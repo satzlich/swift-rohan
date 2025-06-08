@@ -51,7 +51,7 @@ final class ApplyNode: Node {
 
   private enum CodingKeys: CodingKey { case template, arguments }
 
-  public required init(from decoder: any Decoder) throws {
+  required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     let template = try container.decode(MathTemplate.self, forKey: .template)
@@ -80,7 +80,7 @@ final class ApplyNode: Node {
     self._setUp()
   }
 
-  public override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     try container.encode(template, forKey: .template)

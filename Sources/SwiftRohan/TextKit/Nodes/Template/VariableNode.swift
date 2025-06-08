@@ -28,6 +28,24 @@ final class VariableNode: ElementNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case argIndex, levelDelta }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    argumentIndex = try container.decode(Int.self, forKey: .argIndex)
+    nestedLevelDelta = try container.decode(Int.self, forKey: .levelDelta)
+    super.init()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(argumentIndex, forKey: .argIndex)
+    try container.encode(nestedLevelDelta, forKey: .levelDelta)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -65,24 +83,6 @@ final class VariableNode: ElementNode {
     self.argumentIndex = variableNode.argumentIndex
     self.nestedLevelDelta = variableNode.nestedLevelDelta
     super.init(deepCopyOf: variableNode)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case argIndex, levelDelta }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    argumentIndex = try container.decode(Int.self, forKey: .argIndex)
-    nestedLevelDelta = try container.decode(Int.self, forKey: .levelDelta)
-    super.init()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(argumentIndex, forKey: .argIndex)
-    try container.encode(nestedLevelDelta, forKey: .levelDelta)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Storage

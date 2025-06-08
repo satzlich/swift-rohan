@@ -19,11 +19,13 @@ final class LinebreakNode: SimpleNode {
 
   final override func layoutLength() -> Int { 1 }
 
-  // MARK: - LinebreakNode
+  // MARK: - Node(Codable)
 
   required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
   }
+
+  // MARK: - LinebreakNode
 
   // MARK: - Layout
 

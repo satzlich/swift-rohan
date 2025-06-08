@@ -23,13 +23,13 @@ final class HeadingNode: ElementNode {
 
   private enum CodingKeys: CodingKey { case level }
 
-  public required init(from decoder: any Decoder) throws {
+  internal required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.level = try container.decode(Int.self, forKey: .level)
     try super.init(from: decoder)
   }
 
-  public override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self.level, forKey: .level)
     try super.encode(to: encoder)

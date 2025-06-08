@@ -30,15 +30,6 @@ final class MathOperatorNode: SimpleNode {
 
   final override func layoutLength() -> Int { 1 }  // always "1".
 
-  // MARK: - Math Operator
-
-  let mathOperator: MathOperator
-
-  init(_ mathOp: MathOperator) {
-    self.mathOperator = mathOp
-    super.init()
-  }
-
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey { case command }
@@ -56,10 +47,19 @@ final class MathOperatorNode: SimpleNode {
     try super.init(from: decoder)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(mathOperator.command, forKey: .command)
     try super.encode(to: encoder)
+  }
+
+  // MARK: - Math Operator
+
+  let mathOperator: MathOperator
+
+  init(_ mathOp: MathOperator) {
+    self.mathOperator = mathOp
+    super.init()
   }
 
   // MARK: - Layout

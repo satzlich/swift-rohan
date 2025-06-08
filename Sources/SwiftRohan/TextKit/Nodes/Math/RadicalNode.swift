@@ -22,6 +22,25 @@ final class RadicalNode: MathNode {
 
   final override var isDirty: Bool { _isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case radicand, index }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self._radicand = try container.decode(CrampedNode.self, forKey: .radicand)
+    self._index = try container.decodeIfPresent(DegreeNode.self, forKey: .index)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_radicand, forKey: .radicand)
+    try container.encodeIfPresent(_index, forKey: .index)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
@@ -54,25 +73,6 @@ final class RadicalNode: MathNode {
     self._index = node._index?.deepCopy()
     super.init()
     self._setUp()
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case radicand, index }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self._radicand = try container.decode(CrampedNode.self, forKey: .radicand)
-    self._index = try container.decodeIfPresent(DegreeNode.self, forKey: .index)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(_radicand, forKey: .radicand)
-    try container.encodeIfPresent(_index, forKey: .index)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Content

@@ -18,6 +18,31 @@ final class MathAttributesNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let attributes = MathAttributes.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid math attributes command: \(command)")
+    }
+    self.subtype = attributes
+    self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(subtype.command, forKey: .command)
+    try container.encode(_nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - MathAttributesNode
 
   typealias Subtype = MathAttributes
@@ -49,31 +74,6 @@ final class MathAttributesNode: MathNode {
 
   private func _setUp() {
     self._nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let command = try container.decode(String.self, forKey: .command)
-    guard let attributes = MathAttributes.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Invalid math attributes command: \(command)")
-    }
-    self.subtype = attributes
-    self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype.command, forKey: .command)
-    try container.encode(_nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

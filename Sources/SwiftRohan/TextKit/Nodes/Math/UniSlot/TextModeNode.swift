@@ -31,6 +31,23 @@ final class TextModeNode: MathNode {
 
   final override var isDirty: Bool { nucleus.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    try super.init(from: decoder)
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - TextModeNode
 
   let nucleus: ContentNode
@@ -55,23 +72,6 @@ final class TextModeNode: MathNode {
 
   private func _setUp() {
     nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    try super.init(from: decoder)
-    _setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Clone and Visitor

@@ -16,16 +16,7 @@ final class NamedSymbolNode: SimpleNode {
 
   final override func layoutLength() -> Int { namedSymbol.string.length }
 
-  // MARK: - NamedSymbolNode
-
-  let namedSymbol: NamedSymbol
-
-  init(_ namedSymbol: NamedSymbol) {
-    self.namedSymbol = namedSymbol
-    super.init()
-  }
-
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command }
 
@@ -41,10 +32,19 @@ final class NamedSymbolNode: SimpleNode {
     try super.init(from: decoder)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(namedSymbol.command, forKey: .command)
     try super.encode(to: encoder)
+  }
+
+  // MARK: - NamedSymbolNode
+
+  let namedSymbol: NamedSymbol
+
+  init(_ namedSymbol: NamedSymbol) {
+    self.namedSymbol = namedSymbol
+    super.init()
   }
 
   // MARK: - Layout

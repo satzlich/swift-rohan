@@ -17,6 +17,31 @@ final class AccentNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let accent = MathAccent.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown accent command: \(command)")
+    }
+    self.accent = accent
+    self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(accent.command, forKey: .command)
+    try container.encode(_nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - AccentNode
 
   let accent: MathAccent
@@ -44,31 +69,6 @@ final class AccentNode: MathNode {
 
   private final func _setUp() {
     _nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let command = try container.decode(String.self, forKey: .command)
-    guard let accent = MathAccent.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown accent command: \(command)")
-    }
-    self.accent = accent
-    self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(accent.command, forKey: .command)
-    try container.encode(_nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

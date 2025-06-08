@@ -33,7 +33,7 @@ final class TextNode: Node {
 
   private enum CodingKeys: CodingKey { case string }
 
-  public required init(from decoder: any Decoder) throws {
+  required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     let string = try container.decode(RhString.self, forKey: .string)
@@ -46,7 +46,7 @@ final class TextNode: Node {
     try super.init(from: decoder)
   }
 
-  public override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(_string, forKey: .string)
     try super.encode(to: encoder)

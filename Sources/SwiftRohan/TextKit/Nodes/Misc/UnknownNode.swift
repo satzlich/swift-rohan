@@ -30,42 +30,38 @@ final class UnknownNode: SimpleNode {
 
   final override func layoutLength() -> Int { PLACEHOLDER.length }
 
+  // MARK: - Node(Codable)
+
+  required init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    data = try container.decode(JSONValue.self)
+    super.init()
+  }
+
+  final override func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(data)
+    // NB: no need to encode super as it is not a part of the JSON representation
+  }
+
   // MARK: - UnknownNode
 
   var placeholder: String { PLACEHOLDER }
 
-  // MARK: - Layout
-
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText(PLACEHOLDER, self)
   }
-
-  // MARK: - Clone and Visitor
 
   override class var storageTags: [String] {
     // intentionally empty
     []
   }
 
-  // MARK: - Codable
-
   let data: JSONValue
 
   init(_ data: JSONValue) {
     self.data = data
     super.init()
-  }
-
-  public required init(from decoder: Decoder) throws {
-    let container = try decoder.singleValueContainer()
-    data = try container.decode(JSONValue.self)
-    super.init()
-  }
-
-  override public func encode(to encoder: Encoder) throws {
-    var container = encoder.singleValueContainer()
-    try container.encode(data)
-    // no need to encode super as it is not a part of the JSON representation
   }
 
   override func store() -> JSONValue { data }

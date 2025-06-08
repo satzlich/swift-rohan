@@ -28,13 +28,13 @@ class SimpleNode: Node {  // default implementation for simple nodes
 
   final override var isDirty: Bool { false }
 
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
-  public required init(from decoder: any Decoder) throws {
+  required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
   }
 
-  public override func encode(to encoder: any Encoder) throws {
+  internal override func encode(to encoder: any Encoder) throws {
     try super.encode(to: encoder)
   }
 

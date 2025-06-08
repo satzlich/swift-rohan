@@ -21,23 +21,7 @@ final class MathExpressionNode: SimpleNode {
 
   final override func layoutLength() -> Int { _deflated.layoutLength() }
 
-  // MARK: - MathExpressionNode
-
-  let mathExpression: MathExpression
-  private let _deflated: Node
-
-  init(_ mathExpression: MathExpression) {
-    self.mathExpression = mathExpression
-    self._deflated = mathExpression.deflated()
-    super.init()
-    _setUp()
-  }
-
-  private func _setUp() {
-    _deflated.setParent(self)
-  }
-
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command }
 
@@ -56,10 +40,26 @@ final class MathExpressionNode: SimpleNode {
     _setUp()
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(mathExpression.command, forKey: .command)
     try super.encode(to: encoder)
+  }
+
+  // MARK: - MathExpressionNode
+
+  let mathExpression: MathExpression
+  private let _deflated: Node
+
+  init(_ mathExpression: MathExpression) {
+    self.mathExpression = mathExpression
+    self._deflated = mathExpression.deflated()
+    super.init()
+    _setUp()
+  }
+
+  private func _setUp() {
+    _deflated.setParent(self)
   }
 
   // MARK: - Layout

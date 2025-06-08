@@ -22,6 +22,31 @@ final class AttachNode: MathNode {
 
   final override var isDirty: Bool { _isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case lsub, lsup, sub, sup, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    _lsub = try container.decodeIfPresent(SubscriptNode.self, forKey: .lsub)
+    _lsup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .lsup)
+    _sub = try container.decodeIfPresent(SubscriptNode.self, forKey: .sub)
+    _sup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .sup)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(nucleus, forKey: .nuc)
+    try container.encodeIfPresent(_lsub, forKey: .lsub)
+    try container.encodeIfPresent(_lsup, forKey: .lsup)
+    try container.encodeIfPresent(_sub, forKey: .sub)
+    try container.encodeIfPresent(_sup, forKey: .sup)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - AttachNode
 
   public init(
@@ -67,34 +92,6 @@ final class AttachNode: MathNode {
     _lsup?.setParent(self)
     _sub?.setParent(self)
     _sup?.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  /// should sync with AttachExpr
-  private enum CodingKeys: CodingKey {
-    case lsub, lsup, sub, sup, nuc
-  }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    _lsub = try container.decodeIfPresent(SubscriptNode.self, forKey: .lsub)
-    _lsup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .lsup)
-    _sub = try container.decodeIfPresent(SubscriptNode.self, forKey: .sub)
-    _sup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .sup)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(nucleus, forKey: .nuc)
-    try container.encodeIfPresent(_lsub, forKey: .lsub)
-    try container.encodeIfPresent(_lsup, forKey: .lsup)
-    try container.encodeIfPresent(_sub, forKey: .sub)
-    try container.encodeIfPresent(_sup, forKey: .sup)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

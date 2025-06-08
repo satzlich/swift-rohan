@@ -17,6 +17,25 @@ final class LeftRightNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case delim, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    delimiters = try container.decode(DelimiterPair.self, forKey: .delim)
+    _nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(delimiters, forKey: .delim)
+    try container.encode(_nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - LeftRightNode
 
   let delimiters: DelimiterPair
@@ -45,25 +64,6 @@ final class LeftRightNode: MathNode {
 
   private func _setUp() {
     _nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case delim, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    delimiters = try container.decode(DelimiterPair.self, forKey: .delim)
-    _nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(delimiters, forKey: .delim)
-    try container.encode(_nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

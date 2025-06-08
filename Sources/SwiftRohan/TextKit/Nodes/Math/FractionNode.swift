@@ -31,6 +31,34 @@ final class FractionNode: MathNode {
 
   final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, num, denom }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let genfrac = MathGenFrac.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown genfrac command: \(command)")
+    }
+    self.genfrac = genfrac
+    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
+    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
+    super.init()
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(genfrac.command, forKey: .command)
+    try container.encode(_numerator, forKey: .num)
+    try container.encode(_denominator, forKey: .denom)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - Fraction
 
   public let genfrac: MathGenFrac
@@ -62,35 +90,6 @@ final class FractionNode: MathNode {
   private final func _setUp() {
     _numerator.setParent(self)
     _denominator.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  // sync with FractionExpr
-  private enum CodingKeys: CodingKey { case command, num, denom }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let genfrac = MathGenFrac.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown genfrac command: \(command)")
-    }
-    self.genfrac = genfrac
-    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
-    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
-    super.init()
-    _setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(genfrac.command, forKey: .command)
-    try container.encode(_numerator, forKey: .num)
-    try container.encode(_denominator, forKey: .denom)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

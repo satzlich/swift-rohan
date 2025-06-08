@@ -46,7 +46,7 @@ class ElementNode: Node {
 
   private enum CodingKeys: CodingKey { case children }
 
-  public required init(from decoder: any Decoder) throws {
+  required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
 
@@ -64,7 +64,7 @@ class ElementNode: Node {
     self._setUp()
   }
 
-  public override func encode(to encoder: any Encoder) throws {
+  internal override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self._children, forKey: .children)
     try super.encode(to: encoder)

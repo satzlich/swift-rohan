@@ -21,7 +21,7 @@ class ContentNode: ElementNode {
 
   // MARK: - Node(Codable)
 
-  public required init(from decoder: any Decoder) throws {
+  required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
   }
 

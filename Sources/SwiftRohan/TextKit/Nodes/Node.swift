@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import _RopeModule
 
-class Node: Codable {
+internal class Node: Codable {
   public init() {}
 
   /// Returns a deep copy of the node (intrinsic state only).
@@ -118,7 +118,7 @@ class Node: Codable {
 
   internal enum CodingKeys: CodingKey { case type }
 
-  public required init(from decoder: any Decoder) throws {
+  internal required init(from decoder: any Decoder) throws {
     // type check is unnecessary, but let's keep it for safety.
 
     // for unknown node, the encoded type can be arbitrary.
@@ -134,7 +134,7 @@ class Node: Codable {
     }
   }
 
-  public func encode(to encoder: any Encoder) throws {
+  internal func encode(to encoder: any Encoder) throws {
     precondition(type != .unknown)  // unknown node is processed separately
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(type, forKey: .type)

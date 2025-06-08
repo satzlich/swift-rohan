@@ -37,6 +37,25 @@ final class EquationNode: MathNode {
   final override var isBlock: Bool { subtype == .block }
   final override var isDirty: Bool { nucleus.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case subtype, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(subtype, forKey: .subtype)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - EquationNode
 
   typealias Subtype = EquationExpr.Subtype
@@ -68,25 +87,6 @@ final class EquationNode: MathNode {
 
   private final func _setUp() {
     self.nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case subtype, nuc }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
-    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype, forKey: .subtype)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

@@ -34,6 +34,16 @@ final class ArgumentNode: Node {
 
   final override func layoutLength() -> Int { 1 }  // always "1".
 
+  // MARK: - Node(Codable)
+
+  required init(from decoder: any Decoder) throws {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
   // MARK: - ElementNode
 
   final func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -68,16 +78,6 @@ final class ArgumentNode: Node {
     super.init()
 
     variableNodes.forEach { $0.setArgumentNode(self) }
-  }
-
-  // MARK: - Codable
-
-  required init(from decoder: any Decoder) throws {
-    preconditionFailure("should not be called. Work is done in ApplyNode.")
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    preconditionFailure("should not be called. Work is done in ApplyNode.")
   }
 
   func getArgumentValue_readonly() -> ElementNode.Store {

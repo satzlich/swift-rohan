@@ -17,6 +17,33 @@ final class UnderOverNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let spreader = MathSpreader.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown MathSpreader command: \(command)")
+    }
+    self.spreader = spreader
+    let clazz = Self.nucleusClazz(for: spreader.subtype)
+    self._nucleus = try container.decode(clazz, forKey: .nuc)
+    super.init()
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(spreader.command, forKey: .command)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - UnderOverNode
 
   let spreader: MathSpreader
@@ -152,33 +179,6 @@ final class UnderOverNode: MathNode {
 
   final override func enumerateComponents() -> [MathNode.Component] {
     [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let spreader = MathSpreader.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown MathSpreader command: \(command)")
-    }
-    self.spreader = spreader
-    let clazz = Self.nucleusClazz(for: spreader.subtype)
-    self._nucleus = try container.decode(clazz, forKey: .nuc)
-    super.init()
-    _setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(spreader.command, forKey: .command)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Clone and Visitor
