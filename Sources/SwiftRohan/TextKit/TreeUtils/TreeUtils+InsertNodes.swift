@@ -555,7 +555,7 @@ extension TreeUtils {
 
     // get the part of paragraph node after (index, offset) and
     // location before (index, offset) starting from the depth of index
-    func takeTailPart() -> (ElementNode.Store, [Int]) {
+    func takeTailPart() -> (ElementStore, Array<Int>) {
       // split the text node at offset
       let (text0, text1) = StringUtils.strictSplit(textNode.string, at: offset)
       // replace the text node at index with text0
@@ -643,7 +643,7 @@ extension TreeUtils {
 
     // get the part of paragrpah node after offset and the location before
     // offset starting from the depth of offset
-    func takeTailPart() -> (ElementNode.Store, [Int]) {
+    func takeTailPart() -> (ElementStore, Array<Int>) {
       let childCount = paragraph.childCount
       let tail = paragraph.takeSubrange(offset..<childCount, inStorage: true)
       return (tail, [offset])
@@ -694,7 +694,7 @@ extension TreeUtils {
   private static func insertParagraphNodes_helper(
     _ nodes: [Node], paragraphNode paragraph: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int,
-    takeTailPart: () -> (ElementNode.Store, [Int])
+    takeTailPart: () -> (ElementStore, Array<Int>)
   ) throws -> ([Int], [Int]) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))

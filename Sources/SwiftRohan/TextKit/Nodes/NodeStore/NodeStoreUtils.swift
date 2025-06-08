@@ -94,16 +94,16 @@ enum NodeStoreUtils {
   /// - Returns: nodes and whether the loading is corrupted.
   static func loadChildren(
     _ children: Array<JSONValue>
-  ) -> (ElementNode.Store, corrupted: Bool) {
-    let result = loadNodes(children) as LoadResult<ElementNode.Store, UnknownNode>
+  ) -> (ElementStore, corrupted: Bool) {
+    let result = loadNodes(children) as LoadResult<ElementStore, UnknownNode>
     switch result {
     case .success(let nodes):
-      return (ElementNode.Store(nodes), false)
+      return (ElementStore(nodes), false)
     case .corrupted(let nodes):
-      return (ElementNode.Store(nodes), true)
+      return (ElementStore(nodes), true)
     case .failure(let unknownNode):
       assertionFailure("Failed to load children: \(unknownNode)")
-      return (ElementNode.Store([unknownNode]), true)
+      return (ElementStore([unknownNode]), true)
     }
   }
 

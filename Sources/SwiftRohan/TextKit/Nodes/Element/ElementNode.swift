@@ -6,6 +6,9 @@ import CoreGraphics
 import DequeModule
 import _RopeModule
 
+/// Storage for `ElementNode` children.
+internal typealias ElementStore = Deque<Node>
+
 internal class ElementNode: Node {
   // MARK: - Node
 
@@ -117,11 +120,10 @@ internal class ElementNode: Node {
 
   // MARK: - Implementation
 
-  public typealias Store = Deque<Node>
-  private final var _children: Store
+  private final var _children: ElementStore
 
   /// - Warning: It's important to sync with the other `init` method.
-  public init(_ children: Store) {
+  public init(_ children: ElementStore) {
     // children and newlines
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
@@ -137,7 +139,7 @@ internal class ElementNode: Node {
   /// - Warning: It's important to sync with the other `init` method.
   public init(_ children: [Node] = []) {
     // children and newlines
-    self._children = Store(children)
+    self._children = ElementStore(children)
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
     self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
@@ -150,7 +152,7 @@ internal class ElementNode: Node {
 
   internal init(deepCopyOf elementNode: ElementNode) {
     // children and newlines
-    self._children = Store(elementNode._children.lazy.map { $0.deepCopy() })
+    self._children = ElementStore(elementNode._children.lazy.map { $0.deepCopy() })
     self._newlines = elementNode._newlines
     // length
     self._layoutLength = elementNode._layoutLength
@@ -168,7 +170,7 @@ internal class ElementNode: Node {
   }
 
   // This is used for serialization.
-  final func getChildren_readonly() -> Store { _children }
+  final func getChildren_readonly() -> ElementStore { _children }
 
   // MARK: - Content
 
@@ -765,7 +767,7 @@ internal class ElementNode: Node {
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
   /// Take all children from the node.
-  public final func takeChildren(inStorage: Bool) -> Store {
+  public final func takeChildren(inStorage: Bool) -> ElementStore {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
@@ -792,7 +794,7 @@ internal class ElementNode: Node {
     return children
   }
 
-  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> Store {
+  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> ElementStore {
     if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
 
     // pre update
@@ -806,7 +808,7 @@ internal class ElementNode: Node {
 
     // perform remove
     var placeholderDelta = -isPlaceholderActive.intValue
-    let children = Store(_children[range])
+    let children = ElementStore(_children[range])
     _children.removeSubrange(range)
     placeholderDelta += isPlaceholderActive.intValue
 
@@ -941,7 +943,7 @@ internal class ElementNode: Node {
   /// - Note: Each merged node is set with parent.
   /// - Returns: the range of compacted nodes, or nil if no compact
   private static func compactSubrange(
-    _ nodes: inout Store, _ range: Range<Int>, _ parent: Node
+    _ nodes: inout ElementStore, _ range: Range<Int>, _ parent: Node
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 

@@ -95,7 +95,7 @@ final class ArgumentNode: Node {
     variableNodes.forEach { $0.setArgumentNode(self) }
   }
 
-  func getArgumentValue_readonly() -> ElementNode.Store {
+  func getArgumentValue_readonly() -> ElementStore {
     variableNodes.first!.getChildren_readonly()
   }
 

@@ -98,10 +98,10 @@ final class HeadingNode: ElementNode {
   init(level: Int, _ children: [Node]) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
-    super.init(Store(children))
+    super.init(ElementStore(children))
   }
 
-  public init(level: Int, _ children: ElementNode.Store) {
+  public init(level: Int, _ children: ElementStore) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(children)

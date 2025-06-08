@@ -64,15 +64,14 @@ class ContentNode: ElementNode {
   // MARK: - ContentNode
 
   required override init(_ children: [Node]) {
-    super.init(Store(children))
+    super.init(ElementStore(children))
   }
 
-  required override init(_ children: ElementNode.Store) {
+  required override init(_ children: ElementStore) {
     super.init(children)
   }
 
   required init(deepCopyOf node: ContentNode) {
     super.init(deepCopyOf: node)
   }
-
 }
