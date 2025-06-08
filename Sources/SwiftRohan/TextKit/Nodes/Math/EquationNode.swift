@@ -10,6 +10,23 @@ public final class EquationNode: MathNode {
     EquationNode.selector(isBlock: isBlock)
   }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      // if there is no math style, compute and set
+      let key = MathProperty.style
+      if current[key] == nil {
+        current[key] = .mathStyle(isBlock ? .display : .text)
+      }
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - EquationNode
+
   typealias Subtype = EquationExpr.Subtype
 
   init(_ subtype: Subtype, _ nucleus: [Node] = []) {
@@ -108,21 +125,6 @@ public final class EquationNode: MathNode {
     return isBlock != nil
       ? TargetSelector(.equation, PropertyMatcher(.isBlock, .bool(isBlock!)))
       : TargetSelector(.equation)
-  }
-
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      // inherit properties
-      var properties = super.getProperties(styleSheet)
-      // if there is no math style, compute and set
-      let key = MathProperty.style
-      if properties[key] == nil {
-        properties[key] = .mathStyle(isBlock ? .display : .text)
-      }
-      // cache properties
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
   }
 
   // MARK: - Components

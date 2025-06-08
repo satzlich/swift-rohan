@@ -5,6 +5,33 @@ import Foundation
 final class MathStylesNode: MathNode {
   override class var type: NodeType { .mathStyles }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      switch styles {
+      case .mathTextStyle(let mathTextStyle):
+        let (variant, bold, italic) = mathTextStyle.tuple()
+        current[MathProperty.variant] = .mathVariant(variant)
+        if let bold = bold { current[MathProperty.bold] = .bool(bold) }
+        if let italic = italic { current[MathProperty.italic] = .bool(italic) }
+
+      case .mathStyle(let mathStyle):
+        current[MathProperty.style] = .mathStyle(mathStyle)
+
+      case .inlineStyle:
+        let key = MathProperty.style
+        let mathStyle = key.resolveValue(current, styleSheet).mathStyle()!
+        current[key] = .mathStyle(mathStyle.inlineParallel())
+      }
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - MathStyles
+
   let styles: MathStyles
   let nucleus: ContentNode
 
@@ -107,37 +134,6 @@ final class MathStylesNode: MathNode {
 
   override func enumerateComponents() -> [MathNode.Component] {
     [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-
-      switch styles {
-      case .mathTextStyle(let mathTextStyle):
-        let (variant, bold, italic) = mathTextStyle.tuple()
-        properties[MathProperty.variant] = .mathVariant(variant)
-        if let bold = bold {
-          properties[MathProperty.bold] = .bool(bold)
-        }
-        if let italic = italic {
-          properties[MathProperty.italic] = .bool(italic)
-        }
-
-      case .mathStyle(let mathStyle):
-        properties[MathProperty.style] = .mathStyle(mathStyle)
-
-      case .inlineStyle:
-        let key = MathProperty.style
-        let mathStyle = key.resolveValue(properties, styleSheet.defaultProperties).mathStyle()!
-        properties[key] = .mathStyle(mathStyle.inlineParallel())
-      }
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
   }
 
   // MARK: - Layout

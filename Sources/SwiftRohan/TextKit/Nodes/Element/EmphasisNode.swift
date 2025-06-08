@@ -6,23 +6,22 @@ import Foundation
 public final class EmphasisNode: ElementNode {
   override class var type: NodeType { .emphasis }
 
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    func invert(fontStyle: FontStyle) -> FontStyle {
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    func invertFontStyle(_ fontStyle: FontStyle) -> FontStyle {
       switch fontStyle {
-      case .normal: return .italic
-      case .italic: return .normal
+      case .normal: .italic
+      case .italic: .normal
       }
     }
 
     if _cachedProperties == nil {
-      // inherit properties
-      var properties = super.getProperties(styleSheet)
-      // invert font style
+      var current = super.getProperties(styleSheet)
+
       let key = TextProperty.style
-      let value = key.resolveValue(properties, styleSheet.defaultProperties).fontStyle()!
-      properties[key] = .fontStyle(invert(fontStyle: value))
-      // cache properties
-      _cachedProperties = properties
+      let value = key.resolveValue(current, styleSheet.defaultProperties).fontStyle()!
+      current[key] = .fontStyle(invertFontStyle(value))
+
+      _cachedProperties = current
     }
     return _cachedProperties!
   }

@@ -6,6 +6,13 @@ import _RopeModule
 public final class TextNode: Node {
   override class var type: NodeType { .text }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    // Use the properties from the parent node if available.
+    parent?.getProperties(styleSheet) ?? [:]
+  }
+
+  // MARK: - TextNode
+
   private let _string: RhString
 
   public convenience init<S: Sequence<Character>>(_ string: S) {
@@ -182,13 +189,6 @@ public final class TextNode: Node {
       return nil
     }
     return LayoutUtils.rayshootFurther(newOffset, affinity, direction, result, context)
-  }
-
-  // MARK: - Styles
-
-  public override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    // inherit from parent
-    parent?.getProperties(styleSheet) ?? [:]
   }
 
   // MARK: - Clone and Visitor

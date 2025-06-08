@@ -3,6 +3,24 @@
 /// A variable node represents a variable in the expansion of a template call.
 /// - Invariant: A variable node must be a descendant of an apply node.
 final class VariableNode: ElementNode {
+  override class var type: NodeType { .variable }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      let key = InternalProperty.nestedLevel
+      let value = key.resolveValue(current, styleSheet).integer()!
+      let level = value + (1 - nestedLevelDelta % 2)
+      current[key] = .integer(level)
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - VariableNode
+
   /// associated argument node
   private(set) weak var argumentNode: ArgumentNode?
 
@@ -50,8 +68,6 @@ final class VariableNode: ElementNode {
     try super.encode(to: encoder)
   }
 
-  override class var type: NodeType { .variable }
-
   override func deepCopy() -> VariableNode { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
@@ -80,19 +96,4 @@ final class VariableNode: ElementNode {
     preconditionFailure("should not be called. Work with apply nodes instead.")
   }
 
-  // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      let key = InternalProperty.nestedLevel
-      let value = key.resolveValue(properties, styleSheet).integer()!
-      // adjust the nested level
-      let level = value + (1 - nestedLevelDelta % 2)
-      properties[key] = .integer(level)
-      //cache
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
 }

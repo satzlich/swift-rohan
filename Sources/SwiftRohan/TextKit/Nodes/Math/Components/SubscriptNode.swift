@@ -1,15 +1,17 @@
 // Copyright 2024-2025 Lie Yan
 
 final class SubscriptNode: ContentNode {
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
+      var current = super.getProperties(styleSheet)
+
       let key = MathProperty.style
-      let value = key.resolveValue(properties, styleSheet).mathStyle()!
-      // style, cramped
-      properties[key] = .mathStyle(MathUtils.scriptStyle(for: value))
-      properties[MathProperty.cramped] = .bool(true)
-      _cachedProperties = properties
+      let value = key.resolveValue(current, styleSheet).mathStyle()!
+      current[key] = .mathStyle(MathUtils.scriptStyle(for: value))
+
+      current[MathProperty.cramped] = .bool(true)
+
+      _cachedProperties = current
     }
     return _cachedProperties!
   }

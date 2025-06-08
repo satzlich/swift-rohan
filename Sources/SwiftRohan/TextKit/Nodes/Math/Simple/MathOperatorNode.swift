@@ -6,6 +6,21 @@ import _RopeModule
 final class MathOperatorNode: SimpleNode {
   override class var type: NodeType { .mathOperator }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      let mathContext = MathUtils.resolveMathContext(current, styleSheet)
+      let fontSize = FontSize(rawValue: mathContext.getFontSize())
+      current[TextProperty.size] = .fontSize(fontSize)
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - Math Operator
+
   let mathOperator: MathOperator
 
   init(_ mathOp: MathOperator) {
@@ -60,22 +75,6 @@ final class MathOperatorNode: SimpleNode {
       }
       context.skipBackwards(layoutLength())
     }
-  }
-
-  // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      // CAUTION: avoid infinite loop
-      let mathContext = MathUtils.resolveMathContext(properties, styleSheet)
-      let fontSize = FontSize(rawValue: mathContext.getFont().size)
-
-      properties[TextProperty.size] = .fontSize(fontSize)
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
   }
 
   // MARK: - Clone and Visitor

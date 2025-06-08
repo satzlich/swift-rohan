@@ -7,6 +7,21 @@ import _RopeModule
 final class TextModeNode: MathNode {
   override class var type: NodeType { .textMode }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      let mathContext = MathUtils.resolveMathContext(current, styleSheet)
+      let fontSize = FontSize(rawValue: mathContext.getFont().size)
+      current[TextProperty.size] = .fontSize(fontSize)
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - Text Mode
+
   let nucleus: ContentNode
 
   init(_ nucleus: [Node]) {
@@ -101,22 +116,6 @@ final class TextModeNode: MathNode {
 
   override func enumerateComponents() -> [MathNode.Component] {
     [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-
-      let mathContext = MathUtils.resolveMathContext(properties, styleSheet)
-      let fontSize = FontSize(rawValue: mathContext.getFont().size)
-
-      properties[TextProperty.size] = .fontSize(fontSize)
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
   }
 
   // MARK: - Layout

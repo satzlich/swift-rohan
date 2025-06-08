@@ -61,7 +61,7 @@ extension MathUtils {
   static func resolveMathContext(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> MathContext {
-    let key = MathContextKey.resolve(properties, styleSheet)
+    let key = MathContextKey.resolveKey(properties, styleSheet)
     return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
 
@@ -99,19 +99,19 @@ extension MathUtils {
     let cramped: Bool
     let textColor: Color
 
-    static func resolve(
+    static func resolveKey(
       _ properties: PropertyDictionary, _ stylesheet: StyleSheet
     ) -> MathContextKey {
-      func resolved(_ key: PropertyKey) -> PropertyValue {
+      func resolveValue(_ key: PropertyKey) -> PropertyValue {
         key.resolveValue(properties, stylesheet)
       }
 
       return MathContextKey(
-        textSize: resolved(textSize).fontSize()!,
-        mathFont: resolved(mathFont).string()!,
-        mathStyle: resolved(mathStyle).mathStyle()!,
-        cramped: resolved(cramped).bool()!,
-        textColor: resolved(textColor).color()!)
+        textSize: resolveValue(textSize).fontSize()!,
+        mathFont: resolveValue(mathFont).string()!,
+        mathStyle: resolveValue(mathStyle).mathStyle()!,
+        cramped: resolveValue(cramped).bool()!,
+        textColor: resolveValue(textColor).color()!)
     }
 
     static let textSize = TextProperty.size

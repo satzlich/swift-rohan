@@ -6,15 +6,11 @@ import Foundation
 public final class StrongNode: ElementNode {
   override class var type: NodeType { .strong }
 
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      // inherit properties
-      var properties = super.getProperties(styleSheet)
-      // invert font style
-      let key = TextProperty.weight
-      properties[key] = .fontWeight(.bold)
-      // cache properties
-      _cachedProperties = properties
+      var current = super.getProperties(styleSheet)
+      current[TextProperty.weight] = .fontWeight(.bold)
+      _cachedProperties = current
     }
     return _cachedProperties!
   }

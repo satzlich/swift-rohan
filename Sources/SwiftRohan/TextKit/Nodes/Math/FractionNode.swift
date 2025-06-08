@@ -7,6 +7,21 @@ import _RopeModule
 final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      if let style = genfrac.style {
+        current[MathProperty.style] = .mathStyle(style)
+      }
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - Fraction
+
   public let genfrac: MathGenFrac
 
   public init(num: [Node], denom: [Node], genfrac: MathGenFrac = .frac) {
@@ -180,17 +195,6 @@ final class FractionNode: MathNode {
   }
 
   // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      if let enforcedStyle = genfrac.style {
-        properties[MathProperty.style] = .mathStyle(enforcedStyle)
-      }
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
 
   private func resolveMathContext(_ context: MathContext) -> MathContext {
     if let enforceStyle = genfrac.style {

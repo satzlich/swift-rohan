@@ -12,6 +12,13 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   // mark as `final` to prevent overriding
   override final func selector() -> TargetSelector { super.selector() }
 
+  // MARK: - Styles
+
+  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    // by default, return parent's properties
+    parent?.getProperties(styleSheet) ?? [:]
+  }
+
   // MARK: - Codable
 
   public required init(from decoder: any Decoder) throws {
@@ -77,12 +84,4 @@ public class SimpleNode: Node {  // default implementation for simple nodes
     assertionFailure("Unreachable")
     return nil
   }
-
-  // MARK: - Styles
-
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    // inherit from parent
-    parent?.getProperties(styleSheet) ?? [:]
-  }
-
 }
