@@ -30,7 +30,7 @@ final class AccentNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf accentNode: AccentNode) {
+  private init(deepCopyOf accentNode: AccentNode) {
     self.accent = accentNode.accent
     self._nucleus = accentNode._nucleus.deepCopy()
     super.init()

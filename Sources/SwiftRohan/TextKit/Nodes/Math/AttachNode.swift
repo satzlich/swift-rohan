@@ -46,7 +46,7 @@ final class AttachNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf scriptsNode: AttachNode) {
+  private init(deepCopyOf scriptsNode: AttachNode) {
     self.nucleus = scriptsNode.nucleus.deepCopy()
     self._lsub = scriptsNode._lsub?.deepCopy()
     self._lsup = scriptsNode._lsup?.deepCopy()

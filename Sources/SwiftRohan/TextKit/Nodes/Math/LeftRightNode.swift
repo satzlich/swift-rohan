@@ -31,7 +31,7 @@ final class LeftRightNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf leftRightNode: LeftRightNode) {
+  private init(deepCopyOf leftRightNode: LeftRightNode) {
     self.delimiters = leftRightNode.delimiters
     self._nucleus = leftRightNode._nucleus.deepCopy()
     super.init()

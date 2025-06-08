@@ -6,13 +6,13 @@ import Foundation
 public class ContentNode: ElementNode {
   // MARK: - Node
 
-  override final class var type: NodeType { .content }
-
   required init() {
     super.init()
   }
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  override final class var type: NodeType { .content }
 
   // MARK: - ContentNode
 

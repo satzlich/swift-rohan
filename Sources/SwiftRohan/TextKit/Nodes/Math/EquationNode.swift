@@ -50,7 +50,7 @@ public final class EquationNode: MathNode {
     self._setUp()
   }
 
-  internal init(deepCopyOf equationNode: EquationNode) {
+  private init(deepCopyOf equationNode: EquationNode) {
     self.subtype = equationNode.subtype
     self.nucleus = equationNode.nucleus.deepCopy()
     super.init()

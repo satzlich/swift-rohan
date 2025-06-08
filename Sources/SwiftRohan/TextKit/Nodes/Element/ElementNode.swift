@@ -158,25 +158,6 @@ public class ElementNode: Node {
   /// Create a node for splitting at the end.
   func createSuccessor() -> ElementNode? { nil }
 
-  //  private final func contentDidChangeLocally(
-  //    childrenDelta: LengthSummary,
-  //    placeholderDelta: Int,
-  //    newlinesDelta: Int,
-  //    inStorage: Bool
-  //  ) {
-  //    // apply delta excluding placeholder and newlines
-  //    _layoutLength += childrenDelta.layoutLength
-  //
-  //    // content change implies dirty
-  //    if inStorage { _isDirty = true }
-  //
-  //    var delta = childrenDelta
-  //    // change to newlines should be added to propagated delta
-  //    delta.layoutLength += placeholderDelta + newlinesDelta
-  //    // propagate to parent
-  //    parent?.contentDidChange(delta: delta, inStorage: inStorage)
-  //  }
-
   private final func contentDidChangeLocally(
     childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool
   ) {

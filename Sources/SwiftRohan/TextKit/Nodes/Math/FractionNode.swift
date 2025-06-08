@@ -46,7 +46,7 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf fractionNode: FractionNode) {
+  private init(deepCopyOf fractionNode: FractionNode) {
     self.genfrac = fractionNode.genfrac
     self._numerator = fractionNode._numerator.deepCopy()
     self._denominator = fractionNode._denominator.deepCopy()

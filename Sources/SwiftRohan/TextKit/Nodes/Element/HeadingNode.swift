@@ -34,7 +34,7 @@ public final class HeadingNode: ElementNode {
     super.init(children)
   }
 
-  internal init(deepCopyOf headingNode: HeadingNode) {
+  private init(deepCopyOf headingNode: HeadingNode) {
     self.level = headingNode.level
     super.init(deepCopyOf: headingNode)
   }

@@ -48,7 +48,7 @@ final class VariableNode: ElementNode {
     super.init()
   }
 
-  internal init(deepCopyOf variableNode: VariableNode) {
+  private init(deepCopyOf variableNode: VariableNode) {
     self.argumentIndex = variableNode.argumentIndex
     self.nestedLevelDelta = variableNode.nestedLevelDelta
     super.init(deepCopyOf: variableNode)

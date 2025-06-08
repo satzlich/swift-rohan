@@ -62,7 +62,7 @@ public final class ApplyNode: Node {
     self._setUp()
   }
 
-  init(deepCopyOf applyNode: ApplyNode) {
+  private init(deepCopyOf applyNode: ApplyNode) {
     // deep copy of argument's value
     func deepCopy(from argument: ArgumentNode) -> [Node] {
       let variableNode = argument.variableNodes.first!
