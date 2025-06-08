@@ -9,6 +9,9 @@ public class SimpleNode: Node {  // default implementation for simple nodes
     super.resetCachedProperties()
   }
 
+  // mark as `final` to prevent overriding
+  override final func selector() -> TargetSelector { super.selector() }
+
   // MARK: - Codable
 
   public required init(from decoder: any Decoder) throws {
@@ -76,8 +79,6 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   }
 
   // MARK: - Styles
-
-  override final func selector() -> TargetSelector { super.selector() }
 
   override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     // inherit from parent

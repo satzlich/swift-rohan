@@ -6,6 +6,10 @@ import _RopeModule
 public final class EquationNode: MathNode {
   override class var type: NodeType { .equation }
 
+  override public func selector() -> TargetSelector {
+    EquationNode.selector(isBlock: isBlock)
+  }
+
   typealias Subtype = EquationExpr.Subtype
 
   init(_ subtype: Subtype, _ nucleus: [Node] = []) {
@@ -99,10 +103,6 @@ public final class EquationNode: MathNode {
   }
 
   // MARK: - Styles
-
-  override public func selector() -> TargetSelector {
-    EquationNode.selector(isBlock: isBlock)
-  }
 
   public static func selector(isBlock: Bool? = nil) -> TargetSelector {
     return isBlock != nil

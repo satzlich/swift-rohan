@@ -44,7 +44,11 @@ public class Node: Codable {
     _cachedProperties = nil
   }
 
-  internal func selector() -> TargetSelector { TargetSelector(type) }
+  /// Returns the selector for the node class without instance properties.
+  final class func selector() -> TargetSelector { TargetSelector(type) }
+
+  /// Returns the selector for the node instance.
+  internal func selector() -> TargetSelector { Self.selector() }
 
   // MARK: - Codable
 
@@ -297,8 +301,4 @@ extension Node {
   }
 
   // MARK: - Styles
-
-  class func selector() -> TargetSelector {
-    TargetSelector(type)
-  }
 }
