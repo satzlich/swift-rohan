@@ -122,6 +122,13 @@ final class MathLineLayoutContext: LayoutContext {
   // MARK: - Query
 
   func getSegmentFrame(
+    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+  ) -> SegmentFrame? {
+    let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
+    return layoutContext.getSegmentFrame(resolvedOffset, affinity)
+  }
+
+  func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
     let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)

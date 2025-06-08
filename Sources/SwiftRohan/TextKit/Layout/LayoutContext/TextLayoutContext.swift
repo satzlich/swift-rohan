@@ -287,7 +287,7 @@ final class TextLayoutContext: LayoutContext {
   ) -> RayshootResult? {
     precondition(isEditing == false)
 
-    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
     else { return nil }
 
     let usageBounds = textLayoutManager.usageBoundsForTextContainer
@@ -339,6 +339,6 @@ final class TextLayoutContext: LayoutContext {
     }
 
     let targetOffset = textContentStorage.characterIndex(for: targetLocation)
-    return getSegmentFrame(for: targetOffset, target.affinity)
+    return getSegmentFrame(targetOffset, target.affinity)
   }
 }
