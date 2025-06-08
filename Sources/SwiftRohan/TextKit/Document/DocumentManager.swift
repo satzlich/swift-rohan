@@ -103,8 +103,10 @@ public final class DocumentManager {
 
   /// Map contents in the given range to a new array.
   /// - Returns: The array of mapped values, or nil if the range is invalid.
-  internal func mapContents<T>(in range: RhTextRange, _ f: (PartialNode) -> T) -> [T]? {
-    var values: [T] = []
+  internal func mapContents<T, S: RangeReplaceableCollection<T>>(
+    in range: RhTextRange, _ f: (PartialNode) -> T
+  ) -> S? {
+    var values: S = .init()
     do {
       try enumerateContents(in: range) { _, node in
         values.append(f(node))
@@ -250,7 +252,7 @@ public final class DocumentManager {
   /// - Returns: (range of resulting math node, isAdded) if successful;
   ///   otherwise, an error.
   internal func addMathComponent(
-    _ range: RhTextRange, _ mathIndex: MathIndex, _ component: [Node]
+    _ range: RhTextRange, _ mathIndex: MathIndex, _ component: ElementStore
   ) -> SatzResult<(RhTextRange, isAdded: Bool)> {
 
     let location = range.location
@@ -271,7 +273,7 @@ public final class DocumentManager {
       }
     }
     else {
-      guard let nucleus = mapContents(in: range, { $0.deepCopy() }),
+      guard let nucleus: ElementStore = mapContents(in: range, { $0.deepCopy() }),
         let mathNode = composeMathNode(nucleus, mathIndex, component)
       else {
         return .failure(SatzError(.InvalidTextRange))
@@ -296,7 +298,7 @@ public final class DocumentManager {
     // Helper
 
     func composeMathNode(
-      _ nucleus: [Node], _ mathIndex: MathIndex, _ component: [Node]
+      _ nucleus: ElementStore, _ mathIndex: MathIndex, _ component: ElementStore
     ) -> MathNode? {
       switch mathIndex {
       case .sub:
@@ -988,7 +990,7 @@ public final class DocumentManager {
   }
 
   func getLatexContent(for range: RhTextRange) -> String? {
-    guard let nodes = mapContents(in: range, { $0 }),
+    guard let nodes: Array<PartialNode> = mapContents(in: range, { $0 }),
       let parent = lowestAncestor(for: range),
       let layoutMode = containerCategory(for: range.location)?.layoutMode()
     else { return nil }

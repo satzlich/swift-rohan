@@ -28,7 +28,29 @@ final class MathOperatorNode: SimpleNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { 1 }  // always "1".
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let fragment =
+        MathOperatorLayoutFragment(self, context.styleSheet, context.mathContext)
+      _mathOperatorFragment = fragment
+      context.insertFragment(fragment, self)
+    }
+    else {
+      guard _mathOperatorFragment != nil
+      else {
+        assertionFailure("Fragment should exist")
+        return
+      }
+      context.skipBackwards(layoutLength())
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -68,42 +90,9 @@ final class MathOperatorNode: SimpleNode {
     return json
   }
 
-  // MARK: - Math Operator
+  // MARK: - Storage
 
-  let mathOperator: MathOperator
-
-  init(_ mathOp: MathOperator) {
-    self.mathOperator = mathOp
-    super.init()
-  }
-
-  // MARK: - Layout
-
-  private var _mathOperatorFragment: MathOperatorLayoutFragment? = nil
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let fragment =
-        MathOperatorLayoutFragment(self, context.styleSheet, context.mathContext)
-      _mathOperatorFragment = fragment
-      context.insertFragment(fragment, self)
-    }
-    else {
-      guard _mathOperatorFragment != nil
-      else {
-        assertionFailure("Fragment should exist")
-        return
-      }
-      context.skipBackwards(layoutLength())
-    }
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],
@@ -112,4 +101,13 @@ final class MathOperatorNode: SimpleNode {
     return .success(MathOperatorNode(mathOp))
   }
 
+  // MARK: - MathOperatorNode
+
+  internal let mathOperator: MathOperator
+  private var _mathOperatorFragment: MathOperatorLayoutFragment? = nil
+
+  init(_ mathOp: MathOperator) {
+    self.mathOperator = mathOp
+    super.init()
+  }
 }

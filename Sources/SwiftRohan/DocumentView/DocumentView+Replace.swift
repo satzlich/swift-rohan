@@ -119,7 +119,7 @@ extension DocumentView {
   /// Add the math component to the node/nodes at the given range.
   /// - Returns: The new range of selection
   internal func addMathComponentForEdit(
-    _ range: RhTextRange, _ mathIndex: MathIndex, _ component: [Node]
+    _ range: RhTextRange, _ mathIndex: MathIndex, _ component: ElementStore
   ) -> EditResult {
     let result = _addMathComponent(for: range, with: mathIndex, component)
     return performPostEditProcessing(result)
@@ -138,7 +138,7 @@ extension DocumentView {
   /// registered.
   /// - Returns: The new range of selection
   private func _addMathComponent(
-    for range: RhTextRange, with mathIndex: MathIndex, _ component: [Node]
+    for range: RhTextRange, with mathIndex: MathIndex, _ component: ElementStore
   ) -> SatzResult<RhTextRange> {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
@@ -187,7 +187,7 @@ extension DocumentView {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
 
-    let componentCopy: [Node]
+    let componentCopy: ElementStore
     do {
       let path = range.location.asArray + [.mathIndex(mathIndex)]
       guard let node = documentManager.getNode(at: path),
@@ -195,7 +195,7 @@ extension DocumentView {
       else {
         return .failure(SatzError(.ModifyMathFailure))
       }
-      componentCopy = node.getChildren_readonly().map { $0.deepCopy() }
+      componentCopy = ElementStore(node.getChildren_readonly().lazy.map { $0.deepCopy() })
     }
 
     let result = documentManager.removeMathComponent(range, mathIndex)
@@ -225,7 +225,7 @@ extension DocumentView {
   }
 
   private func registerUndoRemoveMathComponent(
-    for range: RhTextRange, with mathIndex: MathIndex, _ component: [Node],
+    for range: RhTextRange, with mathIndex: MathIndex, _ component: ElementStore,
     _ undoManager: UndoManager
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)

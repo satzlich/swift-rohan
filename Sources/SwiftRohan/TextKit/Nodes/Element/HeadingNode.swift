@@ -57,6 +57,36 @@ final class HeadingNode: ElementNode {
     visitor.visit(heading: self, context, withChildren: children)
   }
 
+  final override func createSuccessor() -> ElementNode? {
+    /* create "paragraph" */
+    ParagraphNode()
+  }
+
+  final override func cloneEmpty() -> Self { Self(level: level, []) }
+
+  final override func encode<S: Collection<PartialNode> & Encodable>(
+    to encoder: any Encoder, withChildren children: S
+  ) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(level, forKey: .level)
+    try super.encode(to: encoder, withChildren: children)
+  }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<HeadingNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      (try? #/h([1-5])/#.wholeMatch(in: tag)) != nil,
+      let level = Int(tag.dropFirst()),
+      case let .array(children) = array[1]
+    else { return .failure(UnknownNode(json)) }
+    let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
+    let result = Self(level: level, nodes)
+    return corrupted ? .corrupted(result) : .success(result)
+  }
+
   // MARK: - HeadingNode
 
   typealias Subtype = HeadingExpr.Subtype
@@ -68,10 +98,10 @@ final class HeadingNode: ElementNode {
   init(level: Int, _ children: [Node]) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
-    super.init(Store(children))
+    super.init(ElementStore(children))
   }
 
-  public init(level: Int, _ children: ElementNode.Store) {
+  public init(level: Int, _ children: ElementStore) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(children)
@@ -92,34 +122,6 @@ final class HeadingNode: ElementNode {
     default: return nil
     }
   }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<HeadingNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      (try? #/h([1-5])/#.wholeMatch(in: tag)) != nil,
-      let level = Int(tag.dropFirst()),
-      case let .array(children) = array[1]
-    else { return .failure(UnknownNode(json)) }
-    let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
-    let result = Self(level: level, nodes)
-    return corrupted ? .corrupted(result) : .success(result)
-  }
-
-  internal override func encode<S: Collection<PartialNode>>(
-    to encoder: any Encoder, withChildren children: S
-  ) throws where S: Encodable {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(level, forKey: .level)
-    try super.encode(to: encoder, withChildren: children)
-  }
-
-  // MARK: - Content
-
-  override func cloneEmpty() -> Self { Self(level: level, []) }
-  override func createSuccessor() -> ElementNode? { ParagraphNode() }
-
-  // MARK: - Styles
 
   public static func selector(level: Int? = nil) -> TargetSelector {
     precondition(level == nil || HeadingExpr.validate(level: level!))

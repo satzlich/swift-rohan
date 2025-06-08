@@ -29,98 +29,11 @@ final class FractionNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
-  // MARK: - Node(Codable)
-
-  private enum CodingKeys: CodingKey { case command, num, denom }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let genfrac = MathGenFrac.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown genfrac command: \(command)")
-    }
-    self.genfrac = genfrac
-    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
-    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
-    super.init()
-    _setUp()
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(genfrac.command, forKey: .command)
-    try container.encode(_numerator, forKey: .num)
-    try container.encode(_denominator, forKey: .denom)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Node(Storage)
-
-  final override class var storageTags: Array<String> {
-    MathGenFrac.allCommands.map(\.command)
-  }
-
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
-
-  final override func store() -> JSONValue {
-    let num = numerator.store()
-    let denom = denominator.store()
-    let json = JSONValue.array([.string(genfrac.command), num, denom])
-    return json
-  }
-
-  // MARK: - Fraction
-
-  public let genfrac: MathGenFrac
-
-  public init(num: [Node], denom: [Node], genfrac: MathGenFrac = .frac) {
-    self.genfrac = genfrac
-    self._numerator = NumeratorNode(num)
-    self._denominator = DenominatorNode(denom)
-    super.init()
-    self._setUp()
-  }
-
-  init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
-    self.genfrac = genfrac
-    self._numerator = num
-    self._denominator = denom
-    super.init()
-    self._setUp()
-  }
-
-  private init(deepCopyOf fractionNode: FractionNode) {
-    self.genfrac = fractionNode.genfrac
-    self._numerator = fractionNode._numerator.deepCopy()
-    self._denominator = fractionNode._denominator.deepCopy()
-    super.init()
-    self._setUp()
-  }
-
-  private final func _setUp() {
-    _numerator.setParent(self)
-    _denominator.setParent(self)
-  }
-
-  // MARK: - Layout
-
-  private var _fractionFragment: MathFractionLayoutFragment? = nil
-  override var layoutFragment: MathLayoutFragment? { _fractionFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -182,57 +95,92 @@ final class FractionNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .num:
-      return _fractionFragment?.numerator
-    case .denom:
-      return _fractionFragment?.denominator
-    default:
-      return nil
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, num, denom }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let genfrac = MathGenFrac.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown genfrac command: \(command)")
     }
+    self.genfrac = genfrac
+    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
+    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
+    super.init()
+    _setUp()
   }
 
-  override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _fractionFragment?.getMathIndex(interactingAt: point)
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(genfrac.command, forKey: .command)
+    try container.encode(_numerator, forKey: .num)
+    try container.encode(_denominator, forKey: .denom)
+    try super.encode(to: encoder)
   }
 
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    _fractionFragment?.rayshoot(from: point, component, in: direction)
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathGenFrac.allCommands.map(\.command)
   }
 
-  // MARK: - Components
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 
-  private let _numerator: NumeratorNode
-  private let _denominator: DenominatorNode
+  final override func store() -> JSONValue {
+    let num = numerator.store()
+    let denom = denominator.store()
+    let json = JSONValue.array([.string(genfrac.command), num, denom])
+    return json
+  }
 
-  public var numerator: ContentNode { @inline(__always) get { _numerator } }
-  public var denominator: ContentNode { @inline(__always) get { _denominator } }
+  // MARK: - MathNode(Component)
 
-  override func enumerateComponents() -> [MathNode.Component] {
+  final override func enumerateComponents() -> Array<MathNode.Component> {
     [
       (MathIndex.num, _numerator),
       (MathIndex.denom, _denominator),
     ]
   }
 
-  // MARK: - Styles
+  // MARK: - MathNode(Layout)
 
-  private func resolveMathContext(_ context: MathContext) -> MathContext {
-    if let enforceStyle = genfrac.style {
-      return context.with(mathStyle: enforceStyle)
-    }
-    else {
-      return context
+  final override var layoutFragment: MathLayoutFragment? { _fractionFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .num: return _fractionFragment?.numerator
+    case .denom: return _fractionFragment?.denominator
+    default: return nil
     }
   }
 
-  // MARK: - Clone and Visitor
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _fractionFragment?.getMathIndex(interactingAt: point)
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _fractionFragment?.rayshoot(from: point, component, in: direction)
+  }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(command) = array[0],
@@ -265,6 +213,55 @@ final class FractionNode: MathNode {
 
     let node = FractionNode(num: num, denom: denom, genfrac: subtype)
     return corrupted ? .corrupted(node) : .success(node)
+  }
+
+  // MARK: - Fraction
+
+  internal let genfrac: MathGenFrac
+
+  private let _numerator: NumeratorNode
+  private let _denominator: DenominatorNode
+  internal var numerator: ContentNode { _numerator }
+  internal var denominator: ContentNode { _denominator }
+
+  private var _fractionFragment: MathFractionLayoutFragment? = nil
+
+  internal init(num: ElementStore, denom: ElementStore, genfrac: MathGenFrac = .frac) {
+    self.genfrac = genfrac
+    self._numerator = NumeratorNode(num)
+    self._denominator = DenominatorNode(denom)
+    super.init()
+    self._setUp()
+  }
+
+  internal init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
+    self.genfrac = genfrac
+    self._numerator = num
+    self._denominator = denom
+    super.init()
+    self._setUp()
+  }
+
+  private init(deepCopyOf fractionNode: FractionNode) {
+    self.genfrac = fractionNode.genfrac
+    self._numerator = fractionNode._numerator.deepCopy()
+    self._denominator = fractionNode._denominator.deepCopy()
+    super.init()
+    self._setUp()
+  }
+
+  private final func _setUp() {
+    _numerator.setParent(self)
+    _denominator.setParent(self)
+  }
+
+  private func resolveMathContext(_ context: MathContext) -> MathContext {
+    if let enforceStyle = genfrac.style {
+      return context.with(mathStyle: enforceStyle)
+    }
+    else {
+      return context
+    }
   }
 
 }

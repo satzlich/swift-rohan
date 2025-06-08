@@ -34,8 +34,33 @@ final class EquationNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Storage)
+
   final override var isBlock: Bool { subtype == .block }
   final override var isDirty: Bool { nucleus.isDirty }
+
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    if fromScratch {
+      let nucleusFragment =
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      _nucleusFragment = nucleusFragment
+
+      context.insertFragment(nucleusFragment, self)
+    }
+    else {
+      guard let nucFragment = _nucleusFragment
+      else {
+        assertionFailure("Nucleus fragment should not be nil")
+        return
+      }
+
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
+      context.invalidateBackwards(layoutLength())
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -76,11 +101,92 @@ final class EquationNode: MathNode {
     }
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> [MathNode.Component] {
+    [(MathIndex.nuc, nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: MathLayoutFragment? { _nucleusFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    guard index == .nuc else { return nil }
+    return _nucleusFragment
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment,
+    parent context: any LayoutContext
+  ) -> any LayoutContext {
+    // TODO: handle reflowed segments
+    precondition(context is TextLayoutContext)
+    precondition(fragment is MathListLayoutFragment)
+    let context = context as! TextLayoutContext
+    let fragment = fragment as! MathListLayoutFragment
+    return LayoutUtils.initMathListLayoutContext(
+      for: component, fragment, parent: context)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _nucleusFragment != nil ? .nuc : nil
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _nucleusFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: -fragment.ascent), false)
+    case .down:
+      return RayshootResult(point.with(y: fragment.descent), false)
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+  }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let tag = Tag(rawValue: tag)
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+
+    switch nucleus {
+    case let .success(nucleus):
+      let equation = EquationNode(subtype, nucleus)
+      return .success(equation)
+    case let .corrupted(nucleus):
+      let equation = EquationNode(subtype, nucleus)
+      return .corrupted(equation)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - EquationNode
 
-  typealias Subtype = EquationExpr.Subtype
+  internal typealias Subtype = EquationExpr.Subtype
 
-  init(_ subtype: Subtype, _ nucleus: [Node] = []) {
+  internal let subtype: Subtype
+  internal let nucleus: ContentNode
+  private var _nucleusFragment: MathListLayoutFragment? = nil
+
+  init(_ subtype: Subtype, _ nucleus: ElementStore = []) {
     self.subtype = subtype
     self.nucleus = ContentNode(nucleus)
     super.init()
@@ -109,121 +215,10 @@ final class EquationNode: MathNode {
     self.nucleus.setParent(self)
   }
 
-  // MARK: - Layout
-
-  let subtype: Subtype
-
-  private var _nucleusFragment: MathListLayoutFragment? = nil
-
-  override final var layoutFragment: MathLayoutFragment? { _nucleusFragment }
-
-  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    guard index == .nuc else { return nil }
-    return _nucleusFragment
-  }
-
-  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _nucleusFragment != nil ? .nuc : nil
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    guard let fragment = _nucleusFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up:
-      return RayshootResult(point.with(y: -fragment.ascent), false)
-
-    case .down:
-      return RayshootResult(point.with(y: fragment.descent), false)
-
-    default:
-      assertionFailure("Unsupported direction")
-      return nil
-    }
-  }
-
-  // MARK: - Styles
-
-  public static func selector(isBlock: Bool? = nil) -> TargetSelector {
+  internal static func selector(isBlock: Bool? = nil) -> TargetSelector {
     return isBlock != nil
       ? TargetSelector(.equation, PropertyMatcher(.isBlock, .bool(isBlock!)))
       : TargetSelector(.equation)
   }
 
-  // MARK: - Components
-
-  public let nucleus: ContentNode
-
-  override final func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      let tag = Tag(rawValue: tag)
-    else {
-      return .failure(UnknownNode(json))
-    }
-
-    let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
-
-    switch nucleus {
-    case let .success(nucleus):
-      let equation = EquationNode(subtype, nucleus)
-      return .success(equation)
-    case let .corrupted(nucleus):
-      let equation = EquationNode(subtype, nucleus)
-      return .corrupted(equation)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-  }
-
-  // MARK: - Reflow-related
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment,
-    parent context: any LayoutContext
-  ) -> any LayoutContext {
-    // TODO: handle reflowed segments
-    precondition(context is TextLayoutContext)
-    precondition(fragment is MathListLayoutFragment)
-    let context = context as! TextLayoutContext
-    let fragment = fragment as! MathListLayoutFragment
-    return LayoutUtils.initMathListLayoutContext(
-      for: component, fragment, parent: context)
-  }
-
-  override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    precondition(context is TextLayoutContext)
-    let context = context as! TextLayoutContext
-
-    if fromScratch {
-      let nucleusFragment =
-        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      _nucleusFragment = nucleusFragment
-
-      context.insertFragment(nucleusFragment, self)
-    }
-    else {
-      guard let nucFragment = _nucleusFragment
-      else {
-        assertionFailure("Nucleus fragment should not be nil")
-        return
-      }
-
-      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
-      context.invalidateBackwards(layoutLength())
-    }
-  }
 }

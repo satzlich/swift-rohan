@@ -26,6 +26,8 @@ final class StrongNode: ElementNode {
 
   // MARK: - Node(Storage)
 
+  private static let uniqueTag = "strong"
+
   final override class var storageTags: Array<String> { [uniqueTag] }
 
   final override class func load(from json: JSONValue) -> _LoadResult<Node> {
@@ -46,13 +48,9 @@ final class StrongNode: ElementNode {
     visitor.visit(strong: self, context, withChildren: children)
   }
 
-  // MARK: - StrongNode
+  final override func cloneEmpty() -> Self { Self() }
 
-  override func cloneEmpty() -> Self { Self() }
-
-  private static let uniqueTag = "strong"
-
-  var command: String { "textbf" }
+  // MARK: - Storage
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<StrongNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
@@ -62,4 +60,7 @@ final class StrongNode: ElementNode {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
+  // MARK: - StrongNode
+
+  var command: String { "textbf" }
 }

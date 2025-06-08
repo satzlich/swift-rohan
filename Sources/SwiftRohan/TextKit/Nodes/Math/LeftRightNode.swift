@@ -15,87 +15,11 @@ final class LeftRightNode: MathNode {
 
   final override class var type: NodeType { .leftRight }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  // MARK: - Node(Codable)
-
-  private enum CodingKeys: CodingKey { case delim, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    delimiters = try container.decode(DelimiterPair.self, forKey: .delim)
-    _nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(delimiters, forKey: .delim)
-    try container.encode(_nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Node(Storage)
-
-  private static let uniqueTag = "lrdelim"
-
-  final override class var storageTags: Array<String> { [uniqueTag] }
-
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
-
-  final override func store() -> JSONValue {
-    let nucleus: JSONValue = _nucleus.store()
-    let delimiters: JSONValue = delimiters.store()
-    let json = JSONValue.array([.string(Self.uniqueTag), delimiters, nucleus])
-    return json
-  }
-
-  // MARK: - LeftRightNode
-
-  let delimiters: DelimiterPair
-  private let _nucleus: ContentNode
-
-  init(_ delimiters: DelimiterPair, _ nucleus: ContentNode) {
-    self.delimiters = delimiters
-    self._nucleus = nucleus
-    super.init()
-    self._setUp()
-  }
-
-  init(_ delimiters: DelimiterPair, _ nucleus: [Node]) {
-    self.delimiters = delimiters
-    self._nucleus = ContentNode(nucleus)
-    super.init()
-    self._setUp()
-  }
-
-  private init(deepCopyOf leftRightNode: LeftRightNode) {
-    self.delimiters = leftRightNode.delimiters
-    self._nucleus = leftRightNode._nucleus.deepCopy()
-    super.init()
-    self._setUp()
-  }
-
-  private func _setUp() {
-    _nucleus.setParent(self)
-  }
-
-  // MARK: - Layout
-
-  private var _leftRightFragment: MathLeftRightLayoutFragment?
-
-  override var layoutFragment: (any MathLayoutFragment)? { _leftRightFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -138,35 +62,79 @@ final class LeftRightNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case delim, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    delimiters = try container.decode(DelimiterPair.self, forKey: .delim)
+    _nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(delimiters, forKey: .delim)
+    try container.encode(_nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  private static let uniqueTag = "lrdelim"
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus: JSONValue = _nucleus.store()
+    let delimiters: JSONValue = delimiters.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), delimiters, nucleus])
+    return json
+  }
+
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _leftRightFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc: return _leftRightFragment?.nucleus
     default: return nil
     }
   }
 
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     _leftRightFragment?.getMathIndex(interactingAt: point)
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     _leftRightFragment?.rayshoot(from: point, component, in: direction)
   }
 
-  // MARK: - Component
+  // MARK: - Storage
 
-  var nucleus: ContentNode { _nucleus }
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
+  internal class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(tag) = array[0],
@@ -185,6 +153,40 @@ final class LeftRightNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  // MARK: - LeftRightNode
+
+  internal let delimiters: DelimiterPair
+
+  private let _nucleus: ContentNode
+  internal var nucleus: ContentNode { _nucleus }
+
+  private var _leftRightFragment: MathLeftRightLayoutFragment?
+
+  init(_ delimiters: DelimiterPair, _ nucleus: ContentNode) {
+    self.delimiters = delimiters
+    self._nucleus = nucleus
+    super.init()
+    self._setUp()
+  }
+
+  init(_ delimiters: DelimiterPair, _ nucleus: ElementStore) {
+    self.delimiters = delimiters
+    self._nucleus = ContentNode(nucleus)
+    super.init()
+    self._setUp()
+  }
+
+  private init(deepCopyOf leftRightNode: LeftRightNode) {
+    self.delimiters = leftRightNode.delimiters
+    self._nucleus = leftRightNode._nucleus.deepCopy()
+    super.init()
+    self._setUp()
+  }
+
+  private func _setUp() {
+    _nucleus.setParent(self)
   }
 
 }

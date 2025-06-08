@@ -17,7 +17,13 @@ final class LinebreakNode: SimpleNode {
 
   final override class var type: NodeType { .linebreak }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { 1 }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    context.insertText("\n", self)
+  }
 
   // MARK: - Node(Codable)
 
@@ -40,13 +46,7 @@ final class LinebreakNode: SimpleNode {
     return json
   }
 
-  // MARK: - LinebreakNode
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    context.insertText("\n", self)
-  }
-
-  // MARK: - Clone and Visitor
+  // MARK: - Storage
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<LinebreakNode> {
     guard case let .array(array) = json,
@@ -58,4 +58,5 @@ final class LinebreakNode: SimpleNode {
     }
     return .success(LinebreakNode())
   }
+
 }

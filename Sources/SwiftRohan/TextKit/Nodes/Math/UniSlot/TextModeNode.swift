@@ -29,121 +29,18 @@ final class TextModeNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { nucleus.isDirty }
 
-  // MARK: - Node(Codable)
-
-  private enum CodingKeys: CodingKey { case nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    try super.init(from: decoder)
-    _setUp()
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Node(Storage)
-
-  final override class var storageTags: Array<String> { [uniqueTag] }
-
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
-
-  final override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
-    return json
-  }
-
-  // MARK: - TextModeNode
-
-  let nucleus: ContentNode
-
-  init(_ nucleus: [Node]) {
-    self.nucleus = ContentNode(nucleus)
-    super.init()
-    _setUp()
-  }
-
-  init(_ nucleus: ContentNode) {
-    self.nucleus = nucleus
-    super.init()
-    _setUp()
-  }
-
-  private init(deepCopyOf node: TextModeNode) {
-    self.nucleus = node.nucleus.deepCopy()
-    super.init()
-    _setUp()
-  }
-
-  private func _setUp() {
-    nucleus.setParent(self)
-  }
-
-  // MARK: - Clone and Visitor
-
-  private static let uniqueTag = "text"
-
-  var command: String { Self.uniqueTag }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      tag == uniqueTag
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
-    switch nucleus {
-    case .success(let nucleus):
-      let textMode = TextModeNode(nucleus)
-      return .success(textMode)
-    case .corrupted(let nucleus):
-      let textMode = TextModeNode(nucleus)
-      return .corrupted(textMode)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-  }
-
-  // MARK: - Content
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Layout
-
-  typealias _TextModeLayoutFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
-  private var _layoutFragment: _TextModeLayoutFragment? = nil
-  override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    precondition(parent is MathListLayoutContext)
-    precondition(fragment is UniLineLayoutFragment)
-    let context = parent as! MathListLayoutContext
-    let fragment = fragment as! UniLineLayoutFragment
-    return TextLineLayoutContext(context.styleSheet, fragment)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
     if fromScratch {
       let nucleus =
         UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
-      let fragment = _TextModeLayoutFragment(nucleus)
+      let fragment = _NodeFragment(nucleus)
       _layoutFragment = fragment
 
       context.insertFragment(fragment, self)
@@ -176,19 +73,70 @@ final class TextModeNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    try super.init(from: decoder)
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
+    return json
+  }
+
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc: return _layoutFragment?.nucleus
     default: return nil
     }
   }
 
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    precondition(parent is MathListLayoutContext)
+    precondition(fragment is UniLineLayoutFragment)
+    let context = parent as! MathListLayoutContext
+    let fragment = fragment as! UniLineLayoutFragment
+    return TextLineLayoutContext(context.styleSheet, fragment)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard _layoutFragment != nil else { return nil }
     return .nuc
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
@@ -204,4 +152,60 @@ final class TextModeNode: MathNode {
       return nil
     }
   }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    switch nucleus {
+    case .success(let nucleus):
+      let textMode = TextModeNode(nucleus)
+      return .success(textMode)
+    case .corrupted(let nucleus):
+      let textMode = TextModeNode(nucleus)
+      return .corrupted(textMode)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  // MARK: - TextModeNode
+
+  internal typealias _NodeFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
+  private var _layoutFragment: _NodeFragment? = nil
+
+  let nucleus: ContentNode
+
+  init(_ nucleus: ElementStore) {
+    self.nucleus = ContentNode(nucleus)
+    super.init()
+    _setUp()
+  }
+
+  init(_ nucleus: ContentNode) {
+    self.nucleus = nucleus
+    super.init()
+    _setUp()
+  }
+
+  private init(deepCopyOf node: TextModeNode) {
+    self.nucleus = node.nucleus.deepCopy()
+    super.init()
+    _setUp()
+  }
+
+  private func _setUp() {
+    nucleus.setParent(self)
+  }
+
+  private static let uniqueTag = "text"
+
+  var command: String { Self.uniqueTag }
+
 }

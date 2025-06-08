@@ -323,7 +323,7 @@ final class ExprNodeSyncTests {
 
     // expr -> node -> data4
     do {
-      guard let node = NodeUtils.convertExprs([expr]).getOnlyElement()
+      guard let node = (NodeUtils.convertExprs([expr]) as Array).getOnlyElement()
       else {
         Issue.record("Cannot convert expr to node")
         return

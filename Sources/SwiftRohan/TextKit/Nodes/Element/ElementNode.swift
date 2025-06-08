@@ -6,6 +6,9 @@ import CoreGraphics
 import DequeModule
 import _RopeModule
 
+/// Storage for `ElementNode` children.
+internal typealias ElementStore = Deque<Node>
+
 internal class ElementNode: Node {
   // MARK: - Node
 
@@ -26,6 +29,8 @@ internal class ElementNode: Node {
   final override func firstIndex() -> RohanIndex? { .index(0) }
   final override func lastIndex() -> RohanIndex? { .index(_children.count) }
 
+  // MARK: - Node(Layout)
+
   final override func contentDidChange(delta: Int, inStorage: Bool) {
     // apply delta
     _layoutLength += delta
@@ -41,6 +46,22 @@ internal class ElementNode: Node {
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
+
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    if fromScratch {
+      _performLayoutFromScratch(context)
+    }
+    else if _snapshotRecords == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshotRecords = nil
+  }
 
   // MARK: - Node(Codable)
 
@@ -79,11 +100,30 @@ internal class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
-  public typealias Store = Deque<Node>
-  private final var _children: Store
+  /// Create a node for splitting at the end.
+  internal func createSuccessor() -> ElementNode? { nil }  // default to nil.
+
+  /// Create an empty clone of this node.
+  internal func cloneEmpty() -> Self { preconditionFailure("overriding required") }
+
+  /// Encode this node but with children replaced with given children.
+  ///
+  /// Helper function for encoding partial nodes. Override this method to encode
+  /// extra properties.
+  internal func encode<S: Collection<PartialNode> & Encodable>(
+    to encoder: any Encoder, withChildren children: S
+  ) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(children, forKey: .children)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Implementation
+
+  private final var _children: ElementStore
 
   /// - Warning: It's important to sync with the other `init` method.
-  public init(_ children: Store) {
+  internal init(_ children: ElementStore) {
     // children and newlines
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
@@ -96,13 +136,12 @@ internal class ElementNode: Node {
     self._setUp()
   }
 
-  /// - Warning: It's important to sync with the other `init` method.
-  public init(_ children: [Node] = []) {
+  internal override init() {
     // children and newlines
-    self._children = Store(children)
-    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    self._children = ElementStore()
+    self._newlines = NewlineArray()
     // length
-    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+    self._layoutLength = 0
     // flags
     self._isDirty = false
 
@@ -110,9 +149,23 @@ internal class ElementNode: Node {
     self._setUp()
   }
 
+  //  /// - Warning: It's important to sync with the other `init` method.
+  //  public init(_ children: [Node] = []) {
+  //    // children and newlines
+  //    self._children = ElementStore(children)
+  //    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+  //    // length
+  //    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+  //    // flags
+  //    self._isDirty = false
+  //
+  //    super.init()
+  //    self._setUp()
+  //  }
+
   internal init(deepCopyOf elementNode: ElementNode) {
     // children and newlines
-    self._children = Store(elementNode._children.lazy.map { $0.deepCopy() })
+    self._children = ElementStore(elementNode._children.lazy.map { $0.deepCopy() })
     self._newlines = elementNode._newlines
     // length
     self._layoutLength = elementNode._layoutLength
@@ -129,23 +182,8 @@ internal class ElementNode: Node {
     }
   }
 
-  func cloneEmpty() -> ElementNode {
-    preconditionFailure("overriding required")
-  }
-
-  /// Encode this node but with children replaced with given children.
-  ///
-  /// Helper function for encoding partial nodes. Override this method to encode
-  /// extra properties.
-  internal func encode<S>(to encoder: any Encoder, withChildren children: S) throws
-  where S: Collection, S.Element == PartialNode, S: Encodable {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(children, forKey: .children)
-    try super.encode(to: encoder)
-  }
-
   // This is used for serialization.
-  final func getChildren_readonly() -> Store { _children }
+  final func getChildren_readonly() -> ElementStore { _children }
 
   // MARK: - Content
 
@@ -157,9 +195,6 @@ internal class ElementNode: Node {
   final func isMergeable(with other: ElementNode) -> Bool {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
-
-  /// Create a node for splitting at the end.
-  func createSuccessor() -> ElementNode? { nil }
 
   private final func contentDidChangeLocally(
     childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool
@@ -211,22 +246,6 @@ internal class ElementNode: Node {
       _snapshotRecords = zip(_children, _newlines.asBitArray)
         .map { SnapshotRecord($0, $1) }
     }
-  }
-
-  override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    if fromScratch {
-      _performLayoutFromScratch(context)
-    }
-    else if _snapshotRecords == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshotRecords = nil
   }
 
   /// Perform layout for fromScratch=true.
@@ -761,7 +780,7 @@ internal class ElementNode: Node {
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
   /// Take all children from the node.
-  public final func takeChildren(inStorage: Bool) -> Store {
+  public final func takeChildren(inStorage: Bool) -> ElementStore {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
@@ -788,7 +807,7 @@ internal class ElementNode: Node {
     return children
   }
 
-  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> Store {
+  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> ElementStore {
     if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
 
     // pre update
@@ -802,7 +821,7 @@ internal class ElementNode: Node {
 
     // perform remove
     var placeholderDelta = -isPlaceholderActive.intValue
-    let children = Store(_children[range])
+    let children = ElementStore(_children[range])
     _children.removeSubrange(range)
     placeholderDelta += isPlaceholderActive.intValue
 
@@ -937,7 +956,7 @@ internal class ElementNode: Node {
   /// - Note: Each merged node is set with parent.
   /// - Returns: the range of compacted nodes, or nil if no compact
   private static func compactSubrange(
-    _ nodes: inout Store, _ range: Range<Int>, _ parent: Node
+    _ nodes: inout ElementStore, _ range: Range<Int>, _ parent: Node
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 

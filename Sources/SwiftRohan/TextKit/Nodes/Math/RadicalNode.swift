@@ -15,12 +15,34 @@ final class RadicalNode: MathNode {
 
   final override class var type: NodeType { .radical }
 
+  // MARK: - Node(Layout)
+
   final override func contentDidChange(delta: Int, inStorage: Bool) {
     if inStorage { _isDirty = true }
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   final override var isDirty: Bool { _isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _performLayoutFramScratch(context)
+    }
+    else if _snapshot == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshot = nil
+  }
 
   // MARK: - Node(Codable)
 
@@ -59,13 +81,138 @@ final class RadicalNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    if let index = _index {
+      return [(.index, index), (.radicand, _radicand)]
+    }
+    else {
+      return [(.radicand, _radicand)]
+    }
+  }
+
+  final override func isComponentAllowed(_ index: MathIndex) -> Bool {
+    [.index, .radicand].contains(index)
+  }
+
+  final override func addComponent(
+    _ mathIndex: MathIndex, _ content: ElementStore, inStorage: Bool
+  ) {
+    precondition(mathIndex == .index)
+
+    if inStorage { makeSnapshotOnce() }
+
+    switch mathIndex {
+    case .index:
+      assert(_index == nil)
+      _index = DegreeNode(content)
+      _index!.setParent(self)
+
+    default:
+      assertionFailure("Unsupported index")
+    }
+
+    contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
+  final override func removeComponent(_ mathIndex: MathIndex, inStorage: Bool) {
+    precondition(mathIndex == .index)
+
+    if inStorage { makeSnapshotOnce() }
+
+    switch mathIndex {
+    case .index:
+      assert(_index != nil)
+      _index = nil
+
+    default:
+      assertionFailure("Unsupported index")
+    }
+
+    contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .radicand: return _radicalFragment?.radicand
+    case .index: return _radicalFragment?.index
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _radicalFragment?.getMathIndex(interactingAt: point)
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _radicalFragment?.rayshoot(from: point, component, in: direction)
+  }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(tag) = array[0],
+      tag == Self.uniqueTag
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let index: DegreeNode?
+    let corrupted: Bool
+
+    switch NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<DegreeNode?, Void> {
+    case let .success(node):
+      index = node
+      corrupted = false
+    case let .corrupted(node):
+      index = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+
+    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
+    switch radicand {
+    case let .success(radicand):
+      let radical = RadicalNode(radicand, index: index)
+      return corrupted ? .corrupted(radical) : .success(radical)
+    case let .corrupted(radicand):
+      let radical = RadicalNode(radicand, index: index)
+      return .corrupted(radical)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
-  var radicand: ContentNode { _radicand }
-
   private var _index: DegreeNode?
+  var radicand: ContentNode { _radicand }
   var index: ContentNode? { _index }
+
+  private var _radicalFragment: MathRadicalLayoutFragment? = nil
+
+  private var _isDirty: Bool = false
+  private var _snapshot: MathComponentSet? = nil
+
+  var command: String { Self.uniqueTag }
 
   init(_ radicand: CrampedNode, index: DegreeNode? = nil) {
     self._radicand = radicand
@@ -74,7 +221,7 @@ final class RadicalNode: MathNode {
     self._setUp()
   }
 
-  init(_ radicand: [Node], index: [Node]? = nil) {
+  init(_ radicand: ElementStore, index: ElementStore? = nil) {
     self._radicand = CrampedNode(radicand)
     self._index = index.map { DegreeNode($0) }
     super.init()
@@ -93,48 +240,11 @@ final class RadicalNode: MathNode {
     self._setUp()
   }
 
-  // MARK: - Content
-
-  private var _snapshot: ComponentSet? = nil
-
   private func makeSnapshotOnce() {
     if _snapshot == nil {
-      _snapshot = ComponentSet()
+      _snapshot = MathComponentSet()
       if let index = _index { _snapshot!.insert(index.id) }
     }
-  }
-
-  // MARK: - Layout
-
-  private var _isDirty: Bool = false
-
-  private var _radicalFragment: MathRadicalLayoutFragment? = nil
-  override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      _performLayoutFramScratch(context)
-    }
-    else if _snapshot == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshot = nil
   }
 
   private func _performLayoutFramScratch(_ context: MathListLayoutContext) {
@@ -233,118 +343,6 @@ final class RadicalNode: MathNode {
     }
     else {
       context.skipBackwards(layoutLength())
-    }
-  }
-
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .radicand:
-      return _radicalFragment?.radicand
-    case .index:
-      return _radicalFragment?.index
-    default:
-      return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _radicalFragment?.getMathIndex(interactingAt: point)
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    _radicalFragment?.rayshoot(from: point, component, in: direction)
-  }
-
-  // MARK: - Component
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    if let index = _index {
-      return [(.index, index), (.radicand, _radicand)]
-    }
-    else {
-      return [(.radicand, _radicand)]
-    }
-  }
-
-  override func isComponentAllowed(_ index: MathIndex) -> Bool {
-    [.index, .radicand].contains(index)
-  }
-
-  override func addComponent(_ mathIndex: MathIndex, _ content: [Node], inStorage: Bool) {
-    precondition(mathIndex == .index)
-
-    if inStorage { makeSnapshotOnce() }
-
-    switch mathIndex {
-    case .index:
-      assert(_index == nil)
-      _index = DegreeNode(content)
-      _index!.setParent(self)
-
-    default:
-      assertionFailure("Unsupported index")
-    }
-
-    contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  override func removeComponent(_ mathIndex: MathIndex, inStorage: Bool) {
-    precondition(mathIndex == .index)
-
-    if inStorage { makeSnapshotOnce() }
-
-    switch mathIndex {
-    case .index:
-      assert(_index != nil)
-      _index = nil
-
-    default:
-      assertionFailure("Unsupported index")
-    }
-
-    contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  // MARK: - Clone and Visitor
-
-  var command: String { Self.uniqueTag }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
-    guard case let .array(array) = json,
-      array.count == 3,
-      case let .string(tag) = array[0],
-      tag == Self.uniqueTag
-    else {
-      return .failure(UnknownNode(json))
-    }
-
-    let index: DegreeNode?
-    let corrupted: Bool
-
-    switch NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<DegreeNode?, Void> {
-    case let .success(node):
-      index = node
-      corrupted = false
-    case let .corrupted(node):
-      index = node
-      corrupted = true
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-
-    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
-    switch radicand {
-    case let .success(radicand):
-      let radical = RadicalNode(radicand, index: index)
-      return corrupted ? .corrupted(radical) : .success(radical)
-    case let .corrupted(radicand):
-      let radical = RadicalNode(radicand, index: index)
-      return .corrupted(radical)
-    case .failure:
-      return .failure(UnknownNode(json))
     }
   }
 

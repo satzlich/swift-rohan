@@ -35,7 +35,8 @@ extension DocumentView {
       undoManager?.beginUndoGrouping()
       defer { undoManager?.endUndoGrouping() }
 
-      replaceContentsForEdit(in: textRange, with: nil, message: "Failed to delete")
+      replaceContentsForEdit(
+        in: textRange, with: nil as Array<Node>?, message: "Failed to delete")
       if documentManager.isEmpty {
         replaceContentsForEdit(in: documentManager.documentRange, with: [ParagraphNode()])
         moveBackward(self)

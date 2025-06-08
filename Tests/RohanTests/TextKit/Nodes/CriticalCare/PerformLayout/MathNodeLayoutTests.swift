@@ -12,7 +12,7 @@ struct MathNodeLayoutTests {
   func mathNodes_fromScratch() {
     let mathNodes: [MathNode] = MathNodeTests.allSamples().filter({ !isEquationNode($0) })
     let styleSheet = StyleSheetTests.sampleStyleSheet()
-    let contentNode = ContentNode(mathNodes)
+    let contentNode = ContentNode(ElementStore(mathNodes))
     let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
     let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(styleSheet, mathContext, fragment)

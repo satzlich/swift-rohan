@@ -14,7 +14,39 @@ final class NamedSymbolNode: SimpleNode {
 
   final override class var type: NodeType { .namedSymbol }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { namedSymbol.string.length }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    switch context {
+    case let context as MathListLayoutContext:
+      if fromScratch {
+        if namedSymbol.string.count <= 1 {
+          context.insertText(namedSymbol.string, self)
+        }
+        else {
+          let fragments = context.getFragments(for: namedSymbol.string, self)
+          let composite = FragmentCompositeFragment(fragments)
+          let fragment = MathFragmentWrapper(composite, layoutLength())
+          context.insertFragment(fragment, self)
+        }
+      }
+      else {
+        assertionFailure("theoretically we should not reach here")
+        context.skipBackwards(layoutLength())
+      }
+
+    default:
+      if fromScratch {
+        context.insertText(String(namedSymbol.string), self)
+      }
+      else {
+        assertionFailure("theoretically we should not reach here")
+        context.skipBackwards(layoutLength())
+      }
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -53,56 +85,24 @@ final class NamedSymbolNode: SimpleNode {
     return json
   }
 
-  // MARK: - NamedSymbolNode
+  // MARK: - Storage
 
-  let namedSymbol: NamedSymbol
-
-  init(_ namedSymbol: NamedSymbol) {
-    self.namedSymbol = namedSymbol
-    super.init()
-  }
-
-  // MARK: - Layout
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    switch context {
-    case let context as MathListLayoutContext:
-      if fromScratch {
-        if namedSymbol.string.count <= 1 {
-          context.insertText(namedSymbol.string, self)
-        }
-        else {
-          let fragments = context.getFragments(for: namedSymbol.string, self)
-          let composite = FragmentCompositeFragment(fragments)
-          let fragment = MathFragmentWrapper(composite, layoutLength())
-          context.insertFragment(fragment, self)
-        }
-      }
-      else {
-        assertionFailure("theoretically we should not reach here")
-        context.skipBackwards(layoutLength())
-      }
-
-    default:
-      if fromScratch {
-        context.insertText(String(namedSymbol.string), self)
-      }
-      else {
-        assertionFailure("theoretically we should not reach here")
-        context.skipBackwards(layoutLength())
-      }
-    }
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],
       let mathSymbol = NamedSymbol.lookup(command)
     else { return .failure(UnknownNode(json)) }
     return .success(NamedSymbolNode(mathSymbol))
+  }
+
+  // MARK: - NamedSymbolNode
+
+  internal let namedSymbol: NamedSymbol
+
+  init(_ namedSymbol: NamedSymbol) {
+    self.namedSymbol = namedSymbol
+    super.init()
   }
 
 }

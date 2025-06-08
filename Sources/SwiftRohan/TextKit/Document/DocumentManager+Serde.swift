@@ -8,7 +8,9 @@ extension DocumentManager {
   /// - Returns: The JSON data, or nil if the range is invalid.
   func jsonData(for range: RhTextRange) -> Data? {
     // obtain nodes in the range
-    guard let nodes = mapContents(in: range, { $0 }) else { return nil }
+    guard let nodes: Array<PartialNode> = mapContents(in: range, { $0 }) else {
+      return nil
+    }
     // perform serialization
     let encoder = JSONEncoder()
     #if DEBUG

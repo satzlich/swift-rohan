@@ -5,15 +5,12 @@ import OrderedCollections
 
 extension NodeUtils {
   static func applyTemplate(
-    _ template: CompiledTemplate, _ arguments: [[Node]]
+    _ template: CompiledTemplate, _ arguments: Array<ElementStore>
   ) -> (ContentNode, [ArgumentNode])? {
     precondition(template.parameterCount == arguments.count)
 
     // expand template body
-    let contentNode = {
-      let nodes = convertExprs(template.body)
-      return ContentNode(nodes)
-    }()
+    let contentNode = ContentNode(convertExprs(template.body))
 
     // create argument node from paths
     func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode?
@@ -49,9 +46,11 @@ extension NodeUtils {
   }
 
   /// Convert expressions to nodes.
-  static func convertExprs(_ expressions: [Expr]) -> [Node] {
+  static func convertExprs<S: RangeReplaceableCollection<Node>>(
+    _ expressions: [Expr]
+  ) -> S {
     let visitor = ExprToNodeVisitor()
-    return expressions.map { $0.accept(visitor, ()) }
+    return S(expressions.lazy.map { $0.accept(visitor, ()) })
   }
 
   static func convertExpr(_ expression: Expr) -> Node {
@@ -80,7 +79,7 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(apply: ApplyExpr, _ context: Void) -> Node {
     guard let template = MathTemplate.lookup(apply.templateName)
     else { return UnknownNode(.null) }
-    let arguments: Array<[Node]> = apply.arguments
+    let arguments: Array<ElementStore> = apply.arguments
       .map { _convertChildren(of: $0, context) }
 
     guard let applyNode = ApplyNode(template, arguments)
@@ -98,9 +97,10 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
 
   // MARK: - Element
 
-  private func _convertChildren<T: ElementExpr>(of element: T, _ context: Void) -> [Node]
-  {
-    element.children.map({ $0.accept(self, context) })
+  private func _convertChildren<T: ElementExpr>(
+    of element: T, _ context: Void
+  ) -> ElementStore {
+    ElementStore(element.children.lazy.map { $0.accept(self, context) })
   }
 
   override func visit(content: ContentExpr, _ context: Void) -> ContentNode {

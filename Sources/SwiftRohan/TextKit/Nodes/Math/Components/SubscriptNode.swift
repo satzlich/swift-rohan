@@ -18,7 +18,7 @@ final class SubscriptNode: ContentNode {
     return _cachedProperties!
   }
 
-  // MARK: - SubscriptNode
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<SubscriptNode> {
     loadSelfGeneric(from: json)

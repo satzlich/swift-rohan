@@ -20,7 +20,29 @@ final class AttachNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _performLayoutFromScratch(context)
+    }
+    else if _snapshot == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshot = nil
+  }
 
   // MARK: - Node(Codable)
 
@@ -68,6 +90,196 @@ final class AttachNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    var components: Array<MathNode.Component> = []
+
+    _lsub.map { components.append((.lsub, $0)) }
+    _lsup.map { components.append((.lsup, $0)) }
+    components.append((.nuc, nucleus))
+    _sub.map { components.append((.sub, $0)) }
+    _sup.map { components.append((.sup, $0)) }
+
+    return components
+  }
+
+  final override func isComponentAllowed(_ index: MathIndex) -> Bool {
+    [MathIndex.lsub, .lsup, .nuc, .sub, .sup].contains(index)
+  }
+
+  final override func addComponent(
+    _ index: MathIndex, _ content: ElementStore, inStorage: Bool
+  ) {
+    precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
+
+    if inStorage { makeSnapshotOnce() }
+
+    switch index {
+    case .lsub:
+      assert(_lsub == nil)
+      _lsub = SubscriptNode(content)
+      _lsub?.setParent(self)
+    case .lsup:
+      assert(_lsup == nil)
+      _lsup = SuperscriptNode(content)
+      _lsup?.setParent(self)
+    case .sub:
+      assert(_sub == nil)
+      _sub = SubscriptNode(content)
+      _sub?.setParent(self)
+    case .sup:
+      assert(_sup == nil)
+      _sup = SuperscriptNode(content)
+      _sup?.setParent(self)
+    default:
+      assertionFailure("Invalid index for AttachNode")
+    }
+
+    contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
+  final override func removeComponent(_ index: MathIndex, inStorage: Bool) {
+    precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
+
+    if inStorage { makeSnapshotOnce() }
+
+    switch index {
+    case .lsub:
+      assert(_lsub != nil)
+      _lsub = nil
+    case .lsup:
+      assert(_lsup != nil)
+      _lsup = nil
+    case .sub:
+      assert(_sub != nil)
+      _sub = nil
+    case .sup:
+      assert(_sup != nil)
+      _sup = nil
+    default:
+      assertionFailure("Invalid index for AttachNode")
+    }
+
+    contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _attachFragment }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    guard let attachFragment = _attachFragment else { return nil }
+    switch index {
+    case .lsub: return attachFragment.lsub
+    case .lsup: return attachFragment.lsup
+    case .nuc: return attachFragment.nucleus
+    case .sub: return attachFragment.sub
+    case .sup: return attachFragment.sup
+    default: return nil
+    }
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _attachFragment?.getMathIndex(interactingAt: point)
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _attachFragment?.rayshoot(from: point, component, in: direction)
+  }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
+    guard case let .array(array) = json,
+      array.count == 6,
+      case let .string(tag) = array[0], tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let lsub: SubscriptNode?
+    let lsup: SuperscriptNode?
+    let nucleus: ContentNode
+    let sub: SubscriptNode?
+    let sup: SuperscriptNode?
+    var corrupted: Bool = false
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<SubscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        lsub = node
+      case .corrupted(let node):
+        lsub = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[2]) as LoadResult<SuperscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        lsup = node
+      case .corrupted(let node):
+        lsup = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
+      switch node {
+      case .success(let node):
+        nucleus = node
+      case .corrupted(let node):
+        nucleus = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[4]) as LoadResult<SubscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        sub = node
+      case .corrupted(let node):
+        sub = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[5]) as LoadResult<SuperscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        sup = node
+      case .corrupted(let node):
+        sup = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+
+    let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    return corrupted ? .corrupted(result) : .success(result)
+  }
+
   // MARK: - AttachNode
 
   public init(
@@ -84,9 +296,9 @@ final class AttachNode: MathNode {
     self._setUp()
   }
 
-  public init(
-    nuc: [Node], lsub: [Node]? = nil, lsup: [Node]? = nil,
-    sub: [Node]? = nil, sup: [Node]? = nil
+  internal init(
+    nuc: ElementStore, lsub: ElementStore? = nil, lsup: ElementStore? = nil,
+    sub: ElementStore? = nil, sup: ElementStore? = nil
   ) {
     self.nucleus = ContentNode(nuc)
     self._lsub = lsub.map { SubscriptNode($0) }
@@ -115,49 +327,19 @@ final class AttachNode: MathNode {
     _sup?.setParent(self)
   }
 
-  // MARK: - Layout
-
+  private var _attachFragment: MathAttachLayoutFragment? = nil
   private var _isDirty: Bool = false
 
-  private var _attachFragment: MathAttachLayoutFragment? = nil
-  override var layoutFragment: (any MathLayoutFragment)? { _attachFragment }
-
-  private var _snapshot: ComponentSet? = nil
+  private var _snapshot: MathComponentSet? = nil
 
   private func makeSnapshotOnce() {
     if _snapshot == nil {
-      _snapshot = ComponentSet()
+      _snapshot = MathComponentSet()
       if let lsub = _lsub { _snapshot!.insert(lsub.id) }
       if let lsup = _lsup { _snapshot!.insert(lsup.id) }
       if let sub = _sub { _snapshot!.insert(sub.id) }
       if let sup = _sup { _snapshot!.insert(sup.id) }
     }
-  }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      _performLayoutFromScratch(context)
-    }
-    else if _snapshot == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshot = nil
   }
 
   private func _performLayoutFromScratch(_ context: MathListLayoutContext) {
@@ -337,37 +519,6 @@ final class AttachNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    guard let attachFragment = _attachFragment
-    else { return nil }
-
-    switch index {
-    case .lsub:
-      return attachFragment.lsub
-    case .lsup:
-      return attachFragment.lsup
-    case .nuc:
-      return attachFragment.nucleus
-    case .sub:
-      return attachFragment.sub
-    case .sup:
-      return attachFragment.sup
-    default:
-      return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _attachFragment?.getMathIndex(interactingAt: point)
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    _attachFragment?.rayshoot(from: point, component, in: direction)
-  }
-
   // MARK: - Components
 
   public let nucleus: ContentNode
@@ -382,181 +533,6 @@ final class AttachNode: MathNode {
   public var sub: ContentNode? { _sub }
   public var sup: ContentNode? { _sup }
 
-  override func enumerateComponents() -> [MathNode.Component] {
-    var components: [MathNode.Component] = []
-
-    _lsub.map { components.append((.lsub, $0)) }
-    _lsup.map { components.append((.lsup, $0)) }
-    components.append((.nuc, nucleus))
-    _sub.map { components.append((.sub, $0)) }
-    _sup.map { components.append((.sup, $0)) }
-
-    return components
-  }
-
-  override func isComponentAllowed(_ index: MathIndex) -> Bool {
-    [MathIndex.lsub, .lsup, .nuc, .sub, .sup].contains(index)
-  }
-
-  override func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
-    precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
-
-    if inStorage { makeSnapshotOnce() }
-
-    switch index {
-    case .lsub:
-      assert(_lsub == nil)
-      _lsub = SubscriptNode(content)
-      _lsub?.setParent(self)
-    case .lsup:
-      assert(_lsup == nil)
-      _lsup = SuperscriptNode(content)
-      _lsup?.setParent(self)
-    case .sub:
-      assert(_sub == nil)
-      _sub = SubscriptNode(content)
-      _sub?.setParent(self)
-    case .sup:
-      assert(_sup == nil)
-      _sup = SuperscriptNode(content)
-      _sup?.setParent(self)
-    default:
-      assertionFailure("Invalid index for AttachNode")
-    }
-
-    contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  override func removeComponent(_ index: MathIndex, inStorage: Bool) {
-    precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
-
-    if inStorage { makeSnapshotOnce() }
-
-    switch index {
-    case .lsub:
-      assert(_lsub != nil)
-      _lsub = nil
-    case .lsup:
-      assert(_lsup != nil)
-      _lsup = nil
-    case .sub:
-      assert(_sub != nil)
-      _sub = nil
-    case .sup:
-      assert(_sup != nil)
-      _sup = nil
-    default:
-      assertionFailure("Invalid index for AttachNode")
-    }
-
-    contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  // MARK: - Clone and Visitor
-
   private static let uniqueTag = "attach"
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
-    guard case let .array(array) = json,
-      array.count == 6,
-      case let .string(tag) = array[0], tag == uniqueTag
-    else { return .failure(UnknownNode(json)) }
-
-    let lsub: SubscriptNode?
-    let lsup: SuperscriptNode?
-    let nucleus: ContentNode
-    let sub: SubscriptNode?
-    let sup: SuperscriptNode?
-    var corrupted: Bool = false
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<SubscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        lsub = node
-      case .corrupted(let node):
-        lsub = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[2]) as LoadResult<SuperscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        lsup = node
-      case .corrupted(let node):
-        lsup = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
-      switch node {
-      case .success(let node):
-        nucleus = node
-      case .corrupted(let node):
-        nucleus = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[4]) as LoadResult<SubscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        sub = node
-      case .corrupted(let node):
-        sub = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[5]) as LoadResult<SuperscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        sup = node
-      case .corrupted(let node):
-        sup = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-
-    let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
-    return corrupted ? .corrupted(result) : .success(result)
-  }
-
-}
-
-struct ComponentSet: ExpressibleByArrayLiteral {
-  private var _components: Array<NodeIdentifier> = []
-
-  mutating func insert(_ component: NodeIdentifier) {
-    _components.append(component)
-  }
-
-  func contains(_ component: NodeIdentifier) -> Bool {
-    _components.contains(component)
-  }
-
-  mutating func removeAll() {
-    _components.removeAll()
-  }
-
-  typealias ArrayLiteralElement = NodeIdentifier
-
-  init(arrayLiteral elements: ArrayLiteralElement...) {
-    _components = elements
-  }
 }

@@ -17,6 +17,8 @@ final class ParagraphNode: ElementNode {
 
   // MARK: - Node(Storage)
 
+  private static let uniqueTag = "paragraph"
+
   final override class var storageTags: Array<String> { [uniqueTag] }
 
   final override class func load(from json: JSONValue) -> _LoadResult<Node> {
@@ -37,12 +39,10 @@ final class ParagraphNode: ElementNode {
     visitor.visit(paragraph: self, context, withChildren: children)
   }
 
-  // MARK: - ParagraphNode
+  final override func createSuccessor() -> ElementNode? { ParagraphNode() }
+  final override func cloneEmpty() -> Self { Self() }
 
-  override func cloneEmpty() -> Self { Self() }
-  override func createSuccessor() -> ElementNode? { ParagraphNode() }
-
-  private static let uniqueTag = "paragraph"
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<ParagraphNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
@@ -51,5 +51,4 @@ final class ParagraphNode: ElementNode {
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
-
 }

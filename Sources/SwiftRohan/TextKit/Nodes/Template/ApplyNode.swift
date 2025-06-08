@@ -47,6 +47,10 @@ final class ApplyNode: Node {
 
   final override var isDirty: Bool { _content.isDirty }
 
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    _content.performLayout(context, fromScratch: fromScratch)
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case template, arguments }
@@ -58,7 +62,7 @@ final class ApplyNode: Node {
 
     // decode arguments
     var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
-    let argumentValues: Array<Array<Node>> =
+    let argumentValues: Array<ElementStore> =
       try NodeSerdeUtils.decodeListOfListsOfNodes(from: &argumentsContainer)
 
     // almost same as init?()
@@ -105,11 +109,11 @@ final class ApplyNode: Node {
       template.parameterCount == array.count - 1
     else { return .failure(UnknownNode(json)) }
 
-    var argumentValues: Array<Array<Node>> = []
+    var argumentValues: Array<ElementStore> = []
     argumentValues.reserveCapacity(template.parameterCount)
     var corrupted = false
 
-    typealias _ArgumentResult = LoadResult<Array<Node>, UnknownNode>
+    typealias _ArgumentResult = LoadResult<ElementStore, UnknownNode>
     for argument in array.dropFirst() {
       let argumentValue = NodeStoreUtils.loadNodes(argument) as _ArgumentResult
       switch argumentValue {
@@ -144,10 +148,10 @@ final class ApplyNode: Node {
   // MARK: - ApplyNode
 
   let template: MathTemplate
-  private let _arguments: [ArgumentNode]
+  private let _arguments: Array<ArgumentNode>
   private let _content: ContentNode
 
-  internal init?(_ template: MathTemplate, _ argumentValues: [[Node]]) {
+  internal init?(_ template: MathTemplate, _ argumentValues: Array<ElementStore>) {
     guard template.parameterCount == argumentValues.count,
       let (content, arguments) =
         NodeUtils.applyTemplate(template.template, argumentValues)
@@ -163,11 +167,17 @@ final class ApplyNode: Node {
 
   private init(deepCopyOf applyNode: ApplyNode) {
     // deep copy of argument's value
-    func deepCopy(from argument: ArgumentNode) -> [Node] {
+    func deepCopy(from argument: ArgumentNode) -> ElementStore {
       let variableNode = argument.variableNodes.first!
-      return (0..<variableNode.childCount).map({ index in
-        variableNode.getChild(index).deepCopy()
-      })
+
+      var copy: ElementStore = []
+      copy.reserveCapacity(variableNode.childCount)
+      for index in 0..<variableNode.childCount {
+        let child = variableNode.getChild(index)
+        // deep copy of each child
+        copy.append(child.deepCopy())
+      }
+      return copy
     }
 
     self.template = applyNode.template
@@ -201,10 +211,6 @@ final class ApplyNode: Node {
   final func getContent() -> ContentNode { _content }
 
   // MARK: - Layout
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    _content.performLayout(context, fromScratch: fromScratch)
-  }
 
   override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset is not well-defined for ApplyNode
@@ -317,7 +323,5 @@ final class ApplyNode: Node {
   ) -> [RohanIndex] {
     template.template.lookup[argumentIndex][variableIndex] + path
   }
-
-  // MARK: - Clone and Visitor
 
 }

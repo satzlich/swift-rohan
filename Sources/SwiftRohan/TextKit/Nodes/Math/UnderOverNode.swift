@@ -15,102 +15,9 @@ final class UnderOverNode: MathNode {
 
   final override class var type: NodeType { .underOver }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _nucleus.isDirty }
-
-  // MARK: - Node(Codable)
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let spreader = MathSpreader.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown MathSpreader command: \(command)")
-    }
-    self.spreader = spreader
-    let clazz = Self.nucleusClazz(for: spreader.subtype)
-    self._nucleus = try container.decode(clazz, forKey: .nuc)
-    super.init()
-    _setUp()
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(spreader.command, forKey: .command)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Node(Storage)
-
-  final override class var storageTags: Array<String> {
-    MathSpreader.allCommands.map(\.command)
-  }
-
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
-
-  final override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(spreader.command), nucleus])
-    return json
-  }
-
-  // MARK: - UnderOverNode
-
-  let spreader: MathSpreader
-
-  private let _nucleus: ContentNode
-  var nucleus: ContentNode { _nucleus }
-
-  init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
-    self.spreader = spreader
-    self._nucleus = nucleus
-    super.init()
-    _setUp()
-  }
-
-  init(_ subtype: MathSpreader, _ nucleus: [Node]) {
-    self.spreader = subtype
-    self._nucleus = Self.nucleusClazz(for: subtype.subtype).init(nucleus)
-    super.init()
-    _setUp()
-  }
-
-  private static func nucleusClazz(for subtype: MathSpreader.Subtype) -> ContentNode.Type
-  {
-    switch subtype {
-    case .overline, .overspreader: CrampedNode.self
-    case .underline, .underspreader: ContentNode.self
-    case .xarrow: SuperscriptNode.self
-    }
-  }
-
-  private init(deepCopyOf node: UnderOverNode) {
-    self.spreader = node.spreader
-    self._nucleus = node._nucleus.deepCopy()
-    super.init()
-    _setUp()
-  }
-
-  private final func _setUp() {
-    _nucleus.setParent(self)
-  }
-
-  // MARK: - Layout
-
-  private var _underOverFragment: MathUnderOverLayoutFragment? = nil
-  final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
 
   final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
@@ -157,14 +64,70 @@ final class UnderOverNode: MathNode {
     }
   }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let spreader = MathSpreader.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown MathSpreader command: \(command)")
+    }
+    self.spreader = spreader
+    let clazz = Self.nucleusClazz(for: spreader.subtype)
+    self._nucleus = try container.decode(clazz, forKey: .nuc)
+    super.init()
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(spreader.command, forKey: .command)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathSpreader.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(spreader.command), nucleus])
+    return json
+  }
+
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
+
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc:
-      return _underOverFragment?.nucleus
-    default:
-      return nil
+    case .nuc: return _underOverFragment?.nucleus
+    default: return nil
     }
+  }
 
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
@@ -191,15 +154,9 @@ final class UnderOverNode: MathNode {
     }
   }
 
-  // MARK: - Component
+  // MARK: - Storage
 
-  final override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
@@ -224,6 +181,49 @@ final class UnderOverNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  // MARK: - UnderOverNode
+
+  internal let spreader: MathSpreader
+
+  private let _nucleus: ContentNode
+  internal var nucleus: ContentNode { _nucleus }
+
+  private var _underOverFragment: MathUnderOverLayoutFragment? = nil
+
+  init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
+    self.spreader = spreader
+    self._nucleus = nucleus
+    super.init()
+    _setUp()
+  }
+
+  init(_ subtype: MathSpreader, _ nucleus: ElementStore) {
+    self.spreader = subtype
+    self._nucleus = Self.nucleusClazz(for: subtype.subtype).init(nucleus)
+    super.init()
+    _setUp()
+  }
+
+  private static func nucleusClazz(for subtype: MathSpreader.Subtype) -> ContentNode.Type
+  {
+    switch subtype {
+    case .overline, .overspreader: CrampedNode.self
+    case .underline, .underspreader: ContentNode.self
+    case .xarrow: SuperscriptNode.self
+    }
+  }
+
+  private init(deepCopyOf node: UnderOverNode) {
+    self.spreader = node.spreader
+    self._nucleus = node._nucleus.deepCopy()
+    super.init()
+    _setUp()
+  }
+
+  private final func _setUp() {
+    _nucleus.setParent(self)
   }
 
 }

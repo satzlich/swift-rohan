@@ -39,7 +39,47 @@ final class MathStylesNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { nucleus.isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucleus: MathListLayoutFragment =
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      let fragment = _NodeFragment(nucleus)
+      _layoutFragment = fragment
+
+      context.insertFragment(fragment, self)
+    }
+    else {
+      guard let fragment = _layoutFragment else {
+        assertionFailure("Layout fragment is nil")
+        return
+      }
+
+      var needsFixLayout = false
+
+      if isDirty {
+        let oldMetrics = fragment.nucleus.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragment(
+          nucleus, fragment.nucleus, parent: context)
+        if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        context.invalidateBackwards(layoutLength())
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -82,12 +122,82 @@ final class MathStylesNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
+
+  final override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
+    switch index {
+    case .nuc: return _layoutFragment?.nucleus
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    guard _layoutFragment != nil else { return nil }
+    return .nuc
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _layoutFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up: return RayshootResult(point.with(y: fragment.minY), false)
+    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Unexpected direction")
+      return nil
+    }
+  }
+
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let styles = MathStyles.lookup(tag)
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
+    switch nucleus {
+    case let .success(nucleus):
+      let variant = MathStylesNode(styles, nucleus)
+      return .success(variant)
+    case let .corrupted(nucleus):
+      let variant = MathStylesNode(styles, nucleus)
+      return .corrupted(variant)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - MathStylesNode
+
+  private typealias _NodeFragment = LayoutFragmentWrapper<MathListLayoutFragment>
+  private var _layoutFragment: _NodeFragment?
 
   let styles: MathStyles
   let nucleus: ContentNode
 
-  init(_ styles: MathStyles, _ nucleus: [Node]) {
+  init(_ styles: MathStyles, _ nucleus: ElementStore) {
     self.styles = styles
     self.nucleus = ContentNode(nucleus)
     super.init()
@@ -112,109 +222,4 @@ final class MathStylesNode: MathNode {
     nucleus.setParent(self)
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      let styles = MathStyles.lookup(tag)
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
-    switch nucleus {
-    case let .success(nucleus):
-      let variant = MathStylesNode(styles, nucleus)
-      return .success(variant)
-    case let .corrupted(nucleus):
-      let variant = MathStylesNode(styles, nucleus)
-      return .corrupted(variant)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-  }
-
-  // MARK: - Content
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Layout
-
-  private typealias _MathStylesLayoutFragment =
-    LayoutFragmentWrapper<MathListLayoutFragment>
-  private var _layoutFragment: _MathStylesLayoutFragment?
-  override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let nucleus: MathListLayoutFragment =
-        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      let fragment = _MathStylesLayoutFragment(nucleus)
-      _layoutFragment = fragment
-
-      context.insertFragment(fragment, self)
-    }
-    else {
-      guard let fragment = _layoutFragment else {
-        assertionFailure("Layout fragment is nil")
-        return
-      }
-
-      var needsFixLayout = false
-
-      if isDirty {
-        let oldMetrics = fragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          nucleus, fragment.nucleus, parent: context)
-        if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        context.invalidateBackwards(layoutLength())
-      }
-      else {
-        context.skipBackwards(layoutLength())
-      }
-    }
-  }
-
-  override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
-    switch index {
-    case .nuc: return _layoutFragment?.nucleus
-    default: return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _layoutFragment != nil else { return nil }
-    return .nuc
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    guard let fragment = _layoutFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up: return RayshootResult(point.with(y: fragment.minY), false)
-    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Unexpected direction")
-      return nil
-    }
-  }
 }

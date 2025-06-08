@@ -20,6 +20,12 @@ struct NewlineArray: Equatable, Hashable {
   var first: Bool? { _insertNewline.first }
   var last: Bool? { _insertNewline.last }
 
+  init() {
+    self._isBlock = BitArray()
+    self._insertNewline = BitArray()
+    self.newlineCount = 0
+  }
+
   init<S>(_ isBlock: S)
   where S: Sequence, S.Element == Bool {
     self._isBlock = BitArray(isBlock)

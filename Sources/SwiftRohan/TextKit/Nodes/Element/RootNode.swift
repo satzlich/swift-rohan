@@ -17,6 +17,8 @@ final class RootNode: ElementNode {
 
   // MARK: - Node(Storage)
 
+  private static let uniqueTag = "document"
+
   final override class var storageTags: Array<String> { [uniqueTag] }
 
   final override class func load(from json: JSONValue) -> _LoadResult<Node> {
@@ -37,11 +39,9 @@ final class RootNode: ElementNode {
     visitor.visit(root: self, context, withChildren: children)
   }
 
-  // MARK: - RootNode
-
   override func cloneEmpty() -> Self { Self() }
 
-  private static let uniqueTag = "document"
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<RootNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)

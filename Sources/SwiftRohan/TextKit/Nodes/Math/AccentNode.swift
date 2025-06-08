@@ -15,90 +15,11 @@ final class AccentNode: MathNode {
 
   final override class var type: NodeType { .accent }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  // MARK: - Node(Codable)
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let command = try container.decode(String.self, forKey: .command)
-    guard let accent = MathAccent.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown accent command: \(command)")
-    }
-    self.accent = accent
-    self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(accent.command, forKey: .command)
-    try container.encode(_nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Node(Storage)
-
-  final override class var storageTags: Array<String> {
-    MathAccent.allCommands.map(\.command)
-  }
-
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
-
-  final override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(accent.command), nucleus])
-    return json
-  }
-
-  // MARK: - AccentNode
-
-  let accent: MathAccent
-
-  init(_ accent: MathAccent, nucleus: CrampedNode) {
-    self.accent = accent
-    self._nucleus = nucleus
-    super.init()
-    self._setUp()
-  }
-
-  init(_ accent: MathAccent, nucleus: [Node]) {
-    self.accent = accent
-    self._nucleus = CrampedNode(nucleus)
-    super.init()
-    self._setUp()
-  }
-
-  private init(deepCopyOf accentNode: AccentNode) {
-    self.accent = accentNode.accent
-    self._nucleus = accentNode._nucleus.deepCopy()
-    super.init()
-    self._setUp()
-  }
-
-  private final func _setUp() {
-    _nucleus.setParent(self)
-  }
-
-  // MARK: - Layout
-
-  private var _accentFragment: MathAccentLayoutFragment? = nil
-  override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -142,39 +63,84 @@ final class AccentNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let accent = MathAccent.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown accent command: \(command)")
+    }
+    self.accent = accent
+    self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(accent.command, forKey: .command)
+    try container.encode(_nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathAccent.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(accent.command), nucleus])
+    return json
+  }
+
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc:
-      return _accentFragment?.nucleus
-    default:
-      return nil
+    case .nuc: return _accentFragment?.nucleus
+    default: return nil
     }
   }
 
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     _accentFragment?.getMathIndex(interactingAt: point)
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     _accentFragment?.rayshoot(from: point, component, in: direction)
   }
 
-  // MARK: - Component
+  // MARK: - Storage
 
-  private let _nucleus: CrampedNode
-
-  var nucleus: ContentNode { _nucleus }
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
@@ -190,6 +156,38 @@ final class AccentNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  // MARK: - AccentNode
+
+  internal let accent: MathAccent
+  private let _nucleus: CrampedNode
+  internal var nucleus: ContentNode { _nucleus }
+  private var _accentFragment: MathAccentLayoutFragment? = nil
+
+  init(_ accent: MathAccent, nucleus: CrampedNode) {
+    self.accent = accent
+    self._nucleus = nucleus
+    super.init()
+    self._setUp()
+  }
+
+  init(_ accent: MathAccent, nucleus: ElementStore) {
+    self.accent = accent
+    self._nucleus = CrampedNode(nucleus)
+    super.init()
+    self._setUp()
+  }
+
+  private init(deepCopyOf accentNode: AccentNode) {
+    self.accent = accentNode.accent
+    self._nucleus = accentNode._nucleus.deepCopy()
+    super.init()
+    self._setUp()
+  }
+
+  private final func _setUp() {
+    _nucleus.setParent(self)
   }
 
 }
