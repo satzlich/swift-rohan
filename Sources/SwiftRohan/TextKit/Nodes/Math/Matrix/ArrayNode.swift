@@ -4,13 +4,11 @@ import Foundation
 import _RopeModule
 
 class ArrayNode: Node {
-  final override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      for row in _rows {
-        for element in row {
-          element.resetCachedProperties(recursive: recursive)
-        }
+  final override func resetCachedProperties() {
+    super.resetCachedProperties()
+    for row in _rows {
+      for cell in row {
+        cell.resetCachedProperties()
       }
     }
   }

@@ -32,12 +32,15 @@ public class Node: Codable {
   /// Reset properties that cannot be reused.
   internal final func resetForReuse() {
     reallocateId()
-    resetCachedProperties(recursive: true)
+    resetCachedProperties()
   }
 
   final var _cachedProperties: PropertyDictionary?
 
-  internal func resetCachedProperties(recursive: Bool) {
+  /// Reset cached properties **recursively**.
+  /// - Note: If only the node's properties are to be reset, just call
+  ///     `self._cachedProperties = nil`.
+  internal func resetCachedProperties() {
     _cachedProperties = nil
   }
 

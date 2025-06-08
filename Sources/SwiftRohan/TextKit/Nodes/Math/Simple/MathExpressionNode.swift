@@ -5,11 +5,9 @@ import Foundation
 final class MathExpressionNode: SimpleNode {
   override class var type: NodeType { .mathExpression }
 
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      _deflated.resetCachedProperties(recursive: recursive)
-    }
+  override func resetCachedProperties() {
+    super.resetCachedProperties()
+    _deflated.resetCachedProperties()
   }
 
   let mathExpression: MathExpression

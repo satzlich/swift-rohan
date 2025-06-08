@@ -7,10 +7,10 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  override final func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      _children.forEach { $0.resetCachedProperties(recursive: true) }
+  override final func resetCachedProperties() {
+    super.resetCachedProperties()
+    for child in _children {
+      child.resetCachedProperties()
     }
   }
 

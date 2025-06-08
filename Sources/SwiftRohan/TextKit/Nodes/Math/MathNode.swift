@@ -3,10 +3,10 @@
 import CoreGraphics
 
 public class MathNode: Node {
-  override final func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      enumerateComponents().forEach { $0.content.resetCachedProperties(recursive: true) }
+  override final func resetCachedProperties() {
+    super.resetCachedProperties()
+    for (_, content) in enumerateComponents() {
+      content.resetCachedProperties()
     }
   }
 

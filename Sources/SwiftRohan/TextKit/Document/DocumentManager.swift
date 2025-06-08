@@ -20,7 +20,7 @@ public final class DocumentManager {
   public var styleSheet: StyleSheet {
     didSet {
       // reset style cache
-      rootNode.resetCachedProperties(recursive: true)
+      rootNode.resetCachedProperties()
 
       // clear text content storage
       textContentStorage.performEditingTransaction {

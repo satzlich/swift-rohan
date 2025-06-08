@@ -6,9 +6,9 @@ import _RopeModule
 public final class ApplyNode: Node {
   override class var type: NodeType { .apply }
 
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive { _content.resetCachedProperties(recursive: true) }
+  override func resetCachedProperties() {
+    super.resetCachedProperties()
+    _content.resetCachedProperties()
   }
 
   let template: MathTemplate

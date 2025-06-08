@@ -21,8 +21,7 @@ struct NodesTests {
       _ = node.id
       _ = node.type
       node.reallocateId()
-      node.resetCachedProperties(recursive: false)
-      node.resetCachedProperties(recursive: true)
+      node.resetCachedProperties()
       node.resetForReuse()
       _ = node.firstIndex()
       _ = node.lastIndex()
