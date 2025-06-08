@@ -37,7 +37,7 @@ class ContentNode: ElementNode {
   }
 
   final override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = childrenReadonly().map { $0.store() }
     return JSONValue.array(children)
   }
 
@@ -62,10 +62,6 @@ class ContentNode: ElementNode {
   }
 
   // MARK: - ContentNode
-
-  //  required override init(_ children: [Node]) {
-  //    super.init(ElementStore(children))
-  //  }
 
   required override init(_ children: ElementStore) {
     super.init(children)

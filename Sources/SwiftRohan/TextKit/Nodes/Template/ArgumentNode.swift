@@ -55,7 +55,7 @@ final class ArgumentNode: Node {
   final override func store() -> JSONValue {
     precondition(!variableNodes.isEmpty)
     let first = variableNodes[0]
-    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = first.childrenReadonly().map { $0.store() }
     return JSONValue.array(children)
   }
 
@@ -96,7 +96,7 @@ final class ArgumentNode: Node {
   }
 
   func getArgumentValue_readonly() -> ElementStore {
-    variableNodes.first!.getChildren_readonly()
+    variableNodes.first!.childrenReadonly()
   }
 
   // MARK: - Content

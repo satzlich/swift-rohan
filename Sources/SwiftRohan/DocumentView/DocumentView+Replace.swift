@@ -195,7 +195,7 @@ extension DocumentView {
       else {
         return .failure(SatzError(.ModifyMathFailure))
       }
-      componentCopy = ElementStore(node.getChildren_readonly().lazy.map { $0.deepCopy() })
+      componentCopy = ElementStore(node.childrenReadonly().lazy.map { $0.deepCopy() })
     }
 
     let result = documentManager.removeMathComponent(range, mathIndex)
@@ -326,7 +326,7 @@ extension DocumentView {
       }
       let ncols = node.columnCount
       return (0..<ncols).map { col in
-        node.getElement(row, col).getChildren_readonly().map { $0.deepCopy() }
+        node.getElement(row, col).childrenReadonly().map { $0.deepCopy() }
       }
     }
 
@@ -338,7 +338,7 @@ extension DocumentView {
       }
       let nrows = node.rowCount
       return (0..<nrows).map { row in
-        node.getElement(row, column).getChildren_readonly().map { $0.deepCopy() }
+        node.getElement(row, column).childrenReadonly().map { $0.deepCopy() }
       }
     }
 

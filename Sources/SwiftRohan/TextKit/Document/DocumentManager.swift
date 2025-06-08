@@ -341,7 +341,7 @@ public final class DocumentManager {
         else {
           return .failure(SatzError(.InvalidMathComponent))
         }
-        let contents = nucleus.getChildren_readonly().map { $0.deepCopy() }
+        let contents = nucleus.childrenReadonly().map { $0.deepCopy() }
         return replaceContents(in: range, with: contents)
       }
       else {

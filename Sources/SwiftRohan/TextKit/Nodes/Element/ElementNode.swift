@@ -122,54 +122,33 @@ internal class ElementNode: Node {
 
   private final var _children: ElementStore
 
-  /// - Warning: It's important to sync with the other `init` method.
+  /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
-    // children and newlines
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
-    // length
     self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
-    // flags
     self._isDirty = false
 
     super.init()
     self._setUp()
   }
 
+  /// - Warning: Sync with other init() method.
   internal override init() {
-    // children and newlines
     self._children = ElementStore()
     self._newlines = NewlineArray()
-    // length
     self._layoutLength = 0
-    // flags
     self._isDirty = false
 
     super.init()
     self._setUp()
   }
 
-  //  /// - Warning: It's important to sync with the other `init` method.
-  //  public init(_ children: [Node] = []) {
-  //    // children and newlines
-  //    self._children = ElementStore(children)
-  //    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
-  //    // length
-  //    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
-  //    // flags
-  //    self._isDirty = false
-  //
-  //    super.init()
-  //    self._setUp()
-  //  }
-
+  /// - Warning: Sync with other init() method.
   internal init(deepCopyOf elementNode: ElementNode) {
-    // children and newlines
     self._children = ElementStore(elementNode._children.lazy.map { $0.deepCopy() })
     self._newlines = elementNode._newlines
-    // length
     self._layoutLength = elementNode._layoutLength
-    // flags
     self._isDirty = false
 
     super.init()
@@ -182,8 +161,7 @@ internal class ElementNode: Node {
     }
   }
 
-  // This is used for serialization.
-  final func getChildren_readonly() -> ElementStore { _children }
+  final func childrenReadonly() -> ElementStore { _children }
 
   // MARK: - Content
 

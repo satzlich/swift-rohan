@@ -131,7 +131,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit(
     variable: VariableNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    visit(variable: variable, context, withChildren: variable.getChildren_readonly())
+    visit(variable: variable, context, withChildren: variable.childrenReadonly())
   }
 
   override func visit<T, S>(
@@ -156,7 +156,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit(
     content: ContentNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    visit(content: content, context, withChildren: content.getChildren_readonly())
+    visit(content: content, context, withChildren: content.childrenReadonly())
   }
 
   override func visit<T, S>(
@@ -169,7 +169,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     emphasis: EmphasisNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    let children = emphasis.getChildren_readonly()
+    let children = emphasis.childrenReadonly()
     return visit(emphasis: emphasis, context, withChildren: children)
   }
 
@@ -184,7 +184,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     heading: HeadingNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    return visit(heading: heading, context, withChildren: heading.getChildren_readonly())
+    return visit(heading: heading, context, withChildren: heading.childrenReadonly())
   }
 
   override func visit<T, S>(
@@ -200,7 +200,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     paragraph: ParagraphNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    let children = paragraph.getChildren_readonly()
+    let children = paragraph.childrenReadonly()
     return visit(paragraph: paragraph, context, withChildren: children)
   }
 
@@ -213,7 +213,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit(root: RootNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    return visit(root: root, context, withChildren: root.getChildren_readonly())
+    return visit(root: root, context, withChildren: root.childrenReadonly())
   }
 
   override func visit<T, S>(
@@ -247,7 +247,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     strong: StrongNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    return visit(strong: strong, context, withChildren: strong.getChildren_readonly())
+    return visit(strong: strong, context, withChildren: strong.childrenReadonly())
   }
 
   override func visit<T, S>(
@@ -417,7 +417,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       else { return .failure(SatzError(.ExportLatexFailure)) }
       let limitsSyntax = ControlWordSyntax(command: limitsCommand)
 
-      if let element = mathAttributes.nucleus.getChildren_readonly().getOnlyElement(),
+      if let element = mathAttributes.nucleus.childrenReadonly().getOnlyElement(),
         isMathOperator(element)
       {
         let stream = StreamSyntax(nucleus.stream + [.controlWord(limitsSyntax)])

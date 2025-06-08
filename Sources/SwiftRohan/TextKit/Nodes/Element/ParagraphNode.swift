@@ -26,7 +26,7 @@ final class ParagraphNode: ElementNode {
   }
 
   final override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = childrenReadonly().map { $0.store() }
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
   }
