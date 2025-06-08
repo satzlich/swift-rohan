@@ -85,6 +85,12 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Returns the index for the upstream end.
+  internal func firstIndex() -> RohanIndex? { preconditionFailure("overriding required") }
+
+  /// Returns the index for the downstream end.
+  internal func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -138,14 +144,6 @@ public class Node: Codable {
   internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     preconditionFailure("overriding required")
   }
-
-  // MARK: - Location
-
-  /// Returns the index for the upstream end
-  func firstIndex() -> RohanIndex? { preconditionFailure("overriding required") }
-
-  /// Returns the index for the downstream end
-  func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
 
   // MARK: - Layout
 

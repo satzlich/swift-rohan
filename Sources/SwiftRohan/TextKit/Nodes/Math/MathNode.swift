@@ -17,6 +17,14 @@ public class MathNode: Node {
     return getComponent(index)
   }
 
+  final override func firstIndex() -> RohanIndex? {
+    (enumerateComponents().first?.index).map { .mathIndex($0) }
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    (enumerateComponents().last?.index).map { .mathIndex($0) }
+  }
+
   // MARK: - Content
 
   override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
@@ -65,14 +73,6 @@ public class MathNode: Node {
     let target = direction == .forward ? componentIndex + 1 : componentIndex - 1
     guard 0..<components.count ~= target else { return nil }
     return components[target].index
-  }
-
-  override final func firstIndex() -> RohanIndex? {
-    (enumerateComponents().first?.index).map({ .mathIndex($0) })
-  }
-
-  override final func lastIndex() -> RohanIndex? {
-    (enumerateComponents().last?.index).map({ .mathIndex($0) })
   }
 
   // MARK: - Layout

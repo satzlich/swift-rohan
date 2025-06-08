@@ -20,6 +20,16 @@ public final class ApplyNode: Node {
     return _arguments[index]
   }
 
+  final override func firstIndex() -> RohanIndex? {
+    guard !_arguments.isEmpty else { return nil }
+    return .argumentIndex(0)
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    guard !_arguments.isEmpty else { return nil }
+    return .argumentIndex(_arguments.count - 1)
+  }
+
   // MARK: - ApplyNode
 
   let template: MathTemplate
@@ -126,18 +136,6 @@ public final class ApplyNode: Node {
   }
 
   final func getContent() -> ContentNode { _content }
-
-  // MARK: - Location
-
-  override func firstIndex() -> RohanIndex? {
-    guard !_arguments.isEmpty else { return nil }
-    return .argumentIndex(0)
-  }
-
-  override func lastIndex() -> RohanIndex? {
-    guard !_arguments.isEmpty else { return nil }
-    return .argumentIndex(_arguments.count - 1)
-  }
 
   // MARK: - Layout
 

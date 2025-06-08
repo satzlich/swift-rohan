@@ -40,6 +40,16 @@ class ArrayNode: Node {
     return self.getComponent(index)
   }
 
+  final override func firstIndex() -> RohanIndex? {
+    guard rowCount > 0, columnCount > 0 else { return nil }
+    return .gridIndex(0, 0)
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    guard rowCount > 0, columnCount > 0 else { return nil }
+    return .gridIndex(rowCount - 1, columnCount - 1)
+  }
+
   // MARK: - Array
 
   typealias Cell = ContentNode
@@ -188,18 +198,6 @@ class ArrayNode: Node {
     }
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  // MARK: - Location
-
-  final override func firstIndex() -> RohanIndex? {
-    guard rowCount > 0, columnCount > 0 else { return nil }
-    return .gridIndex(0, 0)
-  }
-
-  final override func lastIndex() -> RohanIndex? {
-    guard rowCount > 0, columnCount > 0 else { return nil }
-    return .gridIndex(rowCount - 1, columnCount - 1)
   }
 
   final func destinationIndex(

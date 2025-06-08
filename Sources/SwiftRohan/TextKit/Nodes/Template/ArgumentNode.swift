@@ -11,6 +11,14 @@ final class ArgumentNode: Node {
     variableNodes.first?.getChild(index)
   }
 
+  final override func firstIndex() -> RohanIndex? {
+    variableNodes.first?.firstIndex()
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    variableNodes.first?.lastIndex()
+  }
+
   // MARK: - ApplyNode
 
   /// associated apply node
@@ -86,16 +94,6 @@ final class ArgumentNode: Node {
       }
       return candidate
     }
-  }
-
-  // MARK: - Location
-
-  override func firstIndex() -> RohanIndex? {
-    variableNodes.first!.firstIndex()
-  }
-
-  override func lastIndex() -> RohanIndex? {
-    variableNodes.first!.lastIndex()
   }
 
   // MARK: - Layout

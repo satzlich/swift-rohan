@@ -23,6 +23,9 @@ public class ElementNode: Node {
     return _children[index]
   }
 
+  final override func firstIndex() -> RohanIndex? { .index(0) }
+  final override func lastIndex() -> RohanIndex? { .index(_children.count) }
+
   // MARK: - ElementNode
 
   public typealias Store = Deque<Node>
@@ -171,12 +174,6 @@ public class ElementNode: Node {
     // propagate to parent
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
-
-  // MARK: - Location
-
-  override final func firstIndex() -> RohanIndex? { .index(0) }
-
-  override final func lastIndex() -> RohanIndex? { .index(_children.count) }
 
   // MARK: - Layout
 

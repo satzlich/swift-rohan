@@ -21,6 +21,9 @@ public class SimpleNode: Node {  // default implementation for simple nodes
 
   final override func getChild(_ index: RohanIndex) -> Node? { nil }
 
+  final override func firstIndex() -> RohanIndex? { nil }
+  final override func lastIndex() -> RohanIndex? { nil }
+
   // MARK: - Codable
 
   public required init(from decoder: any Decoder) throws {
@@ -36,11 +39,6 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   override final func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
     // do nothing
   }
-
-  // MARK: - Location
-
-  override final func firstIndex() -> RohanIndex? { nil }
-  override final func lastIndex() -> RohanIndex? { nil }
 
   // MARK: - Layout
 

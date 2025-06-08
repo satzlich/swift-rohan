@@ -15,6 +15,9 @@ public final class TextNode: Node {
 
   final override func getChild(_ index: RohanIndex) -> Node? { nil }
 
+  final override func firstIndex() -> RohanIndex? { .index(0) }
+  final override func lastIndex() -> RohanIndex? { .index(_string.length) }
+
   // MARK: - TextNode
 
   private let _string: RhString
@@ -78,10 +81,6 @@ public final class TextNode: Node {
     // convert back
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
-
-  override func firstIndex() -> RohanIndex? { .index(0) }
-
-  override func lastIndex() -> RohanIndex? { .index(length) }
 
   // MARK: - Layout
 
