@@ -16,6 +16,8 @@ final class ArgumentNode: Node {
 
   final override class var type: NodeType { .argument }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> Node? {
     variableNodes.first?.getChild(index)
   }
@@ -27,6 +29,23 @@ final class ArgumentNode: Node {
   final override func lastIndex() -> RohanIndex? {
     variableNodes.first?.lastIndex()
   }
+
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    assertionFailure("should not be called")
+    return nil
+  }
+
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    assertionFailure("should not be called")
+    return nil
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    assertionFailure("should not be called")
+    return .null
+  }
+
+  // MARK: - Node(Layout)
 
   final override func contentDidChange(delta: Int, inStorage: Bool) {
     assertionFailure("should not be called")
@@ -48,14 +67,14 @@ final class ArgumentNode: Node {
 
   final override class var storageTags: Array<String> { /* intentionally empty */ [] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     preconditionFailure("Work is done in ApplyNode.")
   }
 
   final override func store() -> JSONValue {
     precondition(!variableNodes.isEmpty)
     let first = variableNodes[0]
-    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = first.childrenReadonly().map { $0.store() }
     return JSONValue.array(children)
   }
 
@@ -96,7 +115,7 @@ final class ArgumentNode: Node {
   }
 
   func getArgumentValue_readonly() -> ElementStore {
-    variableNodes.first!.getChildren_readonly()
+    variableNodes.first!.childrenReadonly()
   }
 
   // MARK: - Content
@@ -136,24 +155,9 @@ final class ArgumentNode: Node {
 
   // MARK: - Layout
 
-  override func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    assertionFailure("should not be called")
-    return nil
-  }
-
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    assertionFailure("should not be called")
-    return nil
-  }
-
-  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    assertionFailure("should not be called")
-    return .null
-  }
-
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -166,8 +170,8 @@ final class ArgumentNode: Node {
   }
 
   override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
+    with point: CGPoint, context: any LayoutContext,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     assertionFailure(
       """

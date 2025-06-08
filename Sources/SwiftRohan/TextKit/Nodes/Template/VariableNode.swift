@@ -54,7 +54,7 @@ final class VariableNode: ElementNode {
     preconditionFailure("Work with apply nodes instead.")
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     preconditionFailure("Work with apply nodes instead.")
   }
 

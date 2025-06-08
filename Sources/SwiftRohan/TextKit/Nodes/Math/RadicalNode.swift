@@ -69,7 +69,7 @@ final class RadicalNode: MathNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -135,12 +135,12 @@ final class RadicalNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .radicand: return _radicalFragment?.radicand
-    case .index: return _radicalFragment?.index
+    case .radicand: return _nodeFragment?.radicand
+    case .index: return _nodeFragment?.index
     default: return nil
     }
   }
@@ -152,19 +152,19 @@ final class RadicalNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _radicalFragment?.getMathIndex(interactingAt: point)
+    _nodeFragment?.getMathIndex(interactingAt: point)
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    _radicalFragment?.rayshoot(from: point, component, in: direction)
+    _nodeFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<RadicalNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(tag) = array[0],
@@ -187,7 +187,7 @@ final class RadicalNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
+    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as NodeLoaded<CrampedNode>
     switch radicand {
     case let .success(radicand):
       let radical = RadicalNode(radicand, index: index)
@@ -207,7 +207,7 @@ final class RadicalNode: MathNode {
   var radicand: ContentNode { _radicand }
   var index: ContentNode? { _index }
 
-  private var _radicalFragment: MathRadicalLayoutFragment? = nil
+  private var _nodeFragment: MathRadicalLayoutFragment? = nil
 
   private var _isDirty: Bool = false
   private var _snapshot: MathComponentSet? = nil
@@ -256,32 +256,32 @@ final class RadicalNode: MathNode {
     let index: MathListLayoutFragment? = _index.map { layoutComponent($0) }
     let radical = MathRadicalLayoutFragment(radicand, index)
 
-    _radicalFragment = radical
+    _nodeFragment = radical
     radical.fixLayout(context.mathContext)
     context.insertFragment(radical, self)
   }
 
   private func _performLayoutSimple(_ context: MathListLayoutContext) {
-    guard let radicalFragment = _radicalFragment
+    guard let nodeFragment = _nodeFragment
     else {
       assertionFailure("radicalFragment not set")
       return
     }
 
     // save metrics before any layout changes
-    let oldMetrics = radicalFragment.boxMetrics
+    let oldMetrics = nodeFragment.boxMetrics
     var needsFixLayout = false
 
     if radicand.isDirty {
-      let oldMetrics = radicalFragment.radicand.boxMetrics
+      let oldMetrics = nodeFragment.radicand.boxMetrics
       LayoutUtils.reconcileMathListLayoutFragment(
-        _radicand, radicalFragment.radicand, parent: context)
-      if radicalFragment.radicand.isNearlyEqual(to: oldMetrics) == false {
+        _radicand, nodeFragment.radicand, parent: context)
+      if nodeFragment.radicand.isNearlyEqual(to: oldMetrics) == false {
         needsFixLayout = true
       }
     }
     if let index = _index, index.isDirty {
-      guard let indexFrag = radicalFragment.index
+      guard let indexFrag = nodeFragment.index
       else {
         assertionFailure("index fragment not set")
         return
@@ -294,8 +294,8 @@ final class RadicalNode: MathNode {
     }
 
     if needsFixLayout {
-      radicalFragment.fixLayout(context.mathContext)
-      if radicalFragment.isNearlyEqual(to: oldMetrics) == false {
+      nodeFragment.fixLayout(context.mathContext)
+      if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
         context.invalidateBackwards(layoutLength())
       }
       else {
@@ -310,7 +310,7 @@ final class RadicalNode: MathNode {
   private func _performLayoutFull(_ context: MathListLayoutContext) {
     precondition(_snapshot != nil)
 
-    guard let radicalFragment = _radicalFragment,
+    guard let nodeFragment = _nodeFragment,
       let snapshot = _snapshot
     else {
       assertionFailure("radicalFragment or snapshot not set")
@@ -319,12 +319,12 @@ final class RadicalNode: MathNode {
 
     if radicand.isDirty {
       LayoutUtils.reconcileMathListLayoutFragment(
-        radicand, radicalFragment.radicand, parent: context)
+        radicand, nodeFragment.radicand, parent: context)
     }
 
     if let index = _index {
       if !snapshot.contains(index.id) {
-        radicalFragment.index =
+        nodeFragment.index =
           LayoutUtils.buildMathListLayoutFragment(index, parent: context)
       }
       else {
@@ -332,13 +332,13 @@ final class RadicalNode: MathNode {
       }
     }
     else {
-      radicalFragment.index = nil
+      nodeFragment.index = nil
     }
 
     // fix layout
-    let oldMetrics = radicalFragment.boxMetrics
-    radicalFragment.fixLayout(context.mathContext)
-    if radicalFragment.isNearlyEqual(to: oldMetrics) == false {
+    let oldMetrics = nodeFragment.boxMetrics
+    nodeFragment.fixLayout(context.mathContext)
+    if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
       context.invalidateBackwards(layoutLength())
     }
     else {

@@ -54,7 +54,7 @@ final class UnknownNode: SimpleNode {
 
   final override class var storageTags: Array<String> { /* intentionally empty */ [] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     assertionFailure("should not be called")
     return .failure(UnknownNode(json))
   }
@@ -64,12 +64,10 @@ final class UnknownNode: SimpleNode {
   // MARK: - UnknownNode
 
   var placeholder: String { PLACEHOLDER }
-
   let data: JSONValue
 
   init(_ data: JSONValue) {
     self.data = data
     super.init()
   }
-
 }

@@ -3,6 +3,35 @@
 import Foundation
 
 public struct PageProperty: PropertyAggregate {
+  // MARK: - PropertyAggregate
+
+  public static func resolveAggregate(
+    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+  ) -> PageProperty {
+    func resolved(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, fallback)
+    }
+
+    return PageProperty(
+      width: resolved(width).absLength()!,
+      height: resolved(height).absLength()!,
+      topMargin: resolved(topMargin).absLength()!,
+      bottomMargin: resolved(bottomMargin).absLength()!,
+      leftMargin: resolved(leftMargin).absLength()!,
+      rightMargin: resolved(rightMargin).absLength()!)
+  }
+
+  public static let allKeys: [PropertyKey] = [
+    width,
+    height,
+    topMargin,
+    bottomMargin,
+    leftMargin,
+    rightMargin,
+  ]
+
+  // MARK: - Implementation
+
   public let width: AbsLength
   public let height: AbsLength
   public let topMargin: AbsLength
@@ -26,39 +55,6 @@ public struct PageProperty: PropertyAggregate {
     self.rightMargin = rightMargin
   }
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      PageProperty.width: .absLength(width),
-      PageProperty.height: .absLength(height),
-      PageProperty.topMargin: .absLength(topMargin),
-      PageProperty.bottomMargin: .absLength(bottomMargin),
-      PageProperty.leftMargin: .absLength(leftMargin),
-      PageProperty.rightMargin: .absLength(rightMargin),
-    ]
-  }
-
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
-    [:]
-  }
-
-  public static func resolve(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
-  ) -> PageProperty {
-    func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
-    }
-
-    return PageProperty(
-      width: resolved(width).absLength()!,
-      height: resolved(height).absLength()!,
-      topMargin: resolved(topMargin).absLength()!,
-      bottomMargin: resolved(bottomMargin).absLength()!,
-      leftMargin: resolved(leftMargin).absLength()!,
-      rightMargin: resolved(rightMargin).absLength()!)
-  }
-
-  // MARK: - Key
-
   public static let width = PropertyKey(.root, .width)  // AbsLength
   public static let height = PropertyKey(.root, .height)  // AbsLength
   public static let topMargin = PropertyKey(.root, .topMargin)  // AbsLength
@@ -66,12 +62,4 @@ public struct PageProperty: PropertyAggregate {
   public static let leftMargin = PropertyKey(.root, .leftMargin)  // AbsLength
   public static let rightMargin = PropertyKey(.root, .rightMargin)  // AbsLength
 
-  public static let allKeys: [PropertyKey] = [
-    width,
-    height,
-    topMargin,
-    bottomMargin,
-    leftMargin,
-    rightMargin,
-  ]
 }

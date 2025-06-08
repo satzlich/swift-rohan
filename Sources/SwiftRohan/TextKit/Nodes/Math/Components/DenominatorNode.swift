@@ -22,7 +22,7 @@ final class DenominatorNode: ContentNode {
   
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<DenominatorNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<DenominatorNode> {
     loadSelfGeneric(from: json)
   }
 }

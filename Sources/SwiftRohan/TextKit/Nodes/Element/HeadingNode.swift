@@ -39,12 +39,12 @@ final class HeadingNode: ElementNode {
 
   final override class var storageTags: Array<String> { (1...5).map { "h\($0)" } }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
   final override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = childrenReadonly().map { $0.store() }
     let json = JSONValue.array([.string("h\(level)"), .array(children)])
     return json
   }
@@ -74,7 +74,7 @@ final class HeadingNode: ElementNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<HeadingNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<HeadingNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -91,17 +91,10 @@ final class HeadingNode: ElementNode {
 
   typealias Subtype = HeadingExpr.Subtype
 
-  public let level: Int
-
+  let level: Int
   var subtype: Subtype { Subtype(level: level) }
 
-  init(level: Int, _ children: [Node]) {
-    precondition(HeadingExpr.validate(level: level))
-    self.level = level
-    super.init(ElementStore(children))
-  }
-
-  public init(level: Int, _ children: ElementStore) {
+  init(level: Int, _ children: ElementStore) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(children)
@@ -123,7 +116,7 @@ final class HeadingNode: ElementNode {
     }
   }
 
-  public static func selector(level: Int? = nil) -> TargetSelector {
+  static func selector(level: Int? = nil) -> TargetSelector {
     precondition(level == nil || HeadingExpr.validate(level: level!))
     guard let level else { return TargetSelector(.heading) }
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))

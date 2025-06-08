@@ -128,10 +128,10 @@ final class MathListLayoutContext: LayoutContext {
     return fragmentFactory.makeFragments(from: string, mathProperty)
   }
 
-  // MARK: - Enumeration
+  // MARK: - Query
 
-  private func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+  func getSegmentFrame(
+    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     layoutFragment.getSegmentFrame(for: layoutOffset)
   }
@@ -139,7 +139,7 @@ final class MathListLayoutContext: LayoutContext {
   func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
-    self.getSegmentFrame(for: layoutOffset, affinity)
+    self.getSegmentFrame(layoutOffset, affinity)
   }
 
   func enumerateTextSegments(
@@ -166,7 +166,7 @@ final class MathListLayoutContext: LayoutContext {
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
     else { return nil }
     switch direction {
     case .up:

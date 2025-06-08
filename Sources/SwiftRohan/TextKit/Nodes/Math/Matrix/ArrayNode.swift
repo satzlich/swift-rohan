@@ -37,7 +37,7 @@ class ArrayNode: Node {
 
   final override func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.gridIndex() else { return nil }
-    return self.getComponent(index)
+    return self.getCell(index)
   }
 
   final override func firstIndex() -> RohanIndex? {
@@ -151,7 +151,7 @@ class ArrayNode: Node {
     _addedNodes.removeAll()
   }
 
-  // MARK: - Array
+  // MARK: - ArrayNode
 
   typealias Cell = ContentNode
   typealias Row = GridRow<Cell>
@@ -163,19 +163,20 @@ class ArrayNode: Node {
     case removeColumn(at: Int)
   }
 
-  internal let subtype: MathArray
+  let subtype: MathArray
   internal var _rows: Array<Row> = []
 
   final var rowCount: Int { _rows.count }
   final var columnCount: Int { _rows.first?.count ?? 0 }
   final var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
+
   /// Returns the row at given index.
-  final func getRow(at index: Int) -> Row { return _rows[index] }
+  final func getRow(at index: Int) -> Row { _rows[index] }
 
   /// Returns the element at the specified row and column.
   /// - Precondition: `row` and `column` must be within bounds.
   final func getElement(_ row: Int, _ column: Int) -> Cell {
-    return _rows[row][column]
+    _rows[row][column]
   }
 
   init(_ subtype: MathArray, _ rows: Array<Row>) {
@@ -225,7 +226,7 @@ class ArrayNode: Node {
 
   // MARK: - Content
 
-  final func getComponent(_ index: GridIndex) -> Cell? {
+  final func getCell(_ index: GridIndex) -> Cell? {
     guard index.row < rowCount,
       index.column < columnCount
     else { return nil }
@@ -360,7 +361,7 @@ class ArrayNode: Node {
 
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -373,7 +374,7 @@ class ArrayNode: Node {
       let endIndex: GridIndex = endPath.first?.gridIndex(),
       // must not fork
       index == endIndex,
-      let component = getComponent(index),
+      let component = getCell(index),
       let fragment = getFragment(index)
     else { return false }
 
@@ -392,21 +393,21 @@ class ArrayNode: Node {
     let newContext =
       LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
-      path.dropFirst(), endPath.dropFirst(), newContext,
+      path.dropFirst(), endPath.dropFirst(), context: newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
 
   final override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
-    _ affinity: inout RhTextSelection.Affinity
+    with point: CGPoint, context: any LayoutContext, trace: inout Trace,
+    affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
     // resolve grid index for point
     guard let index: GridIndex = getGridIndex(interactingAt: point),
-      let component = getComponent(index),
+      let component = getCell(index),
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
@@ -423,7 +424,7 @@ class ArrayNode: Node {
     trace.emplaceBack(self, .gridIndex(index))
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
+      component.resolveTextLocation(with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified {
       trace.emplaceBack(component, .index(0))
@@ -441,7 +442,7 @@ class ArrayNode: Node {
 
     guard path.count >= 2,
       let index: GridIndex = path.first?.gridIndex(),
-      let component = getComponent(index),
+      let component = getCell(index),
       let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset

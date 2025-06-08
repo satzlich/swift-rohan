@@ -21,12 +21,12 @@ final class RootNode: ElementNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
   final override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = childrenReadonly().map { $0.store() }
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
   }
@@ -43,7 +43,7 @@ final class RootNode: ElementNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<RootNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<RootNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)

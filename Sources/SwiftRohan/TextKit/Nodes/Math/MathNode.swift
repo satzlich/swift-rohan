@@ -12,6 +12,8 @@ class MathNode: Node {
     }
   }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> ContentNode? {
     guard let index = index.mathIndex() else { return nil }
     return getComponent(index)
@@ -24,6 +26,23 @@ class MathNode: Node {
   final override func lastIndex() -> RohanIndex? {
     (enumerateComponents().last?.index).map { .mathIndex($0) }
   }
+
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    // layout offset for math component is not well-defined and is unused
+    return nil
+  }
+
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    // layout offset for math component is not well-defined and is unused
+    return nil
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset for math component is not well-defined and is unused
+    return .null
+  }
+
+  // MARK: - Node(Layout)
 
   override func contentDidChange(delta: Int, inStorage: Bool) {
     // change of layout length is not propagated
@@ -112,21 +131,6 @@ class MathNode: Node {
     return components[target].index
   }
 
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    // layout offset for math component is not well-defined and is unused
-    return nil
-  }
-
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset for math component is not well-defined and is unused
-    return nil
-  }
-
-  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    // layout offset for math component is not well-defined and is unused
-    return .null
-  }
-
   /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
   final func defaultInitLayoutContext(
     for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
@@ -140,7 +144,7 @@ class MathNode: Node {
 
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -170,7 +174,7 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // reset layout offset to "0" in the new context
     return component.enumerateTextSegments(
-      path.dropFirst(), endPath.dropFirst(), newContext,
+      path.dropFirst(), endPath.dropFirst(), context: newContext,
       layoutOffset: 0, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
@@ -178,8 +182,8 @@ class MathNode: Node {
   /// - Parameters:
   ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
   final override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
+    with point: CGPoint, context: any LayoutContext,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
@@ -200,7 +204,7 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
+      component.resolveTextLocation(with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified { trace.emplaceBack(component, .index(0)) }
     return true

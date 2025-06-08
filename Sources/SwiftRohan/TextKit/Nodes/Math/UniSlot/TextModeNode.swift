@@ -41,12 +41,12 @@ final class TextModeNode: MathNode {
       let nucleus =
         UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
       let fragment = _NodeFragment(nucleus)
-      _layoutFragment = fragment
+      _nodeFragment = fragment
 
       context.insertFragment(fragment, self)
     }
     else {
-      guard let fragment = _layoutFragment else {
+      guard let fragment = _nodeFragment else {
         assertionFailure("Layout fragment is nil")
         return
       }
@@ -94,7 +94,7 @@ final class TextModeNode: MathNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -112,11 +112,11 @@ final class TextModeNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc: return _layoutFragment?.nucleus
+    case .nuc: return _nodeFragment?.nucleus
     default: return nil
     }
   }
@@ -132,7 +132,7 @@ final class TextModeNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _layoutFragment != nil else { return nil }
+    guard _nodeFragment != nil else { return nil }
     return .nuc
   }
 
@@ -140,7 +140,7 @@ final class TextModeNode: MathNode {
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _layoutFragment,
+    guard let fragment = _nodeFragment,
       component == .nuc
     else { return nil }
 
@@ -155,14 +155,14 @@ final class TextModeNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<TextModeNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
       tag == uniqueTag
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
     switch nucleus {
     case .success(let nucleus):
       let textMode = TextModeNode(nucleus)
@@ -178,7 +178,7 @@ final class TextModeNode: MathNode {
   // MARK: - TextModeNode
 
   internal typealias _NodeFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
-  private var _layoutFragment: _NodeFragment? = nil
+  private var _nodeFragment: _NodeFragment? = nil
 
   let nucleus: ContentNode
 

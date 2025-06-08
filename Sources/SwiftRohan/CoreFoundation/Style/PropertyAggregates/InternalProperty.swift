@@ -3,24 +3,9 @@
 import Foundation
 
 public struct InternalProperty: PropertyAggregate {
+  // MARK: - PropertyAggregate
 
-  public let nestedLevel: Int
-
-  public init(nestedLevel: Int) {
-    self.nestedLevel = nestedLevel
-  }
-
-  public func getProperties() -> PropertyDictionary {
-    [
-      InternalProperty.nestedLevel: .integer(nestedLevel)
-    ]
-  }
-
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
-    [:]
-  }
-
-  public static func resolve(
+  public static func resolveAggregate(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> InternalProperty {
     func resolve(_ key: PropertyKey) -> PropertyValue {
@@ -30,11 +15,18 @@ public struct InternalProperty: PropertyAggregate {
     return InternalProperty(nestedLevel: resolve(nestedLevel).integer()!)
   }
 
-  // MARK: - Key
-
-  public static let nestedLevel = PropertyKey(.root, ._nestedLevel)
-
   public static let allKeys: [PropertyKey] = [
     nestedLevel
   ]
+
+  // MARK: - Implementation
+
+  public let nestedLevel: Int
+
+  public init(nestedLevel: Int) {
+    self.nestedLevel = nestedLevel
+  }
+
+  public static let nestedLevel = PropertyKey(.root, ._nestedLevel)
+
 }

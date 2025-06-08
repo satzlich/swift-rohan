@@ -87,7 +87,7 @@ final class EquationNode: MathNode {
 
   final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -154,7 +154,7 @@ final class EquationNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<EquationNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -164,7 +164,7 @@ final class EquationNode: MathNode {
     }
 
     let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
 
     switch nucleus {
     case let .success(nucleus):
@@ -207,7 +207,7 @@ final class EquationNode: MathNode {
     self._setUp()
   }
 
-  func with(nucleus: ContentNode) -> EquationNode {
+  final func with(nucleus: ContentNode) -> EquationNode {
     EquationNode(subtype, nucleus)
   }
 

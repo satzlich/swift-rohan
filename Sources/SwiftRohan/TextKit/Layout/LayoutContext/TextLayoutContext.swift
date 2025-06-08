@@ -139,8 +139,8 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - Frame
 
-  private func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+  func getSegmentFrame(
+    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
 
@@ -168,7 +168,7 @@ final class TextLayoutContext: LayoutContext {
     switch node {
     case let node as GenMathNode:
       let nextOffset = layoutOffset + node.layoutLength()
-      guard var segmentFrame = getSegmentFrame(for: nextOffset, .upstream),
+      guard var segmentFrame = getSegmentFrame(nextOffset, .upstream),
         let wholeFragment = node.layoutFragment
       else { return nil }
       // adjust frame
@@ -176,7 +176,7 @@ final class TextLayoutContext: LayoutContext {
       return segmentFrame
 
     default:
-      return getSegmentFrame(for: layoutOffset, affinity)
+      return getSegmentFrame(layoutOffset, affinity)
     }
   }
 
@@ -287,7 +287,7 @@ final class TextLayoutContext: LayoutContext {
   ) -> RayshootResult? {
     precondition(isEditing == false)
 
-    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
     else { return nil }
 
     let usageBounds = textLayoutManager.usageBoundsForTextContainer
@@ -339,6 +339,6 @@ final class TextLayoutContext: LayoutContext {
     }
 
     let targetOffset = textContentStorage.characterIndex(for: targetLocation)
-    return getSegmentFrame(for: targetOffset, target.affinity)
+    return getSegmentFrame(targetOffset, target.affinity)
   }
 }

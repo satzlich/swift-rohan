@@ -3,7 +3,7 @@
 /// Result of locating with layout offset.
 
 public enum PositionResult<T> {
-  /// a terminal value with a target offset.
+  /// a terminal value with a target offset, that is, no further traversal is possible.
   case terminal(value: T, target: Int)
   /// a halfway value with the offset consumed so far.
   case halfway(value: T, consumed: Int)

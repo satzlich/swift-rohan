@@ -19,10 +19,25 @@ class SimpleNode: Node {  // default implementation for simple nodes
     parent?.getProperties(styleSheet) ?? [:]
   }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> Node? { nil }
 
   final override func firstIndex() -> RohanIndex? { nil }
   final override func lastIndex() -> RohanIndex? { nil }
+
+  override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
+
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    nil
+  }
+
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // always return nil
+    .null
+  }
+
+  // MARK: - Node(Layout)
 
   final override func contentDidChange(delta: Int, inStorage: Bool) { /* no-op */  }
 
@@ -38,21 +53,11 @@ class SimpleNode: Node {  // default implementation for simple nodes
     try super.encode(to: encoder)
   }
 
-  // MARK: - Layout
-
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    nil
-  }
-
-  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    // always return nil
-    .null
-  }
+  // MARK: - Implementation
 
   override final func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -61,8 +66,8 @@ class SimpleNode: Node {  // default implementation for simple nodes
   }
 
   override final func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
+    with point: CGPoint, context: any LayoutContext,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // do nothing
     return false

@@ -51,12 +51,12 @@ final class MathStylesNode: MathNode {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let fragment = _NodeFragment(nucleus)
-      _layoutFragment = fragment
+      _nodeFragment = fragment
 
       context.insertFragment(fragment, self)
     }
     else {
-      guard let fragment = _layoutFragment else {
+      guard let fragment = _nodeFragment else {
         assertionFailure("Layout fragment is nil")
         return
       }
@@ -112,7 +112,7 @@ final class MathStylesNode: MathNode {
     MathStyles.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -130,11 +130,11 @@ final class MathStylesNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
     switch index {
-    case .nuc: return _layoutFragment?.nucleus
+    case .nuc: return _nodeFragment?.nucleus
     default: return nil
     }
   }
@@ -146,7 +146,7 @@ final class MathStylesNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _layoutFragment != nil else { return nil }
+    guard _nodeFragment != nil else { return nil }
     return .nuc
   }
 
@@ -154,7 +154,7 @@ final class MathStylesNode: MathNode {
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _layoutFragment,
+    guard let fragment = _nodeFragment,
       component == .nuc
     else { return nil }
 
@@ -169,14 +169,14 @@ final class MathStylesNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MathStylesNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
       let styles = MathStyles.lookup(tag)
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<CrampedNode>
     switch nucleus {
     case let .success(nucleus):
       let variant = MathStylesNode(styles, nucleus)
@@ -192,7 +192,7 @@ final class MathStylesNode: MathNode {
   // MARK: - MathStylesNode
 
   private typealias _NodeFragment = LayoutFragmentWrapper<MathListLayoutFragment>
-  private var _layoutFragment: _NodeFragment?
+  private var _nodeFragment: _NodeFragment?
 
   let styles: MathStyles
   let nucleus: ContentNode

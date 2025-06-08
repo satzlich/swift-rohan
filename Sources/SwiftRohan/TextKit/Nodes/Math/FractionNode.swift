@@ -44,14 +44,14 @@ final class FractionNode: MathNode {
         LayoutUtils.buildMathListLayoutFragment(denominator, parent: context)
       let fractionFragment =
         MathFractionLayoutFragment(numFragment, denomFragment, genfrac)
-      _fractionFragment = fractionFragment
+      _nodeFragment = fractionFragment
 
       let mathContext = resolveMathContext(context.mathContext)
       fractionFragment.fixLayout(mathContext)
       context.insertFragment(fractionFragment, self)
     }
     else {
-      guard let fractionFragment = _fractionFragment
+      guard let fractionFragment = _nodeFragment
       else {
         assertionFailure("Fraction fragment should not be nil")
         return
@@ -129,7 +129,7 @@ final class FractionNode: MathNode {
     MathGenFrac.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -151,12 +151,12 @@ final class FractionNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: MathLayoutFragment? { _fractionFragment }
+  final override var layoutFragment: MathLayoutFragment? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .num: return _fractionFragment?.numerator
-    case .denom: return _fractionFragment?.denominator
+    case .num: return _nodeFragment?.numerator
+    case .denom: return _nodeFragment?.denominator
     default: return nil
     }
   }
@@ -168,19 +168,19 @@ final class FractionNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _fractionFragment?.getMathIndex(interactingAt: point)
+    _nodeFragment?.getMathIndex(interactingAt: point)
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    _fractionFragment?.rayshoot(from: point, component, in: direction)
+    _nodeFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<FractionNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(command) = array[0],
@@ -224,9 +224,9 @@ final class FractionNode: MathNode {
   internal var numerator: ContentNode { _numerator }
   internal var denominator: ContentNode { _denominator }
 
-  private var _fractionFragment: MathFractionLayoutFragment? = nil
+  private var _nodeFragment: MathFractionLayoutFragment? = nil
 
-  internal init(num: ElementStore, denom: ElementStore, genfrac: MathGenFrac = .frac) {
+  init(num: ElementStore, denom: ElementStore, genfrac: MathGenFrac = .frac) {
     self.genfrac = genfrac
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
@@ -234,7 +234,7 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
-  internal init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
+  init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
     self.genfrac = genfrac
     self._numerator = num
     self._denominator = denom
@@ -256,12 +256,11 @@ final class FractionNode: MathNode {
   }
 
   private func resolveMathContext(_ context: MathContext) -> MathContext {
-    if let enforceStyle = genfrac.style {
-      return context.with(mathStyle: enforceStyle)
+    if let style = genfrac.style {
+      return context.with(mathStyle: style)
     }
     else {
       return context
     }
   }
-
 }

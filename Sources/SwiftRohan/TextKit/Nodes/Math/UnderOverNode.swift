@@ -97,7 +97,7 @@ final class UnderOverNode: MathNode {
     MathSpreader.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -156,14 +156,14 @@ final class UnderOverNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<UnderOverNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
       let spreader = MathSpreader.lookup(command)
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus: _LoadResult<ContentNode> =
+    let nucleus: NodeLoaded<ContentNode> =
       switch spreader.subtype {
       case .overline, .overspreader:
         CrampedNode.loadSelf(from: array[1]).cast()

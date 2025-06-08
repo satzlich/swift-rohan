@@ -25,6 +25,6 @@ extension StyleSheet {
   }
 
   public func resolveDefault<T: PropertyAggregate>() -> T {
-    T.resolve([:], defaultProperties)
+    T.resolveAggregate([:], defaultProperties)
   }
 }

@@ -99,6 +99,36 @@ internal class Node: Codable {
   /// Returns the index for the downstream end.
   internal func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
 
+  /// Returns the layout offset for the given index, that is, the sum of layout
+  /// lengths of all children before the child at the given index, taking into
+  /// account additional units (e.g. newlines) that contribute to layout lengths.
+  /// - Returns: the layout offset; or `nil` if the index is invalid or layout
+  ///     length is not well-defined for the kind of this node.
+  /// - Invariant: if `offset = getLayoutOffset(index)` is non-nil, then
+  ///     `getPosition(offset) == index`.
+  internal func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns the rohan index of the child node that is picked by `[layoutOffset, _ + 1)`
+  /// together with the layout offset of the child.
+  /// - Parameter layoutOffset: layout offset
+  /// - Invariant: If return value is non-nil, then access child/character with
+  ///     the returned index must succeed.
+  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
+  internal func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns a position within the node that is picked by `layoutOffset`.
+  /// - Parameter layoutOffset: layout offset
+  /// - Invariant: If return value is non-nil, then the index must be valid for the node.
+  ///     For example, for an `ElementNode`, the index must be a valid child index which
+  ///     is in the range `[0, childCount]` (inclusive).
+  internal func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Layout
 
   internal func contentDidChange(delta: Int, inStorage: Bool) {
@@ -149,7 +179,7 @@ internal class Node: Codable {
 
   // MARK: - Storage
 
-  typealias _LoadResult<T: Node> = LoadResult<T, UnknownNode>
+  typealias NodeLoaded<T: Node> = LoadResult<T, UnknownNode>
 
   /// Tags associated with this node.
   /// - IMPORTANT: The set of storageTags should only expand, and never shrink.
@@ -158,42 +188,14 @@ internal class Node: Codable {
   }
 
   /// Restore the node from JSONValue.
-  internal class func load(from json: JSONValue) -> _LoadResult<Node> {
+  internal class func load(from json: JSONValue) -> NodeLoaded<Node> {
     preconditionFailure("overriding required")
   }
 
   /// Store the node to JSONValue.
   internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
-  // MARK: - Content
-
-  /// Returns the layout offset for the given index, that is, the sum of layout
-  /// lengths of all children before the child at the given index, taking into
-  /// account newlines.
-  /// - Returns: the layout offset; or `nil` if the index is invalid or layout
-  ///     length is not well-defined for the kind of this node.
-  func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns the rohan index of the child node that is picked by `[layoutOffset, _ + 1)`
-  /// together with the layout offset of the child.
-  /// - Parameter layoutOffset: layout offset
-  /// - Invariant: If return value is non-nil, then access child/character with
-  ///     the returned index must succeed.
-  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
-  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns a position within the node that is picked by `layoutOffset`.
-  /// - Parameter layoutOffset: layout offset
-  /// - Invariant: If return value is non-nil, then the index must be valid for the node.
-  ///     For example, for an `ElementNode`, the index must be a valid child index which
-  ///     is in the range `[0, childCount]` (inclusive).
-  func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    preconditionFailure("overriding required")
-  }
+  // MARK: - Tree API
 
   /// Enumerate the text segments in the range given by `[path, endPath)`
   /// - Parameters:
@@ -204,9 +206,9 @@ internal class Node: Codable {
   ///   - originCorrection: correction to the origin of the text segment. Initially ".zero".
   ///   - block: block to call for each segment
   /// - Returns: `false` if the enumeration is interrupted by the block, `true` otherwise.
-  func enumerateTextSegments(
+  internal func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -216,9 +218,9 @@ internal class Node: Codable {
   /// Resolve the text location for the given point within the node.
   /// - Returns: true if text location is resolved, false otherwise.
   /// - Note: In the case of success, the text location is implicitly stored in the trace.
-  func resolveTextLocation(
-    with point: CGPoint, _ context: LayoutContext, _ trace: inout Trace,
-    _ affinity: inout RhTextSelection.Affinity
+  internal func resolveTextLocation(
+    with point: CGPoint, context: LayoutContext, trace: inout Trace,
+    affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     preconditionFailure("overriding required")
   }
@@ -228,9 +230,8 @@ internal class Node: Codable {
   ///     the current position of the ray with `isResolved=false`. Return `nil` if
   ///     it is guaranteed that no glyph will be hit.
   /// - Note: The position is with respect to the origin of layout context.
-  func rayshoot(
-    from path: ArraySlice<RohanIndex>,
-    affinity: RhTextSelection.Affinity,
+  internal func rayshoot(
+    from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
@@ -248,7 +249,7 @@ extension Node {
   /// Resolve the value of property aggregate for given type.
   final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {
-    T.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
+    T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
   /// Resolve the value of property for given key.
@@ -257,6 +258,4 @@ extension Node {
   ) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
-
-  // MARK: - Styles
 }

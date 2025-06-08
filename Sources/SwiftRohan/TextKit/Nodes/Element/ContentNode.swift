@@ -32,12 +32,12 @@ class ContentNode: ElementNode {
     []
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    (loadSelfGeneric(from: json) as _LoadResult<Self>).cast()
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
+    (loadSelfGeneric(from: json) as NodeLoaded<Self>).cast()
   }
 
   final override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let children: [JSONValue] = childrenReadonly().map { $0.store() }
     return JSONValue.array(children)
   }
 
@@ -53,7 +53,7 @@ class ContentNode: ElementNode {
 
   // MARK: - Storage
 
-  final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
+  final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> NodeLoaded<T>
   {
     guard case let .array(array) = json else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
@@ -62,10 +62,6 @@ class ContentNode: ElementNode {
   }
 
   // MARK: - ContentNode
-
-  //  required override init(_ children: [Node]) {
-  //    super.init(ElementStore(children))
-  //  }
 
   required override init(_ children: ElementStore) {
     super.init(children)

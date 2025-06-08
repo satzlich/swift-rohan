@@ -7,10 +7,10 @@ import LatexParser
 import _RopeModule
 
 public final class DocumentManager {
-  public typealias SegmentType = NSTextLayoutManager.SegmentType
-  public typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
+  typealias SegmentType = NSTextLayoutManager.SegmentType
+  typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
   typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
-  public typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
+  typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
   /// The root node of the document
   private let content: DocumentContent
@@ -341,7 +341,7 @@ public final class DocumentManager {
         else {
           return .failure(SatzError(.InvalidMathComponent))
         }
-        let contents = nucleus.getChildren_readonly().map { $0.deepCopy() }
+        let contents = nucleus.childrenReadonly().map { $0.deepCopy() }
         return replaceContents(in: range, with: contents)
       }
       else {
@@ -473,7 +473,7 @@ public final class DocumentManager {
 
   /// Enumerate text segments in the given range.
   /// - Note: `block` should return `false` to break out of enumeration.
-  public func enumerateTextSegments(
+  func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
     // (textSegmentRange, textSegmentFrame, baselinePosition) -> continue
     using block: EnumerateTextSegmentsBlock
@@ -482,7 +482,7 @@ public final class DocumentManager {
     let endPath = textRange.endLocation.asArray
     _ = rootNode.enumerateTextSegments(
       ArraySlice(path), ArraySlice(endPath),
-      _getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
+      context: _getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
 
@@ -497,7 +497,8 @@ public final class DocumentManager {
     var trace = Trace()
     var affinity = RhTextSelection.Affinity.downstream
 
-    let modified = rootNode.resolveTextLocation(with: point, context, &trace, &affinity)
+    let modified = rootNode.resolveTextLocation(
+      with: point, context: context, trace: &trace, affinity: &affinity)
     if modified,
       let location = trace.toTextLocation()
     {
