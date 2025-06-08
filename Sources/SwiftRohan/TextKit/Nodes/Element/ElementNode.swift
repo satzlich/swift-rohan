@@ -188,30 +188,25 @@ internal class ElementNode: Node {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
-  // MARK: - Layout
+  // MARK: - Layout Impl.
 
-  /// layout length excluding additional units added by `isBlock`, `newlines`,
-  /// `showPlaceholder`
+  /// layout length **excluding** additional units added by newlines and placeholder.
   private final var _layoutLength: Int
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
-
   private final var _isDirty: Bool
 
-  /// true if placeholder should be shown when the node is empty
+  /// true if placeholder should be shown when the node is empty.
   final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }
 
-  /// true if placeholder should be shown
+  /// true if placeholder should be shown.
   final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
 
   /// lossy snapshot of original children
   private final var _snapshotRecords: [SnapshotRecord]? = nil
 
-  /// lossy snapshot of original children (for debug only)
-  private final var snapshotRecords: [SnapshotRecord]? { _snapshotRecords }
-
   internal func snapshotDescription() -> Array<String>? {
-    snapshotRecords.map { $0.map(\.description) }
+    _snapshotRecords.map { $0.map(\.description) }
   }
 
   /// Make snapshot once if not already made

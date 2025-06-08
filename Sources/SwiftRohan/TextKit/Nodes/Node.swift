@@ -99,6 +99,34 @@ internal class Node: Codable {
   /// Returns the index for the downstream end.
   internal func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
 
+  /// Returns the layout offset for the given index, that is, the sum of layout
+  /// lengths of all children before the child at the given index, taking into
+  /// account newlines.
+  /// - Returns: the layout offset; or `nil` if the index is invalid or layout
+  ///     length is not well-defined for the kind of this node.
+  internal func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns the rohan index of the child node that is picked by `[layoutOffset, _ + 1)`
+  /// together with the layout offset of the child.
+  /// - Parameter layoutOffset: layout offset
+  /// - Invariant: If return value is non-nil, then access child/character with
+  ///     the returned index must succeed.
+  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
+  internal func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns a position within the node that is picked by `layoutOffset`.
+  /// - Parameter layoutOffset: layout offset
+  /// - Invariant: If return value is non-nil, then the index must be valid for the node.
+  ///     For example, for an `ElementNode`, the index must be a valid child index which
+  ///     is in the range `[0, childCount]` (inclusive).
+  internal func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Layout
 
   internal func contentDidChange(delta: Int, inStorage: Bool) {
@@ -166,34 +194,6 @@ internal class Node: Codable {
   internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
   // MARK: - Unpolished API
-
-  /// Returns the layout offset for the given index, that is, the sum of layout
-  /// lengths of all children before the child at the given index, taking into
-  /// account newlines.
-  /// - Returns: the layout offset; or `nil` if the index is invalid or layout
-  ///     length is not well-defined for the kind of this node.
-  func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns the rohan index of the child node that is picked by `[layoutOffset, _ + 1)`
-  /// together with the layout offset of the child.
-  /// - Parameter layoutOffset: layout offset
-  /// - Invariant: If return value is non-nil, then access child/character with
-  ///     the returned index must succeed.
-  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
-  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns a position within the node that is picked by `layoutOffset`.
-  /// - Parameter layoutOffset: layout offset
-  /// - Invariant: If return value is non-nil, then the index must be valid for the node.
-  ///     For example, for an `ElementNode`, the index must be a valid child index which
-  ///     is in the range `[0, childCount]` (inclusive).
-  func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    preconditionFailure("overriding required")
-  }
 
   /// Enumerate the text segments in the range given by `[path, endPath)`
   /// - Parameters:
