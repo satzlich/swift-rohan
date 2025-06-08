@@ -44,6 +44,8 @@ public class Node: Codable {
     _cachedProperties = nil
   }
 
+  internal func selector() -> TargetSelector { TargetSelector(type) }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -207,8 +209,6 @@ public class Node: Codable {
   }
 
   // MARK: - Styles
-
-  func selector() -> TargetSelector { TargetSelector(type) }
 
   public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {

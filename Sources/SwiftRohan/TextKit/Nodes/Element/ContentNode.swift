@@ -1,0 +1,66 @@
+// Copyright 2024-2025 Lie Yan
+
+import DequeModule
+import Foundation
+
+public class ContentNode: ElementNode {
+  override final class var type: NodeType { .content }
+
+  required init() {
+    super.init()
+  }
+
+  required override init(_ children: [Node]) {
+    super.init(Store(children))
+  }
+
+  required override init(_ children: ElementNode.Store) {
+    super.init(children)
+  }
+
+  required init(deepCopyOf node: ContentNode) {
+    super.init(deepCopyOf: node)
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    try super.init(from: decoder)
+  }
+
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(content: self, context)
+  }
+
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
+    visitor.visit(content: self, context, withChildren: children)
+  }
+
+  final override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func cloneEmpty() -> Self { Self() }
+
+  override class var storageTags: [String] {
+    // ContentNode emit no tags
+    []
+  }
+
+  final override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    return JSONValue.array(children)
+  }
+
+  final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
+  {
+    guard case let .array(array) = json
+    else { return .failure(UnknownNode(json)) }
+    let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
+    let result = T(nodes)
+    return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    (loadSelfGeneric(from: json) as _LoadResult<Self>).cast()
+  }
+}
