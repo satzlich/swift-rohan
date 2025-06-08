@@ -5,6 +5,8 @@ import Foundation
 final class NamedSymbolNode: SimpleNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(namedSymbol) }
+
   final override class var type: NodeType { .namedSymbol }
 
   final override func layoutLength() -> Int { namedSymbol.string.length }
@@ -73,10 +75,6 @@ final class NamedSymbolNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> NamedSymbolNode {
-    NamedSymbolNode(namedSymbol)
-  }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

@@ -4,9 +4,14 @@ import DequeModule
 import Foundation
 
 public final class RootNode: ElementNode {
-  override class var type: NodeType { .root }
+  // MARK: - Node
 
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .root }
+
+  // MARK: - RootNode
+
   override func cloneEmpty() -> Self { Self() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R

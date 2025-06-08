@@ -6,7 +6,9 @@ import _RopeModule
 final class MathOperatorNode: SimpleNode {
   // MARK: - Node
 
-  override class var type: NodeType { .mathOperator }
+  final override func deepCopy() -> Self { Self(mathOperator) }
+
+  final override class var type: NodeType { .mathOperator }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -80,8 +82,6 @@ final class MathOperatorNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MathOperatorNode { MathOperatorNode(mathOperator) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

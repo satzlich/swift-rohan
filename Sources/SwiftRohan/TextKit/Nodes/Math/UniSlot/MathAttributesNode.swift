@@ -6,6 +6,9 @@ import UnicodeMathClass
 /// A node that override certain math attributes of generated fragment.
 final class MathAttributesNode: MathNode {
   // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .mathAttributes }
 
   final override var isDirty: Bool { _nucleus.isDirty }
@@ -32,7 +35,7 @@ final class MathAttributesNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf node: MathAttributesNode) {
+  private init(deepCopyOf node: MathAttributesNode) {
     self.subtype = node.subtype
     self._nucleus = node._nucleus.deepCopy()
     super.init()
@@ -161,8 +164,6 @@ final class MathAttributesNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

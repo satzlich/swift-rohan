@@ -5,6 +5,8 @@ import Foundation
 final class MathExpressionNode: SimpleNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(mathExpression) }
+
   final override class var type: NodeType { .mathExpression }
 
   final override func resetCachedProperties() {
@@ -71,10 +73,6 @@ final class MathExpressionNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MathExpressionNode {
-    MathExpressionNode(mathExpression)
-  }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

@@ -6,6 +6,8 @@ import _RopeModule
 public final class EquationNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .equation }
 
   final override func selector() -> TargetSelector {
@@ -137,8 +139,6 @@ public final class EquationNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

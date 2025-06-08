@@ -4,7 +4,11 @@ import DequeModule
 import Foundation
 
 public final class StrongNode: ElementNode {
-  override class var type: NodeType { .strong }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .strong }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -15,7 +19,8 @@ public final class StrongNode: ElementNode {
     return _cachedProperties!
   }
 
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  // MARK: - StrongNode
+
   override func cloneEmpty() -> Self { Self() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R

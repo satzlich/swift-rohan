@@ -3,7 +3,11 @@
 /// A variable node represents a variable in the expansion of a template call.
 /// - Invariant: A variable node must be a descendant of an apply node.
 final class VariableNode: ElementNode {
-  override class var type: NodeType { .variable }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .variable }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -67,8 +71,6 @@ final class VariableNode: ElementNode {
     try container.encode(nestedLevelDelta, forKey: .levelDelta)
     try super.encode(to: encoder)
   }
-
-  override func deepCopy() -> VariableNode { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

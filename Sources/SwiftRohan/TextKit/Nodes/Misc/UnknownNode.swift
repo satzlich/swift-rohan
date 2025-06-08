@@ -18,6 +18,8 @@ public final class UnknownNode: SimpleNode {
     super.init()
   }
 
+  final override func deepCopy() -> Self { Self(data) }
+
   final override class var type: NodeType { .unknown }
 
   final override func layoutLength() -> Int { PLACEHOLDER.length }
@@ -33,10 +35,6 @@ public final class UnknownNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  public override func deepCopy() -> UnknownNode {
-    UnknownNode(data)
-  }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

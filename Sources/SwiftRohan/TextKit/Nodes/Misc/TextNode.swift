@@ -6,6 +6,8 @@ import _RopeModule
 public final class TextNode: Node {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .text }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -36,7 +38,7 @@ public final class TextNode: Node {
     super.init()
   }
 
-  internal init(deepCopyOf textNode: TextNode) {
+  private init(deepCopyOf textNode: TextNode) {
     self._string = textNode._string
     super.init()
   }
@@ -187,8 +189,6 @@ public final class TextNode: Node {
   }
 
   // MARK: - Clone and Visitor
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

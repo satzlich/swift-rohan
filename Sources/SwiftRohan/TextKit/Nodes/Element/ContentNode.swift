@@ -4,11 +4,17 @@ import DequeModule
 import Foundation
 
 public class ContentNode: ElementNode {
+  // MARK: - Node
+
   override final class var type: NodeType { .content }
 
   required init() {
     super.init()
   }
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  // MARK: - ContentNode
 
   required override init(_ children: [Node]) {
     super.init(Store(children))
@@ -36,8 +42,6 @@ public class ContentNode: ElementNode {
   ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(content: self, context, withChildren: children)
   }
-
-  final override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func cloneEmpty() -> Self { Self() }
 

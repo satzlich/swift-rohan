@@ -5,6 +5,10 @@ import _RopeModule
 final class ArgumentNode: Node {
   // MARK: - Node
 
+  final override func deepCopy() -> Self {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
   final override class var type: NodeType { .argument }
 
   final override func getChild(_ index: RohanIndex) -> Node? {
@@ -226,10 +230,6 @@ final class ArgumentNode: Node {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Node {
-    preconditionFailure("\(#function) should not be called for \(Swift.type(of: self))")
-  }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

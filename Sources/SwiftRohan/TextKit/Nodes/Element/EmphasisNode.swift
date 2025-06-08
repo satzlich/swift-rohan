@@ -4,7 +4,11 @@ import DequeModule
 import Foundation
 
 public final class EmphasisNode: ElementNode {
-  override class var type: NodeType { .emphasis }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .emphasis }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     func invertFontStyle(_ fontStyle: FontStyle) -> FontStyle {
@@ -26,7 +30,8 @@ public final class EmphasisNode: ElementNode {
     return _cachedProperties!
   }
 
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  // MARK: - EmphasisNode
+
   override func cloneEmpty() -> Self { Self() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R

@@ -6,6 +6,8 @@ import _RopeModule
 final class AccentNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .accent }
 
   final override var isDirty: Bool { _nucleus.isDirty }
@@ -150,8 +152,6 @@ final class AccentNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

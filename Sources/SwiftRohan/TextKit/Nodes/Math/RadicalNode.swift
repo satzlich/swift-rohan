@@ -6,6 +6,8 @@ import _RopeModule
 final class RadicalNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .radical }
 
   final override func contentDidChange(delta: Int, inStorage: Bool) {
@@ -42,7 +44,7 @@ final class RadicalNode: MathNode {
     self._index?.setParent(self)
   }
 
-  init(deepCopyOf node: RadicalNode) {
+  private init(deepCopyOf node: RadicalNode) {
     self._radicand = node._radicand.deepCopy()
     self._index = node._index?.deepCopy()
     super.init()
@@ -284,8 +286,6 @@ final class RadicalNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Node { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

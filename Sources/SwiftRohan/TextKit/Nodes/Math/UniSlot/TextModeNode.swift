@@ -7,6 +7,8 @@ import _RopeModule
 final class TextModeNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .textMode }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -40,7 +42,7 @@ final class TextModeNode: MathNode {
     _setUp()
   }
 
-  init(deepCopyOf node: TextModeNode) {
+  private init(deepCopyOf node: TextModeNode) {
     self.nucleus = node.nucleus.deepCopy()
     super.init()
     _setUp()
@@ -68,8 +70,6 @@ final class TextModeNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

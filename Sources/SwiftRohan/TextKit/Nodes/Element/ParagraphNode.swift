@@ -4,7 +4,13 @@ import DequeModule
 import Foundation
 
 public final class ParagraphNode: ElementNode {
-  override class var type: NodeType { .paragraph }
+  // MARK: - Node
+
+  final override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .paragraph }
+
+  // MARK: - ParagraphNode
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -17,7 +23,6 @@ public final class ParagraphNode: ElementNode {
     visitor.visit(paragraph: self, context, withChildren: children)
   }
 
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
   override func cloneEmpty() -> Self { Self() }
   override func createSuccessor() -> ElementNode? { ParagraphNode() }
 

@@ -4,11 +4,17 @@ import DequeModule
 import Foundation
 
 public final class HeadingNode: ElementNode {
-  override class var type: NodeType { .heading }
+  // MARK: - Node
 
-  override public func selector() -> TargetSelector {
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .heading }
+
+  final override func selector() -> TargetSelector {
     HeadingNode.selector(level: level)
   }
+
+  // MARK: - HeadingNode
 
   typealias Subtype = HeadingExpr.Subtype
 
@@ -32,8 +38,6 @@ public final class HeadingNode: ElementNode {
     self.level = headingNode.level
     super.init(deepCopyOf: headingNode)
   }
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

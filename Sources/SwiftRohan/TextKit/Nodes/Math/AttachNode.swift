@@ -6,6 +6,8 @@ import _RopeModule
 final class AttachNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .attach }
 
   final override func contentDidChange(delta: Int, inStorage: Bool) {
@@ -428,8 +430,6 @@ final class AttachNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Node { AttachNode(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

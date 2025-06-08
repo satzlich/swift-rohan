@@ -7,6 +7,9 @@ import _RopeModule
 public class Node: Codable {
   public init() {}
 
+  /// Returns a deep copy of the node (intrinsic state only).
+  internal func deepCopy() -> Self { preconditionFailure("overriding required") }
+
   internal class var type: NodeType { preconditionFailure("overriding required") }
   final var type: NodeType { Self.type }
 
@@ -153,13 +156,6 @@ public class Node: Codable {
 
   // MARK: - Content
 
-  final var isTransparent: Bool { NodePolicy.isTransparent(type) }
-
-  // MARK: - Layout
-
-  /// Returns true if the node is pivotal.
-  final var isPivotal: Bool { NodePolicy.isPivotal(type) }
-
   /// Perform layout and clear the dirty flag.
   /// * For `fromScratch=true`, one should treat the node as if it was not
   ///   laid-out before.
@@ -241,17 +237,17 @@ public class Node: Codable {
 
   // MARK: - Clone and Visitor
 
-  /// Returns a deep copy of the node (intrinsic state only).
-  public func deepCopy() -> Node {
-    preconditionFailure("overriding required")
-  }
-
   func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 }
 
 extension Node {
+  final var isTransparent: Bool { NodePolicy.isTransparent(type) }
+
+  /// Returns true if the node is pivotal.
+  final var isPivotal: Bool { NodePolicy.isPivotal(type) }
+
   /// Resolve the value of property aggregate for given type.
   final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {

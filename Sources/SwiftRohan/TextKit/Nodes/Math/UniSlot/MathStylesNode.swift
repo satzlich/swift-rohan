@@ -5,6 +5,8 @@ import Foundation
 final class MathStylesNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .mathStyles }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -53,7 +55,7 @@ final class MathStylesNode: MathNode {
     _setUp()
   }
 
-  internal init(deepCopyOf node: MathStylesNode) {
+  private init(deepCopyOf node: MathStylesNode) {
     self.styles = node.styles
     self.nucleus = node.nucleus.deepCopy()
     super.init()
@@ -90,8 +92,6 @@ final class MathStylesNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

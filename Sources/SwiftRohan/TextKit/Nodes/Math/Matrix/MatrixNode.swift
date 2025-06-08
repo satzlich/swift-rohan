@@ -3,7 +3,12 @@
 import Foundation
 
 final class MatrixNode: ArrayNode {
-  override class var type: NodeType { .matrix }
+  // MARK: - Node
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override class var type: NodeType { .matrix }
+
+  // MARK: - MatrixNode
 
   override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
     super.init(subtype, rows)
@@ -14,7 +19,7 @@ final class MatrixNode: ArrayNode {
     super.init(subtype, rows)
   }
 
-  init(deepCopyOf matrixNode: MatrixNode) {
+  private init(deepCopyOf matrixNode: MatrixNode) {
     super.init(deepCopyOf: matrixNode)
   }
 
@@ -43,8 +48,6 @@ final class MatrixNode: ArrayNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MatrixNode { MatrixNode(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

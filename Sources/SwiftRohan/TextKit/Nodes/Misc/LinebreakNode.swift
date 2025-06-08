@@ -5,11 +5,14 @@ import _RopeModule
 
 final class LinebreakNode: SimpleNode {
   // MARK: - Node
+
   override init() { super.init() }
 
-  override class var type: NodeType { .linebreak }
+  final override func deepCopy() -> Self { Self() }
 
-  override func layoutLength() -> Int { 1 }
+  final override class var type: NodeType { .linebreak }
+
+  final override func layoutLength() -> Int { 1 }
 
   // MARK: - LinebreakNode
 
@@ -24,8 +27,6 @@ final class LinebreakNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> LinebreakNode { LinebreakNode() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

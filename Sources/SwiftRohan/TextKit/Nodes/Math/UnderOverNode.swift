@@ -6,6 +6,8 @@ import _RopeModule
 final class UnderOverNode: MathNode {
   // MARK: - Node
 
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
   final override class var type: NodeType { .underOver }
 
   final override var isDirty: Bool { _nucleus.isDirty }
@@ -40,7 +42,7 @@ final class UnderOverNode: MathNode {
     }
   }
 
-  init(deepCopyOf node: UnderOverNode) {
+  private init(deepCopyOf node: UnderOverNode) {
     self.spreader = node.spreader
     self._nucleus = node._nucleus.deepCopy()
     super.init()
@@ -175,8 +177,6 @@ final class UnderOverNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Node { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
