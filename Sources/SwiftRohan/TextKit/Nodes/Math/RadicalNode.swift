@@ -4,7 +4,62 @@ import Foundation
 import _RopeModule
 
 final class RadicalNode: MathNode {
-  override class var type: NodeType { .radical }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(radical: self, context)
+  }
+
+  final override class var type: NodeType { .radical }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    super.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  final override var isDirty: Bool { _isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case radicand, index }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self._radicand = try container.decode(CrampedNode.self, forKey: .radicand)
+    self._index = try container.decodeIfPresent(DegreeNode.self, forKey: .index)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_radicand, forKey: .radicand)
+    try container.encodeIfPresent(_index, forKey: .index)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  private static let uniqueTag = "sqrt"
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let radicand = radicand.store()
+    let index = _index?.store() ?? .null
+    // keep the order: index, radicand
+    let json = JSONValue.array([.string(Self.uniqueTag), index, radicand])
+    return json
+  }
+
+  // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
   var radicand: ContentNode { _radicand }
@@ -31,38 +86,14 @@ final class RadicalNode: MathNode {
     self._index?.setParent(self)
   }
 
-  init(deepCopyOf node: RadicalNode) {
+  private init(deepCopyOf node: RadicalNode) {
     self._radicand = node._radicand.deepCopy()
     self._index = node._index?.deepCopy()
     super.init()
     self._setUp()
   }
 
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case radicand, index }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self._radicand = try container.decode(CrampedNode.self, forKey: .radicand)
-    self._index = try container.decodeIfPresent(DegreeNode.self, forKey: .index)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(_radicand, forKey: .radicand)
-    try container.encodeIfPresent(_index, forKey: .index)
-    try super.encode(to: encoder)
-  }
-
   // MARK: - Content
-
-  override func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
-  }
 
   private var _snapshot: ComponentSet? = nil
 
@@ -76,7 +107,6 @@ final class RadicalNode: MathNode {
   // MARK: - Layout
 
   private var _isDirty: Bool = false
-  override var isDirty: Bool { _isDirty }
 
   private var _radicalFragment: MathRadicalLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }
@@ -280,28 +310,7 @@ final class RadicalNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> Node { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(radical: self, context)
-  }
-
-  private static let uniqueTag = "sqrt"
-
   var command: String { Self.uniqueTag }
-
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    let radicand = radicand.store()
-    let index = _index?.store() ?? .null
-    // keep the order: index, radicand
-    let json = JSONValue.array([.string(Self.uniqueTag), index, radicand])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
     guard case let .array(array) = json,
@@ -339,7 +348,4 @@ final class RadicalNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

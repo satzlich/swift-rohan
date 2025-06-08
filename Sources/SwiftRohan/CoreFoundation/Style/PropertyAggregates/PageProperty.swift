@@ -45,7 +45,7 @@ public struct PageProperty: PropertyAggregate {
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> PageProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolve(properties, fallback)
+      key.resolveValue(properties, fallback)
     }
 
     return PageProperty(

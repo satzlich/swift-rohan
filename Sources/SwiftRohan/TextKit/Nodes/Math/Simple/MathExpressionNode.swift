@@ -3,23 +3,25 @@
 import Foundation
 
 final class MathExpressionNode: SimpleNode {
-  override class var type: NodeType { .mathExpression }
+  // MARK: - Node
 
-  let mathExpression: MathExpression
-  private let _deflated: Node
+  final override func deepCopy() -> Self { Self(mathExpression) }
 
-  init(_ mathExpression: MathExpression) {
-    self.mathExpression = mathExpression
-    self._deflated = mathExpression.deflated()
-    super.init()
-    _setUp()
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathExpression: self, context)
   }
 
-  private func _setUp() {
-    _deflated.setParent(self)
+  final override class var type: NodeType { .mathExpression }
+
+  final override func resetCachedProperties() {
+    super.resetCachedProperties()
+    _deflated.resetCachedProperties()
   }
 
-  // MARK: - Codable
+  final override func layoutLength() -> Int { _deflated.layoutLength() }
+
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command }
 
@@ -38,15 +40,44 @@ final class MathExpressionNode: SimpleNode {
     _setUp()
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(mathExpression.command, forKey: .command)
     try super.encode(to: encoder)
   }
 
-  // MARK: - Layout
+  // MARK: - Node(Storage)
 
-  override func layoutLength() -> Int { _deflated.layoutLength() }
+  final override class var storageTags: Array<String> {
+    MathExpression.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathExpression.command)])
+    return json
+  }
+
+  // MARK: - MathExpressionNode
+
+  let mathExpression: MathExpression
+  private let _deflated: Node
+
+  init(_ mathExpression: MathExpression) {
+    self.mathExpression = mathExpression
+    self._deflated = mathExpression.deflated()
+    super.init()
+    _setUp()
+  }
+
+  private func _setUp() {
+    _deflated.setParent(self)
+  }
+
+  // MARK: - Layout
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
@@ -61,34 +92,7 @@ final class MathExpressionNode: SimpleNode {
     }
   }
 
-  // MARK: - Style
-
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      _deflated.resetCachedProperties(recursive: recursive)
-    }
-  }
-
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MathExpressionNode {
-    MathExpressionNode(mathExpression)
-  }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathExpression: self, context)
-  }
-
-  override class var storageTags: [String] {
-    MathExpression.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathExpression.command)])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathExpressionNode> {
     guard case let .array(array) = json,
@@ -99,7 +103,4 @@ final class MathExpressionNode: SimpleNode {
     return .success(MathExpressionNode(mathExpression))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

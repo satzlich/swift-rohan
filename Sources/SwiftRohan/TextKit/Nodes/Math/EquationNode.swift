@@ -3,8 +3,80 @@
 import AppKit
 import _RopeModule
 
-public final class EquationNode: MathNode {
-  override class var type: NodeType { .equation }
+final class EquationNode: MathNode {
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(equation: self, context)
+  }
+
+  final override class var type: NodeType { .equation }
+
+  final override func selector() -> TargetSelector {
+    EquationNode.selector(isBlock: isBlock)
+  }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      // if there is no math style, compute and set
+      let key = MathProperty.style
+      if current[key] == nil {
+        current[key] = .mathStyle(isBlock ? .display : .text)
+      }
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  final override var isBlock: Bool { subtype == .block }
+  final override var isDirty: Bool { nucleus.isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case subtype, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(subtype, forKey: .subtype)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  private enum Tag: String, Codable, CaseIterable { case blockmath, inlinemath }
+
+  final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    switch subtype {
+    case .block:
+      return JSONValue.array([.string(Tag.blockmath.rawValue), nucleus])
+    case .inline:
+      return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
+    }
+  }
+
+  // MARK: - EquationNode
 
   typealias Subtype = EquationExpr.Subtype
 
@@ -22,7 +94,7 @@ public final class EquationNode: MathNode {
     self._setUp()
   }
 
-  internal init(deepCopyOf equationNode: EquationNode) {
+  private init(deepCopyOf equationNode: EquationNode) {
     self.subtype = equationNode.subtype
     self.nucleus = equationNode.nucleus.deepCopy()
     super.init()
@@ -37,32 +109,9 @@ public final class EquationNode: MathNode {
     self.nucleus.setParent(self)
   }
 
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case subtype, nuc }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
-    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype, forKey: .subtype)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
   // MARK: - Layout
 
   let subtype: Subtype
-
-  override public var isBlock: Bool { subtype == .block }
-
-  override var isDirty: Bool { nucleus.isDirty }
 
   private var _nucleusFragment: MathListLayoutFragment? = nil
 
@@ -100,29 +149,10 @@ public final class EquationNode: MathNode {
 
   // MARK: - Styles
 
-  override public func selector() -> TargetSelector {
-    EquationNode.selector(isBlock: isBlock)
-  }
-
   public static func selector(isBlock: Bool? = nil) -> TargetSelector {
     return isBlock != nil
       ? TargetSelector(.equation, PropertyMatcher(.isBlock, .bool(isBlock!)))
       : TargetSelector(.equation)
-  }
-
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      // inherit properties
-      var properties = super.getProperties(styleSheet)
-      // if there is no math style, compute and set
-      let key = MathProperty.style
-      if properties[key] == nil {
-        properties[key] = .mathStyle(isBlock ? .display : .text)
-      }
-      // cache properties
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
   }
 
   // MARK: - Components
@@ -134,31 +164,6 @@ public final class EquationNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(equation: self, context)
-  }
-
-  private enum Tag: String, Codable, CaseIterable {
-    case blockmath, inlinemath
-  }
-
-  override class var storageTags: [String] {
-    Tag.allCases.map { $0.rawValue }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    switch subtype {
-    case .block:
-      return JSONValue.array([.string(Tag.blockmath.rawValue), nucleus])
-    case .inline:
-      return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
-    }
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
     guard case let .array(array) = json,
@@ -182,10 +187,6 @@ public final class EquationNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   // MARK: - Reflow-related

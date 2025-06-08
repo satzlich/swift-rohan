@@ -4,16 +4,33 @@ import Foundation
 import _RopeModule
 
 final class MathOperatorNode: SimpleNode {
-  override class var type: NodeType { .mathOperator }
+  // MARK: - Node
 
-  let mathOperator: MathOperator
+  final override func deepCopy() -> Self { Self(mathOperator) }
 
-  init(_ mathOp: MathOperator) {
-    self.mathOperator = mathOp
-    super.init()
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathOperator: self, context)
   }
 
-  // MARK: - Codable
+  final override class var type: NodeType { .mathOperator }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      let mathContext = MathUtils.resolveMathContext(current, styleSheet)
+      let fontSize = FontSize(rawValue: mathContext.getFontSize())
+      current[TextProperty.size] = .fontSize(fontSize)
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  final override func layoutLength() -> Int { 1 }  // always "1".
+
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command }
 
@@ -30,15 +47,37 @@ final class MathOperatorNode: SimpleNode {
     try super.init(from: decoder)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(mathOperator.command, forKey: .command)
     try super.encode(to: encoder)
   }
 
-  // MARK: - Layout
+  // MARK: - Node(Storage)
 
-  override func layoutLength() -> Int { 1 }
+  final override class var storageTags: Array<String> {
+    MathOperator.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathOperator.command)])
+    return json
+  }
+
+  // MARK: - Math Operator
+
+  let mathOperator: MathOperator
+
+  init(_ mathOp: MathOperator) {
+    self.mathOperator = mathOp
+    super.init()
+  }
+
+  // MARK: - Layout
 
   private var _mathOperatorFragment: MathOperatorLayoutFragment? = nil
 
@@ -62,39 +101,7 @@ final class MathOperatorNode: SimpleNode {
     }
   }
 
-  // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      // CAUTION: avoid infinite loop
-      let mathContext = MathUtils.resolveMathContext(properties, styleSheet)
-      let fontSize = FontSize(rawValue: mathContext.getFont().size)
-
-      properties[TextProperty.size] = .fontSize(fontSize)
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
-
   // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MathOperatorNode { MathOperatorNode(mathOperator) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathOperator: self, context)
-  }
-
-  override class var storageTags: [String] {
-    MathOperator.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathOperator.command)])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
     guard case let .array(array) = json,
@@ -105,7 +112,4 @@ final class MathOperatorNode: SimpleNode {
     return .success(MathOperatorNode(mathOp))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

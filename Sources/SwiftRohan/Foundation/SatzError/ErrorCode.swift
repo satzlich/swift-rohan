@@ -45,9 +45,10 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0001_0003, name: "InvalidJSON", type: .InternalError)
 
   // location
-  #ErrorCode(code: 0x0001_1001, name: "InvalidTextLocation", type: .InternalError)
-  #ErrorCode(code: 0x0001_1002, name: "InvalidTextRange", type: .InternalError)
-  #ErrorCode(code: 0x0001_1003, name: "InvalidMathComponent", type: .InternalError)
+  #ErrorCode(code: 0x0001_1001, name: "InvalidLayoutOffset", type: .InternalError)
+  #ErrorCode(code: 0x0001_1002, name: "InvalidTextLocation", type: .InternalError)
+  #ErrorCode(code: 0x0001_1003, name: "InvalidTextRange", type: .InternalError)
+  #ErrorCode(code: 0x0001_1004, name: "InvalidMathComponent", type: .InternalError)
 
   // expected node
   #ErrorCode(code: 0x0001_2001, name: "ElementNodeExpected", type: .InternalError)

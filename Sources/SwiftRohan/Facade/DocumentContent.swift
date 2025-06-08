@@ -57,7 +57,7 @@ public final class DocumentContent {
     self.rootNode = RootNode([ParagraphNode()])
   }
 
-  public init(_ rootNode: RootNode) {
+  init(_ rootNode: RootNode) {
     self.rootNode = rootNode
   }
 }

@@ -21,7 +21,8 @@ struct NodesTests {
       _ = node.id
       _ = node.type
       node.reallocateId()
-      node.prepareForReuse()
+      node.resetCachedProperties()
+      node.resetForReuse()
       _ = node.firstIndex()
       _ = node.lastIndex()
       _ = node.layoutLength()
@@ -29,8 +30,6 @@ struct NodesTests {
       _ = node.isDirty
       _ = node.selector()
       _ = node.getProperties(stylesheet)
-      node.resetCachedProperties(recursive: false)
-      node.resetCachedProperties(recursive: true)
       _ = node.deepCopy()
 
       //

@@ -4,36 +4,20 @@ import Foundation
 import _RopeModule
 
 final class AccentNode: MathNode {
-  override class var type: NodeType { .accent }
+  // MARK: - Node
 
-  let accent: MathAccent
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  init(_ accent: MathAccent, nucleus: CrampedNode) {
-    self.accent = accent
-    self._nucleus = nucleus
-    super.init()
-    self._setUp()
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(accent: self, context)
   }
 
-  init(_ accent: MathAccent, nucleus: [Node]) {
-    self.accent = accent
-    self._nucleus = CrampedNode(nucleus)
-    super.init()
-    self._setUp()
-  }
+  final override class var type: NodeType { .accent }
 
-  init(deepCopyOf accentNode: AccentNode) {
-    self.accent = accentNode.accent
-    self._nucleus = accentNode._nucleus.deepCopy()
-    super.init()
-    self._setUp()
-  }
+  final override var isDirty: Bool { _nucleus.isDirty }
 
-  private final func _setUp() {
-    _nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command, nuc }
 
@@ -51,16 +35,59 @@ final class AccentNode: MathNode {
     self._setUp()
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(accent.command, forKey: .command)
     try container.encode(_nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 
-  // MARK: - Layout
+  // MARK: - Node(Storage)
 
-  override var isDirty: Bool { _nucleus.isDirty }
+  final override class var storageTags: Array<String> {
+    MathAccent.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(accent.command), nucleus])
+    return json
+  }
+
+  // MARK: - AccentNode
+
+  let accent: MathAccent
+
+  init(_ accent: MathAccent, nucleus: CrampedNode) {
+    self.accent = accent
+    self._nucleus = nucleus
+    super.init()
+    self._setUp()
+  }
+
+  init(_ accent: MathAccent, nucleus: [Node]) {
+    self.accent = accent
+    self._nucleus = CrampedNode(nucleus)
+    super.init()
+    self._setUp()
+  }
+
+  private init(deepCopyOf accentNode: AccentNode) {
+    self.accent = accentNode.accent
+    self._nucleus = accentNode._nucleus.deepCopy()
+    super.init()
+    self._setUp()
+  }
+
+  private final func _setUp() {
+    _nucleus.setParent(self)
+  }
+
+  // MARK: - Layout
 
   private var _accentFragment: MathAccentLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
@@ -147,23 +174,6 @@ final class AccentNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(accent: self, context)
-  }
-
-  override class var storageTags: [String] {
-    MathAccent.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(accent.command), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -182,7 +192,4 @@ final class AccentNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

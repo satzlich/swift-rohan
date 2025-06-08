@@ -20,7 +20,7 @@ public final class DocumentManager {
   public var styleSheet: StyleSheet {
     didSet {
       // reset style cache
-      rootNode.resetCachedProperties(recursive: true)
+      rootNode.resetCachedProperties()
 
       // clear text content storage
       textContentStorage.performEditingTransaction {
@@ -129,7 +129,7 @@ public final class DocumentManager {
 
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
-  public func replaceContents(
+  func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
     // remove contents if nodes is nil or empty
@@ -504,6 +504,16 @@ public final class DocumentManager {
     else {
       return nil
     }
+  }
+
+  /// Resolve the text location for the given point.
+  /// - Returns: The resolved text location if successful; otherwise, nil.
+  internal func resolveTextLocation_v2(with point: CGPoint) -> AffineLocation? {
+    #if LOG_TEXT_SELECTION
+    Rohan.logger.debug("Interacting at \(point.debugDescription)")
+    #endif
+
+    preconditionFailure()
   }
 
   // MARK: - Navigation

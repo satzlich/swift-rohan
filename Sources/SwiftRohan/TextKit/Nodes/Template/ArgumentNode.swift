@@ -3,7 +3,71 @@ import AppKit
 import _RopeModule
 
 final class ArgumentNode: Node {
-  override class var type: NodeType { .argument }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(argument: self, context)
+  }
+
+  final override class var type: NodeType { .argument }
+
+  final override func getChild(_ index: RohanIndex) -> Node? {
+    variableNodes.first?.getChild(index)
+  }
+
+  final override func firstIndex() -> RohanIndex? {
+    variableNodes.first?.firstIndex()
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    variableNodes.first?.lastIndex()
+  }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    assertionFailure("should not be called")
+  }
+
+  final override func layoutLength() -> Int { 1 }  // always "1".
+
+  // MARK: - Node(Codable)
+
+  required init(from decoder: any Decoder) throws {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { /* intentionally empty */ [] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
+  final override func store() -> JSONValue {
+    precondition(!variableNodes.isEmpty)
+    let first = variableNodes[0]
+    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
+    return JSONValue.array(children)
+  }
+
+  // MARK: - ElementNode
+
+  final func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    visitor.visit(argument: self, context, withChildren: children)
+  }
+
+  // MARK: - ApplyNode
 
   /// associated apply node
   private weak var applyNode: ApplyNode? = nil
@@ -31,16 +95,6 @@ final class ArgumentNode: Node {
     variableNodes.forEach { $0.setArgumentNode(self) }
   }
 
-  // MARK: - Codable
-
-  required init(from decoder: any Decoder) throws {
-    preconditionFailure("should not be called. Work is done in ApplyNode.")
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    preconditionFailure("should not be called. Work is done in ApplyNode.")
-  }
-
   func getArgumentValue_readonly() -> ElementNode.Store {
     variableNodes.first!.getChildren_readonly()
   }
@@ -49,11 +103,7 @@ final class ArgumentNode: Node {
 
   var childCount: Int { variableNodes.first!.childCount }
 
-  override func getChild(_ index: RohanIndex) -> Node? {
-    variableNodes.first!.getChild(index)
-  }
-
-  func getChild(_ index: Int) -> Node {
+  final func getChild(_ index: Int) -> Node {
     precondition(index < childCount)
     return variableNodes.first!.getChild(index)
   }
@@ -84,19 +134,7 @@ final class ArgumentNode: Node {
     }
   }
 
-  // MARK: - Location
-
-  override func firstIndex() -> RohanIndex? {
-    variableNodes.first!.firstIndex()
-  }
-
-  override func lastIndex() -> RohanIndex? {
-    variableNodes.first!.lastIndex()
-  }
-
   // MARK: - Layout
-
-  override func layoutLength() -> Int { return 1 }
 
   override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     assertionFailure("should not be called")
@@ -106,6 +144,11 @@ final class ArgumentNode: Node {
   override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     assertionFailure("should not be called")
     return nil
+  }
+
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    assertionFailure("should not be called")
+    return .null
   }
 
   override func enumerateTextSegments(
@@ -214,37 +257,4 @@ final class ArgumentNode: Node {
       location, endLocation, variableNodes.first!, nil, &insertionPoint)
   }
 
-  // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Node {
-    preconditionFailure("\(#function) should not be called for \(Swift.type(of: self))")
-  }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(argument: self, context)
-  }
-
-  /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R {
-    visitor.visit(argument: self, context, withChildren: children)
-  }
-
-  override class var storageTags: [String] {
-    // intentionally empty
-    []
-  }
-
-  override func store() -> JSONValue {
-    precondition(!variableNodes.isEmpty)
-    let first = variableNodes[0]
-    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
-    return JSONValue.array(children)
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("should not be called. Work is done in ApplyNode.")
-  }
 }

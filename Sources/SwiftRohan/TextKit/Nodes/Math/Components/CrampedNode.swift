@@ -2,14 +2,18 @@
 
 /// A content node that is cramped.
 final class CrampedNode: ContentNode {
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  // MARK: - Node
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      properties[MathProperty.cramped] = .bool(true)
-      _cachedProperties = properties
+      var current = super.getProperties(styleSheet)
+      current[MathProperty.cramped] = .bool(true)
+      _cachedProperties = current
     }
     return _cachedProperties!
   }
+
+  // MARK: - CrampedNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<CrampedNode> {
     loadSelfGeneric(from: json)

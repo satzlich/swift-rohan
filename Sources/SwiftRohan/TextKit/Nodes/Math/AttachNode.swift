@@ -4,7 +4,71 @@ import Foundation
 import _RopeModule
 
 final class AttachNode: MathNode {
-  override class var type: NodeType { .attach }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(attach: self, context)
+  }
+
+  final override class var type: NodeType { .attach }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    super.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  final override var isDirty: Bool { _isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case lsub, lsup, sub, sup, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    _lsub = try container.decodeIfPresent(SubscriptNode.self, forKey: .lsub)
+    _lsup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .lsup)
+    _sub = try container.decodeIfPresent(SubscriptNode.self, forKey: .sub)
+    _sup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .sup)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(nucleus, forKey: .nuc)
+    try container.encodeIfPresent(_lsub, forKey: .lsub)
+    try container.encodeIfPresent(_lsup, forKey: .lsup)
+    try container.encodeIfPresent(_sub, forKey: .sub)
+    try container.encodeIfPresent(_sup, forKey: .sup)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    var array: [JSONValue] = []
+    array.append(.string(Self.uniqueTag))
+    // keep the order: lsub, lsup, nuc, sub, sup
+    array.append(_lsub?.store() ?? .null)
+    array.append(_lsup?.store() ?? .null)
+    array.append(nucleus.store())
+    array.append(_sub?.store() ?? .null)
+    array.append(_sup?.store() ?? .null)
+    let json = JSONValue.array(array)
+    return json
+  }
+
+  // MARK: - AttachNode
 
   public init(
     nuc: ContentNode,
@@ -33,7 +97,7 @@ final class AttachNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf scriptsNode: AttachNode) {
+  private init(deepCopyOf scriptsNode: AttachNode) {
     self.nucleus = scriptsNode.nucleus.deepCopy()
     self._lsub = scriptsNode._lsub?.deepCopy()
     self._lsup = scriptsNode._lsup?.deepCopy()
@@ -51,45 +115,9 @@ final class AttachNode: MathNode {
     _sup?.setParent(self)
   }
 
-  // MARK: - Codable
-
-  /// should sync with AttachExpr
-  private enum CodingKeys: CodingKey {
-    case lsub, lsup, sub, sup, nuc
-  }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    _lsub = try container.decodeIfPresent(SubscriptNode.self, forKey: .lsub)
-    _lsup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .lsup)
-    _sub = try container.decodeIfPresent(SubscriptNode.self, forKey: .sub)
-    _sup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .sup)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(nucleus, forKey: .nuc)
-    try container.encodeIfPresent(_lsub, forKey: .lsub)
-    try container.encodeIfPresent(_lsup, forKey: .lsup)
-    try container.encodeIfPresent(_sub, forKey: .sub)
-    try container.encodeIfPresent(_sup, forKey: .sup)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Content
-
-  override func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
   // MARK: - Layout
 
   private var _isDirty: Bool = false
-  override var isDirty: Bool { _isDirty }
 
   private var _attachFragment: MathAttachLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _attachFragment }
@@ -426,30 +454,7 @@ final class AttachNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> Node { AttachNode(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(attach: self, context)
-  }
-
   private static let uniqueTag = "attach"
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    var array: [JSONValue] = []
-    array.append(.string(Self.uniqueTag))
-    // keep the order: lsub, lsup, nuc, sub, sup
-    array.append(_lsub?.store() ?? .null)
-    array.append(_lsup?.store() ?? .null)
-    array.append(nucleus.store())
-    array.append(_sub?.store() ?? .null)
-    array.append(_sup?.store() ?? .null)
-    let json = JSONValue.array(array)
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
     guard case let .array(array) = json,
@@ -532,9 +537,6 @@ final class AttachNode: MathNode {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }
 
 struct ComponentSet: ExpressibleByArrayLiteral {

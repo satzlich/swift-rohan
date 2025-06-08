@@ -1,23 +1,26 @@
 // Copyright 2024-2025 Lie Yan
 
 final class DenominatorNode: ContentNode {
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  // MARK: - Node
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      // inherit properties
-      var properties = super.getProperties(styleSheet)
+      var current = super.getProperties(styleSheet)
 
       // set math style ← fraction style
       let key = MathProperty.style
-      let value = key.resolve(properties, styleSheet).mathStyle()!
-      properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
-      // set cramped ← true
-      properties[MathProperty.cramped] = .bool(true)
+      let value = key.resolveValue(current, styleSheet).mathStyle()!
+      current[key] = .mathStyle(MathUtils.fractionStyle(for: value))
 
-      // cache properties
-      _cachedProperties = properties
+      // set cramped ← true
+      current[MathProperty.cramped] = .bool(true)
+
+      _cachedProperties = current
     }
     return _cachedProperties!
   }
+  
+  // MARK: - DenominatorNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<DenominatorNode> {
     loadSelfGeneric(from: json)

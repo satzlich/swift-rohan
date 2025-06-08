@@ -6,7 +6,79 @@ import CoreGraphics
 import DequeModule
 import _RopeModule
 
-public class ElementNode: Node {
+internal class ElementNode: Node {
+  // MARK: - Node
+
+  final override func resetCachedProperties() {
+    super.resetCachedProperties()
+    for child in _children {
+      child.resetCachedProperties()
+    }
+  }
+
+  final override func getChild(_ index: RohanIndex) -> Node? {
+    guard let index = index.index(),
+      index < _children.count
+    else { return nil }
+    return _children[index]
+  }
+
+  final override func firstIndex() -> RohanIndex? { .index(0) }
+  final override func lastIndex() -> RohanIndex? { .index(_children.count) }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    // apply delta
+    _layoutLength += delta
+    // content change implies dirty
+    if inStorage { _isDirty = true }
+    // propagate to parent
+    parent?.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  final override func layoutLength() -> Int {
+    isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
+  }
+
+  final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
+  final override var isDirty: Bool { _isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case children }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
+
+    // children and newlines
+    self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
+    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
+
+    // length
+    self._layoutLength = _children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+
+    // flags
+    self._isDirty = false
+
+    try super.init(from: decoder)
+    self._setUp()
+  }
+
+  internal override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self._children, forKey: .children)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - ElementNode
+
+  /// Visit the children in the manner of this node.
+  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public typealias Store = Deque<Node>
   private final var _children: Store
 
@@ -16,8 +88,7 @@ public class ElementNode: Node {
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
-    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._layoutLength = summary.layoutLength
+    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
     // flags
     self._isDirty = false
 
@@ -31,8 +102,7 @@ public class ElementNode: Node {
     self._children = Store(children)
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
-    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._layoutLength = summary.layoutLength
+    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
     // flags
     self._isDirty = false
 
@@ -63,32 +133,6 @@ public class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case children }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
-    // children and newlines
-    self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
-    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
-    // length
-    let summary = _children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._layoutLength = summary.layoutLength
-    // flags
-    self._isDirty = false
-
-    try super.init(from: decoder)
-    self._setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(self._children, forKey: .children)
-    try super.encode(to: encoder)
-  }
-
   /// Encode this node but with children replaced with given children.
   ///
   /// Helper function for encoding partial nodes. Override this method to encode
@@ -102,13 +146,6 @@ public class ElementNode: Node {
 
   // This is used for serialization.
   final func getChildren_readonly() -> Store { _children }
-
-  /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R {
-    preconditionFailure("overriding required")
-  }
 
   // MARK: - Content
 
@@ -124,56 +161,20 @@ public class ElementNode: Node {
   /// Create a node for splitting at the end.
   func createSuccessor() -> ElementNode? { nil }
 
-  override final func getChild(_ index: RohanIndex) -> Node? {
-    guard let index = index.index(),
-      index < _children.count
-    else { return nil }
-    return _children[index]
-  }
-
-  override final func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    // apply delta
-    _layoutLength += delta.layoutLength
-
-    // content change implies dirty
-    if inStorage { _isDirty = true }
-
-    // propagate to parent
-    parent?.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
   private final func contentDidChangeLocally(
-    childrenDelta: LengthSummary,
-    placeholderDelta: Int,
-    newlinesDelta: Int,
-    inStorage: Bool
+    childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool
   ) {
     // apply delta excluding placeholder and newlines
-    _layoutLength += childrenDelta.layoutLength
+    _layoutLength += childrenDelta
 
     // content change implies dirty
     if inStorage { _isDirty = true }
 
     var delta = childrenDelta
     // change to newlines should be added to propagated delta
-    delta.layoutLength += placeholderDelta + newlinesDelta
+    delta += placeholderDelta + newlinesDelta
     // propagate to parent
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
-  // MARK: - Location
-
-  override final func firstIndex() -> RohanIndex? { .index(0) }
-
-  override final func lastIndex() -> RohanIndex? { .index(_children.count) }
-
-  // MARK: - Styles
-
-  override final func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      _children.forEach { $0.resetCachedProperties(recursive: true) }
-    }
   }
 
   // MARK: - Layout
@@ -184,14 +185,7 @@ public class ElementNode: Node {
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
-  override final func layoutLength() -> Int {
-    isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
-  }
-
-  override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
-
   private final var _isDirty: Bool
-  override final var isDirty: Bool { _isDirty }
 
   /// true if placeholder should be shown when the node is empty
   final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }
@@ -428,16 +422,47 @@ public class ElementNode: Node {
   final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
-    let placeholder = isPlaceholderActive.intValue
-    let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
-    let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return placeholder + s1 + s2
+
+    if _children.isEmpty {
+      return isPlaceholderActive.intValue
+    }
+    else {
+      assert(isPlaceholderActive == false)
+      let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
+      let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
+      return s1 + s2
+    }
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    guard 0...layoutLength() ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+
+    if _children.isEmpty {
+      return .terminal(value: .index(0), target: 0)
+    }
+    assert(isPlaceholderActive == false)
+
+    var (k, s) = (0, 0)
+    // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
+    // invariant: s(k) = sum:i∈[0,k):ell(i)
+    //            s(k) ≤ layoutOffset
+    //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
+    while k < _children.count {
+      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
+      if ss > layoutOffset { break }
+      (k, s) = (k + 1, ss)
+    }
+    return k == _children.count
+      ? .terminal(value: .index(k), target: s)
+      : .halfway(value: .index(k), consumed: s)
   }
 
   /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
@@ -740,10 +765,10 @@ public class ElementNode: Node {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
-    var delta = LengthSummary.zero
+    var delta = 0
     _children.forEach { child in
       child.clearParent()
-      delta -= child.lengthSummary
+      delta -= child.layoutLength()
     }
 
     // perform remove
@@ -759,8 +784,7 @@ public class ElementNode: Node {
     // post update
     contentDidChangeLocally(
       childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta,
-      inStorage: inStorage)
+      newlinesDelta: newlinesDelta, inStorage: inStorage)
     return children
   }
 
@@ -770,10 +794,10 @@ public class ElementNode: Node {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
-    var delta = LengthSummary.zero
+    var delta = 0
     _children[range].forEach { child in
       child.clearParent()
-      delta -= child.lengthSummary
+      delta -= child.layoutLength()
     }
 
     // perform remove
@@ -790,8 +814,7 @@ public class ElementNode: Node {
     // post update
     contentDidChangeLocally(
       childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta,
-      inStorage: inStorage)
+      newlinesDelta: newlinesDelta, inStorage: inStorage)
     return children
   }
 
@@ -807,7 +830,7 @@ public class ElementNode: Node {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
-    let delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
+    let delta = nodes.lazy.map { $0.layoutLength() }.reduce(.zero, +)
 
     // perform insert
     var placeholderDelta = -isPlaceholderActive.intValue
@@ -824,8 +847,7 @@ public class ElementNode: Node {
 
     contentDidChangeLocally(
       childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta,
-      inStorage: inStorage)
+      newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
   public final func removeChild(at index: Int, inStorage: Bool) {
@@ -836,10 +858,10 @@ public class ElementNode: Node {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
-    var delta = LengthSummary.zero
+    var delta = 0
     _children[range].forEach { child in
       child.clearParent()
-      delta -= child.lengthSummary
+      delta -= child.layoutLength()
     }
 
     // perform remove
@@ -855,8 +877,7 @@ public class ElementNode: Node {
     // post update
     contentDidChangeLocally(
       childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta,
-      inStorage: inStorage)
+      newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
   internal final func replaceChild(_ node: Node, at index: Int, inStorage: Bool) {
@@ -865,7 +886,7 @@ public class ElementNode: Node {
     if inStorage { makeSnapshotOnce() }
 
     // compute delta
-    let delta = node.lengthSummary - _children[index].lengthSummary
+    let delta = node.layoutLength() - _children[index].layoutLength()
     // perform replace
     _children[index].clearParent()
     _children[index] = node
@@ -906,7 +927,7 @@ public class ElementNode: Node {
     // compact doesn't affect _layout length_, so delta = 0.
     // Theorectically newlinesDelta = 0, but it doesn't harm to update it.
     contentDidChangeLocally(
-      childrenDelta: .zero, placeholderDelta: 0, newlinesDelta: newlinesDelta,
+      childrenDelta: 0, placeholderDelta: 0, newlinesDelta: newlinesDelta,
       inStorage: inStorage)
 
     return true

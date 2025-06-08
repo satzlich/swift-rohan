@@ -54,7 +54,7 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> TextProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolve(properties, fallback)
+      key.resolveValue(properties, fallback)
     }
 
     return TextProperty(

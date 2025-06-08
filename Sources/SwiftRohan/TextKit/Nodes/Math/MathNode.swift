@@ -2,23 +2,40 @@
 
 import CoreGraphics
 
-public class MathNode: Node {
-  // MARK: - Content
+class MathNode: Node {
+  // MARK: - Node
 
-  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    // change of layout length is not propagated
-    parent?.contentDidChange(delta: delta.with(layoutLength: 0), inStorage: inStorage)
+  final override func resetCachedProperties() {
+    super.resetCachedProperties()
+    for (_, content) in enumerateComponents() {
+      content.resetCachedProperties()
+    }
   }
+
+  final override func getChild(_ index: RohanIndex) -> ContentNode? {
+    guard let index = index.mathIndex() else { return nil }
+    return getComponent(index)
+  }
+
+  final override func firstIndex() -> RohanIndex? {
+    (enumerateComponents().first?.index).map { .mathIndex($0) }
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    (enumerateComponents().last?.index).map { .mathIndex($0) }
+  }
+
+  override func contentDidChange(delta: Int, inStorage: Bool) {
+    // change of layout length is not propagated
+    parent?.contentDidChange(delta: 0, inStorage: inStorage)
+  }
+
+  final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
 
   // MARK: - Content
 
   @usableFromInline
   typealias Component = (index: MathIndex, content: ContentNode)
-
-  override final func getChild(_ index: RohanIndex) -> ContentNode? {
-    guard let index = index.mathIndex() else { return nil }
-    return getComponent(index)
-  }
 
   /// Returns the component for the index. If not found, return nil.
   final func getComponent(_ index: MathIndex) -> ContentNode? {
@@ -58,26 +75,7 @@ public class MathNode: Node {
     return components[target].index
   }
 
-  override final func firstIndex() -> RohanIndex? {
-    (enumerateComponents().first?.index).map({ .mathIndex($0) })
-  }
-
-  override final func lastIndex() -> RohanIndex? {
-    (enumerateComponents().last?.index).map({ .mathIndex($0) })
-  }
-
-  // MARK: - Styles
-
-  override final func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      enumerateComponents().forEach { $0.content.resetCachedProperties(recursive: true) }
-    }
-  }
-
   // MARK: - Layout
-
-  override final func layoutLength() -> Int { 1 }  // always "1" for math nodes
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for math component is not well-defined and is unused
@@ -87,6 +85,11 @@ public class MathNode: Node {
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     // layout offset for math component is not well-defined and is unused
     return nil
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset for math component is not well-defined and is unused
+    return .null
   }
 
   /// Returns the math index for the given point.

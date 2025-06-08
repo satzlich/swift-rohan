@@ -3,16 +3,20 @@
 import Foundation
 
 final class NamedSymbolNode: SimpleNode {
-  override class var type: NodeType { .namedSymbol }
+  // MARK: - Node
 
-  let namedSymbol: NamedSymbol
+  final override func deepCopy() -> Self { Self(namedSymbol) }
 
-  init(_ namedSymbol: NamedSymbol) {
-    self.namedSymbol = namedSymbol
-    super.init()
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(namedSymbol: self, context)
   }
 
-  // MARK: - Codable
+  final override class var type: NodeType { .namedSymbol }
+
+  final override func layoutLength() -> Int { namedSymbol.string.length }
+
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command }
 
@@ -28,17 +32,37 @@ final class NamedSymbolNode: SimpleNode {
     try super.init(from: decoder)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(namedSymbol.command, forKey: .command)
     try super.encode(to: encoder)
   }
 
-  // MARK: - Layout
+  // MARK: - Node(Storage)
 
-  override func layoutLength() -> Int {
-    namedSymbol.string.length
+  final override class var storageTags: Array<String> {
+    NamedSymbol.allCommands.map(\.command)
   }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(namedSymbol.command)])
+    return json
+  }
+
+  // MARK: - NamedSymbolNode
+
+  let namedSymbol: NamedSymbol
+
+  init(_ namedSymbol: NamedSymbol) {
+    self.namedSymbol = namedSymbol
+    super.init()
+  }
+
+  // MARK: - Layout
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     switch context {
@@ -72,24 +96,6 @@ final class NamedSymbolNode: SimpleNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> NamedSymbolNode {
-    NamedSymbolNode(namedSymbol)
-  }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(namedSymbol: self, context)
-  }
-
-  override class var storageTags: [String] {
-    NamedSymbol.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(namedSymbol.command)])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
     guard case let .array(array) = json,
       array.count == 1,
@@ -99,7 +105,4 @@ final class NamedSymbolNode: SimpleNode {
     return .success(NamedSymbolNode(mathSymbol))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

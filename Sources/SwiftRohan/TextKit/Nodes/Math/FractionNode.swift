@@ -5,7 +5,78 @@ import _RopeModule
 
 /// Generalized fraction
 final class FractionNode: MathNode {
-  override class var type: NodeType { .fraction }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(fraction: self, context)
+  }
+
+  final override class var type: NodeType { .fraction }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      if let style = genfrac.style {
+        current[MathProperty.style] = .mathStyle(style)
+      }
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, num, denom }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let genfrac = MathGenFrac.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown genfrac command: \(command)")
+    }
+    self.genfrac = genfrac
+    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
+    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
+    super.init()
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(genfrac.command, forKey: .command)
+    try container.encode(_numerator, forKey: .num)
+    try container.encode(_denominator, forKey: .denom)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathGenFrac.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let num = numerator.store()
+    let denom = denominator.store()
+    let json = JSONValue.array([.string(genfrac.command), num, denom])
+    return json
+  }
+
+  // MARK: - Fraction
 
   public let genfrac: MathGenFrac
 
@@ -25,7 +96,7 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf fractionNode: FractionNode) {
+  private init(deepCopyOf fractionNode: FractionNode) {
     self.genfrac = fractionNode.genfrac
     self._numerator = fractionNode._numerator.deepCopy()
     self._denominator = fractionNode._denominator.deepCopy()
@@ -38,38 +109,7 @@ final class FractionNode: MathNode {
     _denominator.setParent(self)
   }
 
-  // MARK: - Codable
-
-  // sync with FractionExpr
-  private enum CodingKeys: CodingKey { case command, num, denom }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let genfrac = MathGenFrac.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Unknown genfrac command: \(command)")
-    }
-    self.genfrac = genfrac
-    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
-    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
-    super.init()
-    _setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(genfrac.command, forKey: .command)
-    try container.encode(_numerator, forKey: .num)
-    try container.encode(_denominator, forKey: .denom)
-    try super.encode(to: encoder)
-  }
-
   // MARK: - Layout
-
-  override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
   private var _fractionFragment: MathFractionLayoutFragment? = nil
   override var layoutFragment: MathLayoutFragment? { _fractionFragment }
@@ -181,17 +221,6 @@ final class FractionNode: MathNode {
 
   // MARK: - Styles
 
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      if let enforcedStyle = genfrac.style {
-        properties[MathProperty.style] = .mathStyle(enforcedStyle)
-      }
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
-
   private func resolveMathContext(_ context: MathContext) -> MathContext {
     if let enforceStyle = genfrac.style {
       return context.with(mathStyle: enforceStyle)
@@ -202,24 +231,6 @@ final class FractionNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(fraction: self, context)
-  }
-
-  override class var storageTags: [String] {
-    MathGenFrac.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let num = numerator.store()
-    let denom = denominator.store()
-    let json = JSONValue.array([.string(genfrac.command), num, denom])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
     guard case let .array(array) = json,
@@ -254,10 +265,6 @@ final class FractionNode: MathNode {
 
     let node = FractionNode(num: num, denom: denom, genfrac: subtype)
     return corrupted ? .corrupted(node) : .success(node)
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
 }

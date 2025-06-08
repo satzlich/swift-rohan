@@ -45,7 +45,7 @@ struct SlicedElement: Encodable {
 extension SlicedElement: GenNode {
   var type: NodeType { _sourceNode.type }
 
-  func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     visitor.visit(slicedElement: self, context)
   }
 

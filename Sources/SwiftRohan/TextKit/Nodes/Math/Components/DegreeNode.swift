@@ -2,16 +2,19 @@
 
 /// Degree of Radical.
 final class DegreeNode: ContentNode {
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  // MARK: - Node
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      properties[MathProperty.style] = .mathStyle(.scriptScript)
-      _cachedProperties = properties
+      var current = super.getProperties(styleSheet)
+      current[MathProperty.style] = .mathStyle(.scriptScript)
+      _cachedProperties = current
     }
     return _cachedProperties!
   }
-  
-  
+
+  // MARK: - DegreeNode
+
   final class func loadSelf(from json: JSONValue) -> _LoadResult<DegreeNode> {
     loadSelfGeneric(from: json)
   }

@@ -3,8 +3,66 @@
 import Foundation
 import _RopeModule
 
-public final class TextNode: Node {
-  override class var type: NodeType { .text }
+final class TextNode: Node {
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(text: self, context)
+  }
+
+  final override class var type: NodeType { .text }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    // Use the properties from the parent node if available.
+    parent?.getProperties(styleSheet) ?? [:]
+  }
+
+  final override func getChild(_ index: RohanIndex) -> Node? { nil }
+
+  final override func firstIndex() -> RohanIndex? { .index(0) }
+  final override func lastIndex() -> RohanIndex? { .index(_string.length) }
+
+  final override func layoutLength() -> Int { _string.length }
+
+  final override var isDirty: Bool { false }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case string }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let string = try container.decode(RhString.self, forKey: .string)
+    guard Self.validate(string: string) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .string, in: container, debugDescription: "Invalid text string.")
+    }
+    self._string = string
+
+    try super.init(from: decoder)
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_string, forKey: .string)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { /* intentionally empty */ [] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue { .string(String(_string)) }
+
+  // MARK: - TextNode
 
   private let _string: RhString
 
@@ -18,7 +76,7 @@ public final class TextNode: Node {
     super.init()
   }
 
-  internal init(deepCopyOf textNode: TextNode) {
+  private init(deepCopyOf textNode: TextNode) {
     self._string = textNode._string
     super.init()
   }
@@ -26,32 +84,6 @@ public final class TextNode: Node {
   static func validate<S: Sequence<Character>>(string: S) -> Bool {
     TextExpr.validate(string: string)
   }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case string }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let string = try container.decode(RhString.self, forKey: .string)
-    guard Self.validate(string: string) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .string, in: container,
-        debugDescription: "Invalid text string.")
-    }
-    self._string = string
-    try super.init(from: decoder)
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(_string, forKey: .string)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Content
-
-  override final func getChild(_ index: RohanIndex) -> Node? { return nil }
 
   // MARK: - Location
 
@@ -72,19 +104,7 @@ public final class TextNode: Node {
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
-  override func firstIndex() -> RohanIndex? { .index(0) }
-
-  override func lastIndex() -> RohanIndex? { .index(length) }
-
   // MARK: - Layout
-
-  // Semantically layout length and string length are not the same.
-  // By our design choice, their values coincide.
-  override final func layoutLength() -> Int { _string.utf16.count }
-
-  override final var isBlock: Bool { false }
-
-  override final var isDirty: Bool { false }
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     context.insertText(_string, self)
@@ -101,6 +121,14 @@ public final class TextNode: Node {
     guard 0..<layoutLength() ~= layoutOffset else { return nil }
     let index = _getUpstreamBoundary(layoutOffset)
     return (.index(index), index)
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    guard 0...layoutLength() ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+    let index = _getUpstreamBoundary(layoutOffset)
+    return .terminal(value: .index(index), target: index)
   }
 
   /// Returns the index of the character at the given layout offset.
@@ -176,40 +204,13 @@ public final class TextNode: Node {
     return LayoutUtils.rayshootFurther(newOffset, affinity, direction, result, context)
   }
 
-  // MARK: - Styles
-
-  public override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    // inherit from parent
-    parent?.getProperties(styleSheet) ?? [:]
-  }
-
   // MARK: - Clone and Visitor
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(text: self, context)
-  }
-
-  override class var storageTags: [String] {
-    // intentionally empty
-    []
-  }
-
-  override func store() -> JSONValue {
-    .string(String(_string))
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<TextNode> {
     guard case let .string(string) = json,
       Self.validate(string: string)
     else { return .failure(UnknownNode(json)) }
     return .success(TextNode(string))
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   // MARK: - TextNode Specific

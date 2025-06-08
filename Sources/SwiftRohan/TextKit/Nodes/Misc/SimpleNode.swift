@@ -2,40 +2,52 @@
 
 import CoreGraphics
 
-public class SimpleNode: Node {  // default implementation for simple nodes
+class SimpleNode: Node {  // default implementation for simple nodes
+  // MARK: - Node
+
   override init() { super.init() }
 
-  // MARK: - Codable
+  override func resetCachedProperties() {
+    super.resetCachedProperties()
+  }
 
-  public required init(from decoder: any Decoder) throws {
+  // mark as `final` to prevent overriding
+  final override func selector() -> TargetSelector { super.selector() }
+
+  internal override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    // by default, return parent's properties
+    parent?.getProperties(styleSheet) ?? [:]
+  }
+
+  final override func getChild(_ index: RohanIndex) -> Node? { nil }
+
+  final override func firstIndex() -> RohanIndex? { nil }
+  final override func lastIndex() -> RohanIndex? { nil }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) { /* no-op */  }
+
+  final override var isDirty: Bool { false }
+
+  // MARK: - Node(Codable)
+
+  required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
   }
 
-  public override func encode(to encoder: any Encoder) throws {
+  internal override func encode(to encoder: any Encoder) throws {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override final func getChild(_ index: RohanIndex) -> Node? { nil }
-
-  override final func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
-    // do nothing
-  }
-
-  // MARK: - Location
-
-  override final func firstIndex() -> RohanIndex? { nil }
-  override final func lastIndex() -> RohanIndex? { nil }
-
   // MARK: - Layout
-
-  override final var isBlock: Bool { false }
-  override final var isDirty: Bool { false }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     nil
+  }
+
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // always return nil
+    .null
   }
 
   override final func enumerateTextSegments(
@@ -64,18 +76,5 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   ) -> RayshootResult? {
     assertionFailure("Unreachable")
     return nil
-  }
-
-  // MARK: - Styles
-
-  override final func selector() -> TargetSelector { super.selector() }
-
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    // inherit from parent
-    parent?.getProperties(styleSheet) ?? [:]
-  }
-
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
   }
 }

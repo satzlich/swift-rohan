@@ -3,7 +3,86 @@
 import Foundation
 
 final class MathStylesNode: MathNode {
-  override class var type: NodeType { .mathStyles }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathStyles: self, context)
+  }
+
+  final override class var type: NodeType { .mathStyles }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      switch styles {
+      case .mathTextStyle(let mathTextStyle):
+        let (variant, bold, italic) = mathTextStyle.tuple()
+        current[MathProperty.variant] = .mathVariant(variant)
+        if let bold = bold { current[MathProperty.bold] = .bool(bold) }
+        if let italic = italic { current[MathProperty.italic] = .bool(italic) }
+
+      case .mathStyle(let mathStyle):
+        current[MathProperty.style] = .mathStyle(mathStyle)
+
+      case .inlineStyle:
+        let key = MathProperty.style
+        let mathStyle = key.resolveValue(current, styleSheet).mathStyle()!
+        current[key] = .mathStyle(mathStyle.inlineParallel())
+      }
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  final override var isDirty: Bool { nucleus.isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let styles = MathStyles.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid styles command: \(command)")
+    }
+    self.styles = styles
+    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    try super.init(from: decoder)
+    _setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(styles.command, forKey: .command)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathStyles.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(styles.command), nucleus])
+    return json
+  }
+
+  // MARK: - MathStylesNode
 
   let styles: MathStyles
   let nucleus: ContentNode
@@ -22,7 +101,7 @@ final class MathStylesNode: MathNode {
     _setUp()
   }
 
-  internal init(deepCopyOf node: MathStylesNode) {
+  private init(deepCopyOf node: MathStylesNode) {
     self.styles = node.styles
     self.nucleus = node.nucleus.deepCopy()
     super.init()
@@ -31,52 +110,6 @@ final class MathStylesNode: MathNode {
 
   private func _setUp() {
     nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let command = try container.decode(String.self, forKey: .command)
-    guard let styles = MathStyles.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Invalid styles command: \(command)")
-    }
-    self.styles = styles
-    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    try super.init(from: decoder)
-    _setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(styles.command, forKey: .command)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
-  // MARK: - Clone and Visitor
-
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathStyles: self, context)
-  }
-
-  // MARK: - Storage
-
-  override class var storageTags: [String] {
-    MathStyles.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(styles.command), nucleus])
-    return json
   }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
@@ -99,50 +132,13 @@ final class MathStylesNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
-
   // MARK: - Content
 
   override func enumerateComponents() -> [MathNode.Component] {
     [(MathIndex.nuc, nucleus)]
   }
 
-  // MARK: - Styles
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-
-      switch styles {
-      case .mathTextStyle(let mathTextStyle):
-        let (variant, bold, italic) = mathTextStyle.tuple()
-        properties[MathProperty.variant] = .mathVariant(variant)
-        if let bold = bold {
-          properties[MathProperty.bold] = .bool(bold)
-        }
-        if let italic = italic {
-          properties[MathProperty.italic] = .bool(italic)
-        }
-
-      case .mathStyle(let mathStyle):
-        properties[MathProperty.style] = .mathStyle(mathStyle)
-
-      case .inlineStyle:
-        let key = MathProperty.style
-        let mathStyle = key.resolve(properties, styleSheet.defaultProperties).mathStyle()!
-        properties[key] = .mathStyle(mathStyle.inlineParallel())
-      }
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
-
   // MARK: - Layout
-
-  override var isDirty: Bool { nucleus.isDirty }
 
   private typealias _MathStylesLayoutFragment =
     LayoutFragmentWrapper<MathListLayoutFragment>

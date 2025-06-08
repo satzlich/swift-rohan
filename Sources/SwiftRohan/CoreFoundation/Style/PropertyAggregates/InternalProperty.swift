@@ -24,7 +24,7 @@ public struct InternalProperty: PropertyAggregate {
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> InternalProperty {
     func resolve(_ key: PropertyKey) -> PropertyValue {
-      key.resolve(properties, fallback)
+      key.resolveValue(properties, fallback)
     }
 
     return InternalProperty(nestedLevel: resolve(nestedLevel).integer()!)

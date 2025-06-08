@@ -5,7 +5,61 @@ import UnicodeMathClass
 
 /// A node that override certain math attributes of generated fragment.
 final class MathAttributesNode: MathNode {
-  override class var type: NodeType { .mathAttributes }
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathAttributes: self, context)
+  }
+
+  final override class var type: NodeType { .mathAttributes }
+
+  final override var isDirty: Bool { _nucleus.isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case command, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let attributes = MathAttributes.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid math attributes command: \(command)")
+    }
+    self.subtype = attributes
+    self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(subtype.command, forKey: .command)
+    try container.encode(_nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathAttributes.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = _nucleus.store()
+    let json = JSONValue.array([.string(subtype.command), nucleus])
+    return json
+  }
+
+  // MARK: - MathAttributesNode
 
   typealias Subtype = MathAttributes
 
@@ -27,7 +81,7 @@ final class MathAttributesNode: MathNode {
     self._setUp()
   }
 
-  init(deepCopyOf node: MathAttributesNode) {
+  private init(deepCopyOf node: MathAttributesNode) {
     self.subtype = node.subtype
     self._nucleus = node._nucleus.deepCopy()
     super.init()
@@ -38,34 +92,7 @@ final class MathAttributesNode: MathNode {
     self._nucleus.setParent(self)
   }
 
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case command, nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let command = try container.decode(String.self, forKey: .command)
-    guard let attributes = MathAttributes.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Invalid math attributes command: \(command)")
-    }
-    self.subtype = attributes
-    self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype.command, forKey: .command)
-    try container.encode(_nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
-
   // MARK: - Layout
-
-  override var isDirty: Bool { _nucleus.isDirty }
 
   private typealias _MathAttributesLayoutFragment =
     MathAttributesLayoutFragment<MathListLayoutFragment>
@@ -159,23 +186,6 @@ final class MathAttributesNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathAttributes: self, context)
-  }
-
-  override class var storageTags: [String] {
-    MathAttributes.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = _nucleus.store()
-    let json = JSONValue.array([.string(subtype.command), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathAttributesNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -194,9 +204,5 @@ final class MathAttributesNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 }

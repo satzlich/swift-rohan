@@ -4,6 +4,65 @@ import Foundation
 import _RopeModule
 
 class ArrayNode: Node {
+  // MARK: - Node(Styles)
+
+  final override func resetCachedProperties() {
+    super.resetCachedProperties()
+    for row in _rows {
+      for cell in row {
+        cell.resetCachedProperties()
+      }
+    }
+  }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      let key = MathProperty.style
+      let value = key.resolveValue(current, styleSheet).mathStyle()!
+      let mathStyle =
+        switch subtype.subtype {
+        case .matrix, .cases, .substack: MathUtils.matrixStyle(for: value)
+        case .aligned, .gathered: MathUtils.alignedStyle(for: value)
+        }
+      current[key] = .mathStyle(mathStyle)
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - Node(Positioning)
+
+  final override func getChild(_ index: RohanIndex) -> Node? {
+    guard let index = index.gridIndex() else { return nil }
+    return self.getComponent(index)
+  }
+
+  final override func firstIndex() -> RohanIndex? {
+    guard rowCount > 0, columnCount > 0 else { return nil }
+    return .gridIndex(0, 0)
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    guard rowCount > 0, columnCount > 0 else { return nil }
+    return .gridIndex(rowCount - 1, columnCount - 1)
+  }
+
+  // MARK: - Node(Layout)
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    parent?.contentDidChange(delta: 0, inStorage: inStorage)
+  }
+
+  final override func layoutLength() -> Int { 1 }  // always "1".
+
+  final override var isDirty: Bool { _isDirty }
+
+  // MARK: - Array
+
   typealias Cell = ContentNode
   typealias Row = GridRow<Cell>
 
@@ -76,21 +135,11 @@ class ArrayNode: Node {
 
   // MARK: - Content
 
-  final override func getChild(_ index: RohanIndex) -> Node? {
-    guard let index = index.gridIndex() else { return nil }
-    return getComponent(index)
-  }
-
   final func getComponent(_ index: GridIndex) -> Cell? {
     guard index.row < rowCount,
       index.column < columnCount
     else { return nil }
     return _rows[index.row][index.column]
-  }
-
-  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
   private var _editLog: Array<ArrayEvent> = []
@@ -157,18 +206,6 @@ class ArrayNode: Node {
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  // MARK: - Location
-
-  final override func firstIndex() -> RohanIndex? {
-    guard rowCount > 0, columnCount > 0 else { return nil }
-    return .gridIndex(0, 0)
-  }
-
-  final override func lastIndex() -> RohanIndex? {
-    guard rowCount > 0, columnCount > 0 else { return nil }
-    return .gridIndex(rowCount - 1, columnCount - 1)
-  }
-
   final func destinationIndex(
     for index: GridIndex, _ direction: TextSelectionNavigation.Direction
   ) -> GridIndex? {
@@ -210,12 +247,7 @@ class ArrayNode: Node {
 
   // MARK: - Layout
 
-  final override func layoutLength() -> Int { 1 }
-
-  final override var isBlock: Bool { false }
-
   private var _isDirty: Bool = false
-  final override var isDirty: Bool { _isDirty }
 
   private var _matrixFragment: MathArrayLayoutFragment? = nil
 
@@ -319,6 +351,11 @@ class ArrayNode: Node {
   final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     // layout offset for matrix is not well-defined and is unused
     nil
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset for matrix is not well-defined and is unused
+    .null
   }
 
   final override func enumerateTextSegments(
@@ -474,33 +511,4 @@ class ArrayNode: Node {
     _matrixFragment?.rayshoot(from: point, index, in: direction)
   }
 
-  // MARK: - Styles
-
-  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      let key = MathProperty.style
-      let value = key.resolve(properties, styleSheet).mathStyle()!
-      switch subtype.subtype {
-      case .matrix, .cases, .substack:
-        properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
-      case .aligned, .gathered:
-        properties[key] = .mathStyle(MathUtils.alignedStyle(for: value))
-      }
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
-
-  final override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      for row in _rows {
-        for element in row {
-          element.resetCachedProperties(recursive: recursive)
-        }
-      }
-    }
-  }
 }

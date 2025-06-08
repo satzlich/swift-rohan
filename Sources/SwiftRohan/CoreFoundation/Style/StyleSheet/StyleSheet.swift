@@ -21,7 +21,7 @@ public final class StyleSheet: Sendable {
 
 extension StyleSheet {
   public func resolveDefault(_ key: PropertyKey) -> PropertyValue {
-    key.resolve([:], defaultProperties)
+    key.resolveValue([:], defaultProperties)
   }
 
   public func resolveDefault<T: PropertyAggregate>() -> T {

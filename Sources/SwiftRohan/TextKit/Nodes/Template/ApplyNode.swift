@@ -3,8 +3,145 @@
 import Foundation
 import _RopeModule
 
-public final class ApplyNode: Node {
-  override class var type: NodeType { .apply }
+final class ApplyNode: Node {
+  // MARK: - Node
+
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(apply: self, context)
+  }
+
+  final override class var type: NodeType { .apply }
+
+  final override func resetCachedProperties() {
+    super.resetCachedProperties()
+    _content.resetCachedProperties()
+  }
+
+  final override func getChild(_ index: RohanIndex) -> ArgumentNode? {
+    guard let index = index.argumentIndex(),
+      index < _arguments.count
+    else { return nil }
+    return _arguments[index]
+  }
+
+  final override func firstIndex() -> RohanIndex? {
+    guard !_arguments.isEmpty else { return nil }
+    return .argumentIndex(0)
+  }
+
+  final override func lastIndex() -> RohanIndex? {
+    guard !_arguments.isEmpty else { return nil }
+    return .argumentIndex(_arguments.count - 1)
+  }
+
+  // MARK: - Node(Layout)
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    parent?.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  final override func layoutLength() -> Int { _content.layoutLength() }
+
+  final override var isDirty: Bool { _content.isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case template, arguments }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let template = try container.decode(MathTemplate.self, forKey: .template)
+
+    // decode arguments
+    var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
+    let argumentValues: Array<Array<Node>> =
+      try NodeSerdeUtils.decodeListOfListsOfNodes(from: &argumentsContainer)
+
+    // almost same as init?()
+    guard template.parameterCount == argumentValues.count,
+      let (content, arguments) =
+        NodeUtils.applyTemplate(template.template, argumentValues)
+    else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .arguments, in: container,
+        debugDescription: "Failed to apply template with given arguments")
+    }
+
+    self.template = template
+    self._arguments = arguments
+    self._content = content
+
+    try super.init(from: decoder)
+
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+
+    try container.encode(template, forKey: .template)
+
+    let listOfListsOfNodes = self._arguments.map { $0.getArgumentValue_readonly() }
+    try container.encode(listOfListsOfNodes, forKey: .arguments)
+
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathTemplate.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    guard case let .array(array) = json,
+      array.isEmpty == false,
+      case let .string(tag) = array[0],
+      let template = MathTemplate.lookup(tag),
+      template.parameterCount == array.count - 1
+    else { return .failure(UnknownNode(json)) }
+
+    var argumentValues: Array<Array<Node>> = []
+    argumentValues.reserveCapacity(template.parameterCount)
+    var corrupted = false
+
+    typealias _ArgumentResult = LoadResult<Array<Node>, UnknownNode>
+    for argument in array.dropFirst() {
+      let argumentValue = NodeStoreUtils.loadNodes(argument) as _ArgumentResult
+      switch argumentValue {
+      case .success(let nodes):
+        argumentValues.append(nodes)
+      case .corrupted(let nodes):
+        argumentValues.append(nodes)
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+
+    guard let applyNode = ApplyNode(template, argumentValues) else {
+      return .failure(UnknownNode(json))
+    }
+    return corrupted ? .corrupted(applyNode) : .success(applyNode)
+  }
+
+  final override func store() -> JSONValue {
+    switch template.subtype {
+    case .functionCall:
+      let arguments: Array<JSONValue> = _arguments.map { $0.store() }
+      let values = [JSONValue.string(template.command)] + arguments
+      return JSONValue.array(values)
+
+    case .codeSnippet:
+      preconditionFailure()
+    }
+  }
+
+  // MARK: - ApplyNode
 
   let template: MathTemplate
   private let _arguments: [ArgumentNode]
@@ -24,7 +161,7 @@ public final class ApplyNode: Node {
     self._setUp()
   }
 
-  init(deepCopyOf applyNode: ApplyNode) {
+  private init(deepCopyOf applyNode: ApplyNode) {
     // deep copy of argument's value
     func deepCopy(from argument: ArgumentNode) -> [Node] {
       let variableNode = argument.variableNodes.first!
@@ -52,54 +189,6 @@ public final class ApplyNode: Node {
     self._arguments.forEach({ $0.setApplyNode(self) })
   }
 
-  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    // propagate to parent
-    parent?.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case template, arguments }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    // decode template
-    let template = try container.decode(MathTemplate.self, forKey: .template)
-    // decode arguments
-    var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
-    let argumentValues: [[Node]] =
-      try NodeSerdeUtils.decodeListOfListsOfNodes(from: &argumentsContainer)
-
-    // almost same as init?()
-    guard template.parameterCount == argumentValues.count,
-      let (content, arguments) =
-        NodeUtils.applyTemplate(template.template, argumentValues)
-    else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .arguments, in: container,
-        debugDescription: "Failed to apply template with given arguments")
-    }
-
-    self.template = template
-    self._arguments = arguments
-    self._content = content
-
-    try super.init(from: decoder)
-
-    self._setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    // encode template
-    try container.encode(template, forKey: .template)
-    // encode arguments
-    let listOfListsOfNodes = self._arguments.map({ $0.getArgumentValue_readonly() })
-    try container.encode(listOfListsOfNodes, forKey: .arguments)
-    try super.encode(to: encoder)
-  }
-
   // MARK: - Content
 
   final var argumentCount: Int { _arguments.count }
@@ -111,39 +200,7 @@ public final class ApplyNode: Node {
 
   final func getContent() -> ContentNode { _content }
 
-  override func getChild(_ index: RohanIndex) -> ArgumentNode? {
-    guard let index = index.argumentIndex(),
-      index < _arguments.count
-    else { return nil }
-    return _arguments[index]
-  }
-
-  // MARK: - Location
-
-  override func firstIndex() -> RohanIndex? {
-    guard !_arguments.isEmpty else { return nil }
-    return .argumentIndex(0)
-  }
-
-  override func lastIndex() -> RohanIndex? {
-    guard !_arguments.isEmpty else { return nil }
-    return .argumentIndex(_arguments.count - 1)
-  }
-
-  // MARK: - Styles
-
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive { _content.resetCachedProperties(recursive: true) }
-  }
-
   // MARK: - Layout
-
-  override func layoutLength() -> Int { _content.layoutLength() }
-
-  override var isBlock: Bool { false }
-
-  override var isDirty: Bool { _content.isDirty }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     _content.performLayout(context, fromScratch: fromScratch)
@@ -157,6 +214,11 @@ public final class ApplyNode: Node {
   override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     // layout offset is not well-defined for ApplyNode
     nil
+  }
+
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset is not well-defined for ApplyNode
+    .null
   }
 
   override func enumerateTextSegments(
@@ -258,60 +320,4 @@ public final class ApplyNode: Node {
 
   // MARK: - Clone and Visitor
 
-  public override func deepCopy() -> ApplyNode {
-    ApplyNode(deepCopyOf: self)
-  }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(apply: self, context)
-  }
-
-  override class var storageTags: [String] {
-    MathTemplate.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    switch template.subtype {
-    case .functionCall:
-      let arguments: Array<JSONValue> = _arguments.map { $0.store() }
-      let values = [JSONValue.string(template.command)] + arguments
-      return JSONValue.array(values)
-
-    case .codeSnippet:
-      preconditionFailure()
-    }
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    guard case let .array(array) = json,
-      array.isEmpty == false,
-      case let .string(tag) = array[0],
-      let template = MathTemplate.lookup(tag),
-      template.parameterCount == array.count - 1
-    else { return .failure(UnknownNode(json)) }
-
-    var argumentValues: Array<Array<Node>> = []
-    argumentValues.reserveCapacity(template.parameterCount)
-    var corrupted = false
-
-    typealias _ArgumentResult = LoadResult<Array<Node>, UnknownNode>
-    for argument in array.dropFirst() {
-      let argumentValue = NodeStoreUtils.loadNodes(argument) as _ArgumentResult
-      switch argumentValue {
-      case .success(let nodes):
-        argumentValues.append(nodes)
-      case .corrupted(let nodes):
-        argumentValues.append(nodes)
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-
-    guard let applyNode = ApplyNode(template, argumentValues) else {
-      return .failure(UnknownNode(json))
-    }
-    return corrupted ? .corrupted(applyNode) : .success(applyNode)
-  }
 }

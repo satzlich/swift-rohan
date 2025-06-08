@@ -3,22 +3,17 @@
 import Foundation
 
 final class MatrixNode: ArrayNode {
-  override class var type: NodeType { .matrix }
+  // MARK: - Node
+  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
-    super.init(subtype, rows)
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(matrix: self, context)
   }
 
-  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
-    let rows = rows.map { Row($0) }
-    super.init(subtype, rows)
-  }
+  final override class var type: NodeType { .matrix }
 
-  init(deepCopyOf matrixNode: MatrixNode) {
-    super.init(deepCopyOf: matrixNode)
-  }
-
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case rows, command }
 
@@ -35,33 +30,45 @@ final class MatrixNode: ArrayNode {
     super.init(subtype, rows)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(subtype.command, forKey: .command)
     try container.encode(_rows, forKey: .rows)
     try super.encode(to: encoder)
   }
 
-  // MARK: - Clone and Visitor
+  // MARK: - Node(Storage)
 
-  override func deepCopy() -> MatrixNode { MatrixNode(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(matrix: self, context)
+  final override class var storageTags: Array<String> {
+    MathArray.allCommands.map(\.command)
   }
 
-  override class var storageTags: [String] {
-    MathArray.allCommands.map { $0.command }
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 
-  override func store() -> JSONValue {
+  final override func store() -> JSONValue {
     let rows: [JSONValue] = _rows.map { row in
       let children: [JSONValue] = row.map { $0.store() }
       return JSONValue.array(children)
     }
     let json = JSONValue.array([.string(subtype.command), .array(rows)])
     return json
+  }
+
+  // MARK: - MatrixNode
+
+  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
+    super.init(subtype, rows)
+  }
+
+  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
+    let rows = rows.map { Row($0) }
+    super.init(subtype, rows)
+  }
+
+  private init(deepCopyOf matrixNode: MatrixNode) {
+    super.init(deepCopyOf: matrixNode)
   }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<MatrixNode> {
@@ -85,7 +92,4 @@ final class MatrixNode: ArrayNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

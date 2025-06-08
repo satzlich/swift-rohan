@@ -4,51 +4,127 @@ import AppKit
 import Foundation
 import _RopeModule
 
-public class Node: Codable {
-  internal final private(set) weak var parent: Node?
+internal class Node: Codable {
+  public init() {}
 
-  /// Identifier of this node
-  internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
+  /// Returns a deep copy of the node (intrinsic state only).
+  internal func deepCopy() -> Self { preconditionFailure("overriding required") }
 
-  class var type: NodeType { preconditionFailure("overriding required") }
+  internal func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {  // V for visitor, C for context, R for result
+    preconditionFailure("overriding required")
+  }
+
+  internal class var type: NodeType { preconditionFailure("overriding required") }
   final var type: NodeType { Self.type }
 
-  internal final func setParent(_ parent: Node) {
+  final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
+
+  final private(set) weak var parent: Node?
+
+  /// Reallocate the node's identifier.
+  final func reallocateId() {
+    self.id = NodeIdAllocator.allocate()
+  }
+
+  final func setParent(_ parent: Node) {
     precondition(self.parent == nil)
     self.parent = parent
   }
 
-  internal final func clearParent() {
+  final func clearParent() {
     precondition(self.parent != nil)
     parent = nil
   }
 
-  /// Reallocate the node's identifier.
-  /// - Warning: Reallocation of node id can be disastrous if used incorrectly.
-  internal final func reallocateId() {
-    id = NodeIdAllocator.allocate()
-  }
-
   /// Reset properties that cannot be reused.
-  /// 1. Reallocate the node's identifier.
-  /// 2. Clear the cached properties.
-  internal final func prepareForReuse() {
+  final func resetForReuse() {
     reallocateId()
-    resetCachedProperties(recursive: true)
+    resetCachedProperties()
   }
 
-  public init() {}
+  // MARK: - Styles
+
+  final var _cachedProperties: PropertyDictionary?
+
+  /// Reset cached properties **recursively**.
+  /// - Note: If only the node's properties are to be reset, just call
+  ///     `self._cachedProperties = nil`.
+  internal func resetCachedProperties() {
+    _cachedProperties = nil
+  }
+
+  /// Returns the selector for the node class without instance properties.
+  final class func selector() -> TargetSelector { TargetSelector(type) }
+
+  /// Returns the selector for the node instance.
+  internal func selector() -> TargetSelector { Self.selector() }
+
+  internal func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      let inherited = parent?.getProperties(styleSheet)
+      let ruleBased = styleSheet.getProperties(for: self.selector())
+
+      var current: PropertyDictionary =
+        switch (inherited, ruleBased) {
+        case (.none, .none): [:]
+        case let (.some(a), .none): a
+        case let (.none, .some(b)): b
+        case let (.some(a), .some(b)): a.merging(b) { $1 }
+        }
+
+      // process nested-level property
+      if NodePolicy.shouldIncreaseLevel(self.type) {
+        let key = InternalProperty.nestedLevel
+        let level = key.resolveValue(current, styleSheet).integer()!
+        current.updateValue(.integer(level + 1), forKey: key)
+      }
+
+      // set the cache
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - Positioning
+
+  /// Returns the child for the index. If not found or invalid, returns nil.
+  internal func getChild(_ index: RohanIndex) -> Node? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns the index for the upstream end.
+  internal func firstIndex() -> RohanIndex? { preconditionFailure("overriding required") }
+
+  /// Returns the index for the downstream end.
+  internal func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
+
+  // MARK: - Layout
+
+  internal func contentDidChange(delta: Int, inStorage: Bool) {
+    preconditionFailure("overriding required")
+  }
+
+  /// How many length units the node contributes to the layout context.
+  internal func layoutLength() -> Int { preconditionFailure("overriding required") }
+
+  /// Returns true if the node produces a block layout.
+  internal var isBlock: Bool { false }  // default is inline.
+
+  /// Returns true if the node is dirty.
+  internal var isDirty: Bool { preconditionFailure("overriding required") }
 
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
 
-  public required init(from decoder: any Decoder) throws {
-    // This is unnecessary, but it's a good practice to check type consistency
+  internal required init(from decoder: any Decoder) throws {
+    // type check is unnecessary, but let's keep it for safety.
 
-    // for unknown node, the encoded type can be arbitrary
+    // for unknown node, the encoded type can be arbitrary.
     guard Self.type != .unknown else { return }
-    // for known node type, the encoded type must match
+
+    // for known node type, the encoded type must match.
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let nodeType = try container.decode(NodeType.self, forKey: .type)
     guard nodeType == Self.type else {
@@ -58,8 +134,8 @@ public class Node: Codable {
     }
   }
 
-  public func encode(to encoder: any Encoder) throws {
-    precondition(type != .unknown, "type must be known")
+  internal func encode(to encoder: any Encoder) throws {
+    precondition(type != .unknown)  // unknown node is processed separately
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(type, forKey: .type)
   }
@@ -68,59 +144,21 @@ public class Node: Codable {
 
   typealias _LoadResult<T: Node> = LoadResult<T, UnknownNode>
 
+  /// Tags associated with this node.
+  /// - IMPORTANT: The set of storageTags should only expand, and never shrink.
+  internal class var storageTags: Array<String> {
+    preconditionFailure("overriding required")
+  }
+
   /// Restore the node from JSONValue.
-  class func load(from json: JSONValue) -> _LoadResult<Node> {
+  internal class func load(from json: JSONValue) -> _LoadResult<Node> {
     preconditionFailure("overriding required")
   }
 
   /// Store the node to JSONValue.
-  func store() -> JSONValue {
-    preconditionFailure("overriding required")
-  }
-
-  /// Tags associated with this node.
-  /// - IMPORTANT: The set of storageTags should only expand, and never shrink.
-  class var storageTags: [String] {
-    preconditionFailure("overriding required")
-  }
+  internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
   // MARK: - Content
-
-  final var isTransparent: Bool { NodePolicy.isTransparent(type) }
-
-  /// Returns the child for the index. If not found, return nil.
-  func getChild(_ index: RohanIndex) -> Node? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Propagate content change.
-  internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    preconditionFailure("overriding required")
-  }
-
-  // MARK: - Location
-
-  /// Returns the index for the upstream end
-  func firstIndex() -> RohanIndex? { preconditionFailure("overriding required") }
-
-  /// Returns the index for the downstream end
-  func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
-
-  // MARK: - Layout
-
-  /// How many length units the node contributes to the layout context.
-  func layoutLength() -> Int {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns true if the node occupies a single block.
-  var isBlock: Bool { false }
-
-  /// Returns true if the node is dirty.
-  var isDirty: Bool { preconditionFailure("overriding required") }
-
-  /// Returns true if the node is pivotal.
-  final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
   /// Perform layout and clear the dirty flag.
   /// * For `fromScratch=true`, one should treat the node as if it was not
@@ -146,6 +184,15 @@ public class Node: Codable {
   ///     the returned index must succeed.
   /// - Invariant: `consumed == nil || consumed <= layoutOffset`
   func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns a position within the node that is picked by `layoutOffset`.
+  /// - Parameter layoutOffset: layout offset
+  /// - Invariant: If return value is non-nil, then the index must be valid for the node.
+  ///     For example, for an `ElementNode`, the index must be a valid child index which
+  ///     is in the range `[0, childCount]` (inclusive).
+  func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     preconditionFailure("overriding required")
   }
 
@@ -191,90 +238,14 @@ public class Node: Codable {
     precondition(direction == .up || direction == .down)
     preconditionFailure("overriding required")
   }
-
-  // MARK: - Styles
-
-  final var _cachedProperties: PropertyDictionary?
-
-  func selector() -> TargetSelector { TargetSelector(type) }
-
-  public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      let inherited = parent?.getProperties(styleSheet)
-      // apply style rule for given selector
-      do {
-        let properties = styleSheet.getProperties(for: selector())
-        switch (inherited, properties) {
-        case (.none, .none):
-          _cachedProperties = [:]
-        case let (.none, .some(properties)):
-          _cachedProperties = properties
-        case let (.some(inherited), .none):
-          _cachedProperties = inherited
-        case let (.some(inherited), .some(properties)):
-          _cachedProperties = inherited.merging(properties) { $1 }
-        }
-      }
-      // process for nested-level
-      if NodePolicy.shouldIncreaseLevel(self.type) {
-        let key = InternalProperty.nestedLevel
-        let level = key.resolve(_cachedProperties!, styleSheet).integer()!
-        _cachedProperties?.updateValue(.integer(level + 1), forKey: key)
-      }
-    }
-    return _cachedProperties!
-  }
-
-  func resetCachedProperties(recursive: Bool) {
-    _cachedProperties = nil
-  }
-
-  // MARK: - Clone and Visitor
-
-  /// Returns a deep copy of the node (intrinsic state only).
-  public func deepCopy() -> Node {
-    preconditionFailure("overriding required")
-  }
-
-  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
-    preconditionFailure("overriding required")
-  }
-
-  // MARK: - LengthSummary
-
-  final var lengthSummary: LengthSummary {
-    LengthSummary(layoutLength: layoutLength())
-  }
-
-  /// Previously there were multiple kinds of lengths involved. Now there is only one.
-  struct LengthSummary: Equatable, Hashable, AdditiveArithmetic {
-    var layoutLength: Int
-
-    init(layoutLength: Int) {
-      self.layoutLength = layoutLength
-    }
-
-    func with(layoutLength: Int) -> Self {
-      LengthSummary(layoutLength: layoutLength)
-    }
-
-    static let zero = LengthSummary(layoutLength: 0)
-
-    static func + (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
-      LengthSummary(layoutLength: lhs.layoutLength + rhs.layoutLength)
-    }
-
-    static func - (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
-      LengthSummary(layoutLength: lhs.layoutLength - rhs.layoutLength)
-    }
-
-    static prefix func - (summary: LengthSummary) -> LengthSummary {
-      LengthSummary(layoutLength: -summary.layoutLength)
-    }
-  }
 }
 
 extension Node {
+  final var isTransparent: Bool { NodePolicy.isTransparent(type) }
+
+  /// Returns true if the node is pivotal.
+  final var isPivotal: Bool { NodePolicy.isPivotal(type) }
+
   /// Resolve the value of property aggregate for given type.
   final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {
@@ -285,12 +256,8 @@ extension Node {
   final func resolveProperty(
     _ key: PropertyKey, _ styleSheet: StyleSheet
   ) -> PropertyValue {
-    key.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
+    key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
   // MARK: - Styles
-
-  class func selector() -> TargetSelector {
-    TargetSelector(type)
-  }
 }
