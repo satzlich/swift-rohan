@@ -24,6 +24,10 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   final override func firstIndex() -> RohanIndex? { nil }
   final override func lastIndex() -> RohanIndex? { nil }
 
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    // do nothing
+  }
+
   // MARK: - Codable
 
   public required init(from decoder: any Decoder) throws {
@@ -32,12 +36,6 @@ public class SimpleNode: Node {  // default implementation for simple nodes
 
   public override func encode(to encoder: any Encoder) throws {
     try super.encode(to: encoder)
-  }
-
-  // MARK: - Content
-
-  override final func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
-    // do nothing
   }
 
   // MARK: - Layout

@@ -4,7 +4,16 @@ import Foundation
 import _RopeModule
 
 final class AttachNode: MathNode {
-  override class var type: NodeType { .attach }
+  // MARK: - Node
+
+  final override class var type: NodeType { .attach }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    super.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  // MARK: - AttachNode
 
   public init(
     nuc: ContentNode,
@@ -77,13 +86,6 @@ final class AttachNode: MathNode {
     try container.encodeIfPresent(_sub, forKey: .sub)
     try container.encodeIfPresent(_sup, forKey: .sup)
     try super.encode(to: encoder)
-  }
-
-  // MARK: - Content
-
-  override func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   // MARK: - Layout

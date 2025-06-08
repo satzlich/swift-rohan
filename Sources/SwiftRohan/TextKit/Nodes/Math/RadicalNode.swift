@@ -4,7 +4,16 @@ import Foundation
 import _RopeModule
 
 final class RadicalNode: MathNode {
-  override class var type: NodeType { .radical }
+  // MARK: - Node
+
+  final override class var type: NodeType { .radical }
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    super.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
   var radicand: ContentNode { _radicand }
@@ -58,11 +67,6 @@ final class RadicalNode: MathNode {
   }
 
   // MARK: - Content
-
-  override func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
-  }
 
   private var _snapshot: ComponentSet? = nil
 

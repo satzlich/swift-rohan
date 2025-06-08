@@ -50,6 +50,13 @@ class ArrayNode: Node {
     return .gridIndex(rowCount - 1, columnCount - 1)
   }
 
+  // MARK: - Node(Layout)
+
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    parent?.contentDidChange(delta: 0, inStorage: inStorage)
+  }
+
   // MARK: - Array
 
   typealias Cell = ContentNode
@@ -129,11 +136,6 @@ class ArrayNode: Node {
       index.column < columnCount
     else { return nil }
     return _rows[index.row][index.column]
-  }
-
-  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
   private var _editLog: Array<ArrayEvent> = []

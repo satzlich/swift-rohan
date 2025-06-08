@@ -91,6 +91,12 @@ public class Node: Codable {
   /// Returns the index for the downstream end.
   internal func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
 
+  // MARK: - Layout
+
+  internal func contentDidChange(delta: Int, inStorage: Bool) {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -139,11 +145,6 @@ public class Node: Codable {
   // MARK: - Content
 
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
-
-  /// Propagate content change.
-  internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    preconditionFailure("overriding required")
-  }
 
   // MARK: - Layout
 

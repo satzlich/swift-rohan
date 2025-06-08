@@ -25,11 +25,9 @@ public class MathNode: Node {
     (enumerateComponents().last?.index).map { .mathIndex($0) }
   }
 
-  // MARK: - Content
-
-  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
+  override func contentDidChange(delta: Int, inStorage: Bool) {
     // change of layout length is not propagated
-    parent?.contentDidChange(delta: delta.with(layoutLength: 0), inStorage: inStorage)
+    parent?.contentDidChange(delta: 0, inStorage: inStorage)
   }
 
   // MARK: - Content

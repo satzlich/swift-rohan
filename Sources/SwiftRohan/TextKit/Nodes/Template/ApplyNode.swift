@@ -30,6 +30,10 @@ public final class ApplyNode: Node {
     return .argumentIndex(_arguments.count - 1)
   }
 
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    parent?.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
   // MARK: - ApplyNode
 
   let template: MathTemplate
@@ -76,11 +80,6 @@ public final class ApplyNode: Node {
     // set apply node for arguments
     // NOTE: parent should not be set for arguments
     self._arguments.forEach({ $0.setApplyNode(self) })
-  }
-
-  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
-    // propagate to parent
-    parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   // MARK: - Codable
