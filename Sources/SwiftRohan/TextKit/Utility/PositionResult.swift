@@ -12,6 +12,19 @@ public enum PositionResult<T> {
   /// a failure with an error.
   case failure(error: SatzError)
 
+  var isTerminal: Bool {
+    if case .terminal = self { return true }
+    return false
+  }
+  var isHalfway: Bool {
+    if case .halfway = self { return true }
+    return false
+  }
+  var isFailure: Bool {
+    if case .failure = self { return true }
+    return false
+  }
+
   var value: T? {
     switch self {
     case let .terminal(value, _): return value

@@ -467,7 +467,9 @@ public class ElementNode: Node {
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
-    return .halfway(value: .index(k), consumed: s)
+    return k == _children.count
+      ? .terminal(value: .index(k), target: s)
+      : .halfway(value: .index(k), consumed: s)
   }
 
   /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
