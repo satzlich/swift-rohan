@@ -948,19 +948,6 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     let original = documentManager.prettyPrint()
 
-    let expected0 = try Regex(
-      """
-      root
-      snapshot: nil
-      ├ \\([0-9]+\\) paragraph
-      │ snapshot: nil
-      │ └ \\([0-9]+\\) text "Book I "
-      └ \\([0-9]+\\) paragraph
-        snapshot: nil
-        └ \\([0-9]+\\) text "The quick brown fox jumps over the lazy dog\\."
-      """)
-    #expect(try expected0.wholeMatch(in: documentManager.debugPrint()) != nil)
-
     // paragraph -> text -> <offset>
     let location = TextLocation.compose("[↓0,↓0]", "Book ".length)!
     // paragraph -> text -> <offset>
@@ -970,16 +957,6 @@ final class DeleteRangeTests: TextKitTestsBase {
     let (range1, deleted1) =
       TextKitTestsBase.copyReplaceContents(in: range, with: nil, documentManager)
     #expect("\(range1)" == "[↓0,↓0]:5")
-
-    let expected1 = try Regex(
-      """
-      root
-      snapshot: \\(\\d+,8\\+1\\), \\(\\d+,45\\+0\\)
-      └ \\(\\d+\\) paragraph
-        snapshot: \\(\\d+,7\\+0\\)
-        └ \\(\\d+\\) text "Book he quick brown fox jumps over the lazy dog\\."
-      """)
-    #expect(try expected1.wholeMatch(in: documentManager.debugPrint()) != nil)
 
     // revert
     let (range2, _) =

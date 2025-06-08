@@ -51,7 +51,7 @@ struct PathTests {
 
     do {
       let valid = TextLocation.parse("[↓0,↓0]:3")!
-      #expect(TreeUtils.computeLayoutOffset(for: valid.asArraySlice, tree) == 4)
+      #expect(TreeUtils.computeLayoutOffset(for: valid.asArraySlice, tree) == 3)
     }
 
     do {

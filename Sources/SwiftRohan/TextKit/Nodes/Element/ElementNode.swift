@@ -436,6 +436,7 @@ public class ElementNode: Node {
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
+    assert(consumed <= layoutOffset)
     return (.index(i), consumed)
   }
 
@@ -444,8 +445,12 @@ public class ElementNode: Node {
   /// - Returns: nil if layout offset is out of bounds. Otherwise, returns (k, s)
   ///     where k is the index of the child containing the layout offset and s is
   ///     the layout offset of the child.
-  private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
-    guard 0..<layoutLength() ~= layoutOffset else { return nil }
+  /// - Invariant: `consumed <= layoutOffset`.
+  private final func getChildIndex(_ layoutOffset: Int) -> (Int, consumed: Int)? {
+    let layoutLength = self.layoutLength()
+    guard layoutOffset >= 0,
+      layoutOffset < layoutLength || (isBlock && layoutOffset == layoutLength)
+    else { return nil }
 
     var (k, s) = (0, isPlaceholderActive.intValue)
     // notations: LO:= layoutOffset

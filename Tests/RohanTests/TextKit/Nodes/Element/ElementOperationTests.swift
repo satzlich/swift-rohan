@@ -35,12 +35,12 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 11
-        ├ paragraph 3
+        root 8
+        ├ paragraph 2
         │ └ text 2
-        ├ paragraph 3
+        ├ paragraph 2
         │ └ text 2
-        └ paragraph 3
+        └ paragraph 2
           └ text 2
         """)
 
@@ -64,14 +64,14 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 14
-        ├ paragraph 3
-        │ └ text 2
+        root 10
         ├ paragraph 2
-        │ └ text 1
-        ├ paragraph 3
         │ └ text 2
-        └ paragraph 3
+        ├ paragraph 1
+        │ └ text 1
+        ├ paragraph 2
+        │ └ text 2
+        └ paragraph 2
           └ text 2
         """)
 
@@ -89,12 +89,12 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 10
-        ├ paragraph 3
-        │ └ text 2
+        root 7
         ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 1
         │ └ text 1
-        └ paragraph 3
+        └ paragraph 2
           └ text 2
         """)
   }
@@ -131,13 +131,13 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 12
-        ├ paragraph 3
+        root 9
+        ├ paragraph 2
         │ └ text 2
-        ├ paragraph 4
+        ├ paragraph 3
         │ ├ text 2
         │ └ text 1
-        └ paragraph 3
+        └ paragraph 2
           └ text 2
         """)
 
@@ -156,12 +156,12 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 10
-        ├ paragraph 3
-        │ └ text 2
+        root 7
         ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 1
         │ └ text 1
-        └ paragraph 3
+        └ paragraph 2
           └ text 2
         """)
 
@@ -327,12 +327,12 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 16
-        ├ heading 9
+        root 14
+        ├ heading 8
         │ ├ text 3
         │ └ emphasis 5
         │   └ text 5
-        └ paragraph 6
+        └ paragraph 5
           ├ text 4
           └ equation 1
             └ nuc 3
@@ -346,12 +346,12 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 16
-        ├ heading 9
+        root 14
+        ├ heading 8
         │ ├ text 3
         │ └ emphasis 5
         │   └ text 5
-        └ paragraph 6
+        └ paragraph 5
           ├ text 4
           └ equation 1
             └ nuc 4
