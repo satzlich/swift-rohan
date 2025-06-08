@@ -428,10 +428,16 @@ public class ElementNode: Node {
   final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
-    let placeholder = isPlaceholderActive.intValue
-    let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
-    let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return placeholder + s1 + s2
+
+    if _children.isEmpty {
+      return isPlaceholderActive.intValue
+    }
+    else {
+      assert(isPlaceholderActive == false)
+      let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
+      let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
+      return s1 + s2
+    }
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
