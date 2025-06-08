@@ -108,8 +108,9 @@ final class AttachNode: MathNode {
     [MathIndex.lsub, .lsup, .nuc, .sub, .sup].contains(index)
   }
 
-  final override func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool)
-  {
+  final override func addComponent(
+    _ index: MathIndex, _ content: ElementStore, inStorage: Bool
+  ) {
     precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
 
     if inStorage { makeSnapshotOnce() }
@@ -295,9 +296,9 @@ final class AttachNode: MathNode {
     self._setUp()
   }
 
-  public init(
-    nuc: [Node], lsub: [Node]? = nil, lsup: [Node]? = nil,
-    sub: [Node]? = nil, sup: [Node]? = nil
+  internal init(
+    nuc: ElementStore, lsub: ElementStore? = nil, lsup: ElementStore? = nil,
+    sub: ElementStore? = nil, sup: ElementStore? = nil
   ) {
     self.nucleus = ContentNode(nuc)
     self._lsub = lsub.map { SubscriptNode($0) }

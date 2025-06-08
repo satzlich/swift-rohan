@@ -172,7 +172,7 @@ final class AccentNode: MathNode {
     self._setUp()
   }
 
-  init(_ accent: MathAccent, nucleus: [Node]) {
+  init(_ accent: MathAccent, nucleus: ElementStore) {
     self.accent = accent
     self._nucleus = CrampedNode(nucleus)
     super.init()

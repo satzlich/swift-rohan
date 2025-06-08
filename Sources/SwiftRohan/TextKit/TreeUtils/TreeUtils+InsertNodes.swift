@@ -359,7 +359,7 @@ extension TreeUtils {
       return ([index] + from, [index] + to)
     }
     else {
-      let paragraph = ParagraphNode(nodes)
+      let paragraph = ParagraphNode(ElementStore(nodes))
       container.insertChild(paragraph, at: index, inStorage: true)
       return ([index, 0], [index + 1])
     }

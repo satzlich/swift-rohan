@@ -15,7 +15,7 @@ extension DocumentView {
       }
 
     case let .insertExprs(insertExprs):
-      let content = NodeUtils.convertExprs(insertExprs.exprs)
+      let content: Array<Node> = NodeUtils.convertExprs(insertExprs.exprs)
       let result = replaceContentsForEdit(in: range, with: content)
 
       switch result {
@@ -55,7 +55,7 @@ extension DocumentView {
 
       // remove range if non-empty
       if range.isEmpty == false {
-        let result = replaceContentsForEdit(in: range, with: nil)
+        let result = replaceContentsForEdit(in: range, with: nil as Array<Node>?)
         assert(result.isSuccess)
       }
 

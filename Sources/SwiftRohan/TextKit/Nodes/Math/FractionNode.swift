@@ -226,7 +226,7 @@ final class FractionNode: MathNode {
 
   private var _fractionFragment: MathFractionLayoutFragment? = nil
 
-  internal init(num: [Node], denom: [Node], genfrac: MathGenFrac = .frac) {
+  internal init(num: ElementStore, denom: ElementStore, genfrac: MathGenFrac = .frac) {
     self.genfrac = genfrac
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)

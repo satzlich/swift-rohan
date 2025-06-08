@@ -182,7 +182,7 @@ final class TextModeNode: MathNode {
 
   let nucleus: ContentNode
 
-  init(_ nucleus: [Node]) {
+  init(_ nucleus: ElementStore) {
     self.nucleus = ContentNode(nucleus)
     super.init()
     _setUp()

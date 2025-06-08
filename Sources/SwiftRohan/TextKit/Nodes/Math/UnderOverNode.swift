@@ -199,7 +199,7 @@ final class UnderOverNode: MathNode {
     _setUp()
   }
 
-  init(_ subtype: MathSpreader, _ nucleus: [Node]) {
+  init(_ subtype: MathSpreader, _ nucleus: ElementStore) {
     self.spreader = subtype
     self._nucleus = Self.nucleusClazz(for: subtype.subtype).init(nucleus)
     super.init()

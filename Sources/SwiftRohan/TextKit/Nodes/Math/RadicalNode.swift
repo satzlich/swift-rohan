@@ -97,7 +97,7 @@ final class RadicalNode: MathNode {
   }
 
   final override func addComponent(
-    _ mathIndex: MathIndex, _ content: [Node], inStorage: Bool
+    _ mathIndex: MathIndex, _ content: ElementStore, inStorage: Bool
   ) {
     precondition(mathIndex == .index)
 
@@ -221,7 +221,7 @@ final class RadicalNode: MathNode {
     self._setUp()
   }
 
-  init(_ radicand: [Node], index: [Node]? = nil) {
+  init(_ radicand: ElementStore, index: ElementStore? = nil) {
     self._radicand = CrampedNode(radicand)
     self._index = index.map { DegreeNode($0) }
     super.init()

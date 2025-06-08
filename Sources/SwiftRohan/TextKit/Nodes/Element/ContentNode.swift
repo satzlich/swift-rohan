@@ -6,7 +6,7 @@ import Foundation
 class ContentNode: ElementNode {
   // MARK: - Node
 
-  required init() {
+  required override init() {
     super.init()
   }
 
@@ -63,9 +63,9 @@ class ContentNode: ElementNode {
 
   // MARK: - ContentNode
 
-  required override init(_ children: [Node]) {
-    super.init(ElementStore(children))
-  }
+  //  required override init(_ children: [Node]) {
+  //    super.init(ElementStore(children))
+  //  }
 
   required override init(_ children: ElementStore) {
     super.init(children)

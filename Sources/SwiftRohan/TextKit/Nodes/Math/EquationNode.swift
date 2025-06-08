@@ -186,7 +186,7 @@ final class EquationNode: MathNode {
   internal let nucleus: ContentNode
   private var _nucleusFragment: MathListLayoutFragment? = nil
 
-  init(_ subtype: Subtype, _ nucleus: [Node] = []) {
+  init(_ subtype: Subtype, _ nucleus: ElementStore = []) {
     self.subtype = subtype
     self.nucleus = ContentNode(nucleus)
     super.init()

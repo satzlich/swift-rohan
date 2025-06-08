@@ -182,7 +182,7 @@ final class MathAttributesNode: MathNode {
   private let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
 
-  init(_ mathAttributes: MathAttributes, _ nucleus: [Node]) {
+  init(_ mathAttributes: MathAttributes, _ nucleus: ElementStore) {
     self.subtype = mathAttributes
     self._nucleus = ContentNode(nucleus)
     super.init()

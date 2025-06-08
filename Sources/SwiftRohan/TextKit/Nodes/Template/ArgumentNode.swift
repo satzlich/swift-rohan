@@ -193,7 +193,9 @@ final class ArgumentNode: Node {
 
   // MARK: - Children
 
-  func insertChildren(contentsOf nodes: [Node], at index: Int, inStorage: Bool) {
+  func insertChildren<S: Collection<Node>>(
+    contentsOf nodes: S, at index: Int, inStorage: Bool
+  ) {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
     for variable in variableNodes.dropFirst() {

@@ -41,7 +41,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           """)
 
       // deserialize
-      let decodedNodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
+      let decodedNodes: ElementStore = try NodeSerdeUtils.decodeListOfNodes(from: data)
       #expect(
         ContentNode(decodedNodes).prettyPrint() == """
           content
@@ -66,7 +66,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           """)
 
       // deserialize
-      let decodedNodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
+      let decodedNodes: ElementStore = try NodeSerdeUtils.decodeListOfNodes(from: data)
       #expect(
         ContentNode(decodedNodes).prettyPrint() == """
           content

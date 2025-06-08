@@ -171,7 +171,7 @@ final class LeftRightNode: MathNode {
     self._setUp()
   }
 
-  init(_ delimiters: DelimiterPair, _ nucleus: [Node]) {
+  init(_ delimiters: DelimiterPair, _ nucleus: ElementStore) {
     self.delimiters = delimiters
     self._nucleus = ContentNode(nucleus)
     super.init()

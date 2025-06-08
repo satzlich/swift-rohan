@@ -46,7 +46,8 @@ class MathNode: Node {
   internal func isComponentAllowed(_ index: MathIndex) -> Bool { false }
 
   /// Add the component specified by the given index and content to the node.
-  internal func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
+  internal func addComponent(_ index: MathIndex, _ content: ElementStore, inStorage: Bool)
+  {
     assertionFailure("inapplicable unless overridden")
   }
 

@@ -7,7 +7,7 @@ extension TreeUtils {
 
   /// Returns the (most restricting) content category of the node list. Or nil
   /// if the nodes are inconsistent so cannot be used as content.
-  static func contentCategory(of nodes: [Node]) -> ContentCategory? {
+  static func contentCategory<S: Collection<Node>>(of nodes: S) -> ContentCategory? {
     var counts = CountSummary.zero
     performCount(&counts, nodes)
 
@@ -144,7 +144,7 @@ extension TreeUtils {
   /// Returns the (most restricting) content category of the expression list.
   /// Or nil if the nodes are inconsistent so cannot be used as content.
   static func contentCategory(of exprs: [Expr]) -> ContentCategory? {
-    let nodes = NodeUtils.convertExprs(exprs)
+    let nodes: Array<Node> = NodeUtils.convertExprs(exprs)
     return contentCategory(of: nodes)
   }
 

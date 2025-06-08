@@ -16,7 +16,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
   private func copyContents(
     in range: RhTextRange, _ documentManager: DocumentManager
   ) throws -> ContentNode {
-    let nodes = documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
+    let nodes: ElementStore =
+      documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
     return ContentNode(nodes)
   }
 

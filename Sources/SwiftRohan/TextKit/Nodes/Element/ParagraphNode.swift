@@ -51,5 +51,4 @@ final class ParagraphNode: ElementNode {
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
-
 }

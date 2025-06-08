@@ -25,7 +25,7 @@ struct ExprsTests {
       _ = expr.accept(visitor4, ())
 
       if [.apply, .variable].contains(expr.type) == false {
-        _ = NodeUtils.convertExprs([expr])
+        _ = NodeUtils.convertExprs([expr]) as Array<Node>
       }
     }
   }

@@ -197,7 +197,7 @@ final class MathStylesNode: MathNode {
   let styles: MathStyles
   let nucleus: ContentNode
 
-  init(_ styles: MathStyles, _ nucleus: [Node]) {
+  init(_ styles: MathStyles, _ nucleus: ElementStore) {
     self.styles = styles
     self.nucleus = ContentNode(nucleus)
     super.init()

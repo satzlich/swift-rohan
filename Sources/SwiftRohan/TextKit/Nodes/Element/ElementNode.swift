@@ -123,7 +123,7 @@ internal class ElementNode: Node {
   private final var _children: ElementStore
 
   /// - Warning: It's important to sync with the other `init` method.
-  public init(_ children: ElementStore) {
+  internal init(_ children: ElementStore) {
     // children and newlines
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
@@ -136,19 +136,32 @@ internal class ElementNode: Node {
     self._setUp()
   }
 
-  /// - Warning: It's important to sync with the other `init` method.
-  public init(_ children: [Node] = []) {
+  internal override init() {
     // children and newlines
-    self._children = ElementStore(children)
-    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    self._children = ElementStore()
+    self._newlines = NewlineArray()
     // length
-    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+    self._layoutLength = 0
     // flags
     self._isDirty = false
 
     super.init()
     self._setUp()
   }
+
+  //  /// - Warning: It's important to sync with the other `init` method.
+  //  public init(_ children: [Node] = []) {
+  //    // children and newlines
+  //    self._children = ElementStore(children)
+  //    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+  //    // length
+  //    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+  //    // flags
+  //    self._isDirty = false
+  //
+  //    super.init()
+  //    self._setUp()
+  //  }
 
   internal init(deepCopyOf elementNode: ElementNode) {
     // children and newlines
