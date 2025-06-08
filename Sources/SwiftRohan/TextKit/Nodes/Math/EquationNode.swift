@@ -152,6 +152,32 @@ final class EquationNode: MathNode {
     }
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let tag = Tag(rawValue: tag)
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+
+    switch nucleus {
+    case let .success(nucleus):
+      let equation = EquationNode(subtype, nucleus)
+      return .success(equation)
+    case let .corrupted(nucleus):
+      let equation = EquationNode(subtype, nucleus)
+      return .corrupted(equation)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - EquationNode
 
   internal typealias Subtype = EquationExpr.Subtype
@@ -193,30 +219,6 @@ final class EquationNode: MathNode {
     return isBlock != nil
       ? TargetSelector(.equation, PropertyMatcher(.isBlock, .bool(isBlock!)))
       : TargetSelector(.equation)
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      let tag = Tag(rawValue: tag)
-    else {
-      return .failure(UnknownNode(json))
-    }
-
-    let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
-
-    switch nucleus {
-    case let .success(nucleus):
-      let equation = EquationNode(subtype, nucleus)
-      return .success(equation)
-    case let .corrupted(nucleus):
-      let equation = EquationNode(subtype, nucleus)
-      return .corrupted(equation)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
   }
 
 }

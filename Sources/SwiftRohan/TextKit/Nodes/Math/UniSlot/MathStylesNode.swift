@@ -167,6 +167,28 @@ final class MathStylesNode: MathNode {
     }
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let styles = MathStyles.lookup(tag)
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
+    switch nucleus {
+    case let .success(nucleus):
+      let variant = MathStylesNode(styles, nucleus)
+      return .success(variant)
+    case let .corrupted(nucleus):
+      let variant = MathStylesNode(styles, nucleus)
+      return .corrupted(variant)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - MathStylesNode
 
   private typealias _NodeFragment = LayoutFragmentWrapper<MathListLayoutFragment>
@@ -200,23 +222,4 @@ final class MathStylesNode: MathNode {
     nucleus.setParent(self)
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      let styles = MathStyles.lookup(tag)
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
-    switch nucleus {
-    case let .success(nucleus):
-      let variant = MathStylesNode(styles, nucleus)
-      return .success(variant)
-    case let .corrupted(nucleus):
-      let variant = MathStylesNode(styles, nucleus)
-      return .corrupted(variant)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-  }
 }

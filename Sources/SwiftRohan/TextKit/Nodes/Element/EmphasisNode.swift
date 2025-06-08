@@ -59,17 +59,20 @@ final class EmphasisNode: ElementNode {
 
   final override func cloneEmpty() -> Self { Self() }
 
-  // MARK: - EmphasisNode
+  // MARK: - Storage
 
-  private static let uniqueTag = "emph"
-
-  var command: String { Self.uniqueTag }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<EmphasisNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<EmphasisNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
+
+  // MARK: - EmphasisNode
+
+  private static let uniqueTag = "emph"
+
+  var command: String { Self.uniqueTag }
+
 }

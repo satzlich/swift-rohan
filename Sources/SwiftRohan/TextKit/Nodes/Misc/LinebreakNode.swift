@@ -46,7 +46,7 @@ final class LinebreakNode: SimpleNode {
     return json
   }
 
-  // MARK: - LinebreakNode
+  // MARK: - Storage
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<LinebreakNode> {
     guard case let .array(array) = json,
@@ -58,4 +58,5 @@ final class LinebreakNode: SimpleNode {
     }
     return .success(LinebreakNode())
   }
+
 }

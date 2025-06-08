@@ -68,6 +68,15 @@ final class TextNode: Node {
 
   final override func store() -> JSONValue { .string(String(_string)) }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<TextNode> {
+    guard case let .string(string) = json,
+      Self.validate(string: string)
+    else { return .failure(UnknownNode(json)) }
+    return .success(TextNode(string))
+  }
+
   // MARK: - TextNode
 
   private let _string: RhString
@@ -204,15 +213,6 @@ final class TextNode: Node {
       return nil
     }
     return LayoutUtils.rayshootFurther(newOffset, affinity, direction, result, context)
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<TextNode> {
-    guard case let .string(string) = json,
-      Self.validate(string: string)
-    else { return .failure(UnknownNode(json)) }
-    return .success(TextNode(string))
   }
 
   // MARK: - TextNode Specific

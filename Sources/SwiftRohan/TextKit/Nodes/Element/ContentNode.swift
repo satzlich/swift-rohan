@@ -51,6 +51,16 @@ class ContentNode: ElementNode {
 
   final override func cloneEmpty() -> Self { Self() }
 
+  // MARK: - Storage
+
+  final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
+  {
+    guard case let .array(array) = json else { return .failure(UnknownNode(json)) }
+    let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
+    let result = T(nodes)
+    return corrupted ? .corrupted(result) : .success(result)
+  }
+
   // MARK: - ContentNode
 
   required override init(_ children: [Node]) {
@@ -65,12 +75,4 @@ class ContentNode: ElementNode {
     super.init(deepCopyOf: node)
   }
 
-  final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
-  {
-    guard case let .array(array) = json
-    else { return .failure(UnknownNode(json)) }
-    let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
-    let result = T(nodes)
-    return corrupted ? .corrupted(result) : .success(result)
-  }
 }

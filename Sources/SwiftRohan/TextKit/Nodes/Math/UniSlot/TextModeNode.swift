@@ -153,6 +153,28 @@ final class TextModeNode: MathNode {
     }
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    switch nucleus {
+    case .success(let nucleus):
+      let textMode = TextModeNode(nucleus)
+      return .success(textMode)
+    case .corrupted(let nucleus):
+      let textMode = TextModeNode(nucleus)
+      return .corrupted(textMode)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - TextModeNode
 
   internal typealias _NodeFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
@@ -186,23 +208,4 @@ final class TextModeNode: MathNode {
 
   var command: String { Self.uniqueTag }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      tag == uniqueTag
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
-    switch nucleus {
-    case .success(let nucleus):
-      let textMode = TextModeNode(nucleus)
-      return .success(textMode)
-    case .corrupted(let nucleus):
-      let textMode = TextModeNode(nucleus)
-      return .corrupted(textMode)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-  }
 }

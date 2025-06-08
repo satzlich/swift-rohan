@@ -16,8 +16,8 @@ final class SuperscriptNode: ContentNode {
     return _cachedProperties!
   }
 
-  // MARK: - SuperscriptNode
-  
+  // MARK: - Storage
+
   final class func loadSelf(from json: JSONValue) -> _LoadResult<SuperscriptNode> {
     loadSelfGeneric(from: json)
   }

@@ -178,6 +178,43 @@ final class FractionNode: MathNode {
     _fractionFragment?.rayshoot(from: point, component, in: direction)
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(command) = array[0],
+      let subtype = MathGenFrac.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+
+    let num: NumeratorNode
+    var corrupted: Bool = false
+
+    switch NumeratorNode.loadSelf(from: array[1]) {
+    case .success(let node):
+      num = node
+    case .corrupted(let node):
+      num = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+
+    let denom: DenominatorNode
+    switch DenominatorNode.loadSelf(from: array[2]) {
+    case .success(let node):
+      denom = node
+    case .corrupted(let node):
+      denom = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+
+    let node = FractionNode(num: num, denom: denom, genfrac: subtype)
+    return corrupted ? .corrupted(node) : .success(node)
+  }
+
   // MARK: - Fraction
 
   internal let genfrac: MathGenFrac
@@ -225,41 +262,6 @@ final class FractionNode: MathNode {
     else {
       return context
     }
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
-    guard case let .array(array) = json,
-      array.count == 3,
-      case let .string(command) = array[0],
-      let subtype = MathGenFrac.lookup(command)
-    else { return .failure(UnknownNode(json)) }
-
-    let num: NumeratorNode
-    var corrupted: Bool = false
-
-    switch NumeratorNode.loadSelf(from: array[1]) {
-    case .success(let node):
-      num = node
-    case .corrupted(let node):
-      num = node
-      corrupted = true
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-
-    let denom: DenominatorNode
-    switch DenominatorNode.loadSelf(from: array[2]) {
-    case .success(let node):
-      denom = node
-    case .corrupted(let node):
-      denom = node
-      corrupted = true
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-
-    let node = FractionNode(num: num, denom: denom, genfrac: subtype)
-    return corrupted ? .corrupted(node) : .success(node)
   }
 
 }

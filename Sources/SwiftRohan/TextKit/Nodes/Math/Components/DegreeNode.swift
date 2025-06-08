@@ -13,7 +13,7 @@ final class DegreeNode: ContentNode {
     return _cachedProperties!
   }
 
-  // MARK: - DegreeNode
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<DegreeNode> {
     loadSelfGeneric(from: json)

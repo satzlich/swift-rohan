@@ -154,6 +154,35 @@ final class UnderOverNode: MathNode {
     }
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(command) = array[0],
+      let spreader = MathSpreader.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus: _LoadResult<ContentNode> =
+      switch spreader.subtype {
+      case .overline, .overspreader:
+        CrampedNode.loadSelf(from: array[1]).cast()
+      case .underline, .underspreader:
+        ContentNode.loadSelfGeneric(from: array[1])
+      case .xarrow:
+        SuperscriptNode.loadSelf(from: array[1]).cast()
+      }
+
+    switch nucleus {
+    case .success(let nucleus):
+      return .success(UnderOverNode(spreader, nucleus))
+    case .corrupted(let nucleus):
+      return .corrupted(UnderOverNode(spreader, nucleus))
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - UnderOverNode
 
   internal let spreader: MathSpreader
@@ -195,33 +224,6 @@ final class UnderOverNode: MathNode {
 
   private final func _setUp() {
     _nucleus.setParent(self)
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(command) = array[0],
-      let spreader = MathSpreader.lookup(command)
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus: _LoadResult<ContentNode> =
-      switch spreader.subtype {
-      case .overline, .overspreader:
-        CrampedNode.loadSelf(from: array[1]).cast()
-      case .underline, .underspreader:
-        ContentNode.loadSelfGeneric(from: array[1])
-      case .xarrow:
-        SuperscriptNode.loadSelf(from: array[1]).cast()
-      }
-
-    switch nucleus {
-    case .success(let nucleus):
-      return .success(UnderOverNode(spreader, nucleus))
-    case .corrupted(let nucleus):
-      return .corrupted(UnderOverNode(spreader, nucleus))
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
   }
 
 }

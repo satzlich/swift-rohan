@@ -13,7 +13,7 @@ final class CrampedNode: ContentNode {
     return _cachedProperties!
   }
 
-  // MARK: - CrampedNode
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<CrampedNode> {
     loadSelfGeneric(from: json)

@@ -132,12 +132,35 @@ final class LeftRightNode: MathNode {
     _leftRightFragment?.rayshoot(from: point, component, in: direction)
   }
 
+  // MARK: - Storage
+
+  internal class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(tag) = array[0],
+      tag == uniqueTag,
+      let delimiters = DelimiterPair.load(from: array[1])
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<ContentNode>
+    switch nucleus {
+    case .success(let nucleus):
+      let leftRight = LeftRightNode(delimiters, nucleus)
+      return .success(leftRight)
+    case .corrupted(let nucleus):
+      let leftRight = LeftRightNode(delimiters, nucleus)
+      return .corrupted(leftRight)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - LeftRightNode
 
-  let delimiters: DelimiterPair
+  internal let delimiters: DelimiterPair
 
   private let _nucleus: ContentNode
-  var nucleus: ContentNode { _nucleus }
+  internal var nucleus: ContentNode { _nucleus }
 
   private var _leftRightFragment: MathLeftRightLayoutFragment?
 
@@ -164,27 +187,6 @@ final class LeftRightNode: MathNode {
 
   private func _setUp() {
     _nucleus.setParent(self)
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
-    guard case let .array(array) = json,
-      array.count == 3,
-      case let .string(tag) = array[0],
-      tag == uniqueTag,
-      let delimiters = DelimiterPair.load(from: array[1])
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<ContentNode>
-    switch nucleus {
-    case .success(let nucleus):
-      let leftRight = LeftRightNode(delimiters, nucleus)
-      return .success(leftRight)
-    case .corrupted(let nucleus):
-      let leftRight = LeftRightNode(delimiters, nucleus)
-      return .corrupted(leftRight)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
   }
 
 }

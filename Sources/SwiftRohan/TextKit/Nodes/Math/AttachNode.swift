@@ -196,6 +196,89 @@ final class AttachNode: MathNode {
     _attachFragment?.rayshoot(from: point, component, in: direction)
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
+    guard case let .array(array) = json,
+      array.count == 6,
+      case let .string(tag) = array[0], tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let lsub: SubscriptNode?
+    let lsup: SuperscriptNode?
+    let nucleus: ContentNode
+    let sub: SubscriptNode?
+    let sup: SuperscriptNode?
+    var corrupted: Bool = false
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<SubscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        lsub = node
+      case .corrupted(let node):
+        lsub = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[2]) as LoadResult<SuperscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        lsup = node
+      case .corrupted(let node):
+        lsup = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
+      switch node {
+      case .success(let node):
+        nucleus = node
+      case .corrupted(let node):
+        nucleus = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[4]) as LoadResult<SubscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        sub = node
+      case .corrupted(let node):
+        sub = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let result =
+        NodeStoreUtils.loadOptComponent(array[5]) as LoadResult<SuperscriptNode?, Void>
+      switch result {
+      case .success(let node):
+        sup = node
+      case .corrupted(let node):
+        sup = node
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+
+    let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    return corrupted ? .corrupted(result) : .success(result)
+  }
+
   // MARK: - AttachNode
 
   public init(
@@ -449,90 +532,6 @@ final class AttachNode: MathNode {
   public var sub: ContentNode? { _sub }
   public var sup: ContentNode? { _sup }
 
-  // MARK: - Clone and Visitor
-
   private static let uniqueTag = "attach"
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
-    guard case let .array(array) = json,
-      array.count == 6,
-      case let .string(tag) = array[0], tag == uniqueTag
-    else { return .failure(UnknownNode(json)) }
-
-    let lsub: SubscriptNode?
-    let lsup: SuperscriptNode?
-    let nucleus: ContentNode
-    let sub: SubscriptNode?
-    let sup: SuperscriptNode?
-    var corrupted: Bool = false
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<SubscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        lsub = node
-      case .corrupted(let node):
-        lsub = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[2]) as LoadResult<SuperscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        lsup = node
-      case .corrupted(let node):
-        lsup = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
-      switch node {
-      case .success(let node):
-        nucleus = node
-      case .corrupted(let node):
-        nucleus = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[4]) as LoadResult<SubscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        sub = node
-      case .corrupted(let node):
-        sub = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-    do {
-      let result =
-        NodeStoreUtils.loadOptComponent(array[5]) as LoadResult<SuperscriptNode?, Void>
-      switch result {
-      case .success(let node):
-        sup = node
-      case .corrupted(let node):
-        sup = node
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-
-    let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
-    return corrupted ? .corrupted(result) : .success(result)
-  }
-
 }
-

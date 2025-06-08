@@ -76,6 +76,17 @@ final class MathExpressionNode: SimpleNode {
     return json
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathExpressionNode> {
+    guard case let .array(array) = json,
+      array.count == 1,
+      case let .string(tag) = array[0],
+      let mathExpression = MathExpression.lookup(tag)
+    else { return .failure(UnknownNode(json)) }
+    return .success(MathExpressionNode(mathExpression))
+  }
+
   // MARK: - MathExpressionNode
 
   let mathExpression: MathExpression
@@ -90,17 +101,6 @@ final class MathExpressionNode: SimpleNode {
 
   private func _setUp() {
     _deflated.setParent(self)
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathExpressionNode> {
-    guard case let .array(array) = json,
-      array.count == 1,
-      case let .string(tag) = array[0],
-      let mathExpression = MathExpression.lookup(tag)
-    else { return .failure(UnknownNode(json)) }
-    return .success(MathExpressionNode(mathExpression))
   }
 
 }

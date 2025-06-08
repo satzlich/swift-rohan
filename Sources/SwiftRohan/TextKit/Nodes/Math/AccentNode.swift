@@ -138,6 +138,26 @@ final class AccentNode: MathNode {
     _accentFragment?.rayshoot(from: point, component, in: direction)
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(command) = array[0],
+      let accent = MathAccent.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = CrampedNode.loadSelf(from: array[1]) as _LoadResult<CrampedNode>
+    switch nucleus {
+    case .success(let nucleus):
+      return .success(AccentNode(accent, nucleus: nucleus))
+    case .corrupted(let nucleus):
+      return .corrupted(AccentNode(accent, nucleus: nucleus))
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - AccentNode
 
   internal let accent: MathAccent
@@ -168,24 +188,6 @@ final class AccentNode: MathNode {
 
   private final func _setUp() {
     _nucleus.setParent(self)
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(command) = array[0],
-      let accent = MathAccent.lookup(command)
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = CrampedNode.loadSelf(from: array[1]) as _LoadResult<CrampedNode>
-    switch nucleus {
-    case .success(let nucleus):
-      return .success(AccentNode(accent, nucleus: nucleus))
-    case .corrupted(let nucleus):
-      return .corrupted(AccentNode(accent, nucleus: nucleus))
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
   }
 
 }

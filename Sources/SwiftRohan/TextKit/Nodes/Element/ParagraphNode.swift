@@ -40,10 +40,9 @@ final class ParagraphNode: ElementNode {
   }
 
   final override func createSuccessor() -> ElementNode? { ParagraphNode() }
-
   final override func cloneEmpty() -> Self { Self() }
 
-  // MARK: - ParagraphNode
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<ParagraphNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)

@@ -56,22 +56,9 @@ final class MatrixNode: ArrayNode {
     return json
   }
 
-  // MARK: - MatrixNode
+  // MARK: - Storage
 
-  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
-    super.init(subtype, rows)
-  }
-
-  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
-    let rows = rows.map { Row($0) }
-    super.init(subtype, rows)
-  }
-
-  private init(deepCopyOf matrixNode: MatrixNode) {
-    super.init(deepCopyOf: matrixNode)
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MatrixNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<MatrixNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -90,6 +77,21 @@ final class MatrixNode: ArrayNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  // MARK: - MatrixNode
+
+  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
+    super.init(subtype, rows)
+  }
+
+  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
+    let rows = rows.map { Row($0) }
+    super.init(subtype, rows)
+  }
+
+  private init(deepCopyOf matrixNode: MatrixNode) {
+    super.init(deepCopyOf: matrixNode)
   }
 
 }

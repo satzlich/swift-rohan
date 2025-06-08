@@ -318,6 +318,4 @@ final class ApplyNode: Node {
     template.template.lookup[argumentIndex][variableIndex] + path
   }
 
-  // MARK: - Clone and Visitor
-
 }

@@ -152,6 +152,28 @@ final class MathAttributesNode: MathNode {
     }
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathAttributesNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let attributes = MathAttributes.lookup(tag)
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    switch nucleus {
+    case let .success(nucleus):
+      let node = MathAttributesNode(attributes, nucleus)
+      return .success(node)
+    case let .corrupted(nucleus):
+      let node = MathAttributesNode(attributes, nucleus)
+      return .corrupted(node)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - MathAttributesNode
 
   typealias Subtype = MathAttributes
@@ -192,23 +214,4 @@ final class MathAttributesNode: MathNode {
 
   private var _attrFragment: _MathAttributesLayoutFragment?
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathAttributesNode> {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      let attributes = MathAttributes.lookup(tag)
-    else { return .failure(UnknownNode(json)) }
-
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
-    switch nucleus {
-    case let .success(nucleus):
-      let node = MathAttributesNode(attributes, nucleus)
-      return .success(node)
-    case let .corrupted(nucleus):
-      let node = MathAttributesNode(attributes, nucleus)
-      return .corrupted(node)
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-  }
 }

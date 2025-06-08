@@ -50,9 +50,7 @@ final class StrongNode: ElementNode {
 
   final override func cloneEmpty() -> Self { Self() }
 
-  // MARK: - StrongNode
-
-  var command: String { "textbf" }
+  // MARK: - Storage
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<StrongNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
@@ -62,4 +60,7 @@ final class StrongNode: ElementNode {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
+  // MARK: - StrongNode
+
+  var command: String { "textbf" }
 }

@@ -41,7 +41,7 @@ final class RootNode: ElementNode {
 
   override func cloneEmpty() -> Self { Self() }
 
-  // MARK: - RootNode
+  // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<RootNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)

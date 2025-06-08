@@ -85,24 +85,24 @@ final class NamedSymbolNode: SimpleNode {
     return json
   }
 
-  // MARK: - NamedSymbolNode
+  // MARK: - Storage
 
-  let namedSymbol: NamedSymbol
-
-  init(_ namedSymbol: NamedSymbol) {
-    self.namedSymbol = namedSymbol
-    super.init()
-  }
-
-  // MARK: - Clone and Visitor
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],
       let mathSymbol = NamedSymbol.lookup(command)
     else { return .failure(UnknownNode(json)) }
     return .success(NamedSymbolNode(mathSymbol))
+  }
+
+  // MARK: - NamedSymbolNode
+
+  internal let namedSymbol: NamedSymbol
+
+  init(_ namedSymbol: NamedSymbol) {
+    self.namedSymbol = namedSymbol
+    super.init()
   }
 
 }

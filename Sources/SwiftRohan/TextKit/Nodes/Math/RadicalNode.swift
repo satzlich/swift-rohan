@@ -162,6 +162,44 @@ final class RadicalNode: MathNode {
     _radicalFragment?.rayshoot(from: point, component, in: direction)
   }
 
+  // MARK: - Storage
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(tag) = array[0],
+      tag == Self.uniqueTag
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let index: DegreeNode?
+    let corrupted: Bool
+
+    switch NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<DegreeNode?, Void> {
+    case let .success(node):
+      index = node
+      corrupted = false
+    case let .corrupted(node):
+      index = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+
+    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
+    switch radicand {
+    case let .success(radicand):
+      let radical = RadicalNode(radicand, index: index)
+      return corrupted ? .corrupted(radical) : .success(radical)
+    case let .corrupted(radicand):
+      let radical = RadicalNode(radicand, index: index)
+      return .corrupted(radical)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
   // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
@@ -305,42 +343,6 @@ final class RadicalNode: MathNode {
     }
     else {
       context.skipBackwards(layoutLength())
-    }
-  }
-
-  class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
-    guard case let .array(array) = json,
-      array.count == 3,
-      case let .string(tag) = array[0],
-      tag == Self.uniqueTag
-    else {
-      return .failure(UnknownNode(json))
-    }
-
-    let index: DegreeNode?
-    let corrupted: Bool
-
-    switch NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<DegreeNode?, Void> {
-    case let .success(node):
-      index = node
-      corrupted = false
-    case let .corrupted(node):
-      index = node
-      corrupted = true
-    case .failure:
-      return .failure(UnknownNode(json))
-    }
-
-    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
-    switch radicand {
-    case let .success(radicand):
-      let radical = RadicalNode(radicand, index: index)
-      return corrupted ? .corrupted(radical) : .success(radical)
-    case let .corrupted(radicand):
-      let radical = RadicalNode(radicand, index: index)
-      return .corrupted(radical)
-    case .failure:
-      return .failure(UnknownNode(json))
     }
   }
 
