@@ -57,6 +57,8 @@ class ArrayNode: Node {
     parent?.contentDidChange(delta: 0, inStorage: inStorage)
   }
 
+  final override func layoutLength() -> Int { 1 }  // always "1".
+
   // MARK: - Array
 
   typealias Cell = ContentNode
@@ -242,8 +244,6 @@ class ArrayNode: Node {
   }
 
   // MARK: - Layout
-
-  final override func layoutLength() -> Int { 1 }
 
   final override var isBlock: Bool { false }
 

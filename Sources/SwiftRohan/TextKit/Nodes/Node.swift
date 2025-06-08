@@ -97,6 +97,9 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// How many length units the node contributes to the layout context.
+  internal func layoutLength() -> Int { preconditionFailure("overriding required") }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -147,11 +150,6 @@ public class Node: Codable {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
 
   // MARK: - Layout
-
-  /// How many length units the node contributes to the layout context.
-  func layoutLength() -> Int {
-    preconditionFailure("overriding required")
-  }
 
   /// Returns true if the node occupies a single block.
   var isBlock: Bool { false }

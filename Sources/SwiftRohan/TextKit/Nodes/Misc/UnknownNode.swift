@@ -12,18 +12,21 @@ private let PLACEHOLDER = "[Unknown Node]"
     Codable interface.
  */
 public final class UnknownNode: SimpleNode {
-  override class var type: NodeType { .unknown }
-
-  var placeholder: String { PLACEHOLDER }
-
+  // MARK: - Node
   public override init() {
     self.data = .null
     super.init()
   }
 
-  // MARK: - Layout
+  final override class var type: NodeType { .unknown }
 
-  override func layoutLength() -> Int { PLACEHOLDER.length }
+  final override func layoutLength() -> Int { PLACEHOLDER.length }
+
+  // MARK: - UnknownNode
+
+  var placeholder: String { PLACEHOLDER }
+
+  // MARK: - Layout
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText(PLACEHOLDER, self)

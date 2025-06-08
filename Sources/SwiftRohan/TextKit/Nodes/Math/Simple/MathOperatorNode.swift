@@ -4,6 +4,8 @@ import Foundation
 import _RopeModule
 
 final class MathOperatorNode: SimpleNode {
+  // MARK: - Node
+
   override class var type: NodeType { .mathOperator }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -18,6 +20,8 @@ final class MathOperatorNode: SimpleNode {
     }
     return _cachedProperties!
   }
+
+  final override func layoutLength() -> Int { 1 }  // always "1".
 
   // MARK: - Math Operator
 
@@ -52,8 +56,6 @@ final class MathOperatorNode: SimpleNode {
   }
 
   // MARK: - Layout
-
-  override func layoutLength() -> Int { 1 }
 
   private var _mathOperatorFragment: MathOperatorLayoutFragment? = nil
 

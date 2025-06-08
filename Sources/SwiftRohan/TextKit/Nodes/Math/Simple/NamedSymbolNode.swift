@@ -3,7 +3,13 @@
 import Foundation
 
 final class NamedSymbolNode: SimpleNode {
-  override class var type: NodeType { .namedSymbol }
+  // MARK: - Node
+
+  final override class var type: NodeType { .namedSymbol }
+
+  final override func layoutLength() -> Int { namedSymbol.string.length }
+
+  // MARK: - NamedSymbolNode
 
   let namedSymbol: NamedSymbol
 
@@ -35,10 +41,6 @@ final class NamedSymbolNode: SimpleNode {
   }
 
   // MARK: - Layout
-
-  override func layoutLength() -> Int {
-    namedSymbol.string.length
-  }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     switch context {

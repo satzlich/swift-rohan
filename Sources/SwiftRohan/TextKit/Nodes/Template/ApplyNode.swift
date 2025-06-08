@@ -30,9 +30,13 @@ public final class ApplyNode: Node {
     return .argumentIndex(_arguments.count - 1)
   }
 
+  // MARK: - Node(Layout)
+
   final override func contentDidChange(delta: Int, inStorage: Bool) {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
+
+  final override func layoutLength() -> Int { _content.layoutLength() }
 
   // MARK: - ApplyNode
 
@@ -137,8 +141,6 @@ public final class ApplyNode: Node {
   final func getContent() -> ContentNode { _content }
 
   // MARK: - Layout
-
-  override func layoutLength() -> Int { _content.layoutLength() }
 
   override var isBlock: Bool { false }
 

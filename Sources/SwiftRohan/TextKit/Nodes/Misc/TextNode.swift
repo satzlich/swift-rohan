@@ -18,6 +18,8 @@ public final class TextNode: Node {
   final override func firstIndex() -> RohanIndex? { .index(0) }
   final override func lastIndex() -> RohanIndex? { .index(_string.length) }
 
+  final override func layoutLength() -> Int { _string.length }
+
   // MARK: - TextNode
 
   private let _string: RhString
@@ -83,10 +85,6 @@ public final class TextNode: Node {
   }
 
   // MARK: - Layout
-
-  // Semantically layout length and string length are not the same.
-  // By our design choice, their values coincide.
-  override final func layoutLength() -> Int { _string.utf16.count }
 
   override final var isBlock: Bool { false }
 

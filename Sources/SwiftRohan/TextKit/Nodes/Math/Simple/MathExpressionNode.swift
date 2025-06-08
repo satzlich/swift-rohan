@@ -3,12 +3,18 @@
 import Foundation
 
 final class MathExpressionNode: SimpleNode {
-  override class var type: NodeType { .mathExpression }
+  // MARK: - Node
 
-  override func resetCachedProperties() {
+  final override class var type: NodeType { .mathExpression }
+
+  final override func resetCachedProperties() {
     super.resetCachedProperties()
     _deflated.resetCachedProperties()
   }
+
+  final override func layoutLength() -> Int { _deflated.layoutLength() }
+
+  // MARK: - MathExpressionNode
 
   let mathExpression: MathExpression
   private let _deflated: Node
@@ -50,8 +56,6 @@ final class MathExpressionNode: SimpleNode {
   }
 
   // MARK: - Layout
-
-  override func layoutLength() -> Int { _deflated.layoutLength() }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)

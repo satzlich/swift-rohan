@@ -4,17 +4,20 @@ import Foundation
 import _RopeModule
 
 final class LinebreakNode: SimpleNode {
+  // MARK: - Node
+  override init() { super.init() }
+
   override class var type: NodeType { .linebreak }
 
-  override init() { super.init() }
+  override func layoutLength() -> Int { 1 }
+
+  // MARK: - LinebreakNode
 
   required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
   }
 
   // MARK: - Layout
-
-  override func layoutLength() -> Int { 1 }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText("\n", self)

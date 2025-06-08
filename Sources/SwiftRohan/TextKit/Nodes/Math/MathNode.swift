@@ -30,6 +30,8 @@ public class MathNode: Node {
     parent?.contentDidChange(delta: 0, inStorage: inStorage)
   }
 
+  final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
+
   // MARK: - Content
 
   @usableFromInline
@@ -74,8 +76,6 @@ public class MathNode: Node {
   }
 
   // MARK: - Layout
-
-  override final func layoutLength() -> Int { 1 }  // always "1" for math nodes
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for math component is not well-defined and is unused

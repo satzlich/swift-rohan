@@ -35,6 +35,10 @@ public class ElementNode: Node {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  final override func layoutLength() -> Int {
+    isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
+  }
+
   // MARK: - ElementNode
 
   public typealias Store = Deque<Node>
@@ -196,10 +200,6 @@ public class ElementNode: Node {
   private final var _layoutLength: Int
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
-
-  override final func layoutLength() -> Int {
-    isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
-  }
 
   override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
 

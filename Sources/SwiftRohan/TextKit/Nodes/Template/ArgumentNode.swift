@@ -19,6 +19,12 @@ final class ArgumentNode: Node {
     variableNodes.first?.lastIndex()
   }
 
+  final override func contentDidChange(delta: Int, inStorage: Bool) {
+    assertionFailure("should not be called")
+  }
+
+  final override func layoutLength() -> Int { 1 }  // always "1".
+
   // MARK: - ApplyNode
 
   /// associated apply node
@@ -97,8 +103,6 @@ final class ArgumentNode: Node {
   }
 
   // MARK: - Layout
-
-  override func layoutLength() -> Int { return 1 }
 
   override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     assertionFailure("should not be called")
