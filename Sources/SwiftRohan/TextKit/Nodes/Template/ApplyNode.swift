@@ -278,7 +278,7 @@ final class ApplyNode: Node {
     // resolve text location in content
     var localTrace = Trace()
     let modified = _content.resolveTextLocation(
-      with: point, context, &localTrace, &affinity, layoutRange)
+      with: point, context: context, trace: &localTrace, affinity: &affinity, layoutRange: layoutRange)
     guard modified else { return false }
 
     // Returns true if the given node is a variable node associated to this

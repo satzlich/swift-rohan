@@ -213,16 +213,14 @@ internal class ElementNode: Node {
   private final func contentDidChangeLocally(
     childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool
   ) {
-    // apply delta excluding placeholder and newlines
-    _layoutLength += childrenDelta
-
     // content change implies dirty
     if inStorage { _isDirty = true }
 
-    var delta = childrenDelta
-    // change to newlines should be added to propagated delta
-    delta += placeholderDelta + newlinesDelta
+    // apply delta excluding placeholder and newlines
+    _layoutLength += childrenDelta
+
     // propagate to parent
+    let delta = childrenDelta + placeholderDelta + newlinesDelta
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
@@ -241,7 +239,7 @@ internal class ElementNode: Node {
   final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
 
   /// lossy snapshot of original children
-  private final var _snapshotRecords: [SnapshotRecord]? = nil
+  private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   internal func snapshotDescription() -> Array<String>? {
     _snapshotRecords.map { $0.map(\.description) }
@@ -561,7 +559,9 @@ internal class ElementNode: Node {
 
     affinity = result.affinity
 
-    return resolveTextLocation(with: point, context, &trace, &affinity, layoutRange)
+    return resolveTextLocation(
+      with: point, context: context, trace: &trace, affinity: &affinity,
+      layoutRange: layoutRange)
   }
 
   /// Resolve the text location at the given point and layout range.
@@ -570,9 +570,9 @@ internal class ElementNode: Node {
   ///     of the container. For MathLayoutContext, the point is relative to the
   ///     **top-left corner** of the math list.
   final func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity,
-    _ layoutRange: LayoutRange
+    with point: CGPoint, context: any LayoutContext,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity,
+    layoutRange: LayoutRange
   ) -> Bool {
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound
