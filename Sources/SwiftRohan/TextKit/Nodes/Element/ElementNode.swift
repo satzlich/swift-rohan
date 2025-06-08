@@ -97,6 +97,12 @@ internal class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
+  /// Create a node for splitting at the end.
+  internal func createSuccessor() -> ElementNode? { nil }  // default to nil.
+
+  /// Create an empty clone of this node.
+  internal func cloneEmpty() -> Self { preconditionFailure("overriding required") }
+
   public typealias Store = Deque<Node>
   private final var _children: Store
 
@@ -147,10 +153,6 @@ internal class ElementNode: Node {
     }
   }
 
-  func cloneEmpty() -> ElementNode {
-    preconditionFailure("overriding required")
-  }
-
   /// Encode this node but with children replaced with given children.
   ///
   /// Helper function for encoding partial nodes. Override this method to encode
@@ -175,9 +177,6 @@ internal class ElementNode: Node {
   final func isMergeable(with other: ElementNode) -> Bool {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
-
-  /// Create a node for splitting at the end.
-  func createSuccessor() -> ElementNode? { nil }
 
   private final func contentDidChangeLocally(
     childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool

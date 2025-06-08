@@ -57,6 +57,13 @@ final class HeadingNode: ElementNode {
     visitor.visit(heading: self, context, withChildren: children)
   }
 
+  final override func createSuccessor() -> ElementNode? {
+    /* create "paragraph" */
+    ParagraphNode()
+  }
+
+  final override func cloneEmpty() -> Self { Self(level: level, []) }
+
   // MARK: - HeadingNode
 
   typealias Subtype = HeadingExpr.Subtype
@@ -115,9 +122,6 @@ final class HeadingNode: ElementNode {
   }
 
   // MARK: - Content
-
-  override func cloneEmpty() -> Self { Self(level: level, []) }
-  override func createSuccessor() -> ElementNode? { ParagraphNode() }
 
   // MARK: - Styles
 

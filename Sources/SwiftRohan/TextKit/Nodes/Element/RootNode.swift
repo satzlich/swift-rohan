@@ -39,9 +39,9 @@ final class RootNode: ElementNode {
     visitor.visit(root: self, context, withChildren: children)
   }
 
-  // MARK: - RootNode
-
   override func cloneEmpty() -> Self { Self() }
+
+  // MARK: - RootNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<RootNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)

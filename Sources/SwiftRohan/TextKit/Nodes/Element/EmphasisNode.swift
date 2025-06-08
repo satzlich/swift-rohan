@@ -57,9 +57,9 @@ final class EmphasisNode: ElementNode {
     visitor.visit(emphasis: self, context, withChildren: children)
   }
 
-  // MARK: - EmphasisNode
+  final override func cloneEmpty() -> Self { Self() }
 
-  override func cloneEmpty() -> Self { Self() }
+  // MARK: - EmphasisNode
 
   private static let uniqueTag = "emph"
 

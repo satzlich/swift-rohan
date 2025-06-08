@@ -48,9 +48,9 @@ final class StrongNode: ElementNode {
     visitor.visit(strong: self, context, withChildren: children)
   }
 
-  // MARK: - StrongNode
+  final override func cloneEmpty() -> Self { Self() }
 
-  override func cloneEmpty() -> Self { Self() }
+  // MARK: - StrongNode
 
   var command: String { "textbf" }
 
