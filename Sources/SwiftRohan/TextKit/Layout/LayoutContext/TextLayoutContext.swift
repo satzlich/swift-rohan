@@ -248,21 +248,6 @@ final class TextLayoutContext: LayoutContext {
 
     let fraction = fractionOfDistanceThroughGlyph(for: point) ?? 0.51
 
-    if charIndex > 0,
-      charIndex == charRange.lowerBound && fraction == 0,
-      let char = self.getUnichar(at: charIndex),
-      char == 0x0a  // newline
-    {
-      if let prevChar = self.getUnichar(at: charIndex - 1),
-        UTF16.isTrailSurrogate(prevChar)
-      {
-        return PickingResult(charIndex - 2..<charIndex, 1.0, .downstream)
-      }
-      else {
-        return PickingResult(charIndex - 1..<charIndex, 1.0, .downstream)
-      }
-    }
-
     if charIndex == charRange.upperBound {
       return PickingResult(charRange, 1.0, affinity)
     }
