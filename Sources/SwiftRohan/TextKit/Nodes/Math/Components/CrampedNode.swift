@@ -15,7 +15,7 @@ final class CrampedNode: ContentNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<CrampedNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<CrampedNode> {
     loadSelfGeneric(from: json)
   }
 }

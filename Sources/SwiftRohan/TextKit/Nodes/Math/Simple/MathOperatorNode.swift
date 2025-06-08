@@ -81,7 +81,7 @@ final class MathOperatorNode: SimpleNode {
     MathOperator.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -92,7 +92,7 @@ final class MathOperatorNode: SimpleNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MathOperatorNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],

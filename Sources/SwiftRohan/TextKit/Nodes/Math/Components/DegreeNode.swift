@@ -15,7 +15,7 @@ final class DegreeNode: ContentNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<DegreeNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<DegreeNode> {
     loadSelfGeneric(from: json)
   }
 }

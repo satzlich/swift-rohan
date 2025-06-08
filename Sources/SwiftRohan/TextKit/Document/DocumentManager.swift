@@ -7,10 +7,10 @@ import LatexParser
 import _RopeModule
 
 public final class DocumentManager {
-  public typealias SegmentType = NSTextLayoutManager.SegmentType
-  public typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
+  typealias SegmentType = NSTextLayoutManager.SegmentType
+  typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
   typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
-  public typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
+  typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
   /// The root node of the document
   private let content: DocumentContent
@@ -473,7 +473,7 @@ public final class DocumentManager {
 
   /// Enumerate text segments in the given range.
   /// - Note: `block` should return `false` to break out of enumeration.
-  public func enumerateTextSegments(
+  func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
     // (textSegmentRange, textSegmentFrame, baselinePosition) -> continue
     using block: EnumerateTextSegmentsBlock

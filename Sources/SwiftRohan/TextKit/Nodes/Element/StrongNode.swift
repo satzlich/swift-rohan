@@ -30,7 +30,7 @@ final class StrongNode: ElementNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -52,7 +52,7 @@ final class StrongNode: ElementNode {
 
   // MARK: - Storage
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<StrongNode> {
+  class func loadSelf(from json: JSONValue) -> NodeLoaded<StrongNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)

@@ -19,7 +19,7 @@ final class NumeratorNode: ContentNode {
   
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<NumeratorNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<NumeratorNode> {
     loadSelfGeneric(from: json)
   }
 }

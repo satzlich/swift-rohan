@@ -94,7 +94,7 @@ final class TextModeNode: MathNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -155,14 +155,14 @@ final class TextModeNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<TextModeNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
       tag == uniqueTag
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
     switch nucleus {
     case .success(let nucleus):
       let textMode = TextModeNode(nucleus)

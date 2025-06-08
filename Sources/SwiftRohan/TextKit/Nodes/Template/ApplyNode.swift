@@ -118,7 +118,7 @@ final class ApplyNode: Node {
     MathTemplate.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     guard case let .array(array) = json,
       array.isEmpty == false,
       case let .string(tag) = array[0],

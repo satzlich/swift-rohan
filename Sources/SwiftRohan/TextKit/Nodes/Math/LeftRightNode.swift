@@ -87,7 +87,7 @@ final class LeftRightNode: MathNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -134,7 +134,7 @@ final class LeftRightNode: MathNode {
 
   // MARK: - Storage
 
-  internal class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
+  internal class func loadSelf(from json: JSONValue) -> NodeLoaded<LeftRightNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(tag) = array[0],
@@ -142,7 +142,7 @@ final class LeftRightNode: MathNode {
       let delimiters = DelimiterPair.load(from: array[1])
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<ContentNode>
+    let nucleus = ContentNode.loadSelfGeneric(from: array[2]) as NodeLoaded<ContentNode>
     switch nucleus {
     case .success(let nucleus):
       let leftRight = LeftRightNode(delimiters, nucleus)

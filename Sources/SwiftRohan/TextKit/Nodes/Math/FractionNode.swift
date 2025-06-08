@@ -129,7 +129,7 @@ final class FractionNode: MathNode {
     MathGenFrac.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -180,7 +180,7 @@ final class FractionNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<FractionNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(command) = array[0],

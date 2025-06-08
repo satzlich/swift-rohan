@@ -43,7 +43,7 @@ final class MatrixNode: ArrayNode {
     MathArray.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -58,7 +58,7 @@ final class MatrixNode: ArrayNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<MatrixNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MatrixNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],

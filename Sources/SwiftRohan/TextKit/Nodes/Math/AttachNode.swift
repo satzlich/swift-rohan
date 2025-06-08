@@ -73,7 +73,7 @@ final class AttachNode: MathNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -199,7 +199,7 @@ final class AttachNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<AttachNode> {
     guard case let .array(array) = json,
       array.count == 6,
       case let .string(tag) = array[0], tag == uniqueTag
@@ -238,7 +238,7 @@ final class AttachNode: MathNode {
       }
     }
     do {
-      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
+      let node = ContentNode.loadSelfGeneric(from: array[3]) as NodeLoaded<ContentNode>
       switch node {
       case .success(let node):
         nucleus = node

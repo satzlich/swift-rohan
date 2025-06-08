@@ -39,7 +39,7 @@ final class HeadingNode: ElementNode {
 
   final override class var storageTags: Array<String> { (1...5).map { "h\($0)" } }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -74,7 +74,7 @@ final class HeadingNode: ElementNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<HeadingNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<HeadingNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],

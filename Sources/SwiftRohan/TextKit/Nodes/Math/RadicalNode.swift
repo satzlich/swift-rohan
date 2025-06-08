@@ -69,7 +69,7 @@ final class RadicalNode: MathNode {
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -164,7 +164,7 @@ final class RadicalNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<RadicalNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(tag) = array[0],
@@ -187,7 +187,7 @@ final class RadicalNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
+    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as NodeLoaded<CrampedNode>
     switch radicand {
     case let .success(radicand):
       let radical = RadicalNode(radicand, index: index)

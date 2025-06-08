@@ -67,7 +67,7 @@ final class ArgumentNode: Node {
 
   final override class var storageTags: Array<String> { /* intentionally empty */ [] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     preconditionFailure("Work is done in ApplyNode.")
   }
 

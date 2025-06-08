@@ -18,7 +18,7 @@ final class SuperscriptNode: ContentNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<SuperscriptNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<SuperscriptNode> {
     loadSelfGeneric(from: json)
   }
 }

@@ -67,7 +67,7 @@ final class MathExpressionNode: SimpleNode {
     MathExpression.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -78,7 +78,7 @@ final class MathExpressionNode: SimpleNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathExpressionNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MathExpressionNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(tag) = array[0],

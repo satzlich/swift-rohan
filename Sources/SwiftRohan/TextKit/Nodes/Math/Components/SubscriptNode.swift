@@ -20,7 +20,7 @@ final class SubscriptNode: ContentNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<SubscriptNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<SubscriptNode> {
     loadSelfGeneric(from: json)
   }
 }

@@ -62,7 +62,7 @@ final class TextNode: Node {
 
   final override class var storageTags: Array<String> { /* intentionally empty */ [] }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -70,7 +70,7 @@ final class TextNode: Node {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<TextNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<TextNode> {
     guard case let .string(string) = json,
       Self.validate(string: string)
     else { return .failure(UnknownNode(json)) }

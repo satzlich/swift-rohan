@@ -97,7 +97,7 @@ final class MathAttributesNode: MathNode {
     MathAttributes.allCommands.map(\.command)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
   }
 
@@ -154,14 +154,14 @@ final class MathAttributesNode: MathNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> _LoadResult<MathAttributesNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MathAttributesNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
       let attributes = MathAttributes.lookup(tag)
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
     switch nucleus {
     case let .success(nucleus):
       let node = MathAttributesNode(attributes, nucleus)
