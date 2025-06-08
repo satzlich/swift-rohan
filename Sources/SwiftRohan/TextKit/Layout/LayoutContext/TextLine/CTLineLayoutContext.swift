@@ -109,8 +109,10 @@ internal class CTLineLayoutContext: LayoutContext {
     return (width, ascent, descent)
   }
 
-  private func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+  // MARK: - Query
+
+  func getSegmentFrame(
+    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
     let (_, ascent, descent) = getBounds()
@@ -122,7 +124,7 @@ internal class CTLineLayoutContext: LayoutContext {
   func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
-    self.getSegmentFrame(for: layoutOffset, affinity)
+    self.getSegmentFrame(layoutOffset, affinity)
   }
 
   /// - Note: Origins of the segment frame is relative to __the top-left corner__
@@ -194,7 +196,7 @@ internal class CTLineLayoutContext: LayoutContext {
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
     else { return nil }
 
     switch direction {

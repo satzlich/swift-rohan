@@ -44,6 +44,16 @@ protocol LayoutContext {
 
   // MARK: - Query
 
+  /// Get the frame of the layout fragment at the given layout offset.
+  /// - Parameters:
+  ///     - layoutOffset: the layout offset to query the frame for.
+  ///     - affinity: the affinity to use when querying the frame.
+  /// - Note: For this function, all frame origins are placed at the **top-left corner**,
+  ///     and is the position relative to the container frame's **top-left corner**.
+  func getSegmentFrame(
+    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+  ) -> SegmentFrame?
+
   /// Get the frame of the layout fragment at the given layout offset
   /// - Parameters:
   ///   - layoutOffset: the layout offset to query the frame for.
@@ -88,6 +98,8 @@ protocol LayoutContext {
   ) -> RayshootResult?
 
   /// Go from current offset in given direction and get a segment frame in the next line.
+  /// - Note: We care about the vertical position of the line, horizontal position is
+  ///     unused.
   func lineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
