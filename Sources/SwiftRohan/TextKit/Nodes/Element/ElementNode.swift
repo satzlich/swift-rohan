@@ -447,14 +447,14 @@ public class ElementNode: Node {
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    let layoutLength = self.layoutLength()
-    guard 0...layoutLength ~= layoutOffset else {
+    guard 0...layoutLength() ~= layoutOffset else {
       return .failure(error: SatzError(.InvalidLayoutOffset))
     }
 
     if _children.isEmpty {
-      return .success(value: .index(0), target: 0)
+      return .terminal(value: .index(0), target: 0)
     }
+    assert(isPlaceholderActive == false)
 
     var (k, s) = (0, 0)
     // notations: LO:= layoutOffset

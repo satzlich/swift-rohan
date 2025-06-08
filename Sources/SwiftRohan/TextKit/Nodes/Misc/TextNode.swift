@@ -108,7 +108,7 @@ public final class TextNode: Node {
       return .failure(error: SatzError(.InvalidLayoutOffset))
     }
     let index = _getUpstreamBoundary(layoutOffset)
-    return .success(value: .index(index), target: index)
+    return .terminal(value: .index(index), target: index)
   }
 
   /// Returns the index of the character at the given layout offset.
