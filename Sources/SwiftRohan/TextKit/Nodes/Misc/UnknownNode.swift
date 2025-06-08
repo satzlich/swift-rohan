@@ -44,17 +44,23 @@ final class UnknownNode: SimpleNode {
     // NB: no need to encode super as it is not a part of the JSON representation
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { /* intentionally empty */ [] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    assertionFailure("should not be called")
+    return .failure(UnknownNode(json))
+  }
+
+  final override func store() -> JSONValue { data }
+
   // MARK: - UnknownNode
 
   var placeholder: String { PLACEHOLDER }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText(PLACEHOLDER, self)
-  }
-
-  override class var storageTags: [String] {
-    // intentionally empty
-    []
   }
 
   let data: JSONValue
@@ -64,5 +70,4 @@ final class UnknownNode: SimpleNode {
     super.init()
   }
 
-  override func store() -> JSONValue { data }
 }

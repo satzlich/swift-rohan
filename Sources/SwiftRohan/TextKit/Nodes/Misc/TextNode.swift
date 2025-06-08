@@ -52,6 +52,16 @@ final class TextNode: Node {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { /* intentionally empty */ [] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue { .string(String(_string)) }
+
   // MARK: - TextNode
 
   private let _string: RhString
@@ -196,24 +206,11 @@ final class TextNode: Node {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    // intentionally empty
-    []
-  }
-
-  override func store() -> JSONValue {
-    .string(String(_string))
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<TextNode> {
     guard case let .string(string) = json,
       Self.validate(string: string)
     else { return .failure(UnknownNode(json)) }
     return .success(TextNode(string))
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   // MARK: - TextNode Specific

@@ -43,6 +43,22 @@ final class MathAttributesNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathAttributes.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = _nucleus.store()
+    let json = JSONValue.array([.string(subtype.command), nucleus])
+    return json
+  }
+
   // MARK: - MathAttributesNode
 
   typealias Subtype = MathAttributes
@@ -170,16 +186,6 @@ final class MathAttributesNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathAttributes.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = _nucleus.store()
-    let json = JSONValue.array([.string(subtype.command), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathAttributesNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -198,9 +204,5 @@ final class MathAttributesNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 }

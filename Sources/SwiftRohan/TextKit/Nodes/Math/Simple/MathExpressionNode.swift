@@ -46,6 +46,21 @@ final class MathExpressionNode: SimpleNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathExpression.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathExpression.command)])
+    return json
+  }
+
   // MARK: - MathExpressionNode
 
   let mathExpression: MathExpression
@@ -79,15 +94,6 @@ final class MathExpressionNode: SimpleNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathExpression.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathExpression.command)])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathExpressionNode> {
     guard case let .array(array) = json,
       array.count == 1,
@@ -97,7 +103,4 @@ final class MathExpressionNode: SimpleNode {
     return .success(MathExpressionNode(mathExpression))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

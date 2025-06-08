@@ -37,6 +37,25 @@ final class MatrixNode: ArrayNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathArray.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let rows: [JSONValue] = _rows.map { row in
+      let children: [JSONValue] = row.map { $0.store() }
+      return JSONValue.array(children)
+    }
+    let json = JSONValue.array([.string(subtype.command), .array(rows)])
+    return json
+  }
+
   // MARK: - MatrixNode
 
   override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
@@ -50,21 +69,6 @@ final class MatrixNode: ArrayNode {
 
   private init(deepCopyOf matrixNode: MatrixNode) {
     super.init(deepCopyOf: matrixNode)
-  }
-
-  // MARK: - Clone and Visitor
-
-  override class var storageTags: [String] {
-    MathArray.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let rows: [JSONValue] = _rows.map { row in
-      let children: [JSONValue] = row.map { $0.store() }
-      return JSONValue.array(children)
-    }
-    let json = JSONValue.array([.string(subtype.command), .array(rows)])
-    return json
   }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<MatrixNode> {
@@ -88,7 +92,4 @@ final class MatrixNode: ArrayNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

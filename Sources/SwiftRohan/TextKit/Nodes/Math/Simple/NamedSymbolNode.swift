@@ -38,6 +38,21 @@ final class NamedSymbolNode: SimpleNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    NamedSymbol.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(namedSymbol.command)])
+    return json
+  }
+
   // MARK: - NamedSymbolNode
 
   let namedSymbol: NamedSymbol
@@ -81,15 +96,6 @@ final class NamedSymbolNode: SimpleNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    NamedSymbol.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(namedSymbol.command)])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
     guard case let .array(array) = json,
       array.count == 1,
@@ -99,7 +105,4 @@ final class NamedSymbolNode: SimpleNode {
     return .success(NamedSymbolNode(mathSymbol))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

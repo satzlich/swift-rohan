@@ -31,12 +31,30 @@ enum LoadResult<T, U> {
     return false
   }
 
-  func cast<V>() -> LoadResult<V, U> {
+}
+
+extension LoadResult where T: Node, U: Node {
+  @inline(__always)
+  internal func cast() -> LoadResult<Node, U> {
     switch self {
     case .success(let value):
-      return .success(value as! V)
+      return .success(value)
     case .corrupted(let value):
-      return .corrupted(value as! V)
+      return .corrupted(value)
+    case .failure(let value):
+      return .failure(value)
+    }
+  }
+}
+
+extension LoadResult where T: ContentNode, U: Node {
+  @inline(__always)
+  internal func cast() -> LoadResult<ContentNode, U> {
+    switch self {
+    case .success(let value):
+      return .success(value)
+    case .corrupted(let value):
+      return .corrupted(value)
     case .failure(let value):
       return .failure(value)
     }

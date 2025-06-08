@@ -15,6 +15,20 @@ final class ParagraphNode: ElementNode {
 
   final override class var type: NodeType { .paragraph }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
+  }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -30,16 +44,6 @@ final class ParagraphNode: ElementNode {
 
   private static let uniqueTag = "paragraph"
 
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
-    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
-    return json
-  }
-
   final class func loadSelf(from json: JSONValue) -> _LoadResult<ParagraphNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
@@ -48,7 +52,4 @@ final class ParagraphNode: ElementNode {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

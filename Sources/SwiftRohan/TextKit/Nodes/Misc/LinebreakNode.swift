@@ -25,26 +25,28 @@ final class LinebreakNode: SimpleNode {
     try super.init(from: decoder)
   }
 
-  // MARK: - LinebreakNode
+  // MARK: - Node(Storage)
 
-  // MARK: - Layout
+  private static let uniqueTag = "linebreak"
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(Self.uniqueTag)])
+    return json
+  }
+
+  // MARK: - LinebreakNode
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText("\n", self)
   }
 
   // MARK: - Clone and Visitor
-
-  private static let uniqueTag = "linebreak"
-
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(Self.uniqueTag)])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<LinebreakNode> {
     guard case let .array(array) = json,
@@ -55,9 +57,5 @@ final class LinebreakNode: SimpleNode {
       return .failure(UnknownNode(json))
     }
     return .success(LinebreakNode())
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 }

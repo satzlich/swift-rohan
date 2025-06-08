@@ -46,6 +46,18 @@ final class VariableNode: ElementNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { /* emits no storage tags */ [] }
+
+  final override func store() -> JSONValue {
+    preconditionFailure("Work with apply nodes instead.")
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    preconditionFailure("Work with apply nodes instead.")
+  }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -83,21 +95,6 @@ final class VariableNode: ElementNode {
     self.argumentIndex = variableNode.argumentIndex
     self.nestedLevelDelta = variableNode.nestedLevelDelta
     super.init(deepCopyOf: variableNode)
-  }
-
-  // MARK: - Storage
-
-  override class var storageTags: [String] {
-    // variable node emits no storage tags
-    []
-  }
-
-  override func store() -> JSONValue {
-    preconditionFailure("should not be called. Work with apply nodes instead.")
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("should not be called. Work with apply nodes instead.")
   }
 
 }

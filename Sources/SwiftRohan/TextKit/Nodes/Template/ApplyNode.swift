@@ -91,6 +91,56 @@ final class ApplyNode: Node {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathTemplate.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    guard case let .array(array) = json,
+      array.isEmpty == false,
+      case let .string(tag) = array[0],
+      let template = MathTemplate.lookup(tag),
+      template.parameterCount == array.count - 1
+    else { return .failure(UnknownNode(json)) }
+
+    var argumentValues: Array<Array<Node>> = []
+    argumentValues.reserveCapacity(template.parameterCount)
+    var corrupted = false
+
+    typealias _ArgumentResult = LoadResult<Array<Node>, UnknownNode>
+    for argument in array.dropFirst() {
+      let argumentValue = NodeStoreUtils.loadNodes(argument) as _ArgumentResult
+      switch argumentValue {
+      case .success(let nodes):
+        argumentValues.append(nodes)
+      case .corrupted(let nodes):
+        argumentValues.append(nodes)
+        corrupted = true
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+
+    guard let applyNode = ApplyNode(template, argumentValues) else {
+      return .failure(UnknownNode(json))
+    }
+    return corrupted ? .corrupted(applyNode) : .success(applyNode)
+  }
+
+  final override func store() -> JSONValue {
+    switch template.subtype {
+    case .functionCall:
+      let arguments: Array<JSONValue> = _arguments.map { $0.store() }
+      let values = [JSONValue.string(template.command)] + arguments
+      return JSONValue.array(values)
+
+    case .codeSnippet:
+      preconditionFailure()
+    }
+  }
+
   // MARK: - ApplyNode
 
   let template: MathTemplate
@@ -270,51 +320,4 @@ final class ApplyNode: Node {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathTemplate.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    switch template.subtype {
-    case .functionCall:
-      let arguments: Array<JSONValue> = _arguments.map { $0.store() }
-      let values = [JSONValue.string(template.command)] + arguments
-      return JSONValue.array(values)
-
-    case .codeSnippet:
-      preconditionFailure()
-    }
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    guard case let .array(array) = json,
-      array.isEmpty == false,
-      case let .string(tag) = array[0],
-      let template = MathTemplate.lookup(tag),
-      template.parameterCount == array.count - 1
-    else { return .failure(UnknownNode(json)) }
-
-    var argumentValues: Array<Array<Node>> = []
-    argumentValues.reserveCapacity(template.parameterCount)
-    var corrupted = false
-
-    typealias _ArgumentResult = LoadResult<Array<Node>, UnknownNode>
-    for argument in array.dropFirst() {
-      let argumentValue = NodeStoreUtils.loadNodes(argument) as _ArgumentResult
-      switch argumentValue {
-      case .success(let nodes):
-        argumentValues.append(nodes)
-      case .corrupted(let nodes):
-        argumentValues.append(nodes)
-        corrupted = true
-      case .failure:
-        return .failure(UnknownNode(json))
-      }
-    }
-
-    guard let applyNode = ApplyNode(template, argumentValues) else {
-      return .failure(UnknownNode(json))
-    }
-    return corrupted ? .corrupted(applyNode) : .success(applyNode)
-  }
 }

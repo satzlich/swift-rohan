@@ -35,6 +35,20 @@ final class HeadingNode: ElementNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { (1...5).map { "h\($0)" } }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string("h\(level)"), .array(children)])
+    return json
+  }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -79,16 +93,6 @@ final class HeadingNode: ElementNode {
     }
   }
 
-  override class var storageTags: [String] {
-    (1...5).map { "h\($0)" }
-  }
-
-  override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
-    let json = JSONValue.array([.string("h\(level)"), .array(children)])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<HeadingNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -100,10 +104,6 @@ final class HeadingNode: ElementNode {
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(level: level, nodes)
     return corrupted ? .corrupted(result) : .success(result)
-  }
-
-  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   internal override func encode<S: Collection<PartialNode>>(

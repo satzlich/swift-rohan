@@ -47,6 +47,27 @@ final class AttachNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    var array: [JSONValue] = []
+    array.append(.string(Self.uniqueTag))
+    // keep the order: lsub, lsup, nuc, sub, sup
+    array.append(_lsub?.store() ?? .null)
+    array.append(_lsup?.store() ?? .null)
+    array.append(nucleus.store())
+    array.append(_sub?.store() ?? .null)
+    array.append(_sup?.store() ?? .null)
+    let json = JSONValue.array(array)
+    return json
+  }
+
   // MARK: - AttachNode
 
   public init(
@@ -434,22 +455,6 @@ final class AttachNode: MathNode {
   // MARK: - Clone and Visitor
 
   private static let uniqueTag = "attach"
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    var array: [JSONValue] = []
-    array.append(.string(Self.uniqueTag))
-    // keep the order: lsub, lsup, nuc, sub, sup
-    array.append(_lsub?.store() ?? .null)
-    array.append(_lsup?.store() ?? .null)
-    array.append(nucleus.store())
-    array.append(_sub?.store() ?? .null)
-    array.append(_sup?.store() ?? .null)
-    let json = JSONValue.array(array)
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
     guard case let .array(array) = json,
@@ -532,9 +537,6 @@ final class AttachNode: MathNode {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }
 
 struct ComponentSet: ExpressibleByArrayLiteral {

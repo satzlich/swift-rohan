@@ -25,6 +25,22 @@ class ContentNode: ElementNode {
     try super.init(from: decoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    /* ContentNode emit no tags */
+    []
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    (loadSelfGeneric(from: json) as _LoadResult<Self>).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    return JSONValue.array(children)
+  }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -49,16 +65,6 @@ class ContentNode: ElementNode {
 
   final override func cloneEmpty() -> Self { Self() }
 
-  override class var storageTags: [String] {
-    // ContentNode emit no tags
-    []
-  }
-
-  final override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
-    return JSONValue.array(children)
-  }
-
   final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
   {
     guard case let .array(array) = json
@@ -68,7 +74,4 @@ class ContentNode: ElementNode {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    (loadSelfGeneric(from: json) as _LoadResult<Self>).cast()
-  }
 }

@@ -30,7 +30,7 @@ final class MathOperatorNode: SimpleNode {
 
   final override func layoutLength() -> Int { 1 }  // always "1".
 
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case command }
 
@@ -51,6 +51,21 @@ final class MathOperatorNode: SimpleNode {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(mathOperator.command, forKey: .command)
     try super.encode(to: encoder)
+  }
+
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathOperator.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathOperator.command)])
+    return json
   }
 
   // MARK: - Math Operator
@@ -88,15 +103,6 @@ final class MathOperatorNode: SimpleNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathOperator.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathOperator.command)])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
     guard case let .array(array) = json,
       array.count == 1,
@@ -106,7 +112,4 @@ final class MathOperatorNode: SimpleNode {
     return .success(MathOperatorNode(mathOp))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

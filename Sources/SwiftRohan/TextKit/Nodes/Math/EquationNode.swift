@@ -56,6 +56,26 @@ final class EquationNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  private enum Tag: String, Codable, CaseIterable { case blockmath, inlinemath }
+
+  final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    switch subtype {
+    case .block:
+      return JSONValue.array([.string(Tag.blockmath.rawValue), nucleus])
+    case .inline:
+      return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
+    }
+  }
+
   // MARK: - EquationNode
 
   typealias Subtype = EquationExpr.Subtype
@@ -145,24 +165,6 @@ final class EquationNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  private enum Tag: String, Codable, CaseIterable {
-    case blockmath, inlinemath
-  }
-
-  override class var storageTags: [String] {
-    Tag.allCases.map { $0.rawValue }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    switch subtype {
-    case .block:
-      return JSONValue.array([.string(Tag.blockmath.rawValue), nucleus])
-    case .inline:
-      return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
-    }
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -185,10 +187,6 @@ final class EquationNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   // MARK: - Reflow-related

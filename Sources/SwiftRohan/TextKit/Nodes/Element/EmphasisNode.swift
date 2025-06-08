@@ -8,6 +8,11 @@ final class EmphasisNode: ElementNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(emphasis: self, context)
+  }
+
   final override class var type: NodeType { .emphasis }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -30,6 +35,20 @@ final class EmphasisNode: ElementNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
+  }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -42,24 +61,9 @@ final class EmphasisNode: ElementNode {
 
   override func cloneEmpty() -> Self { Self() }
 
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(emphasis: self, context)
-  }
-
   private static let uniqueTag = "emph"
 
   var command: String { Self.uniqueTag }
-
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
-    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<EmphasisNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
@@ -67,9 +71,5 @@ final class EmphasisNode: ElementNode {
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
-  }
-
-  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 }

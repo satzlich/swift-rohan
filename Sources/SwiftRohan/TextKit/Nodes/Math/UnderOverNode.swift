@@ -44,6 +44,22 @@ final class UnderOverNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathSpreader.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(spreader.command), nucleus])
+    return json
+  }
+
   // MARK: - UnderOverNode
 
   let spreader: MathSpreader
@@ -183,16 +199,6 @@ final class UnderOverNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathSpreader.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(spreader.command), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -220,7 +226,4 @@ final class UnderOverNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

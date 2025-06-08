@@ -59,6 +59,23 @@ final class FractionNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathGenFrac.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let num = numerator.store()
+    let denom = denominator.store()
+    let json = JSONValue.array([.string(genfrac.command), num, denom])
+    return json
+  }
+
   // MARK: - Fraction
 
   public let genfrac: MathGenFrac
@@ -215,17 +232,6 @@ final class FractionNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathGenFrac.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let num = numerator.store()
-    let denom = denominator.store()
-    let json = JSONValue.array([.string(genfrac.command), num, denom])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
     guard case let .array(array) = json,
       array.count == 3,
@@ -259,10 +265,6 @@ final class FractionNode: MathNode {
 
     let node = FractionNode(num: num, denom: denom, genfrac: subtype)
     return corrupted ? .corrupted(node) : .success(node)
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
 }

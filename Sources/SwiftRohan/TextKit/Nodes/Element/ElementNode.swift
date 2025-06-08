@@ -6,7 +6,7 @@ import CoreGraphics
 import DequeModule
 import _RopeModule
 
-class ElementNode: Node {
+internal class ElementNode: Node {
   // MARK: - Node
 
   final override func resetCachedProperties() {

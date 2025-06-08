@@ -41,6 +41,24 @@ final class RadicalNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  private static let uniqueTag = "sqrt"
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let radicand = radicand.store()
+    let index = _index?.store() ?? .null
+    // keep the order: index, radicand
+    let json = JSONValue.array([.string(Self.uniqueTag), index, radicand])
+    return json
+  }
+
   // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
@@ -292,21 +310,7 @@ final class RadicalNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  private static let uniqueTag = "sqrt"
-
   var command: String { Self.uniqueTag }
-
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    let radicand = radicand.store()
-    let index = _index?.store() ?? .null
-    // keep the order: index, radicand
-    let json = JSONValue.array([.string(Self.uniqueTag), index, radicand])
-    return json
-  }
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
     guard case let .array(array) = json,
@@ -344,7 +348,4 @@ final class RadicalNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

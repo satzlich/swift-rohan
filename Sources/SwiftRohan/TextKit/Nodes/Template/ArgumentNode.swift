@@ -44,6 +44,21 @@ final class ArgumentNode: Node {
     preconditionFailure("Work is done in ApplyNode.")
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { /* intentionally empty */ [] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    preconditionFailure("Work is done in ApplyNode.")
+  }
+
+  final override func store() -> JSONValue {
+    precondition(!variableNodes.isEmpty)
+    let first = variableNodes[0]
+    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
+    return JSONValue.array(children)
+  }
+
   // MARK: - ElementNode
 
   final func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -242,21 +257,4 @@ final class ArgumentNode: Node {
       location, endLocation, variableNodes.first!, nil, &insertionPoint)
   }
 
-  // MARK: - Clone and Visitor
-
-  override class var storageTags: [String] {
-    // intentionally empty
-    []
-  }
-
-  override func store() -> JSONValue {
-    precondition(!variableNodes.isEmpty)
-    let first = variableNodes[0]
-    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
-    return JSONValue.array(children)
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("should not be called. Work is done in ApplyNode.")
-  }
 }

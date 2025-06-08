@@ -48,6 +48,20 @@ final class TextModeNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
+    return json
+  }
+
   // MARK: - TextModeNode
 
   let nucleus: ContentNode
@@ -80,18 +94,6 @@ final class TextModeNode: MathNode {
 
   var command: String { Self.uniqueTag }
 
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  // MARK: - Storage
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -110,10 +112,6 @@ final class TextModeNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   // MARK: - Content

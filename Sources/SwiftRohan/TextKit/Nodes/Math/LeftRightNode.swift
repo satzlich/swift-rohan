@@ -36,6 +36,23 @@ final class LeftRightNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  private static let uniqueTag = "lrdelim"
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus: JSONValue = _nucleus.store()
+    let delimiters: JSONValue = delimiters.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), delimiters, nucleus])
+    return json
+  }
+
   // MARK: - LeftRightNode
 
   let delimiters: DelimiterPair
@@ -149,18 +166,6 @@ final class LeftRightNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  private static let uniqueTag = "lrdelim"
-  override class var storageTags: [String] {
-    [uniqueTag]
-  }
-
-  override func store() -> JSONValue {
-    let nucleus: JSONValue = _nucleus.store()
-    let delimiters: JSONValue = delimiters.store()
-    let json = JSONValue.array([.string(Self.uniqueTag), delimiters, nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
     guard case let .array(array) = json,
       array.count == 3,
@@ -182,7 +187,4 @@ final class LeftRightNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

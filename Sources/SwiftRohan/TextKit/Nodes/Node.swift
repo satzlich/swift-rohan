@@ -144,21 +144,19 @@ internal class Node: Codable {
 
   typealias _LoadResult<T: Node> = LoadResult<T, UnknownNode>
 
+  /// Tags associated with this node.
+  /// - IMPORTANT: The set of storageTags should only expand, and never shrink.
+  internal class var storageTags: Array<String> {
+    preconditionFailure("overriding required")
+  }
+
   /// Restore the node from JSONValue.
-  class func load(from json: JSONValue) -> _LoadResult<Node> {
+  internal class func load(from json: JSONValue) -> _LoadResult<Node> {
     preconditionFailure("overriding required")
   }
 
   /// Store the node to JSONValue.
-  func store() -> JSONValue {
-    preconditionFailure("overriding required")
-  }
-
-  /// Tags associated with this node.
-  /// - IMPORTANT: The set of storageTags should only expand, and never shrink.
-  class var storageTags: [String] {
-    preconditionFailure("overriding required")
-  }
+  internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
   // MARK: - Content
 

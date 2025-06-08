@@ -42,6 +42,22 @@ final class AccentNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathAccent.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(accent.command), nucleus])
+    return json
+  }
+
   // MARK: - AccentNode
 
   let accent: MathAccent
@@ -158,16 +174,6 @@ final class AccentNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override class var storageTags: [String] {
-    MathAccent.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(accent.command), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -186,7 +192,4 @@ final class AccentNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
-  }
 }

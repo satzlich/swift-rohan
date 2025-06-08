@@ -66,6 +66,22 @@ final class MathStylesNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  final override class var storageTags: Array<String> {
+    MathStyles.allCommands.map(\.command)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(styles.command), nucleus])
+    return json
+  }
+
   // MARK: - MathStylesNode
 
   let styles: MathStyles
@@ -96,20 +112,6 @@ final class MathStylesNode: MathNode {
     nucleus.setParent(self)
   }
 
-  // MARK: - Clone and Visitor
-
-  // MARK: - Storage
-
-  override class var storageTags: [String] {
-    MathStyles.allCommands.map { $0.command }
-  }
-
-  override func store() -> JSONValue {
-    let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(styles.command), nucleus])
-    return json
-  }
-
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
     guard case let .array(array) = json,
       array.count == 2,
@@ -128,10 +130,6 @@ final class MathStylesNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    loadSelf(from: json).cast()
   }
 
   // MARK: - Content
