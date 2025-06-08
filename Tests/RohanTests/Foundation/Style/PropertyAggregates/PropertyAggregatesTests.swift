@@ -10,10 +10,7 @@ struct PropertyAggregatesTests {
 
   private func coverageTest<T: PropertyAggregate>(_ type: T.Type) {
     let stylesheet = StyleSheets.latinModern(12)
-    let property = stylesheet.resolveDefault() as T
-
-//    _ = property.getProperties()
-//    _ = property.getAttributes()
+    _ = stylesheet.resolveDefault() as T
   }
 
   @Test
@@ -43,8 +40,6 @@ struct PropertyAggregatesTests {
     for variant in MathVariant.allCases {
       for (bold, italic) in product([true, false], [true, false, nil]) {
         let mathProperty = createValue(bold: bold, italic: italic, variant)
-//        _ = mathProperty.getProperties()
-//        _ = mathProperty.getAttributes()
         _ = mathProperty.getAttributes(isFlipped: false, textProperty, mathContext)
       }
     }
