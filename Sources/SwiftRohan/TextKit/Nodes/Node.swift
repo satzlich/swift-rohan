@@ -144,9 +144,8 @@ public class Node: Codable {
   /// - Parameter layoutOffset: layout offset
   /// - Invariant: If return value is non-nil, then access child/character with
   ///     the returned index must succeed.
-  /// - Note: It is possible that childOffset > layoutOffset, in which case the
-  ///     caller should adjust the layout offset accordingly.
-  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, childOffset: Int)? {
+  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
+  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     preconditionFailure("overriding required")
   }
 
