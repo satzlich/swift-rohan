@@ -140,11 +140,56 @@ final class FractionNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [
+      (MathIndex.num, _numerator),
+      (MathIndex.denom, _denominator),
+    ]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: MathLayoutFragment? { _fractionFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .num: return _fractionFragment?.numerator
+    case .denom: return _fractionFragment?.denominator
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _fractionFragment?.getMathIndex(interactingAt: point)
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _fractionFragment?.rayshoot(from: point, component, in: direction)
+  }
+
   // MARK: - Fraction
 
-  public let genfrac: MathGenFrac
+  internal let genfrac: MathGenFrac
 
-  public init(num: [Node], denom: [Node], genfrac: MathGenFrac = .frac) {
+  private let _numerator: NumeratorNode
+  private let _denominator: DenominatorNode
+  internal var numerator: ContentNode { _numerator }
+  internal var denominator: ContentNode { _denominator }
+
+  private var _fractionFragment: MathFractionLayoutFragment? = nil
+
+  internal init(num: [Node], denom: [Node], genfrac: MathGenFrac = .frac) {
     self.genfrac = genfrac
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
@@ -152,7 +197,7 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
-  init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
+  internal init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
     self.genfrac = genfrac
     self._numerator = num
     self._denominator = denom
@@ -173,56 +218,6 @@ final class FractionNode: MathNode {
     _denominator.setParent(self)
   }
 
-  // MARK: - Layout
-
-  private var _fractionFragment: MathFractionLayoutFragment? = nil
-  override var layoutFragment: MathLayoutFragment? { _fractionFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .num:
-      return _fractionFragment?.numerator
-    case .denom:
-      return _fractionFragment?.denominator
-    default:
-      return nil
-    }
-  }
-
-  override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _fractionFragment?.getMathIndex(interactingAt: point)
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    _fractionFragment?.rayshoot(from: point, component, in: direction)
-  }
-
-  // MARK: - Components
-
-  private let _numerator: NumeratorNode
-  private let _denominator: DenominatorNode
-
-  public var numerator: ContentNode { @inline(__always) get { _numerator } }
-  public var denominator: ContentNode { @inline(__always) get { _denominator } }
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [
-      (MathIndex.num, _numerator),
-      (MathIndex.denom, _denominator),
-    ]
-  }
-
-  // MARK: - Styles
-
   private func resolveMathContext(_ context: MathContext) -> MathContext {
     if let enforceStyle = genfrac.style {
       return context.with(mathStyle: enforceStyle)
@@ -231,8 +226,6 @@ final class FractionNode: MathNode {
       return context
     }
   }
-
-  // MARK: - Clone and Visitor
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
     guard case let .array(array) = json,

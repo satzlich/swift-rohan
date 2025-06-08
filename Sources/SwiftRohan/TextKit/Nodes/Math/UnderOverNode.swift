@@ -107,12 +107,61 @@ final class UnderOverNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .nuc: return _underOverFragment?.nucleus
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    guard _underOverFragment != nil else { return nil }
+    return .nuc
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _underOverFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: fragment.minY), false)
+    case .down:
+      return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
+  }
+
   // MARK: - UnderOverNode
 
-  let spreader: MathSpreader
+  internal let spreader: MathSpreader
 
   private let _nucleus: ContentNode
-  var nucleus: ContentNode { _nucleus }
+  internal var nucleus: ContentNode { _nucleus }
+
+  private var _underOverFragment: MathUnderOverLayoutFragment? = nil
 
   init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
     self.spreader = spreader
@@ -147,59 +196,6 @@ final class UnderOverNode: MathNode {
   private final func _setUp() {
     _nucleus.setParent(self)
   }
-
-  // MARK: - Layout
-
-  private var _underOverFragment: MathUnderOverLayoutFragment? = nil
-  final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .nuc:
-      return _underOverFragment?.nucleus
-    default:
-      return nil
-    }
-
-  }
-
-  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _underOverFragment != nil else { return nil }
-    return .nuc
-  }
-
-  final override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    guard let fragment = _underOverFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up:
-      return RayshootResult(point.with(y: fragment.minY), false)
-    case .down:
-      return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Unexpected Direction")
-      return nil
-    }
-  }
-
-  // MARK: - Component
-
-  final override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
     guard case let .array(array) = json,

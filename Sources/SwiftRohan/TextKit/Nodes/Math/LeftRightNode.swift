@@ -98,10 +98,48 @@ final class LeftRightNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _leftRightFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .nuc: return _leftRightFragment?.nucleus
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _leftRightFragment?.getMathIndex(interactingAt: point)
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _leftRightFragment?.rayshoot(from: point, component, in: direction)
+  }
+
   // MARK: - LeftRightNode
 
   let delimiters: DelimiterPair
+
   private let _nucleus: ContentNode
+  var nucleus: ContentNode { _nucleus }
+
+  private var _leftRightFragment: MathLeftRightLayoutFragment?
 
   init(_ delimiters: DelimiterPair, _ nucleus: ContentNode) {
     self.delimiters = delimiters
@@ -127,46 +165,6 @@ final class LeftRightNode: MathNode {
   private func _setUp() {
     _nucleus.setParent(self)
   }
-
-  // MARK: - Layout
-
-  private var _leftRightFragment: MathLeftRightLayoutFragment?
-
-  override var layoutFragment: (any MathLayoutFragment)? { _leftRightFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .nuc: return _leftRightFragment?.nucleus
-    default: return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _leftRightFragment?.getMathIndex(interactingAt: point)
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    _leftRightFragment?.rayshoot(from: point, component, in: direction)
-  }
-
-  // MARK: - Component
-
-  var nucleus: ContentNode { _nucleus }
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<LeftRightNode> {
     guard case let .array(array) = json,

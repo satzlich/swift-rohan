@@ -101,9 +101,64 @@ final class EquationNode: MathNode {
     }
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> [MathNode.Component] {
+    [(MathIndex.nuc, nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: MathLayoutFragment? { _nucleusFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    guard index == .nuc else { return nil }
+    return _nucleusFragment
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment,
+    parent context: any LayoutContext
+  ) -> any LayoutContext {
+    // TODO: handle reflowed segments
+    precondition(context is TextLayoutContext)
+    precondition(fragment is MathListLayoutFragment)
+    let context = context as! TextLayoutContext
+    let fragment = fragment as! MathListLayoutFragment
+    return LayoutUtils.initMathListLayoutContext(
+      for: component, fragment, parent: context)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _nucleusFragment != nil ? .nuc : nil
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _nucleusFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: -fragment.ascent), false)
+    case .down:
+      return RayshootResult(point.with(y: fragment.descent), false)
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+  }
+
   // MARK: - EquationNode
 
-  typealias Subtype = EquationExpr.Subtype
+  internal typealias Subtype = EquationExpr.Subtype
+
+  internal let subtype: Subtype
+  internal let nucleus: ContentNode
+  private var _nucleusFragment: MathListLayoutFragment? = nil
 
   init(_ subtype: Subtype, _ nucleus: [Node] = []) {
     self.subtype = subtype
@@ -134,61 +189,11 @@ final class EquationNode: MathNode {
     self.nucleus.setParent(self)
   }
 
-  // MARK: - Layout
-
-  let subtype: Subtype
-
-  private var _nucleusFragment: MathListLayoutFragment? = nil
-
-  override final var layoutFragment: MathLayoutFragment? { _nucleusFragment }
-
-  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    guard index == .nuc else { return nil }
-    return _nucleusFragment
-  }
-
-  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _nucleusFragment != nil ? .nuc : nil
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    guard let fragment = _nucleusFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up:
-      return RayshootResult(point.with(y: -fragment.ascent), false)
-
-    case .down:
-      return RayshootResult(point.with(y: fragment.descent), false)
-
-    default:
-      assertionFailure("Unsupported direction")
-      return nil
-    }
-  }
-
-  // MARK: - Styles
-
-  public static func selector(isBlock: Bool? = nil) -> TargetSelector {
+  internal static func selector(isBlock: Bool? = nil) -> TargetSelector {
     return isBlock != nil
       ? TargetSelector(.equation, PropertyMatcher(.isBlock, .bool(isBlock!)))
       : TargetSelector(.equation)
   }
-
-  // MARK: - Components
-
-  public let nucleus: ContentNode
-
-  override final func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
     guard case let .array(array) = json,
@@ -212,21 +217,6 @@ final class EquationNode: MathNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
-  }
-
-  // MARK: - Reflow-related
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment,
-    parent context: any LayoutContext
-  ) -> any LayoutContext {
-    // TODO: handle reflowed segments
-    precondition(context is TextLayoutContext)
-    precondition(fragment is MathListLayoutFragment)
-    let context = context as! TextLayoutContext
-    let fragment = fragment as! MathListLayoutFragment
-    return LayoutUtils.initMathListLayoutContext(
-      for: component, fragment, parent: context)
   }
 
 }
