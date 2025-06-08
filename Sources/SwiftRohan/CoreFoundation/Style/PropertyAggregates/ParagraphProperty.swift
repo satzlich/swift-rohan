@@ -5,18 +5,11 @@ import AppKit
 public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   // MARK: - PropertyAggregate
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      ParagraphProperty.textAlignment: .textAlignment(textAlignment),
-      ParagraphProperty.paragraphSpacing: .float(paragraphSpacing),
-    ]
-  }
-
   public func getAttributes() -> [NSAttributedString.Key: Any] {
     Self._attributesCache.getOrCreate(self, self._createAttributes)
   }
 
-  public static func resolve(
+  public static func resolveAggregate(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> ParagraphProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {

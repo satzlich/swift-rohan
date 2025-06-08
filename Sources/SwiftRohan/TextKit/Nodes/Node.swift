@@ -248,7 +248,7 @@ extension Node {
   /// Resolve the value of property aggregate for given type.
   final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {
-    T.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
+    T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
   /// Resolve the value of property for given key.

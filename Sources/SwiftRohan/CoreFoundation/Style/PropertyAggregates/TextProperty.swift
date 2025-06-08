@@ -4,22 +4,11 @@ import AppKit
 
 public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      TextProperty.font: .string(font),
-      TextProperty.size: .fontSize(size),
-      TextProperty.stretch: .fontStretch(stretch),
-      TextProperty.style: .fontStyle(style),
-      TextProperty.weight: .fontWeight(weight),
-      TextProperty.foregroundColor: .color(foregroundColor),
-    ]
-  }
-
   public func getAttributes() -> [NSAttributedString.Key: Any] {
     self.getAttributes(isFlipped: false)
   }
 
-  public static func resolve(
+  public static func resolveAggregate(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> TextProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {

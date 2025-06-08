@@ -5,17 +5,7 @@ import Foundation
 public struct InternalProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      InternalProperty.nestedLevel: .integer(nestedLevel)
-    ]
-  }
-
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
-    [:]
-  }
-
-  public static func resolve(
+  public static func resolveAggregate(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> InternalProperty {
     func resolve(_ key: PropertyKey) -> PropertyValue {

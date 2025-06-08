@@ -12,8 +12,8 @@ struct PropertyAggregatesTests {
     let stylesheet = StyleSheets.latinModern(12)
     let property = stylesheet.resolveDefault() as T
 
-    _ = property.getProperties()
-    _ = property.getAttributes()
+//    _ = property.getProperties()
+//    _ = property.getAttributes()
   }
 
   @Test
@@ -43,8 +43,8 @@ struct PropertyAggregatesTests {
     for variant in MathVariant.allCases {
       for (bold, italic) in product([true, false], [true, false, nil]) {
         let mathProperty = createValue(bold: bold, italic: italic, variant)
-        _ = mathProperty.getProperties()
-        _ = mathProperty.getAttributes()
+//        _ = mathProperty.getProperties()
+//        _ = mathProperty.getAttributes()
         _ = mathProperty.getAttributes(isFlipped: false, textProperty, mathContext)
       }
     }

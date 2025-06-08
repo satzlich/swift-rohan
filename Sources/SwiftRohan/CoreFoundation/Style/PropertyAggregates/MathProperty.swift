@@ -5,22 +5,7 @@ import AppKit
 public struct MathProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      MathProperty.font: .string(font),
-      MathProperty.bold: .bool(bold),
-      MathProperty.italic: italic == nil ? .none : .bool(italic!),
-      MathProperty.cramped: .bool(cramped),
-      MathProperty.style: .mathStyle(style),
-      MathProperty.variant: .mathVariant(variant),
-    ]
-  }
-
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
-    [:]
-  }
-
-  public static func resolve(
+  public static func resolveAggregate(
     _ properties: PropertyDictionary,
     _ fallback: PropertyMapping
   ) -> MathProperty {

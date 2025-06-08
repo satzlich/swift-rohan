@@ -5,22 +5,7 @@ import Foundation
 public struct PageProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      PageProperty.width: .absLength(width),
-      PageProperty.height: .absLength(height),
-      PageProperty.topMargin: .absLength(topMargin),
-      PageProperty.bottomMargin: .absLength(bottomMargin),
-      PageProperty.leftMargin: .absLength(leftMargin),
-      PageProperty.rightMargin: .absLength(rightMargin),
-    ]
-  }
-
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
-    [:]
-  }
-
-  public static func resolve(
+  public static func resolveAggregate(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> PageProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
