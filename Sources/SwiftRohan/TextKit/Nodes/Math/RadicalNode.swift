@@ -210,7 +210,7 @@ final class RadicalNode: MathNode {
   private var _nodeFragment: MathRadicalLayoutFragment? = nil
 
   private var _isDirty: Bool = false
-  private var _snapshot: MathComponentSet? = nil
+  private var _snapshot: NodeIdSet? = nil
 
   var command: String { Self.uniqueTag }
 
@@ -242,7 +242,7 @@ final class RadicalNode: MathNode {
 
   private func makeSnapshotOnce() {
     if _snapshot == nil {
-      _snapshot = MathComponentSet()
+      _snapshot = NodeIdSet()
       if let index = _index { _snapshot!.insert(index.id) }
     }
   }
