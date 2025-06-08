@@ -249,39 +249,6 @@ public class Node: Codable {
   func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
-
-  // MARK: - LengthSummary
-
-  final var lengthSummary: LengthSummary {
-    LengthSummary(layoutLength: layoutLength())
-  }
-
-  /// Previously there were multiple kinds of lengths involved. Now there is only one.
-  struct LengthSummary: Equatable, Hashable, AdditiveArithmetic {
-    var layoutLength: Int
-
-    init(layoutLength: Int) {
-      self.layoutLength = layoutLength
-    }
-
-    func with(layoutLength: Int) -> Self {
-      LengthSummary(layoutLength: layoutLength)
-    }
-
-    static let zero = LengthSummary(layoutLength: 0)
-
-    static func + (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
-      LengthSummary(layoutLength: lhs.layoutLength + rhs.layoutLength)
-    }
-
-    static func - (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
-      LengthSummary(layoutLength: lhs.layoutLength - rhs.layoutLength)
-    }
-
-    static prefix func - (summary: LengthSummary) -> LengthSummary {
-      LengthSummary(layoutLength: -summary.layoutLength)
-    }
-  }
 }
 
 extension Node {

@@ -53,8 +53,7 @@ public class ElementNode: Node {
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
-    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._layoutLength = summary.layoutLength
+    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
     // flags
     self._isDirty = false
 
@@ -68,8 +67,7 @@ public class ElementNode: Node {
     self._children = Store(children)
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
-    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._layoutLength = summary.layoutLength
+    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
     // flags
     self._isDirty = false
 
@@ -111,8 +109,7 @@ public class ElementNode: Node {
     self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
     self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
     // length
-    let summary = _children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._layoutLength = summary.layoutLength
+    self._layoutLength = _children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
     // flags
     self._isDirty = false
 
