@@ -506,6 +506,16 @@ public final class DocumentManager {
     }
   }
 
+  /// Resolve the text location for the given point.
+  /// - Returns: The resolved text location if successful; otherwise, nil.
+  internal func resolveTextLocation_v2(with point: CGPoint) -> AffineLocation? {
+    #if LOG_TEXT_SELECTION
+    Rohan.logger.debug("Interacting at \(point.debugDescription)")
+    #endif
+
+    preconditionFailure()
+  }
+
   // MARK: - Navigation
 
   internal func destinationLocation(

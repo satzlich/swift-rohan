@@ -5,13 +5,19 @@ import Foundation
 import _RopeModule
 
 public class Node: Codable {
-  internal final private(set) weak var parent: Node?
+  public init() {}
 
-  /// Identifier of this node
+  internal class var type: NodeType { preconditionFailure("overriding required") }
+  internal final var type: NodeType { Self.type }
+
   internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
 
-  class var type: NodeType { preconditionFailure("overriding required") }
-  final var type: NodeType { Self.type }
+  internal final private(set) weak var parent: Node?
+
+  /// Reallocate the node's identifier.
+  internal final func reallocateId() {
+    self.id = NodeIdAllocator.allocate()
+  }
 
   internal final func setParent(_ parent: Node) {
     precondition(self.parent == nil)
@@ -23,21 +29,17 @@ public class Node: Codable {
     parent = nil
   }
 
-  /// Reallocate the node's identifier.
-  /// - Warning: Reallocation of node id can be disastrous if used incorrectly.
-  internal final func reallocateId() {
-    id = NodeIdAllocator.allocate()
-  }
-
   /// Reset properties that cannot be reused.
-  /// 1. Reallocate the node's identifier.
-  /// 2. Clear the cached properties.
-  internal final func prepareForReuse() {
+  internal final func resetForReuse() {
     reallocateId()
     resetCachedProperties(recursive: true)
   }
 
-  public init() {}
+  final var _cachedProperties: PropertyDictionary?
+
+  internal func resetCachedProperties(recursive: Bool) {
+    _cachedProperties = nil
+  }
 
   // MARK: - Codable
 
@@ -203,8 +205,6 @@ public class Node: Codable {
 
   // MARK: - Styles
 
-  final var _cachedProperties: PropertyDictionary?
-
   func selector() -> TargetSelector { TargetSelector(type) }
 
   public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -232,10 +232,6 @@ public class Node: Codable {
       }
     }
     return _cachedProperties!
-  }
-
-  func resetCachedProperties(recursive: Bool) {
-    _cachedProperties = nil
   }
 
   // MARK: - Clone and Visitor

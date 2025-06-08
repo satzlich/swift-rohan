@@ -4,6 +4,17 @@ import Foundation
 import _RopeModule
 
 class ArrayNode: Node {
+  final override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      for row in _rows {
+        for element in row {
+          element.resetCachedProperties(recursive: recursive)
+        }
+      }
+    }
+  }
+
   typealias Cell = ContentNode
   typealias Row = GridRow<Cell>
 
@@ -498,14 +509,4 @@ class ArrayNode: Node {
     return _cachedProperties!
   }
 
-  final override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      for row in _rows {
-        for element in row {
-          element.resetCachedProperties(recursive: recursive)
-        }
-      }
-    }
-  }
 }

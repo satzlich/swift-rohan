@@ -3,6 +3,13 @@
 import CoreGraphics
 
 public class MathNode: Node {
+  override final func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      enumerateComponents().forEach { $0.content.resetCachedProperties(recursive: true) }
+    }
+  }
+
   // MARK: - Content
 
   override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
@@ -64,15 +71,6 @@ public class MathNode: Node {
 
   override final func lastIndex() -> RohanIndex? {
     (enumerateComponents().last?.index).map({ .mathIndex($0) })
-  }
-
-  // MARK: - Styles
-
-  override final func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      enumerateComponents().forEach { $0.content.resetCachedProperties(recursive: true) }
-    }
   }
 
   // MARK: - Layout

@@ -5,6 +5,10 @@ import CoreGraphics
 public class SimpleNode: Node {  // default implementation for simple nodes
   override init() { super.init() }
 
+  override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+  }
+
   // MARK: - Codable
 
   public required init(from decoder: any Decoder) throws {
@@ -80,7 +84,4 @@ public class SimpleNode: Node {  // default implementation for simple nodes
     parent?.getProperties(styleSheet) ?? [:]
   }
 
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-  }
 }

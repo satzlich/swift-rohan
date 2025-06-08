@@ -7,6 +7,13 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
+  override final func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      _children.forEach { $0.resetCachedProperties(recursive: true) }
+    }
+  }
+
   public typealias Store = Deque<Node>
   private final var _children: Store
 
@@ -166,15 +173,6 @@ public class ElementNode: Node {
   override final func firstIndex() -> RohanIndex? { .index(0) }
 
   override final func lastIndex() -> RohanIndex? { .index(_children.count) }
-
-  // MARK: - Styles
-
-  override final func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      _children.forEach { $0.resetCachedProperties(recursive: true) }
-    }
-  }
 
   // MARK: - Layout
 

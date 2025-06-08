@@ -216,7 +216,7 @@ extension TreeUtils {
               // do move/merge
               let children = rhs.takeChildren(inStorage: true)
               // reset properties that cannot be reused
-              children.forEach { $0.prepareForReuse() }
+              children.forEach { $0.resetForReuse() }
               let (from, _) =
                 insertInlineContent(children, elementNode: lhs, index: lhs.childCount)
               // rectify insertion point if necessary

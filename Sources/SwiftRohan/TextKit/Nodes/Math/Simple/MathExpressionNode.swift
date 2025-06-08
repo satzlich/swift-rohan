@@ -5,6 +5,13 @@ import Foundation
 final class MathExpressionNode: SimpleNode {
   override class var type: NodeType { .mathExpression }
 
+  override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      _deflated.resetCachedProperties(recursive: recursive)
+    }
+  }
+
   let mathExpression: MathExpression
   private let _deflated: Node
 
@@ -58,15 +65,6 @@ final class MathExpressionNode: SimpleNode {
     else {
       assertionFailure("theorectically, we should never reach here")
       context.skipBackwards(layoutLength())
-    }
-  }
-
-  // MARK: - Style
-
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive {
-      _deflated.resetCachedProperties(recursive: recursive)
     }
   }
 

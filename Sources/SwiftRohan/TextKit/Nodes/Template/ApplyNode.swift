@@ -6,6 +6,11 @@ import _RopeModule
 public final class ApplyNode: Node {
   override class var type: NodeType { .apply }
 
+  override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive { _content.resetCachedProperties(recursive: true) }
+  }
+
   let template: MathTemplate
   private let _arguments: [ArgumentNode]
   private let _content: ContentNode
@@ -128,13 +133,6 @@ public final class ApplyNode: Node {
   override func lastIndex() -> RohanIndex? {
     guard !_arguments.isEmpty else { return nil }
     return .argumentIndex(_arguments.count - 1)
-  }
-
-  // MARK: - Styles
-
-  override func resetCachedProperties(recursive: Bool) {
-    super.resetCachedProperties(recursive: recursive)
-    if recursive { _content.resetCachedProperties(recursive: true) }
   }
 
   // MARK: - Layout
