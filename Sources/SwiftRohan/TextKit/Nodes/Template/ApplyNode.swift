@@ -20,6 +20,8 @@ final class ApplyNode: Node {
     _content.resetCachedProperties()
   }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> ArgumentNode? {
     guard let index = index.argumentIndex(),
       index < _arguments.count
@@ -35,6 +37,21 @@ final class ApplyNode: Node {
   final override func lastIndex() -> RohanIndex? {
     guard !_arguments.isEmpty else { return nil }
     return .argumentIndex(_arguments.count - 1)
+  }
+
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    // layout offset is not well-defined for ApplyNode
+    nil
+  }
+
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    // layout offset is not well-defined for ApplyNode
+    nil
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset is not well-defined for ApplyNode
+    .null
   }
 
   // MARK: - Node(Layout)
@@ -211,21 +228,6 @@ final class ApplyNode: Node {
   final func getContent() -> ContentNode { _content }
 
   // MARK: - Layout
-
-  override func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    // layout offset is not well-defined for ApplyNode
-    nil
-  }
-
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset is not well-defined for ApplyNode
-    nil
-  }
-
-  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    // layout offset is not well-defined for ApplyNode
-    .null
-  }
 
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,

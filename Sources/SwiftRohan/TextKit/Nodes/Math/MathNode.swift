@@ -12,6 +12,8 @@ class MathNode: Node {
     }
   }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> ContentNode? {
     guard let index = index.mathIndex() else { return nil }
     return getComponent(index)
@@ -24,6 +26,23 @@ class MathNode: Node {
   final override func lastIndex() -> RohanIndex? {
     (enumerateComponents().last?.index).map { .mathIndex($0) }
   }
+
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    // layout offset for math component is not well-defined and is unused
+    return nil
+  }
+
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    // layout offset for math component is not well-defined and is unused
+    return nil
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset for math component is not well-defined and is unused
+    return .null
+  }
+
+  // MARK: - Node(Layout)
 
   override func contentDidChange(delta: Int, inStorage: Bool) {
     // change of layout length is not propagated
@@ -110,21 +129,6 @@ class MathNode: Node {
     let target = direction == .forward ? componentIndex + 1 : componentIndex - 1
     guard 0..<components.count ~= target else { return nil }
     return components[target].index
-  }
-
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    // layout offset for math component is not well-defined and is unused
-    return nil
-  }
-
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset for math component is not well-defined and is unused
-    return nil
-  }
-
-  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    // layout offset for math component is not well-defined and is unused
-    return .null
   }
 
   /// Default implementation of `initLayoutContext(for:fragment:parent:)`.

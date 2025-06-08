@@ -19,10 +19,25 @@ class SimpleNode: Node {  // default implementation for simple nodes
     parent?.getProperties(styleSheet) ?? [:]
   }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> Node? { nil }
 
   final override func firstIndex() -> RohanIndex? { nil }
   final override func lastIndex() -> RohanIndex? { nil }
+
+  override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
+
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    nil
+  }
+
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // always return nil
+    .null
+  }
+
+  // MARK: - Node(Layout)
 
   final override func contentDidChange(delta: Int, inStorage: Bool) { /* no-op */  }
 
@@ -39,16 +54,6 @@ class SimpleNode: Node {  // default implementation for simple nodes
   }
 
   // MARK: - Implementation
-
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    nil
-  }
-
-  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    // always return nil
-    .null
-  }
 
   override final func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,

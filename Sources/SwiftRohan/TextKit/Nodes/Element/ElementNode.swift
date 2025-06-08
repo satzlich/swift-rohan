@@ -19,6 +19,8 @@ internal class ElementNode: Node {
     }
   }
 
+  // MARK: - Node(Positioning)
+
   final override func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.index(),
       index < _children.count
@@ -28,6 +30,42 @@ internal class ElementNode: Node {
 
   final override func firstIndex() -> RohanIndex? { .index(0) }
   final override func lastIndex() -> RohanIndex? { .index(_children.count) }
+
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    guard let index = index.index() else { return nil }
+    return getLayoutOffset(index)
+  }
+
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
+    // assert(consumed <= layoutOffset)
+    return (.index(i), consumed)
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    guard 0...layoutLength() ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+
+    if _children.isEmpty {
+      return .terminal(value: .index(0), target: 0)
+    }
+    assert(isPlaceholderActive == false)
+
+    var (k, s) = (0, 0)
+    // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
+    // invariant: s(k) = sum:i∈[0,k):ell(i)
+    //            s(k) ≤ layoutOffset
+    //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
+    while k < _children.count {
+      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
+      if ss > layoutOffset { break }
+      (k, s) = (k + 1, ss)
+    }
+    return k == _children.count
+      ? .terminal(value: .index(k), target: s)
+      : .halfway(value: .index(k), consumed: s)
+  }
 
   // MARK: - Node(Layout)
 
@@ -409,11 +447,6 @@ internal class ElementNode: Node {
     if self.isPlaceholderActive { context.insertText("⬚", self) }
   }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    guard let index = index.index() else { return nil }
-    return getLayoutOffset(index)
-  }
-
   private final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
@@ -427,37 +460,6 @@ internal class ElementNode: Node {
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
       return s1 + s2
     }
-  }
-
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
-    // assert(consumed <= layoutOffset)
-    return (.index(i), consumed)
-  }
-
-  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    guard 0...layoutLength() ~= layoutOffset else {
-      return .failure(error: SatzError(.InvalidLayoutOffset))
-    }
-
-    if _children.isEmpty {
-      return .terminal(value: .index(0), target: 0)
-    }
-    assert(isPlaceholderActive == false)
-
-    var (k, s) = (0, 0)
-    // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
-    // invariant: s(k) = sum:i∈[0,k):ell(i)
-    //            s(k) ≤ layoutOffset
-    //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
-    while k < _children.count {
-      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
-      if ss > layoutOffset { break }
-      (k, s) = (k + 1, ss)
-    }
-    return k == _children.count
-      ? .terminal(value: .index(k), target: s)
-      : .halfway(value: .index(k), consumed: s)
   }
 
   /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
