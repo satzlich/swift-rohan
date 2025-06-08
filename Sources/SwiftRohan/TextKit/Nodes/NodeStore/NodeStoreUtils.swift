@@ -98,9 +98,9 @@ enum NodeStoreUtils {
     let result = loadNodes(children) as LoadResult<ElementStore, UnknownNode>
     switch result {
     case .success(let nodes):
-      return (ElementStore(nodes), false)
+      return (nodes, false)
     case .corrupted(let nodes):
-      return (ElementStore(nodes), true)
+      return (nodes, true)
     case .failure(let unknownNode):
       assertionFailure("Failed to load children: \(unknownNode)")
       return (ElementStore([unknownNode]), true)
