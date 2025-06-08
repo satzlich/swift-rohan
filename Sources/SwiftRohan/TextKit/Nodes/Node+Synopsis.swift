@@ -56,7 +56,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     result.append(first)
 
     if showSnapshot, let elementNode = node as? ElementNode {
-      let snapshotRecords = elementNode.snapshotRecords.map { $0.map(\.description) }
+      let snapshotRecords = elementNode.snapshotDescription()
       let description = snapshotRecords.map { $0.joined(separator: ", ") } ?? "nil"
       result.append("snapshot: \(description)")
     }

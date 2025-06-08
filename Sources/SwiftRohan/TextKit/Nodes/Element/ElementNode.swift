@@ -163,8 +163,6 @@ internal class ElementNode: Node {
 
   final func childrenReadonly() -> ElementStore { _children }
 
-  // MARK: - Content
-
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
 
@@ -208,8 +206,13 @@ internal class ElementNode: Node {
 
   /// lossy snapshot of original children
   private final var _snapshotRecords: [SnapshotRecord]? = nil
+
   /// lossy snapshot of original children (for debug only)
-  final var snapshotRecords: [SnapshotRecord]? { _snapshotRecords }
+  private final var snapshotRecords: [SnapshotRecord]? { _snapshotRecords }
+
+  internal func snapshotDescription() -> Array<String>? {
+    snapshotRecords.map { $0.map(\.description) }
+  }
 
   /// Make snapshot once if not already made
   /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
@@ -411,12 +414,12 @@ internal class ElementNode: Node {
     if self.isPlaceholderActive { context.insertText("⬚", self) }
   }
 
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
   }
 
-  final func getLayoutOffset(_ index: Int) -> Int? {
+  private final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
 
@@ -431,7 +434,7 @@ internal class ElementNode: Node {
     }
   }
 
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
@@ -491,7 +494,7 @@ internal class ElementNode: Node {
     return (k, s)
   }
 
-  override final func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -549,7 +552,7 @@ internal class ElementNode: Node {
 
   /// Resolve the text location at the given point.
   /// - Returns: true if trace is modified.
-  override final func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -720,7 +723,7 @@ internal class ElementNode: Node {
     }
   }
 
-  override final func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
@@ -753,12 +756,12 @@ internal class ElementNode: Node {
 
   // MARK: - Children
 
-  public final var childCount: Int { _children.count }
+  final var childCount: Int { _children.count }
 
-  public final func getChild(_ index: Int) -> Node { _children[index] }
+  final func getChild(_ index: Int) -> Node { _children[index] }
 
   /// Take all children from the node.
-  public final func takeChildren(inStorage: Bool) -> ElementStore {
+  final func takeChildren(inStorage: Bool) -> ElementStore {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
@@ -785,7 +788,7 @@ internal class ElementNode: Node {
     return children
   }
 
-  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> ElementStore {
+  final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> ElementStore {
     if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
 
     // pre update
@@ -815,11 +818,11 @@ internal class ElementNode: Node {
     return children
   }
 
-  public final func insertChild(_ node: Node, at index: Int, inStorage: Bool) {
+  final func insertChild(_ node: Node, at index: Int, inStorage: Bool) {
     insertChildren(contentsOf: CollectionOfOne(node), at: index, inStorage: inStorage)
   }
 
-  public final func insertChildren<S: Collection<Node>>(
+  final func insertChildren<S: Collection<Node>>(
     contentsOf nodes: S, at index: Int, inStorage: Bool
   ) {
     guard !nodes.isEmpty else { return }
@@ -847,11 +850,11 @@ internal class ElementNode: Node {
       newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
-  public final func removeChild(at index: Int, inStorage: Bool) {
+  final func removeChild(at index: Int, inStorage: Bool) {
     removeSubrange(index..<index + 1, inStorage: inStorage)
   }
 
-  public final func removeSubrange(_ range: Range<Int>, inStorage: Bool) {
+  final func removeSubrange(_ range: Range<Int>, inStorage: Bool) {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
@@ -902,7 +905,7 @@ internal class ElementNode: Node {
 
   /// Compact mergeable nodes in a range.
   /// - Returns: true if compacted
-  internal final func compactSubrange(_ range: Range<Int>, inStorage: Bool) -> Bool {
+  final func compactSubrange(_ range: Range<Int>, inStorage: Bool) -> Bool {
     guard range.count > 1 else { return false }
 
     // pre update
@@ -993,9 +996,9 @@ internal class ElementNode: Node {
   }
 }
 
-// MARK: - Implementation Facilities for Layout
+// MARK: - Facilities for Layout
 
-internal struct SnapshotRecord: CustomStringConvertible {
+private struct SnapshotRecord: CustomStringConvertible {
   let nodeId: NodeIdentifier
   let insertNewline: Bool
   let layoutLength: Int

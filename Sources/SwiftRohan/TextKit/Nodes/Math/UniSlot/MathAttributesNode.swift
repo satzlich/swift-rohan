@@ -29,13 +29,13 @@ final class MathAttributesNode: MathNode {
         LayoutUtils.buildMathListLayoutFragment(_nucleus, parent: context)
 
       let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: subtype)
-      _attrFragment = attrFragment
+      _nodeFragment = attrFragment
 
       attrFragment.fixLayout(context.mathContext)
       context.insertFragment(attrFragment, self)
     }
     else {
-      guard let attrFragment = _attrFragment
+      guard let attrFragment = _nodeFragment
       else {
         assertionFailure("classFragment should not be nil")
         return
@@ -115,11 +115,11 @@ final class MathAttributesNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _attrFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
     switch index {
-    case .nuc: return _attrFragment?.nucleus
+    case .nuc: return _nodeFragment?.nucleus
     default: return nil
     }
   }
@@ -131,7 +131,7 @@ final class MathAttributesNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _attrFragment != nil else { return nil }
+    guard _nodeFragment != nil else { return nil }
     return .nuc
   }
 
@@ -139,7 +139,7 @@ final class MathAttributesNode: MathNode {
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _attrFragment,
+    guard let fragment = _nodeFragment,
       component == .nuc
     else { return nil }
 
@@ -176,11 +176,12 @@ final class MathAttributesNode: MathNode {
 
   // MARK: - MathAttributesNode
 
-  typealias Subtype = MathAttributes
-
-  let subtype: Subtype
+  let subtype: MathAttributes
   private let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
+
+  private typealias _NodeFragment = MathAttributesLayoutFragment<MathListLayoutFragment>
+  private var _nodeFragment: _NodeFragment?
 
   init(_ mathAttributes: MathAttributes, _ nucleus: ElementStore) {
     self.subtype = mathAttributes
@@ -206,12 +207,5 @@ final class MathAttributesNode: MathNode {
   private func _setUp() {
     self._nucleus.setParent(self)
   }
-
-  // MARK: - Layout
-
-  private typealias _MathAttributesLayoutFragment =
-    MathAttributesLayoutFragment<MathListLayoutFragment>
-
-  private var _attrFragment: _MathAttributesLayoutFragment?
 
 }

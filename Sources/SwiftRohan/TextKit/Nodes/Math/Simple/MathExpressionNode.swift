@@ -102,5 +102,4 @@ final class MathExpressionNode: SimpleNode {
   private func _setUp() {
     _deflated.setParent(self)
   }
-
 }

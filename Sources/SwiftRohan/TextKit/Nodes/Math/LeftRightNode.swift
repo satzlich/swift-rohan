@@ -26,12 +26,12 @@ final class LeftRightNode: MathNode {
     if fromScratch {
       let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
-      _leftRightFragment = leftRightFragment
+      _nodeFragment = leftRightFragment
       leftRightFragment.fixLayout(context.mathContext)
       context.insertFragment(leftRightFragment, self)
     }
     else {
-      guard let leftRightFragment = _leftRightFragment
+      guard let leftRightFragment = _nodeFragment
       else {
         assertionFailure("LeftRightNode should have a layout fragment")
         return
@@ -106,11 +106,11 @@ final class LeftRightNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _leftRightFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc: return _leftRightFragment?.nucleus
+    case .nuc: return _nodeFragment?.nucleus
     default: return nil
     }
   }
@@ -122,14 +122,14 @@ final class LeftRightNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _leftRightFragment?.getMathIndex(interactingAt: point)
+    _nodeFragment?.getMathIndex(interactingAt: point)
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    _leftRightFragment?.rayshoot(from: point, component, in: direction)
+    _nodeFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Storage
@@ -162,7 +162,7 @@ final class LeftRightNode: MathNode {
   private let _nucleus: ContentNode
   internal var nucleus: ContentNode { _nucleus }
 
-  private var _leftRightFragment: MathLeftRightLayoutFragment?
+  private var _nodeFragment: MathLeftRightLayoutFragment?
 
   init(_ delimiters: DelimiterPair, _ nucleus: ContentNode) {
     self.delimiters = delimiters

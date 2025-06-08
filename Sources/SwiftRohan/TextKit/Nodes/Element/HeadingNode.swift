@@ -91,17 +91,10 @@ final class HeadingNode: ElementNode {
 
   typealias Subtype = HeadingExpr.Subtype
 
-  public let level: Int
-
+  let level: Int
   var subtype: Subtype { Subtype(level: level) }
 
-  init(level: Int, _ children: [Node]) {
-    precondition(HeadingExpr.validate(level: level))
-    self.level = level
-    super.init(ElementStore(children))
-  }
-
-  public init(level: Int, _ children: ElementStore) {
+  init(level: Int, _ children: ElementStore) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(children)
@@ -123,7 +116,7 @@ final class HeadingNode: ElementNode {
     }
   }
 
-  public static func selector(level: Int? = nil) -> TargetSelector {
+  static func selector(level: Int? = nil) -> TargetSelector {
     precondition(level == nil || HeadingExpr.validate(level: level!))
     guard let level else { return TargetSelector(.heading) }
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))

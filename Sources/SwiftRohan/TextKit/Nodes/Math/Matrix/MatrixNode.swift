@@ -81,7 +81,7 @@ final class MatrixNode: ArrayNode {
 
   // MARK: - MatrixNode
 
-  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
+  override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
   }
 

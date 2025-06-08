@@ -207,7 +207,7 @@ final class EquationNode: MathNode {
     self._setUp()
   }
 
-  func with(nucleus: ContentNode) -> EquationNode {
+  final func with(nucleus: ContentNode) -> EquationNode {
     EquationNode(subtype, nucleus)
   }
 

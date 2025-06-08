@@ -26,12 +26,12 @@ final class AccentNode: MathNode {
     if fromScratch {
       let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let accentFragment = MathAccentLayoutFragment(accent, nucleus: nucFrag)
-      _accentFragment = accentFragment
+      _nodeFragment = accentFragment
       accentFragment.fixLayout(context.mathContext)
       context.insertFragment(accentFragment, self)
     }
     else {
-      guard let accentFragment = _accentFragment
+      guard let accentFragment = _nodeFragment
       else {
         assertionFailure("Accent fragment is nil")
         return
@@ -112,7 +112,7 @@ final class AccentNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func initLayoutContext(
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
@@ -122,20 +122,20 @@ final class AccentNode: MathNode {
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc: return _accentFragment?.nucleus
+    case .nuc: return _nodeFragment?.nucleus
     default: return nil
     }
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _accentFragment?.getMathIndex(interactingAt: point)
+    _nodeFragment?.getMathIndex(interactingAt: point)
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    _accentFragment?.rayshoot(from: point, component, in: direction)
+    _nodeFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Storage
@@ -163,7 +163,7 @@ final class AccentNode: MathNode {
   internal let accent: MathAccent
   private let _nucleus: CrampedNode
   internal var nucleus: ContentNode { _nucleus }
-  private var _accentFragment: MathAccentLayoutFragment? = nil
+  private var _nodeFragment: MathAccentLayoutFragment? = nil
 
   init(_ accent: MathAccent, nucleus: CrampedNode) {
     self.accent = accent

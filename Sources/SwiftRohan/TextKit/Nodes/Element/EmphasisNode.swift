@@ -73,6 +73,6 @@ final class EmphasisNode: ElementNode {
 
   private static let uniqueTag = "emph"
 
-  var command: String { Self.uniqueTag }
+  internal var command: String { Self.uniqueTag }
 
 }

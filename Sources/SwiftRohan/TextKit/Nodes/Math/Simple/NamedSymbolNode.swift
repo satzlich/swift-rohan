@@ -104,5 +104,4 @@ final class NamedSymbolNode: SimpleNode {
     self.namedSymbol = namedSymbol
     super.init()
   }
-
 }

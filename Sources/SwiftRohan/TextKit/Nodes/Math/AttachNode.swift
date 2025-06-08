@@ -282,7 +282,24 @@ final class AttachNode: MathNode {
 
   // MARK: - AttachNode
 
-  public init(
+  let nucleus: ContentNode
+  var lsub: ContentNode? { _lsub }
+  var lsup: ContentNode? { _lsup }
+  var sub: ContentNode? { _sub }
+  var sup: ContentNode? { _sup }
+
+  private var _lsub: SubscriptNode?
+  private var _lsup: SuperscriptNode?
+  private var _sub: SubscriptNode?
+  private var _sup: SuperscriptNode?
+
+  private var _isDirty: Bool = false
+  private var _attachFragment: MathAttachLayoutFragment? = nil
+  private var _snapshot: MathComponentSet? = nil
+
+  private static let uniqueTag = "attach"
+
+  init(
     nuc: ContentNode,
     lsub: SubscriptNode? = nil, lsup: SuperscriptNode? = nil,
     sub: SubscriptNode? = nil, sup: SuperscriptNode? = nil
@@ -319,6 +336,7 @@ final class AttachNode: MathNode {
     self._setUp()
   }
 
+  @inline(__always)
   private func _setUp() {
     nucleus.setParent(self)
     _lsub?.setParent(self)
@@ -326,11 +344,6 @@ final class AttachNode: MathNode {
     _sub?.setParent(self)
     _sup?.setParent(self)
   }
-
-  private var _attachFragment: MathAttachLayoutFragment? = nil
-  private var _isDirty: Bool = false
-
-  private var _snapshot: MathComponentSet? = nil
 
   private func makeSnapshotOnce() {
     if _snapshot == nil {
@@ -518,21 +531,4 @@ final class AttachNode: MathNode {
       context.skipBackwards(layoutLength())
     }
   }
-
-  // MARK: - Components
-
-  public let nucleus: ContentNode
-
-  private var _lsub: SubscriptNode?
-  private var _lsup: SuperscriptNode?
-  private var _sub: SubscriptNode?
-  private var _sup: SuperscriptNode?
-
-  public var lsub: ContentNode? { _lsub }
-  public var lsup: ContentNode? { _lsup }
-  public var sub: ContentNode? { _sub }
-  public var sup: ContentNode? { _sup }
-
-  private static let uniqueTag = "attach"
-
 }
