@@ -105,7 +105,7 @@ extension Trace {
       // (a) TextNode always return non-nil;
       // (b) ElementNode returns nil iff it is child-free.
       // (c) Simple node always return nil.
-      guard let (index, childOffset) = node.getRohanIndex(unconsumed) else {
+      guard let (index, consumed) = node.getRohanIndex(unconsumed) else {
         // ASSERT: node = $child[n-1] ∧ CF(node)
         break
       }
@@ -113,7 +113,7 @@ extension Trace {
 
       // n ← n+1
       trace.emplaceBack(node, index)
-      unconsumed -= childOffset
+      unconsumed -= consumed
 
       // For method `getChild(_:)`, and index obtained with `getRohanIndex(_:)`,
       // (a) TextNode always return nil;

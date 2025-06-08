@@ -452,6 +452,8 @@ public class ElementNode: Node {
       layoutOffset < layoutLength || (isBlock && layoutOffset == layoutLength)
     else { return nil }
 
+    // Invariant: isPlaceholderActive => _children.isEmpty
+
     var (k, s) = (0, isPlaceholderActive.intValue)
     // notations: LO:= layoutOffset
     //            ell(i):= children[i].layoutLength + _newlines[i].intValue
@@ -638,8 +640,8 @@ public class ElementNode: Node {
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard
-          let segmentFrame = context.getSegmentFrame(
-            for: contextOffset, .upstream, matNode)
+          let segmentFrame =
+            context.getSegmentFrame(for: contextOffset, .upstream, matNode)
         else {
           resolveLastIndex(childOfLast: matNode)
           return true
