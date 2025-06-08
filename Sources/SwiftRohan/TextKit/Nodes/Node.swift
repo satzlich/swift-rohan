@@ -8,29 +8,29 @@ public class Node: Codable {
   public init() {}
 
   internal class var type: NodeType { preconditionFailure("overriding required") }
-  internal final var type: NodeType { Self.type }
+  final var type: NodeType { Self.type }
 
-  internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
+  final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
 
-  internal final private(set) weak var parent: Node?
+  final private(set) weak var parent: Node?
 
   /// Reallocate the node's identifier.
-  internal final func reallocateId() {
+  final func reallocateId() {
     self.id = NodeIdAllocator.allocate()
   }
 
-  internal final func setParent(_ parent: Node) {
+  final func setParent(_ parent: Node) {
     precondition(self.parent == nil)
     self.parent = parent
   }
 
-  internal final func clearParent() {
+  final func clearParent() {
     precondition(self.parent != nil)
     parent = nil
   }
 
   /// Reset properties that cannot be reused.
-  internal final func resetForReuse() {
+  final func resetForReuse() {
     reallocateId()
     resetCachedProperties()
   }
@@ -49,6 +49,32 @@ public class Node: Codable {
 
   /// Returns the selector for the node instance.
   internal func selector() -> TargetSelector { Self.selector() }
+
+  internal func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      let inherited = parent?.getProperties(styleSheet)
+      let ruleBased = styleSheet.getProperties(for: self.selector())
+
+      var current: PropertyDictionary =
+        switch (inherited, ruleBased) {
+        case (.none, .none): [:]
+        case let (.some(a), .none): a
+        case let (.none, .some(b)): b
+        case let (.some(a), .some(b)): a.merging(b) { $1 }
+        }
+
+      // process nested-level property
+      if NodePolicy.shouldIncreaseLevel(self.type) {
+        let key = InternalProperty.nestedLevel
+        let level = key.resolve(current, styleSheet).integer()!
+        current.updateValue(.integer(level + 1), forKey: key)
+      }
+
+      // set the cache
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
 
   // MARK: - Codable
 
@@ -210,35 +236,6 @@ public class Node: Codable {
   ) -> RayshootResult? {
     precondition(direction == .up || direction == .down)
     preconditionFailure("overriding required")
-  }
-
-  // MARK: - Styles
-
-  public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      let inherited = parent?.getProperties(styleSheet)
-      // apply style rule for given selector
-      do {
-        let properties = styleSheet.getProperties(for: selector())
-        switch (inherited, properties) {
-        case (.none, .none):
-          _cachedProperties = [:]
-        case let (.none, .some(properties)):
-          _cachedProperties = properties
-        case let (.some(inherited), .none):
-          _cachedProperties = inherited
-        case let (.some(inherited), .some(properties)):
-          _cachedProperties = inherited.merging(properties) { $1 }
-        }
-      }
-      // process for nested-level
-      if NodePolicy.shouldIncreaseLevel(self.type) {
-        let key = InternalProperty.nestedLevel
-        let level = key.resolve(_cachedProperties!, styleSheet).integer()!
-        _cachedProperties?.updateValue(.integer(level + 1), forKey: key)
-      }
-    }
-    return _cachedProperties!
   }
 
   // MARK: - Clone and Visitor
