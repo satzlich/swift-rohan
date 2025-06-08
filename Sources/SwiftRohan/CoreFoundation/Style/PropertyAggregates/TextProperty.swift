@@ -3,6 +3,49 @@
 import AppKit
 
 public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
+
+  public func getProperties() -> PropertyDictionary {
+    [
+      TextProperty.font: .string(font),
+      TextProperty.size: .fontSize(size),
+      TextProperty.stretch: .fontStretch(stretch),
+      TextProperty.style: .fontStyle(style),
+      TextProperty.weight: .fontWeight(weight),
+      TextProperty.foregroundColor: .color(foregroundColor),
+    ]
+  }
+
+  public func getAttributes() -> [NSAttributedString.Key: Any] {
+    self.getAttributes(isFlipped: false)
+  }
+
+  public static func resolve(
+    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+  ) -> TextProperty {
+    func resolved(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, fallback)
+    }
+
+    return TextProperty(
+      font: resolved(font).string()!,
+      size: resolved(size).fontSize()!,
+      stretch: resolved(stretch).fontStretch()!,
+      style: resolved(style).fontStyle()!,
+      weight: resolved(weight).fontWeight()!,
+      foregroundColor: resolved(foregroundColor).color()!)
+  }
+
+  public static let allKeys: [PropertyKey] = [
+    font,
+    size,
+    stretch,
+    style,
+    weight,
+    foregroundColor,
+  ]
+
+  // MARK: - Implementation
+
   public let font: String
   public let size: FontSize
   public let stretch: FontStretch
@@ -27,43 +70,12 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     self.foregroundColor = foregroundColor
   }
 
-  public func getProperties() -> PropertyDictionary {
-    [
-      TextProperty.font: .string(font),
-      TextProperty.size: .fontSize(size),
-      TextProperty.stretch: .fontStretch(stretch),
-      TextProperty.style: .fontStyle(style),
-      TextProperty.weight: .fontWeight(weight),
-      TextProperty.foregroundColor: .color(foregroundColor),
-    ]
-  }
-
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
-    self.getAttributes(isFlipped: false)
-  }
-
   internal func getAttributes(isFlipped: Bool) -> [NSAttributedString.Key: Any] {
     let key = _AttributesKey(self, isFlipped)
     func create() -> [NSAttributedString.Key: Any] {
       _createAttributes(isFlipped: isFlipped)
     }
     return TextProperty._attributesCache.getOrCreate(key, create)
-  }
-
-  public static func resolve(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
-  ) -> TextProperty {
-    func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
-    }
-
-    return TextProperty(
-      font: resolved(font).string()!,
-      size: resolved(size).fontSize()!,
-      stretch: resolved(stretch).fontStretch()!,
-      style: resolved(style).fontStyle()!,
-      weight: resolved(weight).fontWeight()!,
-      foregroundColor: resolved(foregroundColor).color()!)
   }
 
   // MARK: - Cache
@@ -103,8 +115,6 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
       ])
   }
 
-  // MARK: - Key
-
   public static let font = PropertyKey(.text, .fontFamily)  // String
   public static let size = PropertyKey(.text, .fontSize)  // FontSize
   public static let stretch = PropertyKey(.text, .fontStretch)  // FontStretch
@@ -112,12 +122,4 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   public static let weight = PropertyKey(.text, .fontWeight)  // FontWeight
   public static let foregroundColor = PropertyKey(.text, .foregroundColor)  // Color
 
-  public static let allKeys: [PropertyKey] = [
-    font,
-    size,
-    stretch,
-    style,
-    weight,
-    foregroundColor,
-  ]
 }

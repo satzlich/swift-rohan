@@ -3,8 +3,7 @@
 import AppKit
 
 public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
-  public let textAlignment: NSTextAlignment
-  public let paragraphSpacing: CGFloat
+  // MARK: - PropertyAggregate
 
   public func getProperties() -> PropertyDictionary {
     [
@@ -15,19 +14,6 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
 
   public func getAttributes() -> [NSAttributedString.Key: Any] {
     Self._attributesCache.getOrCreate(self, self._createAttributes)
-  }
-
-  private typealias _AttributesCache =
-    ConcurrentCache<ParagraphProperty, [NSAttributedString.Key: Any]>
-
-  private static let _attributesCache = _AttributesCache()
-
-  private func _createAttributes() -> [NSAttributedString.Key: Any] {
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = textAlignment
-    paragraphStyle.paragraphSpacing = paragraphSpacing
-    paragraphStyle.hyphenationFactor = 0.9
-    return [.paragraphStyle: paragraphStyle]
   }
 
   public static func resolve(
@@ -42,13 +28,32 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
       paragraphSpacing: resolved(paragraphSpacing).float()!)
   }
 
+  public static let allKeys: [PropertyKey] = [
+    textAlignment,
+    paragraphSpacing,
+  ]
+
+  // MARK: - Implementation
+
+  public let textAlignment: NSTextAlignment
+  public let paragraphSpacing: CGFloat
+
+  private typealias _AttributesCache =
+    ConcurrentCache<ParagraphProperty, [NSAttributedString.Key: Any]>
+
+  private static let _attributesCache = _AttributesCache()
+
+  private func _createAttributes() -> [NSAttributedString.Key: Any] {
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = textAlignment
+    paragraphStyle.paragraphSpacing = paragraphSpacing
+    paragraphStyle.hyphenationFactor = 0.9
+    return [.paragraphStyle: paragraphStyle]
+  }
+
   // MARK: - Key
 
   public static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
   public static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
 
-  public static let allKeys: [PropertyKey] = [
-    textAlignment,
-    paragraphSpacing,
-  ]
 }

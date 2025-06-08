@@ -3,12 +3,7 @@
 import Foundation
 
 public struct InternalProperty: PropertyAggregate {
-
-  public let nestedLevel: Int
-
-  public init(nestedLevel: Int) {
-    self.nestedLevel = nestedLevel
-  }
+  // MARK: - PropertyAggregate
 
   public func getProperties() -> PropertyDictionary {
     [
@@ -30,11 +25,18 @@ public struct InternalProperty: PropertyAggregate {
     return InternalProperty(nestedLevel: resolve(nestedLevel).integer()!)
   }
 
-  // MARK: - Key
-
-  public static let nestedLevel = PropertyKey(.root, ._nestedLevel)
-
   public static let allKeys: [PropertyKey] = [
     nestedLevel
   ]
+
+  // MARK: - Implementation
+
+  public let nestedLevel: Int
+
+  public init(nestedLevel: Int) {
+    self.nestedLevel = nestedLevel
+  }
+
+  public static let nestedLevel = PropertyKey(.root, ._nestedLevel)
+
 }
