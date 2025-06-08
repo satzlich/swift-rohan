@@ -10,6 +10,11 @@ final class LinebreakNode: SimpleNode {
 
   final override func deepCopy() -> Self { Self() }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(linebreak: self, context)
+  }
+
   final override class var type: NodeType { .linebreak }
 
   final override func layoutLength() -> Int { 1 }
@@ -27,11 +32,6 @@ final class LinebreakNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(linebreak: self, context)
-  }
 
   private static let uniqueTag = "linebreak"
 

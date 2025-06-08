@@ -7,6 +7,11 @@ final class MathExpressionNode: SimpleNode {
 
   final override func deepCopy() -> Self { Self(mathExpression) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathExpression: self, context)
+  }
+
   final override class var type: NodeType { .mathExpression }
 
   final override func resetCachedProperties() {
@@ -73,11 +78,6 @@ final class MathExpressionNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathExpression: self, context)
-  }
 
   override class var storageTags: [String] {
     MathExpression.allCommands.map { $0.command }

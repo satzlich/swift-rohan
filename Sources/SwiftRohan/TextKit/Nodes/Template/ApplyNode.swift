@@ -8,6 +8,11 @@ public final class ApplyNode: Node {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(apply: self, context)
+  }
+
   final override class var type: NodeType { .apply }
 
   final override func resetCachedProperties() {
@@ -263,11 +268,6 @@ public final class ApplyNode: Node {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(apply: self, context)
-  }
 
   override class var storageTags: [String] {
     MathTemplate.allCommands.map { $0.command }

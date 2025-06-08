@@ -8,6 +8,11 @@ final class LeftRightNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(leftRight: self, context)
+  }
+
   final override class var type: NodeType { .leftRight }
 
   final override var isDirty: Bool { _nucleus.isDirty }
@@ -143,11 +148,6 @@ final class LeftRightNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(leftRight: self, context)
-  }
 
   private static let uniqueTag = "lrdelim"
   override class var storageTags: [String] {

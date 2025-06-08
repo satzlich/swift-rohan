@@ -7,6 +7,11 @@ final class MathStylesNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathStyles: self, context)
+  }
+
   final override class var type: NodeType { .mathStyles }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -92,11 +97,6 @@ final class MathStylesNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathStyles: self, context)
-  }
 
   // MARK: - Storage
 

@@ -9,6 +9,11 @@ final class ArgumentNode: Node {
     preconditionFailure("Work is done in ApplyNode.")
   }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(argument: self, context)
+  }
+
   final override class var type: NodeType { .argument }
 
   final override func getChild(_ index: RohanIndex) -> Node? {
@@ -230,11 +235,6 @@ final class ArgumentNode: Node {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(argument: self, context)
-  }
 
   /// Visit the children in the manner of this node.
   internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(

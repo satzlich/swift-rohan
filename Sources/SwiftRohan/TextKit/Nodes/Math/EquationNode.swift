@@ -8,6 +8,11 @@ public final class EquationNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(equation: self, context)
+  }
+
   final override class var type: NodeType { .equation }
 
   final override func selector() -> TargetSelector {
@@ -139,11 +144,6 @@ public final class EquationNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(equation: self, context)
-  }
 
   private enum Tag: String, Codable, CaseIterable {
     case blockmath, inlinemath

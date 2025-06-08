@@ -13,12 +13,18 @@ private let PLACEHOLDER = "[Unknown Node]"
  */
 public final class UnknownNode: SimpleNode {
   // MARK: - Node
+
   public override init() {
     self.data = .null
     super.init()
   }
 
   final override func deepCopy() -> Self { Self(data) }
+
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(unknown: self, context)
+  }
 
   final override class var type: NodeType { .unknown }
 
@@ -35,11 +41,6 @@ public final class UnknownNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(unknown: self, context)
-  }
 
   override class var storageTags: [String] {
     // intentionally empty

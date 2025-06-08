@@ -6,6 +6,11 @@ final class MatrixNode: ArrayNode {
   // MARK: - Node
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(matrix: self, context)
+  }
+
   final override class var type: NodeType { .matrix }
 
   // MARK: - MatrixNode
@@ -48,11 +53,6 @@ final class MatrixNode: ArrayNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(matrix: self, context)
-  }
 
   override class var storageTags: [String] {
     MathArray.allCommands.map { $0.command }

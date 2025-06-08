@@ -8,6 +8,11 @@ final class MathOperatorNode: SimpleNode {
 
   final override func deepCopy() -> Self { Self(mathOperator) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(mathOperator: self, context)
+  }
+
   final override class var type: NodeType { .mathOperator }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -82,11 +87,6 @@ final class MathOperatorNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(mathOperator: self, context)
-  }
 
   override class var storageTags: [String] {
     MathOperator.allCommands.map { $0.command }

@@ -10,6 +10,11 @@ public class Node: Codable {
   /// Returns a deep copy of the node (intrinsic state only).
   internal func deepCopy() -> Self { preconditionFailure("overriding required") }
 
+  internal func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {  // V for visitor, C for context, R for result
+    preconditionFailure("overriding required")
+  }
+
   internal class var type: NodeType { preconditionFailure("overriding required") }
   final var type: NodeType { Self.type }
 
@@ -232,12 +237,6 @@ public class Node: Codable {
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     precondition(direction == .up || direction == .down)
-    preconditionFailure("overriding required")
-  }
-
-  // MARK: - Clone and Visitor
-
-  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 }

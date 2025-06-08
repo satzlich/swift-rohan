@@ -9,6 +9,11 @@ final class TextModeNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(textMode: self, context)
+  }
+
   final override class var type: NodeType { .textMode }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -70,11 +75,6 @@ final class TextModeNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(textMode: self, context)
-  }
 
   private static let uniqueTag = "text"
 

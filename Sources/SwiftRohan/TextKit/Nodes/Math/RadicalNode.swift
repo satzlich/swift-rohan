@@ -8,6 +8,11 @@ final class RadicalNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(radical: self, context)
+  }
+
   final override class var type: NodeType { .radical }
 
   final override func contentDidChange(delta: Int, inStorage: Bool) {
@@ -286,11 +291,6 @@ final class RadicalNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(radical: self, context)
-  }
 
   private static let uniqueTag = "sqrt"
 

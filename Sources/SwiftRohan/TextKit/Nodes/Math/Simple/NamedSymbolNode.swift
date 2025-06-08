@@ -7,6 +7,11 @@ final class NamedSymbolNode: SimpleNode {
 
   final override func deepCopy() -> Self { Self(namedSymbol) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(namedSymbol: self, context)
+  }
+
   final override class var type: NodeType { .namedSymbol }
 
   final override func layoutLength() -> Int { namedSymbol.string.length }
@@ -75,11 +80,6 @@ final class NamedSymbolNode: SimpleNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(namedSymbol: self, context)
-  }
 
   override class var storageTags: [String] {
     NamedSymbol.allCommands.map { $0.command }

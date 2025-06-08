@@ -8,6 +8,11 @@ final class AccentNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(accent: self, context)
+  }
+
   final override class var type: NodeType { .accent }
 
   final override var isDirty: Bool { _nucleus.isDirty }
@@ -152,11 +157,6 @@ final class AccentNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(accent: self, context)
-  }
 
   override class var storageTags: [String] {
     MathAccent.allCommands.map { $0.command }

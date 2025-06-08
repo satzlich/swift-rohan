@@ -8,6 +8,11 @@ final class UnderOverNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(underOver: self, context)
+  }
+
   final override class var type: NodeType { .underOver }
 
   final override var isDirty: Bool { _nucleus.isDirty }
@@ -177,11 +182,6 @@ final class UnderOverNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(underOver: self, context)
-  }
 
   override class var storageTags: [String] {
     MathSpreader.allCommands.map { $0.command }

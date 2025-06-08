@@ -9,6 +9,11 @@ final class FractionNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(fraction: self, context)
+  }
+
   final override class var type: NodeType { .fraction }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -210,11 +215,6 @@ final class FractionNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(fraction: self, context)
-  }
 
   override class var storageTags: [String] {
     MathGenFrac.allCommands.map { $0.command }

@@ -8,6 +8,11 @@ final class AttachNode: MathNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(attach: self, context)
+  }
+
   final override class var type: NodeType { .attach }
 
   final override func contentDidChange(delta: Int, inStorage: Bool) {
@@ -430,11 +435,6 @@ final class AttachNode: MathNode {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(attach: self, context)
-  }
 
   private static let uniqueTag = "attach"
   override class var storageTags: [String] {

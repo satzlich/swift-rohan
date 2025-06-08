@@ -8,6 +8,11 @@ public final class TextNode: Node {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(text: self, context)
+  }
+
   final override class var type: NodeType { .text }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -189,11 +194,6 @@ public final class TextNode: Node {
   }
 
   // MARK: - Clone and Visitor
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(text: self, context)
-  }
 
   override class var storageTags: [String] {
     // intentionally empty

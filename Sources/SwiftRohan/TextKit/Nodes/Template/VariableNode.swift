@@ -7,6 +7,11 @@ final class VariableNode: ElementNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(variable: self, context)
+  }
+
   final override class var type: NodeType { .variable }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -70,11 +75,6 @@ final class VariableNode: ElementNode {
     try container.encode(argumentIndex, forKey: .argIndex)
     try container.encode(nestedLevelDelta, forKey: .levelDelta)
     try super.encode(to: encoder)
-  }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(variable: self, context)
   }
 
   override func accept<R, C, V, T, S>(

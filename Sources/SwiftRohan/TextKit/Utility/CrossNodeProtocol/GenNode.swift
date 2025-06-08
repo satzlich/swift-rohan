@@ -3,7 +3,7 @@
 /// Common interface for Node and PartialNode.
 protocol GenNode {
   var type: NodeType { get }
-  func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R
+  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C>
 }
 
 extension Node: GenNode {}
@@ -20,7 +20,7 @@ extension PartialNode: GenNode {
     }
   }
 
-  func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     switch self {
     case .original(let node):
       return node.accept(visitor, context)
