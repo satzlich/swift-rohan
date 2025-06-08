@@ -19,7 +19,7 @@ public final class EmphasisNode: ElementNode {
       var properties = super.getProperties(styleSheet)
       // invert font style
       let key = TextProperty.style
-      let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
+      let value = key.resolveValue(properties, styleSheet.defaultProperties).fontStyle()!
       properties[key] = .fontStyle(invert(fontStyle: value))
       // cache properties
       _cachedProperties = properties

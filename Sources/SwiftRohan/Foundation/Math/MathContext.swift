@@ -103,7 +103,7 @@ extension MathUtils {
       _ properties: PropertyDictionary, _ stylesheet: StyleSheet
     ) -> MathContextKey {
       func resolved(_ key: PropertyKey) -> PropertyValue {
-        key.resolve(properties, stylesheet)
+        key.resolveValue(properties, stylesheet)
       }
 
       return MathContextKey(

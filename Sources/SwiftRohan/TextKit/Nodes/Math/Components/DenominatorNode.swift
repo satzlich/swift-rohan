@@ -8,7 +8,7 @@ final class DenominatorNode: ContentNode {
 
       // set math style ← fraction style
       let key = MathProperty.style
-      let value = key.resolve(properties, styleSheet).mathStyle()!
+      let value = key.resolveValue(properties, styleSheet).mathStyle()!
       properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
       // set cramped ← true
       properties[MathProperty.cramped] = .bool(true)

@@ -5,7 +5,7 @@ final class SubscriptNode: ContentNode {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
       let key = MathProperty.style
-      let value = key.resolve(properties, styleSheet).mathStyle()!
+      let value = key.resolveValue(properties, styleSheet).mathStyle()!
       // style, cramped
       properties[key] = .mathStyle(MathUtils.scriptStyle(for: value))
       properties[MathProperty.cramped] = .bool(true)

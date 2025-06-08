@@ -58,7 +58,7 @@ public struct MathProperty: PropertyAggregate {
     _ fallback: PropertyMapping
   ) -> MathProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolve(properties, fallback)
+      key.resolveValue(properties, fallback)
     }
 
     return MathProperty(

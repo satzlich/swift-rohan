@@ -4,6 +4,8 @@ import Foundation
 import _RopeModule
 
 class ArrayNode: Node {
+  // MARK: - Styles
+
   final override func resetCachedProperties() {
     super.resetCachedProperties()
     for row in _rows {
@@ -12,6 +14,26 @@ class ArrayNode: Node {
       }
     }
   }
+
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+
+      let key = MathProperty.style
+      let value = key.resolveValue(current, styleSheet).mathStyle()!
+      let mathStyle =
+        switch subtype.subtype {
+        case .matrix, .cases, .substack: MathUtils.matrixStyle(for: value)
+        case .aligned, .gathered: MathUtils.alignedStyle(for: value)
+        }
+      current[key] = .mathStyle(mathStyle)
+
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  // MARK: - Array
 
   typealias Cell = ContentNode
   typealias Row = GridRow<Cell>
@@ -486,25 +508,6 @@ class ArrayNode: Node {
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     _matrixFragment?.rayshoot(from: point, index, in: direction)
-  }
-
-  // MARK: - Styles
-
-  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      let key = MathProperty.style
-      let value = key.resolve(properties, styleSheet).mathStyle()!
-      switch subtype.subtype {
-      case .matrix, .cases, .substack:
-        properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
-      case .aligned, .gathered:
-        properties[key] = .mathStyle(MathUtils.alignedStyle(for: value))
-      }
-
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
   }
 
 }

@@ -86,7 +86,7 @@ final class VariableNode: ElementNode {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
       let key = InternalProperty.nestedLevel
-      let value = key.resolve(properties, styleSheet).integer()!
+      let value = key.resolveValue(properties, styleSheet).integer()!
       // adjust the nested level
       let level = value + (1 - nestedLevelDelta % 2)
       properties[key] = .integer(level)

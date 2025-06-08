@@ -131,7 +131,7 @@ final class MathStylesNode: MathNode {
 
       case .inlineStyle:
         let key = MathProperty.style
-        let mathStyle = key.resolve(properties, styleSheet.defaultProperties).mathStyle()!
+        let mathStyle = key.resolveValue(properties, styleSheet.defaultProperties).mathStyle()!
         properties[key] = .mathStyle(mathStyle.inlineParallel())
       }
 

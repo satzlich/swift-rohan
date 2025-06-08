@@ -35,6 +35,8 @@ public class Node: Codable {
     resetCachedProperties()
   }
 
+  // MARK: - Styles
+
   final var _cachedProperties: PropertyDictionary?
 
   /// Reset cached properties **recursively**.
@@ -66,7 +68,7 @@ public class Node: Codable {
       // process nested-level property
       if NodePolicy.shouldIncreaseLevel(self.type) {
         let key = InternalProperty.nestedLevel
-        let level = key.resolve(current, styleSheet).integer()!
+        let level = key.resolveValue(current, styleSheet).integer()!
         current.updateValue(.integer(level + 1), forKey: key)
       }
 
@@ -294,7 +296,7 @@ extension Node {
   final func resolveProperty(
     _ key: PropertyKey, _ styleSheet: StyleSheet
   ) -> PropertyValue {
-    key.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
+    key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
   // MARK: - Styles

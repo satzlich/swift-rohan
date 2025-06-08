@@ -34,7 +34,7 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> ParagraphProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolve(properties, fallback)
+      key.resolveValue(properties, fallback)
     }
 
     return ParagraphProperty(
