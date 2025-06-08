@@ -144,7 +144,7 @@ class MathNode: Node {
 
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -174,7 +174,7 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // reset layout offset to "0" in the new context
     return component.enumerateTextSegments(
-      path.dropFirst(), endPath.dropFirst(), newContext,
+      path.dropFirst(), endPath.dropFirst(), context: newContext,
       layoutOffset: 0, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
@@ -182,7 +182,7 @@ class MathNode: Node {
   /// - Parameters:
   ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
   final override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // resolve math index for point
@@ -204,7 +204,7 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
+      component.resolveTextLocation(with: relPoint, context: newContext, &trace, &affinity)
     // fix accordingly
     if !modified { trace.emplaceBack(component, .index(0)) }
     return true

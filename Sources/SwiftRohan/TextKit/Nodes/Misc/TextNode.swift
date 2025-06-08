@@ -160,7 +160,7 @@ final class TextNode: Node {
 
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -186,7 +186,7 @@ final class TextNode: Node {
   }
 
   final override func resolveTextLocation(
-    with point: CGPoint, _ context: LayoutContext,
+    with point: CGPoint, context: LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // do nothing

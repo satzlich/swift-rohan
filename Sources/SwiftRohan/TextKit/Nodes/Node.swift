@@ -195,7 +195,7 @@ internal class Node: Codable {
   /// Store the node to JSONValue.
   internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
-  // MARK: - Unpolished API
+  // MARK: - Tree API
 
   /// Enumerate the text segments in the range given by `[path, endPath)`
   /// - Parameters:
@@ -206,9 +206,9 @@ internal class Node: Codable {
   ///   - originCorrection: correction to the origin of the text segment. Initially ".zero".
   ///   - block: block to call for each segment
   /// - Returns: `false` if the enumeration is interrupted by the block, `true` otherwise.
-  func enumerateTextSegments(
+  internal func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -218,8 +218,8 @@ internal class Node: Codable {
   /// Resolve the text location for the given point within the node.
   /// - Returns: true if text location is resolved, false otherwise.
   /// - Note: In the case of success, the text location is implicitly stored in the trace.
-  func resolveTextLocation(
-    with point: CGPoint, _ context: LayoutContext, _ trace: inout Trace,
+  internal func resolveTextLocation(
+    with point: CGPoint, context: LayoutContext, _ trace: inout Trace,
     _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     preconditionFailure("overriding required")
@@ -230,9 +230,8 @@ internal class Node: Codable {
   ///     the current position of the ray with `isResolved=false`. Return `nil` if
   ///     it is guaranteed that no glyph will be hit.
   /// - Note: The position is with respect to the origin of layout context.
-  func rayshoot(
-    from path: ArraySlice<RohanIndex>,
-    affinity: RhTextSelection.Affinity,
+  internal func rayshoot(
+    from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

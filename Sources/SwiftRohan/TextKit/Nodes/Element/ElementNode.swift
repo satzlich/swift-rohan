@@ -493,7 +493,7 @@ internal class ElementNode: Node {
 
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -541,7 +541,7 @@ internal class ElementNode: Node {
         let offset = getLayoutOffset(index)
       else { assertionFailure("Invalid path"); return false }
       return _children[index].enumerateTextSegments(
-        path.dropFirst(), endPath.dropFirst(), context,
+        path.dropFirst(), endPath.dropFirst(), context: context,
         layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
         type: type, options: options, using: block)
     }
@@ -550,7 +550,7 @@ internal class ElementNode: Node {
   /// Resolve the text location at the given point.
   /// - Returns: true if trace is modified.
   final override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point)
@@ -677,7 +677,7 @@ internal class ElementNode: Node {
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
         let modified =
-          matNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
+          matNode.resolveTextLocation(with: newPoint, context: context, &trace, &affinity)
         if !modified { resolveLastIndex(childOfLast: matNode) }
         return true
 
@@ -693,7 +693,7 @@ internal class ElementNode: Node {
         let newPoint = point.relative(to: segmentFrame.frame.origin)
         // recurse and fix on need
         let modified =
-          elementNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
+          elementNode.resolveTextLocation(with: newPoint, context: context, &trace, &affinity)
         if !modified { resolveLastIndex(childOfLast: elementNode) }
         return true
 

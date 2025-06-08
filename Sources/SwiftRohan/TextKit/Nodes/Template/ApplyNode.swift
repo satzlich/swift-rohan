@@ -231,7 +231,7 @@ final class ApplyNode: Node {
 
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
@@ -249,7 +249,7 @@ final class ApplyNode: Node {
       let newEndPath = localPath(for: index, variableIndex: j, endPath.dropFirst())
       let continueEnumeration = _content.enumerateTextSegments(
         ArraySlice(newPath), ArraySlice(newEndPath),
-        context, layoutOffset: layoutOffset, originCorrection: originCorrection,
+        context: context, layoutOffset: layoutOffset, originCorrection: originCorrection,
         type: type, options: options, using: block)
       if !continueEnumeration { return false }
     }
@@ -257,7 +257,7 @@ final class ApplyNode: Node {
   }
 
   override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     assertionFailure(

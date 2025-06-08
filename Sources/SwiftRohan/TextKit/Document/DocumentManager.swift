@@ -482,7 +482,7 @@ public final class DocumentManager {
     let endPath = textRange.endLocation.asArray
     _ = rootNode.enumerateTextSegments(
       ArraySlice(path), ArraySlice(endPath),
-      _getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
+      context: _getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
 
@@ -497,7 +497,7 @@ public final class DocumentManager {
     var trace = Trace()
     var affinity = RhTextSelection.Affinity.downstream
 
-    let modified = rootNode.resolveTextLocation(with: point, context, &trace, &affinity)
+    let modified = rootNode.resolveTextLocation(with: point, context: context, &trace, &affinity)
     if modified,
       let location = trace.toTextLocation()
     {

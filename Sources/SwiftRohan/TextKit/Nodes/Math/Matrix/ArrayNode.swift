@@ -361,7 +361,7 @@ class ArrayNode: Node {
 
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -393,13 +393,13 @@ class ArrayNode: Node {
     let newContext =
       LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
-      path.dropFirst(), endPath.dropFirst(), newContext,
+      path.dropFirst(), endPath.dropFirst(), context: newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
 
   final override func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
+    with point: CGPoint, context: any LayoutContext, _ trace: inout Trace,
     _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     precondition(context is MathListLayoutContext)
@@ -424,7 +424,7 @@ class ArrayNode: Node {
     trace.emplaceBack(self, .gridIndex(index))
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
+      component.resolveTextLocation(with: relPoint, context: newContext, &trace, &affinity)
     // fix accordingly
     if !modified {
       trace.emplaceBack(component, .index(0))
