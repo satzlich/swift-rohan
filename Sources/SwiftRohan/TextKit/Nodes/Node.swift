@@ -101,9 +101,11 @@ internal class Node: Codable {
 
   /// Returns the layout offset for the given index, that is, the sum of layout
   /// lengths of all children before the child at the given index, taking into
-  /// account newlines.
+  /// account additional materials (e.g. newlines) that contribute to layout lengths.
   /// - Returns: the layout offset; or `nil` if the index is invalid or layout
   ///     length is not well-defined for the kind of this node.
+  /// - Invariant: if `offset = getLayoutOffset(index)` is non-nil, then
+  ///     `getPosition(offset) == index`.
   internal func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
   }
