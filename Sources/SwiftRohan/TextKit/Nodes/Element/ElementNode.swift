@@ -457,11 +457,10 @@ public class ElementNode: Node {
     assert(isPlaceholderActive == false)
 
     var (k, s) = (0, 0)
-    // notations: LO:= layoutOffset
-    //            ell(i):= children[i].layoutLength + _newlines[i].intValue
-    // invariant: s(k) = b + sum:i∈[0,k):ell(i)
-    //            s(k) ≤ LO
-    //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
+    // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
+    // invariant: s(k) = sum:i∈[0,k):ell(i)
+    //            s(k) ≤ layoutOffset
+    //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
     while k < _children.count {
       let ss = s + _children[k].layoutLength() + _newlines[k].intValue
       if ss > layoutOffset { break }
