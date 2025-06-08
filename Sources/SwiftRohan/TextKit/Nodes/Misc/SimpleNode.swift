@@ -38,7 +38,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
     try super.encode(to: encoder)
   }
 
-  // MARK: - Layout
+  // MARK: - Implementation
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {

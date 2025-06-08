@@ -165,7 +165,7 @@ internal class Node: Codable {
   /// Store the node to JSONValue.
   internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
-  // MARK: - Content
+  // MARK: - Unpolished API
 
   /// Returns the layout offset for the given index, that is, the sum of layout
   /// lengths of all children before the child at the given index, taking into
@@ -257,6 +257,4 @@ extension Node {
   ) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
-
-  // MARK: - Styles
 }

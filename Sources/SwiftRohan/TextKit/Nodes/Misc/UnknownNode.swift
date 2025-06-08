@@ -64,12 +64,10 @@ final class UnknownNode: SimpleNode {
   // MARK: - UnknownNode
 
   var placeholder: String { PLACEHOLDER }
-
   let data: JSONValue
 
   init(_ data: JSONValue) {
     self.data = data
     super.init()
   }
-
 }

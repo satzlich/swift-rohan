@@ -100,7 +100,7 @@ final class TextNode: Node {
     TextExpr.validate(string: string)
   }
 
-  // MARK: - Location
+  // MARK: - Implementation
 
   /// Move offset by n __characters__
   /// - Returns: nil if the destination offset is out of bounds. Otherwise, the
@@ -119,16 +119,14 @@ final class TextNode: Node {
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
-  // MARK: - Layout
-
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let offset = index.index(),
       0...layoutLength() ~= offset  // inclusive
     else { return nil }
     return offset
   }
 
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard 0..<layoutLength() ~= layoutOffset else { return nil }
     let index = _getUpstreamBoundary(layoutOffset)
     return (.index(index), index)
@@ -187,7 +185,7 @@ final class TextNode: Node {
       layouRange, type: type, options: options, using: newBlock(_:_:_:))
   }
 
-  override final func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, _ context: LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -195,7 +193,7 @@ final class TextNode: Node {
     return false
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
