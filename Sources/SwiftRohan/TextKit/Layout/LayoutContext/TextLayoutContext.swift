@@ -213,10 +213,17 @@ final class TextLayoutContext: LayoutContext {
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     precondition(isEditing == false)
 
+    // special case: if content is empty, return empty range
+    // reason: `textSelections(...)` will return an empty selection.
+    guard textContentStorage.documentRange.isEmpty == false else {
+      return PickingResult(0..<0, 1.0, .downstream)
+    }
+
     func characterIndex(for point: CGPoint) -> (Int, RhTextSelection.Affinity)? {
       let selections = textLayoutManager.textSelectionNavigation.textSelections(
         interactingAt: point, inContainerAt: textLayoutManager.documentRange.location,
-        anchors: [], modifiers: [], selecting: false, bounds: .infinite)
+        anchors: [], modifiers: [], selecting: false,
+        bounds: textLayoutManager.usageBoundsForTextContainer)
       guard let selection = selections.getOnlyElement(),
         let textRange = selection.textRanges.getOnlyElement(),
         textRange.isEmpty
