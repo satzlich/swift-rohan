@@ -28,6 +28,14 @@ final class VariableNode: ElementNode {
     return _cachedProperties!
   }
 
+  // MARK: - ElementNode
+
+  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
+    visitor.visit(variable: self, context, withChildren: children)
+  }
+
   // MARK: - VariableNode
 
   /// associated argument node
@@ -75,12 +83,6 @@ final class VariableNode: ElementNode {
     try container.encode(argumentIndex, forKey: .argIndex)
     try container.encode(nestedLevelDelta, forKey: .levelDelta)
     try super.encode(to: encoder)
-  }
-
-  override func accept<R, C, V, T, S>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
-    visitor.visit(variable: self, context, withChildren: children)
   }
 
   // MARK: - Storage

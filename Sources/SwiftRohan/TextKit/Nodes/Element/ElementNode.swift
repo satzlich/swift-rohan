@@ -44,6 +44,13 @@ public class ElementNode: Node {
 
   // MARK: - ElementNode
 
+  /// Visit the children in the manner of this node.
+  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public typealias Store = Deque<Node>
   private final var _children: Store
 
@@ -136,13 +143,6 @@ public class ElementNode: Node {
 
   // This is used for serialization.
   final func getChildren_readonly() -> Store { _children }
-
-  /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R {
-    preconditionFailure("overriding required")
-  }
 
   // MARK: - Content
 

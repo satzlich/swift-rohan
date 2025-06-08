@@ -8,22 +8,24 @@ public final class RootNode: ElementNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  final override class var type: NodeType { .root }
-
-  // MARK: - RootNode
-
-  override func cloneEmpty() -> Self { Self() }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(root: self, context)
   }
 
-  override func accept<R, C, V, T, S>(
+  final override class var type: NodeType { .root }
+
+  // MARK: - ElementNode
+
+  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
+  ) -> R {
     visitor.visit(root: self, context, withChildren: children)
   }
+
+  // MARK: - RootNode
+
+  override func cloneEmpty() -> Self { Self() }
 
   private static let uniqueTag = "document"
 

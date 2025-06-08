@@ -34,6 +34,14 @@ final class ArgumentNode: Node {
 
   final override func layoutLength() -> Int { 1 }  // always "1".
 
+  // MARK: - ElementNode
+
+  final func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    visitor.visit(argument: self, context, withChildren: children)
+  }
+
   // MARK: - ApplyNode
 
   /// associated apply node
@@ -235,13 +243,6 @@ final class ArgumentNode: Node {
   }
 
   // MARK: - Clone and Visitor
-
-  /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R {
-    visitor.visit(argument: self, context, withChildren: children)
-  }
 
   override class var storageTags: [String] {
     // intentionally empty

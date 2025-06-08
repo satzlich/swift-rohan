@@ -12,7 +12,20 @@ public class ContentNode: ElementNode {
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(content: self, context)
+  }
+
   override final class var type: NodeType { .content }
+
+  // MARK: - ElementNode
+
+  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    visitor.visit(content: self, context, withChildren: children)
+  }
 
   // MARK: - ContentNode
 
@@ -30,17 +43,6 @@ public class ContentNode: ElementNode {
 
   public required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
-  }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(content: self, context)
-  }
-
-  override func accept<R, C, V, T, S>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
-    visitor.visit(content: self, context, withChildren: children)
   }
 
   final override func cloneEmpty() -> Self { Self() }

@@ -30,6 +30,14 @@ public final class EmphasisNode: ElementNode {
     return _cachedProperties!
   }
 
+  // MARK: - ElementNode
+
+  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    visitor.visit(emphasis: self, context, withChildren: children)
+  }
+
   // MARK: - EmphasisNode
 
   override func cloneEmpty() -> Self { Self() }
@@ -37,12 +45,6 @@ public final class EmphasisNode: ElementNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(emphasis: self, context)
-  }
-
-  override func accept<R, C, V, T, S>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
-    visitor.visit(emphasis: self, context, withChildren: children)
   }
 
   private static let uniqueTag = "emph"

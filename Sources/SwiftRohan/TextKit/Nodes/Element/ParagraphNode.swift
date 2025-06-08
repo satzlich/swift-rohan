@@ -8,20 +8,22 @@ public final class ParagraphNode: ElementNode {
 
   final override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  final override class var type: NodeType { .paragraph }
-
-  // MARK: - ParagraphNode
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(paragraph: self, context)
   }
 
-  override func accept<R, C, V, T, S>(
+  final override class var type: NodeType { .paragraph }
+
+  // MARK: - ElementNode
+
+  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
+  ) -> R {
     visitor.visit(paragraph: self, context, withChildren: children)
   }
+
+  // MARK: - ParagraphNode
 
   override func cloneEmpty() -> Self { Self() }
   override func createSuccessor() -> ElementNode? { ParagraphNode() }
