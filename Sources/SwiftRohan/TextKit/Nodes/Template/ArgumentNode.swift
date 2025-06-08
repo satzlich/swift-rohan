@@ -3,7 +3,15 @@ import AppKit
 import _RopeModule
 
 final class ArgumentNode: Node {
-  override class var type: NodeType { .argument }
+  // MARK: - Node
+
+  final override class var type: NodeType { .argument }
+
+  final override func getChild(_ index: RohanIndex) -> Node? {
+    variableNodes.first?.getChild(index)
+  }
+
+  // MARK: - ApplyNode
 
   /// associated apply node
   private weak var applyNode: ApplyNode? = nil
@@ -49,11 +57,7 @@ final class ArgumentNode: Node {
 
   var childCount: Int { variableNodes.first!.childCount }
 
-  override func getChild(_ index: RohanIndex) -> Node? {
-    variableNodes.first!.getChild(index)
-  }
-
-  func getChild(_ index: Int) -> Node {
+  final func getChild(_ index: Int) -> Node {
     precondition(index < childCount)
     return variableNodes.first!.getChild(index)
   }

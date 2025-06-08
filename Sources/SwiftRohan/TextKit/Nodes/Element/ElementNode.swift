@@ -7,12 +7,23 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  override final func resetCachedProperties() {
+  // MARK: - Node
+
+  final override func resetCachedProperties() {
     super.resetCachedProperties()
     for child in _children {
       child.resetCachedProperties()
     }
   }
+
+  final override func getChild(_ index: RohanIndex) -> Node? {
+    guard let index = index.index(),
+      index < _children.count
+    else { return nil }
+    return _children[index]
+  }
+
+  // MARK: - ElementNode
 
   public typealias Store = Deque<Node>
   private final var _children: Store
@@ -130,13 +141,6 @@ public class ElementNode: Node {
 
   /// Create a node for splitting at the end.
   func createSuccessor() -> ElementNode? { nil }
-
-  override final func getChild(_ index: RohanIndex) -> Node? {
-    guard let index = index.index(),
-      index < _children.count
-    else { return nil }
-    return _children[index]
-  }
 
   override final func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     // apply delta

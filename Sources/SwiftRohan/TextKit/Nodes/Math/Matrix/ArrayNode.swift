@@ -4,7 +4,7 @@ import Foundation
 import _RopeModule
 
 class ArrayNode: Node {
-  // MARK: - Styles
+  // MARK: - Node(Styles)
 
   final override func resetCachedProperties() {
     super.resetCachedProperties()
@@ -31,6 +31,13 @@ class ArrayNode: Node {
       _cachedProperties = current
     }
     return _cachedProperties!
+  }
+
+  // MARK: - Node(Positioning)
+
+  final override func getChild(_ index: RohanIndex) -> Node? {
+    guard let index = index.gridIndex() else { return nil }
+    return self.getComponent(index)
   }
 
   // MARK: - Array
@@ -106,11 +113,6 @@ class ArrayNode: Node {
   }
 
   // MARK: - Content
-
-  final override func getChild(_ index: RohanIndex) -> Node? {
-    guard let index = index.gridIndex() else { return nil }
-    return getComponent(index)
-  }
 
   final func getComponent(_ index: GridIndex) -> Cell? {
     guard index.row < rowCount,

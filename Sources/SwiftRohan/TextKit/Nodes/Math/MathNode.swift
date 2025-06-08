@@ -3,11 +3,18 @@
 import CoreGraphics
 
 public class MathNode: Node {
-  override final func resetCachedProperties() {
+  // MARK: - Node
+
+  final override func resetCachedProperties() {
     super.resetCachedProperties()
     for (_, content) in enumerateComponents() {
       content.resetCachedProperties()
     }
+  }
+
+  final override func getChild(_ index: RohanIndex) -> ContentNode? {
+    guard let index = index.mathIndex() else { return nil }
+    return getComponent(index)
   }
 
   // MARK: - Content
@@ -21,11 +28,6 @@ public class MathNode: Node {
 
   @usableFromInline
   typealias Component = (index: MathIndex, content: ContentNode)
-
-  override final func getChild(_ index: RohanIndex) -> ContentNode? {
-    guard let index = index.mathIndex() else { return nil }
-    return getComponent(index)
-  }
 
   /// Returns the component for the index. If not found, return nil.
   final func getComponent(_ index: MathIndex) -> ContentNode? {

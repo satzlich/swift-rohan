@@ -3,6 +3,8 @@
 import CoreGraphics
 
 public class SimpleNode: Node {  // default implementation for simple nodes
+  // MARK: - Node
+
   override init() { super.init() }
 
   override func resetCachedProperties() {
@@ -10,14 +12,14 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   }
 
   // mark as `final` to prevent overriding
-  override final func selector() -> TargetSelector { super.selector() }
+  final override func selector() -> TargetSelector { super.selector() }
 
-  // MARK: - Styles
-
-  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  internal override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     // by default, return parent's properties
     parent?.getProperties(styleSheet) ?? [:]
   }
+
+  final override func getChild(_ index: RohanIndex) -> Node? { nil }
 
   // MARK: - Codable
 
@@ -30,8 +32,6 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   }
 
   // MARK: - Content
-
-  override final func getChild(_ index: RohanIndex) -> Node? { nil }
 
   override final func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
     // do nothing

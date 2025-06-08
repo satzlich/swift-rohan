@@ -4,12 +4,16 @@ import Foundation
 import _RopeModule
 
 public final class TextNode: Node {
+  // MARK: - Node
+
   override class var type: NodeType { .text }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     // Use the properties from the parent node if available.
     parent?.getProperties(styleSheet) ?? [:]
   }
+
+  final override func getChild(_ index: RohanIndex) -> Node? { nil }
 
   // MARK: - TextNode
 
@@ -55,10 +59,6 @@ public final class TextNode: Node {
     try container.encode(_string, forKey: .string)
     try super.encode(to: encoder)
   }
-
-  // MARK: - Content
-
-  override final func getChild(_ index: RohanIndex) -> Node? { return nil }
 
   // MARK: - Location
 

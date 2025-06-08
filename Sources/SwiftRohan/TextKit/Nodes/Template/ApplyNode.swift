@@ -4,12 +4,23 @@ import Foundation
 import _RopeModule
 
 public final class ApplyNode: Node {
+  // MARK: - Node
+
   override class var type: NodeType { .apply }
 
-  override func resetCachedProperties() {
+  final override func resetCachedProperties() {
     super.resetCachedProperties()
     _content.resetCachedProperties()
   }
+
+  final override func getChild(_ index: RohanIndex) -> ArgumentNode? {
+    guard let index = index.argumentIndex(),
+      index < _arguments.count
+    else { return nil }
+    return _arguments[index]
+  }
+
+  // MARK: - ApplyNode
 
   let template: MathTemplate
   private let _arguments: [ArgumentNode]
@@ -115,13 +126,6 @@ public final class ApplyNode: Node {
   }
 
   final func getContent() -> ContentNode { _content }
-
-  override func getChild(_ index: RohanIndex) -> ArgumentNode? {
-    guard let index = index.argumentIndex(),
-      index < _arguments.count
-    else { return nil }
-    return _arguments[index]
-  }
 
   // MARK: - Location
 

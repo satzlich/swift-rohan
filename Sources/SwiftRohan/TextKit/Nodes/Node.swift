@@ -78,6 +78,13 @@ public class Node: Codable {
     return _cachedProperties!
   }
 
+  // MARK: - Positioning
+
+  /// Returns the child for the index. If not found or invalid, returns nil.
+  internal func getChild(_ index: RohanIndex) -> Node? {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -126,11 +133,6 @@ public class Node: Codable {
   // MARK: - Content
 
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
-
-  /// Returns the child for the index. If not found, return nil.
-  func getChild(_ index: RohanIndex) -> Node? {
-    preconditionFailure("overriding required")
-  }
 
   /// Propagate content change.
   internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
