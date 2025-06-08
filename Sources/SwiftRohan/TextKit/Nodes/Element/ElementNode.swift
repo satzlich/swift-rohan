@@ -185,17 +185,13 @@ public class ElementNode: Node {
   private final var _newlines: NewlineArray
 
   override final func layoutLength() -> Int {
-    needsLeadingZWSP.intValue + isPlaceholderActive.intValue + _layoutLength
-      + _newlines.newlineCount
+    isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
   }
 
   override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
 
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
-
-  /// true if a leading ZWSP should be added
-  final var needsLeadingZWSP: Bool { NodePolicy.needsLeadingZWSP(type) }
 
   /// true if placeholder should be shown when the node is empty
   final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }
@@ -260,7 +256,6 @@ public class ElementNode: Node {
     }
 
     if self.isPlaceholderActive { context.insertText("⬚", self) }
-    if self.needsLeadingZWSP { context.insertText("\u{200B}", self) }
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -295,8 +290,6 @@ public class ElementNode: Node {
     assert(self.isPlaceholderActive == false)
     // For robustness, we still process the case when `isPlaceholderActive==true`.
     if self.isPlaceholderActive { context.insertText("⬚", self) }
-
-    if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
@@ -425,7 +418,6 @@ public class ElementNode: Node {
     }
 
     if self.isPlaceholderActive { context.insertText("⬚", self) }
-    if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
@@ -436,11 +428,10 @@ public class ElementNode: Node {
   final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
-    let zwsp = needsLeadingZWSP.intValue
     let placeholder = isPlaceholderActive.intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return zwsp + placeholder + s1 + s2
+    return placeholder + s1 + s2
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
@@ -456,7 +447,7 @@ public class ElementNode: Node {
   private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
     guard 0..<layoutLength() ~= layoutOffset else { return nil }
 
-    var (k, s) = (0, needsLeadingZWSP.intValue + isPlaceholderActive.intValue)
+    var (k, s) = (0, isPlaceholderActive.intValue)
     // notations: LO:= layoutOffset
     //            ell(i):= children[i].layoutLength + _newlines[i].intValue
     //            b:= isBlock.intValue
