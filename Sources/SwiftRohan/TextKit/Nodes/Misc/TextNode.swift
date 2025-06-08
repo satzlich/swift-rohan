@@ -103,6 +103,14 @@ public final class TextNode: Node {
     return (.index(index), index)
   }
 
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    guard 0...layoutLength() ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+    let index = _getUpstreamBoundary(layoutOffset)
+    return .success(value: .index(index), target: index)
+  }
+
   /// Returns the index of the character at the given layout offset.
   /// - Note: ``getIndex(_:)`` differs from ``getRohanIndex(_:)`` in that the
   ///     former considers the case of `layoutOffset == layoutLength` as valid

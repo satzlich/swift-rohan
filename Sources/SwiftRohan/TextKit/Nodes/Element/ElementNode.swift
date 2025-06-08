@@ -440,6 +440,30 @@ public class ElementNode: Node {
     return (.index(i), consumed)
   }
 
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    let layoutLength = self.layoutLength()
+    guard 0...layoutLength ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+
+    if _children.isEmpty {
+      return .success(value: .index(0), target: 0)
+    }
+
+    var (k, s) = (0, 0)
+    // notations: LO:= layoutOffset
+    //            ell(i):= children[i].layoutLength + _newlines[i].intValue
+    // invariant: s(k) = b + sum:i∈[0,k):ell(i)
+    //            s(k) ≤ LO
+    //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
+    while k < _children.count {
+      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
+      if ss > layoutOffset { break }
+      (k, s) = (k + 1, ss)
+    }
+    return .halfway(value: .index(k), consumed: s)
+  }
+
   /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
   /// with the layout offset of the child.
   /// - Returns: nil if layout offset is out of bounds. Otherwise, returns (k, s)

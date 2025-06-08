@@ -159,6 +159,11 @@ public final class ApplyNode: Node {
     nil
   }
 
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset is not well-defined for ApplyNode
+    .null
+  }
+
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,

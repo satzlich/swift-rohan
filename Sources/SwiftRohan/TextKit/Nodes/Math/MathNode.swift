@@ -89,6 +89,11 @@ public class MathNode: Node {
     return nil
   }
 
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset for math component is not well-defined and is unused
+    return .null
+  }
+
   /// Returns the math index for the given point.
   /// - Parameter point: The point relative to the __glyph origin__ of the
   ///     fragment of this node.

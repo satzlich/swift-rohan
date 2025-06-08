@@ -108,6 +108,11 @@ final class ArgumentNode: Node {
     return nil
   }
 
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    assertionFailure("should not be called")
+    return .null
+  }
+
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,

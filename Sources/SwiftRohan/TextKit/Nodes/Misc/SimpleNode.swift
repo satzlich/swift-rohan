@@ -38,6 +38,11 @@ public class SimpleNode: Node {  // default implementation for simple nodes
     nil
   }
 
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // always return nil
+    .null
+  }
+
   override final func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,

@@ -149,6 +149,15 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Returns a position within the node that is picked by `layoutOffset`.
+  /// - Parameter layoutOffset: layout offset
+  /// - Invariant: If return value is non-nil, then the index must be valid for the node.
+  ///     For example, for an `ElementNode`, the index must be a valid child index which
+  ///     is in the range `[0, childCount]` (inclusive).
+  func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    preconditionFailure("overriding required")
+  }
+
   /// Enumerate the text segments in the range given by `[path, endPath)`
   /// - Parameters:
   ///   - path: path to the start of the range

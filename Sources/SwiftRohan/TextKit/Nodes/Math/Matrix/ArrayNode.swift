@@ -321,6 +321,11 @@ class ArrayNode: Node {
     nil
   }
 
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    // layout offset for matrix is not well-defined and is unused
+    .null
+  }
+
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
