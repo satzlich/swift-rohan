@@ -219,8 +219,8 @@ internal class Node: Codable {
   /// - Returns: true if text location is resolved, false otherwise.
   /// - Note: In the case of success, the text location is implicitly stored in the trace.
   internal func resolveTextLocation(
-    with point: CGPoint, context: LayoutContext, _ trace: inout Trace,
-    _ affinity: inout RhTextSelection.Affinity
+    with point: CGPoint, context: LayoutContext, trace: inout Trace,
+    affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     preconditionFailure("overriding required")
   }

@@ -399,8 +399,8 @@ class ArrayNode: Node {
   }
 
   final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, _ trace: inout Trace,
-    _ affinity: inout RhTextSelection.Affinity
+    with point: CGPoint, context: any LayoutContext, trace: inout Trace,
+    affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
@@ -424,7 +424,7 @@ class ArrayNode: Node {
     trace.emplaceBack(self, .gridIndex(index))
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, context: newContext, &trace, &affinity)
+      component.resolveTextLocation(with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified {
       trace.emplaceBack(component, .index(0))

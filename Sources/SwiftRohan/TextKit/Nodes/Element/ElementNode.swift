@@ -551,7 +551,7 @@ internal class ElementNode: Node {
   /// - Returns: true if trace is modified.
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point)
     else { return false }
@@ -677,7 +677,8 @@ internal class ElementNode: Node {
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
         let modified =
-          matNode.resolveTextLocation(with: newPoint, context: context, &trace, &affinity)
+          matNode.resolveTextLocation(
+            with: newPoint, context: context, trace: &trace, affinity: &affinity)
         if !modified { resolveLastIndex(childOfLast: matNode) }
         return true
 
@@ -693,7 +694,8 @@ internal class ElementNode: Node {
         let newPoint = point.relative(to: segmentFrame.frame.origin)
         // recurse and fix on need
         let modified =
-          elementNode.resolveTextLocation(with: newPoint, context: context, &trace, &affinity)
+          elementNode.resolveTextLocation(
+            with: newPoint, context: context, trace: &trace, affinity: &affinity)
         if !modified { resolveLastIndex(childOfLast: elementNode) }
         return true
 
