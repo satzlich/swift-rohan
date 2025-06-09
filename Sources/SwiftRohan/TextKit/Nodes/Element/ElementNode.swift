@@ -319,13 +319,9 @@ internal class ElementNode: Node {
     // workaround for text alignment issue:
     //  the last paragraph with no text occasionally use the alignment of the
     //  previous paragraph.
-    if self.isParagraphContainer {
-      var end = context.layoutCursor + sum
-      for i in _children.indices.suffix(1).reversed() {
-        let location = end - _children[i].layoutLength() - _newlines[i].intValue
-        context.addParagraphStyle(_children[i], location..<end)
-        end = location
-      }
+    if isParagraphContainer && _newlines.last == true {
+      let end = context.layoutCursor + sum
+      context.addParagraphStyle(self, end - 1..<end)
     }
 
     return sum
@@ -506,10 +502,11 @@ internal class ElementNode: Node {
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
-      let end = location + _children[i].layoutLength() + _newlines[i].intValue
+      let end = location + _children[i].layoutLength()
       if predicate(i) { context.addParagraphStyle(_children[i], location..<end) }
-      location = end
+      location = end + _newlines[i].intValue
     }
+    if _newlines.last == true { context.addParagraphStyle(self, location - 1..<location) }
   }
 
   private final func getLayoutOffset(_ index: Int) -> Int? {
