@@ -135,4 +135,12 @@ enum TestUtils {
     let attrString = NSAttributedString(string: string, attributes: attributes)
     attrString.draw(at: point)
   }
+
+  static func updateLayoutLength(_ node: Node) {
+    let styleSheet = StyleSheets.latinModern(10)
+    let layoutContext = TextLayoutContext(styleSheet)
+    layoutContext.beginEditing()
+    _ = node.performLayout(layoutContext, fromScratch: true)
+    layoutContext.endEditing()
+  }
 }
