@@ -135,6 +135,11 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Notify the node that the content has changed.
+  internal func contentDidChange() {
+    preconditionFailure("overriding required")
+  }
+
   /// How many length units the node contributes to the layout context.
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 

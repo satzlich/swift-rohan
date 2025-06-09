@@ -78,6 +78,11 @@ internal class ElementNode: Node {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  final override func contentDidChange() {
+    _isDirty = true
+    parent?.contentDidChange()
+  }
+
   final override func layoutLength() -> Int {
     isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
   }
@@ -216,14 +221,14 @@ internal class ElementNode: Node {
     childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool
   ) {
     // content change implies dirty
-    if inStorage { _isDirty = true }
+    if inStorage { contentDidChange() }
 
-    // apply delta excluding placeholder and newlines
-    _layoutLength += childrenDelta
-
-    // propagate to parent
-    let delta = childrenDelta + placeholderDelta + newlinesDelta
-    parent?.contentDidChange(delta: delta, inStorage: inStorage)
+    //    // apply delta excluding placeholder and newlines
+    //    _layoutLength += childrenDelta
+    //
+    //    // propagate to parent
+    //    let delta = childrenDelta + placeholderDelta + newlinesDelta
+    //    parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   // MARK: - Layout Impl.
@@ -835,59 +840,31 @@ internal class ElementNode: Node {
 
   /// Take all children from the node.
   final func takeChildren(inStorage: Bool) -> ElementStore {
-    // pre update
     if inStorage { makeSnapshotOnce() }
 
-    var delta = 0
-    _children.forEach { child in
+    for child in _children {
       child.clearParent()
-      delta -= child.layoutLength()
     }
-
-    // perform remove
-    var placeholderDelta = -isPlaceholderActive.intValue
     let children = exchange(&_children, with: [])
-    placeholderDelta += isPlaceholderActive.intValue
-
-    // update newlines
-    var newlinesDelta = -_newlines.newlineCount
     _newlines.removeAll()
-    newlinesDelta += _newlines.newlineCount
 
-    // post update
-    contentDidChangeLocally(
-      childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta, inStorage: inStorage)
+    if inStorage { contentDidChange() }
     return children
   }
 
   final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> ElementStore {
     if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
 
-    // pre update
     if inStorage { makeSnapshotOnce() }
 
-    var delta = 0
-    _children[range].forEach { child in
+    for child in _children[range] {
       child.clearParent()
-      delta -= child.layoutLength()
     }
-
-    // perform remove
-    var placeholderDelta = -isPlaceholderActive.intValue
     let children = ElementStore(_children[range])
     _children.removeSubrange(range)
-    placeholderDelta += isPlaceholderActive.intValue
-
-    // update newlines
-    var newlinesDelta = -_newlines.newlineCount
     _newlines.removeSubrange(range)
-    newlinesDelta += _newlines.newlineCount
 
-    // post update
-    contentDidChangeLocally(
-      childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta, inStorage: inStorage)
+    if inStorage { contentDidChange() }
     return children
   }
 
@@ -900,27 +877,16 @@ internal class ElementNode: Node {
   ) {
     guard !nodes.isEmpty else { return }
 
-    // pre update
     if inStorage { makeSnapshotOnce() }
 
-    let delta = nodes.lazy.map { $0.layoutLength() }.reduce(.zero, +)
-
-    // perform insert
-    var placeholderDelta = -isPlaceholderActive.intValue
     _children.insert(contentsOf: nodes, at: index)
-    placeholderDelta += isPlaceholderActive.intValue
-
-    // update newlines
-    var newlinesDelta = -_newlines.newlineCount
     _newlines.insert(contentsOf: nodes.lazy.map(\.isBlock), at: index)
-    newlinesDelta += _newlines.newlineCount
 
-    // post update
-    nodes.forEach { $0.setParent(self) }
+    for node in nodes {
+      node.setParent(self)
+    }
 
-    contentDidChangeLocally(
-      childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   final func removeChild(at index: Int, inStorage: Bool) {
@@ -928,52 +894,28 @@ internal class ElementNode: Node {
   }
 
   final func removeSubrange(_ range: Range<Int>, inStorage: Bool) {
-    // pre update
     if inStorage { makeSnapshotOnce() }
 
-    var delta = 0
-    _children[range].forEach { child in
+    for child in _children[range] {
       child.clearParent()
-      delta -= child.layoutLength()
     }
-
-    // perform remove
-    var placeholderDelta = -isPlaceholderActive.intValue
     _children.removeSubrange(range)
-    placeholderDelta += isPlaceholderActive.intValue
-
-    // update newlines
-    var newlinesDelta = -_newlines.newlineCount
     _newlines.removeSubrange(range)
-    newlinesDelta += _newlines.newlineCount
 
-    // post update
-    contentDidChangeLocally(
-      childrenDelta: delta, placeholderDelta: placeholderDelta,
-      newlinesDelta: newlinesDelta, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   internal final func replaceChild(_ node: Node, at index: Int, inStorage: Bool) {
     precondition(_children[index] !== node && node.parent == nil)
-    // pre update
+
     if inStorage { makeSnapshotOnce() }
 
-    // compute delta
-    let delta = node.layoutLength() - _children[index].layoutLength()
-    // perform replace
     _children[index].clearParent()
     _children[index] = node
     _children[index].setParent(self)
-
-    // update newlines
-    var newlinesDelta = -_newlines.newlineCount
     _newlines.setValue(isBlock: node.isBlock, at: index)
-    newlinesDelta += _newlines.newlineCount
 
-    // post update
-    contentDidChangeLocally(
-      childrenDelta: delta, placeholderDelta: 0, newlinesDelta: newlinesDelta,
-      inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   /// Compact mergeable nodes in a range.
@@ -981,7 +923,6 @@ internal class ElementNode: Node {
   final func compactSubrange(_ range: Range<Int>, inStorage: Bool) -> Bool {
     guard range.count > 1 else { return false }
 
-    // pre update
     if inStorage { makeSnapshotOnce() }
 
     // perform compact
@@ -990,19 +931,9 @@ internal class ElementNode: Node {
     assert(range.lowerBound == newRange.lowerBound)
 
     // update newlines
-    var newlinesDelta = -_newlines.newlineCount
     _newlines.replaceSubrange(range, with: _children[newRange].lazy.map(\.isBlock))
-    newlinesDelta += _newlines.newlineCount
-    assert(newlinesDelta == 0)
 
-    // post update
-
-    // compact doesn't affect _layout length_, so delta = 0.
-    // Theorectically newlinesDelta = 0, but it doesn't harm to update it.
-    contentDidChangeLocally(
-      childrenDelta: 0, placeholderDelta: 0, newlinesDelta: newlinesDelta,
-      inStorage: inStorage)
-
+    if inStorage { contentDidChange() }
     return true
   }
 
