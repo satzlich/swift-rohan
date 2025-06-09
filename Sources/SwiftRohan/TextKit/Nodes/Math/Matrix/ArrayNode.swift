@@ -52,16 +52,18 @@ class ArrayNode: Node {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    parent?.contentDidChange(delta: 0, inStorage: inStorage)
+  final override func contentDidChange() {
+    _isDirty = true
+    parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int { 1 }  // always "1".
+  final override func layoutLength() -> Int { Self.unitLayoutLength }
 
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
     let mathContext = context.mathContext
@@ -134,14 +136,14 @@ class ArrayNode: Node {
       if needsFixLayout {
         matrixFragment.fixLayout(mathContext)
         if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
+          context.invalidateBackwards(Self.unitLayoutLength)
         }
         else {
-          context.skipBackwards(layoutLength())
+          context.skipBackwards(Self.unitLayoutLength)
         }
       }
       else {
-        context.skipBackwards(layoutLength())
+        context.skipBackwards(Self.unitLayoutLength)
       }
     }
 
@@ -149,6 +151,8 @@ class ArrayNode: Node {
     _isDirty = false
     _editLog.removeAll()
     _addedNodes.removeAll()
+
+    return Self.unitLayoutLength
   }
 
   // MARK: - ArrayNode
@@ -165,6 +169,10 @@ class ArrayNode: Node {
 
   let subtype: MathArray
   internal var _rows: Array<Row> = []
+
+  private var _isDirty: Bool = false
+  private var _matrixFragment: MathArrayLayoutFragment? = nil
+  final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
   final var rowCount: Int { _rows.count }
   final var columnCount: Int { _rows.first?.count ?? 0 }
@@ -249,19 +257,17 @@ class ArrayNode: Node {
     elements.forEach { $0.setParent(self) }
     _rows.insert(Row(elements), at: index)
 
-    contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   final func removeRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index < rowCount)
 
-    if inStorage {
-      _editLog.append(.removeRow(at: index))
-    }
+    if inStorage { _editLog.append(.removeRow(at: index)) }
 
     _rows.remove(at: index)
 
-    contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   func insertColumn(at index: Int, inStorage: Bool) {
@@ -280,21 +286,19 @@ class ArrayNode: Node {
       _rows[i].insert(elements[i], at: index)
     }
 
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   func removeColumn(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index < columnCount)
 
-    if inStorage {
-      _editLog.append(.removeColumn(at: index))
-    }
+    if inStorage { _editLog.append(.removeColumn(at: index)) }
 
     for i in (0..<rowCount) {
       _ = _rows[i].remove(at: index)
     }
 
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   final func destinationIndex(
@@ -337,12 +341,6 @@ class ArrayNode: Node {
   }
 
   // MARK: - Layout
-
-  private var _isDirty: Bool = false
-
-  private var _matrixFragment: MathArrayLayoutFragment? = nil
-
-  final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for matrix is not well-defined and is unused
@@ -424,7 +422,8 @@ class ArrayNode: Node {
     trace.emplaceBack(self, .gridIndex(index))
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
+      component.resolveTextLocation(
+        with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified {
       trace.emplaceBack(component, .index(0))

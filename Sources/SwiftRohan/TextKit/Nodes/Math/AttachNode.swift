@@ -15,16 +15,18 @@ final class AttachNode: MathNode {
 
   final override class var type: NodeType { .attach }
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
+  final override func contentDidChange() {
+    _isDirty = true
+    super.contentDidChange()
   }
 
   // MARK: - Node(Layout)
 
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
 
     let context = context as! MathListLayoutContext
@@ -42,6 +44,8 @@ final class AttachNode: MathNode {
     // clear
     _isDirty = false
     _snapshot = nil
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)
@@ -136,7 +140,7 @@ final class AttachNode: MathNode {
       assertionFailure("Invalid index for AttachNode")
     }
 
-    contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   final override func removeComponent(_ index: MathIndex, inStorage: Bool) {
@@ -161,7 +165,7 @@ final class AttachNode: MathNode {
       assertionFailure("Invalid index for AttachNode")
     }
 
-    contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   // MARK: - MathNode(Layout)

@@ -131,11 +131,15 @@ internal class Node: Codable {
 
   // MARK: - Layout
 
-  internal func contentDidChange(delta: Int, inStorage: Bool) {
+  /// Notify the node that the content has changed.
+  internal func contentDidChange() {
     preconditionFailure("overriding required")
   }
 
   /// How many length units the node contributes to the layout context.
+  /// - Invariant: For nodes whose layout length can be known since instantiation,
+  ///     this method must always return the same value. For the rest, this method
+  ///     must return the accurate length computed by the last call to `performLayout`.
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 
   /// Returns true if the node produces a block layout.
@@ -144,10 +148,10 @@ internal class Node: Codable {
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /// Perform layout and clear the dirty flag.
-  /// * For `fromScratch=true`, treat the node as if it was not laid-out before.
-  /// * For `fromScratch=false`, update the existing layout incrementally.
-  internal func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+  /// Perform layout. When the method is returned, the node must be laid out
+  /// with dirty flag cleared and layout length updated.
+  /// - Returns: the number of layout units contributed by the node.
+  internal func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
     preconditionFailure("overriding required")
   }
 
@@ -258,4 +262,6 @@ extension Node {
   ) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
+
+  static let unitLayoutLength: Int = 1
 }

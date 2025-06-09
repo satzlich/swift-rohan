@@ -39,7 +39,7 @@ final class EquationNode: MathNode {
   final override var isBlock: Bool { subtype == .block }
   final override var isDirty: Bool { nucleus.isDirty }
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
 
@@ -54,12 +54,14 @@ final class EquationNode: MathNode {
       guard let nucFragment = _nucleusFragment
       else {
         assertionFailure("Nucleus fragment should not be nil")
-        return
+        return layoutLength()
       }
 
       LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
       context.invalidateBackwards(layoutLength())
     }
+    
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

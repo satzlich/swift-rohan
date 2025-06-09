@@ -44,10 +44,7 @@ class MathNode: Node {
 
   // MARK: - Node(Layout)
 
-  override func contentDidChange(delta: Int, inStorage: Bool) {
-    // change of layout length is not propagated
-    parent?.contentDidChange(delta: 0, inStorage: inStorage)
-  }
+  internal override func contentDidChange() { parent?.contentDidChange() }
 
   final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
 
@@ -204,7 +201,8 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
-      component.resolveTextLocation(with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
+      component.resolveTextLocation(
+        with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified { trace.emplaceBack(component, .index(0)) }
     return true

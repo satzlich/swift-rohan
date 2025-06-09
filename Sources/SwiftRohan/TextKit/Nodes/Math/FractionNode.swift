@@ -33,7 +33,9 @@ final class FractionNode: MathNode {
 
   final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -54,7 +56,7 @@ final class FractionNode: MathNode {
       guard let fractionFragment = _nodeFragment
       else {
         assertionFailure("Fraction fragment should not be nil")
-        return
+        return layoutLength()
       }
 
       // save old metrics before any layout changes
@@ -93,6 +95,8 @@ final class FractionNode: MathNode {
         context.skipBackwards(layoutLength())
       }
     }
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

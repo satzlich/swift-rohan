@@ -22,6 +22,7 @@ struct ElementOperationTests {
       ]),
     ])
 
+    TestUtils.updateLayoutLength(root)
     #expect(
       root.prettyPrint() == """
         root
@@ -48,6 +49,7 @@ struct ElementOperationTests {
     let newParagraph = ParagraphNode([TextNode("X")])
     root.insertChild(newParagraph, at: 1, inStorage: false)
     #expect(newParagraph.parent === root)
+    TestUtils.updateLayoutLength(root)
 
     // check
     #expect(
@@ -77,6 +79,7 @@ struct ElementOperationTests {
 
     // remove child
     root.removeChild(at: 2, inStorage: false)
+    TestUtils.updateLayoutLength(root)
     #expect(
       root.prettyPrint() == """
         root
@@ -117,6 +120,7 @@ struct ElementOperationTests {
     // insert grandchild
     let newText = TextNode("X")
     (root.getChild(1) as! ParagraphNode).insertChild(newText, at: 1, inStorage: false)
+    TestUtils.updateLayoutLength(root)
 
     #expect(
       root.prettyPrint() == """
@@ -143,6 +147,7 @@ struct ElementOperationTests {
 
     // remove grandchild
     (root.getChild(1) as! ParagraphNode).removeChild(at: 0, inStorage: false)
+    TestUtils.updateLayoutLength(root)
 
     #expect(
       root.prettyPrint() == """
@@ -324,6 +329,7 @@ struct ElementOperationTests {
         EquationNode(.inline, [TextNode("a+b")]),
       ]),
     ])
+    TestUtils.updateLayoutLength(root)
 
     #expect(
       root.layoutLengthSynopsis() == """
@@ -343,6 +349,7 @@ struct ElementOperationTests {
       .getChild(1) as! EquationNode)
       .nucleus
       .insertChild(TextNode("X"), at: 1, inStorage: false)
+    TestUtils.updateLayoutLength(root)
 
     #expect(
       root.layoutLengthSynopsis() == """

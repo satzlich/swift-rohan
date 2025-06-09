@@ -64,11 +64,12 @@ struct ElementNodeTests {
   }
 
   @Test
-  static func layoutLength() {
+  func layoutLength() {
     let emphasis = EmphasisNode([
       TextNode("a😀b"),
       EquationNode(.block, [TextNode("a+b")]),
     ])
+    TestUtils.updateLayoutLength(emphasis)
     #expect(emphasis.layoutLength() == 6)
 
     let heading = HeadingNode(
@@ -77,12 +78,14 @@ struct ElementNodeTests {
         TextNode("a😀b"),
         EquationNode(.block, [TextNode("a+b")]),
       ])
+    TestUtils.updateLayoutLength(heading)
     #expect(heading.layoutLength() == 6)
 
     let paragraph = ParagraphNode([
       TextNode("a😀b"),
       EquationNode(.inline, [TextNode("a+b")]),
     ])
+    TestUtils.updateLayoutLength(paragraph)
     #expect(paragraph.layoutLength() == 5)
 
     let root = RootNode([
@@ -92,15 +95,18 @@ struct ElementNodeTests {
       ]),
       ParagraphNode([TextNode("def")]),
     ])
+    TestUtils.updateLayoutLength(root)
     #expect(root.layoutLength() == 9)
   }
 
   @Test
-  static func getLayoutOffset() {
+  func getLayoutOffset() {
     let root = RootNode([
       HeadingNode(level: 1, [TextNode("abc😀")]),
       ParagraphNode([TextNode("def")]),
     ])
+
+    TestUtils.updateLayoutLength(root)
 
     #expect(
       root.layoutLengthSynopsis() == """

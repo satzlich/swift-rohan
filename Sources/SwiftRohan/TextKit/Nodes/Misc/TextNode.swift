@@ -31,8 +31,14 @@ final class TextNode: Node {
 
   final override var isDirty: Bool { false }
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    context.insertText(_string, self)
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+    if fromScratch {
+      context.insertText(_string, self)
+    }
+    else {
+      assertionFailure("TextNode should not be laid out incrementally.")
+    }
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

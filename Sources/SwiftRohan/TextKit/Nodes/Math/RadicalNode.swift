@@ -17,14 +17,16 @@ final class RadicalNode: MathNode {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
+  final override func contentDidChange() {
+    _isDirty = true
+    super.contentDidChange()
   }
 
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
 
     let context = context as! MathListLayoutContext
@@ -42,6 +44,8 @@ final class RadicalNode: MathNode {
     // clear
     _isDirty = false
     _snapshot = nil
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)
@@ -113,7 +117,7 @@ final class RadicalNode: MathNode {
       assertionFailure("Unsupported index")
     }
 
-    contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   final override func removeComponent(_ mathIndex: MathIndex, inStorage: Bool) {
@@ -130,7 +134,7 @@ final class RadicalNode: MathNode {
       assertionFailure("Unsupported index")
     }
 
-    contentDidChange(delta: .zero, inStorage: inStorage)
+    if inStorage { contentDidChange() }
   }
 
   // MARK: - MathNode(Layout)
