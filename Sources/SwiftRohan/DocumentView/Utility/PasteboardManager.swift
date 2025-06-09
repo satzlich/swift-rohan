@@ -63,7 +63,7 @@ final class RohanPasteboardManager: PasteboardManager {
       // replace selected content with nodes
       let result = textView.replaceContentsForEdit(in: selection, with: nodes)
       switch result {
-      case .inserted, .paragraphInserted:
+      case .success, .paragraphInserted:
         return .success
       case let .failure(error):
         if error.code.type == .UserError {
@@ -121,7 +121,7 @@ final class StringPasteboardManager: PasteboardManager {
     }
 
     switch result {
-    case .inserted, .paragraphInserted:
+    case .success, .paragraphInserted:
       return .success
     case let .failure(error):
       if error.code.type == .UserError {

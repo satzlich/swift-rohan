@@ -69,7 +69,7 @@ extension TreeUtils {
       // compose range
       let prefix = trace.dropLast(2).map(\.index)
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
-      return InsertionResult.inserted(newRange)
+      return InsertionResult.success(newRange)
 
     case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
@@ -89,7 +89,7 @@ extension TreeUtils {
       // compose range
       let prefix = trace.dropLast().map(\.index)
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
-      return InsertionResult.inserted(newRange)
+      return InsertionResult.success(newRange)
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -126,7 +126,7 @@ extension TreeUtils {
       child.isTransparent
     {
       let (from, to) = insertString(string, elementNode: child, index: 0)
-      return InsertionResult.inserted(([index] + from, [index] + to))
+      return InsertionResult.success(([index] + from, [index] + to))
     }
     // otherwise, create a new paragraph node
     else {
@@ -233,7 +233,7 @@ extension TreeUtils {
       // compose range
       let prefix = trace.dropLast(2).map(\.index)
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
-      return InsertionResult.inserted(newRange)
+      return InsertionResult.success(newRange)
 
     case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
@@ -256,7 +256,7 @@ extension TreeUtils {
       // compose range
       let prefix = trace.dropLast().map(\.index)
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
-      return InsertionResult.inserted(newRange)
+      return InsertionResult.success(newRange)
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -366,7 +366,7 @@ extension TreeUtils {
       child.isTransparent
     {
       let (from, to) = insertInlineContent(nodes, elementNode: child, index: 0)
-      return InsertionResult.inserted(([index] + from, [index] + to))
+      return InsertionResult.success(([index] + from, [index] + to))
     }
     // otherwise, create a new paragraph node
     else {

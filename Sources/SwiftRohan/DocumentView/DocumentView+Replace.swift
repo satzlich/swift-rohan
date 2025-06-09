@@ -77,7 +77,7 @@ extension DocumentView {
     // perform replacement
     let result = replacementHandler(range)
     switch result {
-    case .inserted(let range),
+    case .success(let range),
       .paragraphInserted(let range):
 
       // register undo action
@@ -148,7 +148,7 @@ extension DocumentView {
       }
 
       if let newLocation = composeLocation(newRange.location, mathIndex) {
-        return .inserted(RhTextRange(newLocation))
+        return .success(RhTextRange(newLocation))
       }
       else {
         return .failure(SatzError(.ModifyMathFailure))
@@ -288,7 +288,7 @@ extension DocumentView {
           return .failure(SatzError(.ModifyGridFailure))
         }
         let newRange = RhTextRange(location)
-        return .inserted(newRange)
+        return .success(newRange)
 
       case .insertColumn(_, at: let column):
         let gridIndex = GridIndex(0, column)
@@ -298,11 +298,11 @@ extension DocumentView {
           return .failure(SatzError(.ModifyGridFailure))
         }
         let newRange = RhTextRange(location)
-        return .inserted(newRange)
+        return .success(newRange)
 
       case .removeRow, .removeColumn:
         let newRange = RhTextRange(range.endLocation)
-        return .inserted(newRange)
+        return .success(newRange)
       }
 
     case .failure(let error):
@@ -363,7 +363,7 @@ extension DocumentView {
     _ result: InsertionResult<RhTextRange>
   ) -> InsertionResult<RhTextRange> {
     switch result {
-    case let .inserted(range):
+    case let .success(range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
 
     case let .paragraphInserted(range):

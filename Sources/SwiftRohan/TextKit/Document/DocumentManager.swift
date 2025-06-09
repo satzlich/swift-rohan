@@ -139,7 +139,7 @@ public final class DocumentManager {
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .inserted(_normalizeRange(result))
+        return .success(_normalizeRange(result))
       case .failure(let error):
         return .failure(error)
       }
@@ -182,7 +182,7 @@ public final class DocumentManager {
     case .paragraphNodes, .topLevelNodes:
       switch TreeUtils.insertParagraphNodes(nodes, at: location, rootNode) {
       case let .success(range):
-        result = .inserted(range)
+        result = .success(range)
       case let .failure(error):
         return .failure(error)
       }
@@ -204,7 +204,7 @@ public final class DocumentManager {
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .inserted(_normalizeRange(result))
+        return .success(_normalizeRange(result))
       case let .failure(error):
         return .failure(error)
       }
@@ -294,7 +294,7 @@ public final class DocumentManager {
       }
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
-      case let .inserted(range1),
+      case let .success(range1),
         let .paragraphInserted(range1):
 
         guard let (object, location) = upstreamObject(from: range1.endLocation)
@@ -363,13 +363,13 @@ public final class DocumentManager {
       else {
         assert(remaining.count > 1)
         node.removeComponent(mathIndex, inStorage: true)
-        return .inserted(range)
+        return .success(range)
       }
 
     case let node as RadicalNode:
       if mathIndex == .index {
         node.removeComponent(mathIndex, inStorage: true)
-        return .inserted(range)
+        return .success(range)
       }
       else {
         return .failure(SatzError(.InvalidMathComponent))

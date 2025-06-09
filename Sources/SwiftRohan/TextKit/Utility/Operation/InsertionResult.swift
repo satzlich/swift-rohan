@@ -2,7 +2,7 @@
 
 enum InsertionResult<T> {
   /// insertion is successful.
-  case inserted(T)
+  case success(T)
   /// insertion is successful with a new paragraph created holding the inserted content.
   case paragraphInserted(T)
 
@@ -10,8 +10,8 @@ enum InsertionResult<T> {
 
   func map<U>(_ transform: (T) throws -> U) rethrows -> InsertionResult<U> {
     switch self {
-    case .inserted(let value):
-      return .inserted(try transform(value))
+    case .success(let value):
+      return .success(try transform(value))
     case .paragraphInserted(let value):
       return .paragraphInserted(try transform(value))
     case .failure(let error):
@@ -21,7 +21,7 @@ enum InsertionResult<T> {
 
   var isSuccess: Bool {
     switch self {
-    case .inserted, .paragraphInserted:
+    case .success, .paragraphInserted:
       return true
     case .failure:
       return false
@@ -34,7 +34,7 @@ enum InsertionResult<T> {
 
   func success() -> T? {
     switch self {
-    case .inserted(let value):
+    case .success(let value):
       return value
     case .paragraphInserted(let value):
       return value
