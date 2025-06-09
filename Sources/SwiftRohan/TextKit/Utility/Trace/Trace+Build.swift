@@ -220,7 +220,25 @@ extension Trace {
   ///         it is relocated to the end of the text node.
   ///     (d) if a location points to the end of a root node whose last child is a
   ///         paragraph node, it is relocated to the end of the last paragraph node.
-  func toUserSpaceLocation() -> TextLocation? {
-    preconditionFailure()
+  mutating func toUserSpaceLocation() -> TextLocation? {
+    guard let last,
+      let lastIndex = last.index.index()
+    else { return nil }
+
+    let lastNode = last.node
+
+    if let root = lastNode as? RootNode {
+      let childCount = root.childCount
+      if childCount > 0,
+        lastIndex == childCount,
+        let paragraph = root.getChild(childCount - 1) as? ParagraphNode
+      {
+        self.moveTo(.index(childCount - 1))
+        self.emplaceBack(paragraph, .index(paragraph.childCount))
+        return self.toNormalLocation()
+      }
+      // FALL THROUGH
+    }
+    return self.toNormalLocation()
   }
 }

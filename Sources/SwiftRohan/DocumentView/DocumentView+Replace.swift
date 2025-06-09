@@ -170,7 +170,7 @@ extension DocumentView {
         let node = node as? ContentNode
       else { return nil }
       let newLocation = TextLocation(indices, node.childCount)
-      return documentManager.normalizeLocation(newLocation)
+      return documentManager.normaliseLocation(newLocation)
     }
   }
 
@@ -342,7 +342,7 @@ extension DocumentView {
       indices.append(.index(location.offset))
       indices.append(.gridIndex(gridIndex))
       let newLocation = TextLocation(indices, 0)
-      return documentManager.normalizeLocation(newLocation)
+      return documentManager.normaliseLocation(newLocation)
     }
   }
 

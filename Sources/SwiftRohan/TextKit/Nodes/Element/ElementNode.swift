@@ -253,17 +253,17 @@ internal class ElementNode: Node {
   private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
-    var sum = 0
-
     if _children.isEmpty {
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
-        sum += 1
+        return 1
       }
-      return sum
+      return 0
     }
 
     assert(_children.isEmpty == false)
+
+    var sum = 0
 
     // reconcile content backwards
     for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
@@ -285,8 +285,19 @@ internal class ElementNode: Node {
 
     // _performLayoutSimple() is called only when the node is marked dirty and
     // the set of child nodes is not added/deleted, so we can safely assume that
-    // the placeholder is not active.
-    assert(self.isPlaceholderActive == false)
+    // the children are not empty.
+
+    assert(_children.isEmpty == false)
+
+    if _children.isEmpty {
+      if self.isPlaceholderActive {
+        context.insertText("⬚", self)
+        return 1
+      }
+      return 0
+    }
+
+    let isLastDirty = _children.last!.isDirty
 
     var sum = 0
     var i = _children.count - 1
@@ -323,7 +334,7 @@ internal class ElementNode: Node {
     // workaround for text alignment issue:
     //  the last paragraph with no text occasionally use the alignment of the
     //  previous paragraph.
-    if isParagraphContainer && _newlines.last == true {
+    if isLastDirty && isParagraphContainer && _newlines.last == true {
       let end = context.layoutCursor + sum
       context.addParagraphStyle(self, end - 1..<end)
     }
@@ -335,18 +346,20 @@ internal class ElementNode: Node {
   private final func _performLayoutFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
-    var sum = 0
-
     if _children.isEmpty {
+      // remove previous layout
       context.deleteBackwards(_layoutLength)
+      // insert placeholder if needed
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
-        sum += 1
+        return 1
       }
-      return sum
+      return 0
     }
 
     assert(_children.isEmpty == false)
+
+    var sum = 0
 
     // records of current children
     let current: Array<ExtendedRecord>

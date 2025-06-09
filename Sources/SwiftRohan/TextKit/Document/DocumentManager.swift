@@ -139,7 +139,7 @@ public final class DocumentManager {
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normalizeRange(result))
+        return .success(_normaliseRange(result))
       case .failure(let error):
         return .failure(error)
       }
@@ -188,7 +188,7 @@ public final class DocumentManager {
       }
     }
 
-    return result.map { _normalizeRange($0) }
+    return result.map { _normaliseRange($0) }
   }
 
   /// Replace characters in range with string.
@@ -204,7 +204,7 @@ public final class DocumentManager {
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normalizeRange(result))
+        return .success(_normaliseRange(result))
       case let .failure(error):
         return .failure(error)
       }
@@ -222,7 +222,7 @@ public final class DocumentManager {
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { _normalizeRange($0) }
+      .map { _normaliseRange($0) }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -972,8 +972,8 @@ public final class DocumentManager {
   }
 
   /// Normalize the given range or return the fallback range.
-  private func _normalizeRange(_ range: RhTextRange) -> RhTextRange {
-    if let normalized = range.normalized(for: rootNode) {
+  private func _normaliseRange(_ range: RhTextRange) -> RhTextRange {
+    if let normalized = range.normalised(for: rootNode) {
       return normalized
     }
     else {
@@ -983,7 +983,7 @@ public final class DocumentManager {
     }
   }
 
-  internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
+  internal func normaliseLocation(_ location: TextLocation) -> TextLocation? {
     location.normalised(for: rootNode)
   }
 
