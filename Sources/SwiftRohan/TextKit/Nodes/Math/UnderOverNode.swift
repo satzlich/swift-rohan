@@ -29,34 +29,34 @@ final class UnderOverNode: MathNode {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let underOverFragment = MathUnderOverLayoutFragment(spreader, nucleus)
-      _underOverFragment = underOverFragment
+      _nodeFragment = underOverFragment
 
       underOverFragment.fixLayout(context.mathContext)
       context.insertFragment(underOverFragment, self)
     }
     else {
-      guard let underOverFragment = _underOverFragment
+      guard let nodeFragment = _nodeFragment
       else {
         assertionFailure("underOverFragment should not be nil")
         return layoutLength()
       }
 
       // save metrics before any layout changes
-      let oldMetrics = underOverFragment.boxMetrics
+      let oldMetrics = nodeFragment.boxMetrics
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let oldMetrics = underOverFragment.nucleus.boxMetrics
+        let oldMetrics = nodeFragment.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragment(
-          nucleus, underOverFragment.nucleus, parent: context)
-        if underOverFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          nucleus, nodeFragment.nucleus, parent: context)
+        if nodeFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        underOverFragment.fixLayout(context.mathContext)
-        if underOverFragment.isNearlyEqual(to: oldMetrics) == false {
+        nodeFragment.fixLayout(context.mathContext)
+        if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
           return layoutLength()
         }
@@ -64,7 +64,7 @@ final class UnderOverNode: MathNode {
       }
       context.skipBackwards(layoutLength())
     }
-    
+
     return layoutLength()
   }
 
@@ -119,11 +119,11 @@ final class UnderOverNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
+  final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc: return _underOverFragment?.nucleus
+    case .nuc: return _nodeFragment?.nucleus
     default: return nil
     }
   }
@@ -135,15 +135,14 @@ final class UnderOverNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _underOverFragment != nil else { return nil }
-    return .nuc
+    _nodeFragment?.getMathIndex(interactingAt: point)
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _underOverFragment,
+    guard let fragment = _nodeFragment,
       component == .nuc
     else { return nil }
 
@@ -194,7 +193,7 @@ final class UnderOverNode: MathNode {
   private let _nucleus: ContentNode
   internal var nucleus: ContentNode { _nucleus }
 
-  private var _underOverFragment: MathUnderOverLayoutFragment? = nil
+  private var _nodeFragment: MathUnderOverLayoutFragment? = nil
 
   init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
     self.spreader = spreader

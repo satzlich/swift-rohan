@@ -36,13 +36,13 @@ internal class ElementNode: Node {
     return getLayoutOffset(index)
   }
 
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
   }
 
-  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
       return .failure(error: SatzError(.InvalidLayoutOffset))
     }
@@ -74,12 +74,12 @@ internal class ElementNode: Node {
     parent?.contentDidChange()
   }
 
-  override func layoutLength() -> Int { _layoutLength }
+  final override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
 
-  override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
 
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context)
@@ -155,10 +155,22 @@ internal class ElementNode: Node {
 
   final func childrenReadonly() -> ElementStore { _children }
 
+  private class func newlineArrayMask() -> Bool { self.type == .root }
+
+  /// Returns true if node is allowed to be empty.
+  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
+
+  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
+
+  final func isMergeable(with other: ElementNode) -> Bool {
+    NodePolicy.isMergeableElements(self.type, other.type)
+  }
+
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
-    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    self._newlines =
+      NewlineArray(children.lazy.map(\.isBlock), mask: Self.newlineArrayMask())
     self._layoutLength = 0
     self._isDirty = false
 
@@ -169,7 +181,7 @@ internal class ElementNode: Node {
   /// - Warning: Sync with other init() method.
   internal override init() {
     self._children = ElementStore()
-    self._newlines = NewlineArray()
+    self._newlines = NewlineArray(mask: Self.newlineArrayMask())
     self._layoutLength = 0
     self._isDirty = false
 
@@ -194,15 +206,6 @@ internal class ElementNode: Node {
     }
   }
 
-  /// Returns true if node is allowed to be empty.
-  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
-
-  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
-
-  final func isMergeable(with other: ElementNode) -> Bool {
-    NodePolicy.isMergeableElements(self.type, other.type)
-  }
-
   // MARK: - Layout Impl.
 
   /// layout length contributed by the node.
@@ -221,7 +224,10 @@ internal class ElementNode: Node {
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   internal func snapshotDescription() -> Array<String>? {
-    _snapshotRecords.map { $0.map(\.description) }
+    if let snapshotRecords = _snapshotRecords {
+      return snapshotRecords.map(\.description)
+    }
+    return nil
   }
 
   /// Make snapshot once if not already made
@@ -234,8 +240,8 @@ internal class ElementNode: Node {
       _snapshotRecords = [SnapshotRecord.placeholder(1)]
     }
     else {
-      _snapshotRecords = zip(_children, _newlines.asBitArray)
-        .map { SnapshotRecord($0, $1) }
+      _snapshotRecords =
+        zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
     }
   }
 
@@ -245,34 +251,28 @@ internal class ElementNode: Node {
 
     var sum = 0
 
-    if self._children.isEmpty {
+    if _children.isEmpty {
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
         sum += 1
       }
       return sum
     }
-    else {
-      // reconcile content backwards
-      for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
-        if insertNewline {
-          context.insertNewline(self)
-          sum += 1
-        }
-        sum += node.performLayout(context, fromScratch: true)
-      }
 
-      // add paragraph style forwards
-      if self.isParagraphContainer {
-        var location = context.layoutCursor
-        for i in 0..<childCount {
-          let end = location + _children[i].layoutLength() + _newlines[i].intValue
-          context.addParagraphStyle(_children[i], location..<end)
-          location = end
-        }
+    assert(_children.isEmpty == false)
+
+    // reconcile content backwards
+    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
+      if insertNewline {
+        context.insertNewline(self)
+        sum += 1
       }
-      return sum
+      sum += node.performLayout(context, fromScratch: true)
     }
+
+    refreshParagraphStyle(context, { _ in true })
+
+    return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -314,6 +314,14 @@ internal class ElementNode: Node {
         sum += _children[i].performLayout(context, fromScratch: false)
         i -= 1
       }
+    }
+
+    // workaround for text alignment issue:
+    //  the last paragraph with no text occasionally use the alignment of the
+    //  previous paragraph.
+    if isParagraphContainer && _newlines.last == true {
+      let end = context.layoutCursor + sum
+      context.addParagraphStyle(self, end - 1..<end)
     }
 
     return sum
@@ -474,18 +482,31 @@ internal class ElementNode: Node {
     }
 
     // add paragraph style forwards
-    if self.isParagraphContainer {
-      var location = context.layoutCursor
+    do {
       let vacuumRange = vacuumRange ?? 0..<0
-      for i in 0..<_children.count {
-        let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        if current[i].isAddedOrDirty || vacuumRange.contains(i) {
-          context.addParagraphStyle(_children[i], location..<end)
-        }
-        location = end
-      }
+      refreshParagraphStyle(
+        context, { i in current[i].isAddedOrDirty || vacuumRange.contains(i) })
     }
+
     return sum
+  }
+
+  /// Refresh paragraph style for children that match the predicate.
+  /// - Precondition: layout cursor is at the start of the node.
+  /// - Postcondition: the cursor is unchanged.
+  @inline(__always)
+  private final func refreshParagraphStyle(
+    _ context: LayoutContext, _ predicate: (Int) -> Bool
+  ) {
+    guard self.isParagraphContainer else { return }
+
+    var location = context.layoutCursor
+    for i in 0..<_children.count {
+      let end = location + _children[i].layoutLength()
+      if predicate(i) { context.addParagraphStyle(_children[i], location..<end) }
+      location = end + _newlines[i].intValue
+    }
+    if _newlines.last == true { context.addParagraphStyle(self, location - 1..<location) }
   }
 
   private final func getLayoutOffset(_ index: Int) -> Int? {

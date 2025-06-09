@@ -234,4 +234,19 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
     return PrintUtils.compose([description], [subtype, nucleus])
   }
+
+  // MARK: - Mouse Pick
+
+  func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    switch spreader.subtype {
+    case .overline: return .nuc
+    case .overspreader: return .nuc
+    case .underline: return .nuc
+    case .underspreader: return .nuc
+    case .xarrow:
+      let minX = (0 + nucleus.minX) / 2
+      let maxX = (width + nucleus.maxX) / 2
+      return (point.x >= minX && point.x <= maxX) ? .nuc : nil
+    }
+  }
 }
