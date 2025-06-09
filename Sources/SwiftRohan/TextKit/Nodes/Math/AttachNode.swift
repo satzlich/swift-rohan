@@ -295,7 +295,7 @@ final class AttachNode: MathNode {
 
   private var _isDirty: Bool = false
   private var _attachFragment: MathAttachLayoutFragment? = nil
-  private var _snapshot: MathComponentSet? = nil
+  private var _snapshot: NodeIdSet? = nil
 
   private static let uniqueTag = "attach"
 
@@ -347,7 +347,7 @@ final class AttachNode: MathNode {
 
   private func makeSnapshotOnce() {
     if _snapshot == nil {
-      _snapshot = MathComponentSet()
+      _snapshot = NodeIdSet()
       if let lsub = _lsub { _snapshot!.insert(lsub.id) }
       if let lsup = _lsup { _snapshot!.insert(lsup.id) }
       if let sub = _sub { _snapshot!.insert(sub.id) }

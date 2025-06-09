@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-internal struct MathComponentSet: ExpressibleByArrayLiteral {
+internal struct NodeIdSet: ExpressibleByArrayLiteral {
   typealias ArrayLiteralElement = NodeIdentifier
 
   private var _components: Array<NodeIdentifier> = []
