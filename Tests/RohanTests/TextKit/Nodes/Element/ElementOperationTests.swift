@@ -36,7 +36,7 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 8
+        root 9
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 2
@@ -66,7 +66,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 10
+        root 11
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 1
@@ -92,7 +92,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 7
+        root 8
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 1
@@ -135,7 +135,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 9
+        root 10
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 3
@@ -161,7 +161,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 7
+        root 8
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 1
@@ -333,7 +333,7 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 14
+        root 15
         ├ heading 8
         │ ├ text 3
         │ └ emphasis 5
@@ -353,7 +353,7 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 14
+        root 15
         ├ heading 8
         │ ├ text 3
         │ └ emphasis 5

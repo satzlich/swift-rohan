@@ -15,6 +15,44 @@ final class RootNode: ElementNode {
 
   final override class var type: NodeType { .root }
 
+  // MARK: - Node(Positioning)
+
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    let layoutLength = super.layoutLength()
+    guard 0...layoutLength + 1 ~= layoutOffset else { return nil }
+
+    let layoutOffset = layoutOffset.clamped(0, layoutLength)
+    return super.getRohanIndex(layoutOffset)
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    let layoutLength = super.layoutLength()
+    guard 0...layoutLength + 1 ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+    let layoutOffset = layoutOffset.clamped(0, layoutLength)
+    return super.getPosition(layoutOffset)
+  }
+
+  // MARK: - Node(Layout)
+
+  final override func layoutLength() -> Int { super.layoutLength() + 1 }
+
+  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) -> Int {
+    if fromScratch {
+      context.insertNewline(self)
+    }
+    else {
+      context.skipBackwards(1)
+    }
+    let sum = super.performLayout(context, fromScratch: fromScratch)
+
+    // add paragraph style to avoid unexpected paragraph alignment
+    context.addParagraphStyle(self, sum..<sum + 1)
+
+    return sum + 1
+  }
+
   // MARK: - Node(Storage)
 
   private static let uniqueTag = "document"

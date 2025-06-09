@@ -96,7 +96,7 @@ struct ElementNodeTests {
       ParagraphNode([TextNode("def")]),
     ])
     TestUtils.updateLayoutLength(root)
-    #expect(root.layoutLength() == 9)
+    #expect(root.layoutLength() == 10)
   }
 
   @Test
@@ -110,7 +110,7 @@ struct ElementNodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 9
+        root 10
         ├ heading 5
         │ └ text 5
         └ paragraph 3

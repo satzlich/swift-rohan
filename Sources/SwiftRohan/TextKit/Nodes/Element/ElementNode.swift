@@ -36,13 +36,13 @@ internal class ElementNode: Node {
     return getLayoutOffset(index)
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
   }
 
-  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
       return .failure(error: SatzError(.InvalidLayoutOffset))
     }
@@ -74,12 +74,12 @@ internal class ElementNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int { _layoutLength }
+  override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
 
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context)
@@ -153,6 +153,8 @@ internal class ElementNode: Node {
 
   private final var _children: ElementStore
 
+  final func childrenReadonly() -> ElementStore { _children }
+
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
@@ -191,8 +193,6 @@ internal class ElementNode: Node {
       child.setParent(self)
     }
   }
-
-  final func childrenReadonly() -> ElementStore { _children }
 
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
@@ -386,17 +386,17 @@ internal class ElementNode: Node {
       }
     }
 
-    // current range covering deleted parts with padding
-    var deletedRange: Range<Int>?
+    // current range that covers deleted nodes which should be vacuumed
+    var vacuumRange: Range<Int>?
 
     var i = current.count - 1
     var j = original.count - 1
 
-    func updateDeletedRange() {
+    func updateVacuumRange() {
       if j >= 0 && original[j].mark == .deleted {
         if i >= 0 {
-          deletedRange =
-            if let range = deletedRange {
+          vacuumRange =
+            if let range = vacuumRange {
               max(0, i - 1)..<range.upperBound
             }
             else {
@@ -404,8 +404,8 @@ internal class ElementNode: Node {
             }
         }
         else {
-          deletedRange =
-            if let range = deletedRange {
+          vacuumRange =
+            if let range = vacuumRange {
               0..<range.upperBound
             }
             else {
@@ -425,7 +425,7 @@ internal class ElementNode: Node {
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
       do {
-        updateDeletedRange()
+        updateVacuumRange()
         while j >= 0 && original[j].mark == .deleted {
           if original[j].insertNewline { context.deleteBackwards(1) }
           context.deleteBackwards(original[j].layoutLength)
@@ -476,10 +476,10 @@ internal class ElementNode: Node {
     // add paragraph style forwards
     if self.isParagraphContainer {
       var location = context.layoutCursor
-      let deletedRange = deletedRange ?? 0..<0
-      for i in 0..<childCount {
+      let vacuumRange = vacuumRange ?? 0..<0
+      for i in 0..<_children.count {
         let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        if current[i].isAddedOrDirty || deletedRange.contains(i) {
+        if current[i].isAddedOrDirty || vacuumRange.contains(i) {
           context.addParagraphStyle(_children[i], location..<end)
         }
         location = end
@@ -962,58 +962,58 @@ internal class ElementNode: Node {
     nodes.removeSubrange(i..<j)
     return range.lowerBound..<i
   }
-}
 
-// MARK: - Facilities for Layout
+  // MARK: - Facilities for Layout
 
-private struct SnapshotRecord: CustomStringConvertible {
-  let nodeId: NodeIdentifier
-  let insertNewline: Bool
-  let layoutLength: Int
+  private struct SnapshotRecord: CustomStringConvertible {
+    let nodeId: NodeIdentifier
+    let insertNewline: Bool
+    let layoutLength: Int
 
-  init(_ node: Node, _ insertNewline: Bool) {
-    self.nodeId = node.id
-    self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength()
+    init(_ node: Node, _ insertNewline: Bool) {
+      self.nodeId = node.id
+      self.insertNewline = insertNewline
+      self.layoutLength = node.layoutLength()
+    }
+
+    private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
+      self.nodeId = nodeId
+      self.insertNewline = insertNewline
+      self.layoutLength = layoutLength
+    }
+
+    /// Create a placeholder record with given layout length.
+    static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
+      SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
+    }
+
+    var description: String {
+      "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
+    }
   }
 
-  private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
-    self.nodeId = nodeId
-    self.insertNewline = insertNewline
-    self.layoutLength = layoutLength
+  private enum LayoutMark { case none; case dirty; case deleted; case added }
+
+  private struct ExtendedRecord {
+    let mark: LayoutMark
+    let nodeId: NodeIdentifier
+    let insertNewline: Bool
+    let layoutLength: Int
+
+    init(_ mark: LayoutMark, _ record: SnapshotRecord) {
+      self.mark = mark
+      self.nodeId = record.nodeId
+      self.insertNewline = record.insertNewline
+      self.layoutLength = record.layoutLength
+    }
+
+    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
+      self.mark = mark
+      self.nodeId = node.id
+      self.insertNewline = insertNewline
+      self.layoutLength = node.layoutLength()
+    }
+
+    var isAddedOrDirty: Bool { mark == .added || mark == .deleted }
   }
-
-  /// Create a placeholder record with given layout length.
-  static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
-    SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
-  }
-
-  var description: String {
-    "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
-  }
-}
-
-private enum LayoutMark { case none; case dirty; case deleted; case added }
-
-private struct ExtendedRecord {
-  let mark: LayoutMark
-  let nodeId: NodeIdentifier
-  let insertNewline: Bool
-  let layoutLength: Int
-
-  init(_ mark: LayoutMark, _ record: SnapshotRecord) {
-    self.mark = mark
-    self.nodeId = record.nodeId
-    self.insertNewline = record.insertNewline
-    self.layoutLength = record.layoutLength
-  }
-
-  init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
-    self.mark = mark
-    self.nodeId = node.id
-    self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength()
-  }
-
-  var isAddedOrDirty: Bool { mark == .added || mark == .deleted }
 }
