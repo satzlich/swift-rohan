@@ -133,7 +133,7 @@ public final class DocumentManager {
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   internal func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> InsertionResult<RhTextRange> {
+  ) -> EditResult<RhTextRange> {
     // remove contents if nodes is nil or empty
     guard let nodes, !nodes.isEmpty
     else {
@@ -169,7 +169,7 @@ public final class DocumentManager {
     }
 
     // insert nodes
-    let result: InsertionResult<RhTextRange>
+    let result: EditResult<RhTextRange>
     switch content {
     case .plaintext:
       assertionFailure("Unreachable")
@@ -198,7 +198,7 @@ public final class DocumentManager {
   ///     single text node.
   internal func replaceCharacters(
     in range: RhTextRange, with string: RhString
-  ) -> InsertionResult<RhTextRange> {
+  ) -> EditResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
     // just remove contents if string is empty
     if string.isEmpty {
@@ -336,7 +336,7 @@ public final class DocumentManager {
   ///   an error.
   internal func removeMathComponent(
     _ range: RhTextRange, _ mathIndex: MathIndex
-  ) -> InsertionResult<RhTextRange> {
+  ) -> EditResult<RhTextRange> {
     let location = range.location
     let end = range.endLocation
 

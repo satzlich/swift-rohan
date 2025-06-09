@@ -214,7 +214,7 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertString(
     _ string: RhString, at location: TextLocationSlice
-  ) throws -> InsertionResult<RhTextRange> {
+  ) throws -> EditResult<RhTextRange> {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {
       _ = try TreeUtils.insertString(string, at: location, variable)
@@ -226,7 +226,7 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertInlineContent(
     _ nodes: [Node], at location: TextLocationSlice
-  ) throws -> InsertionResult<RhTextRange> {
+  ) throws -> EditResult<RhTextRange> {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }
