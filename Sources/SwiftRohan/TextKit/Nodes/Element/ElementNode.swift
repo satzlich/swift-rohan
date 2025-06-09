@@ -316,6 +316,16 @@ internal class ElementNode: Node {
       }
     }
 
+    // update paragraph style for last paragraph to avoid unexpected alignment
+    if self.isParagraphContainer {
+      var endOffset = context.layoutCursor + sum
+      for k in _children.indices.suffix(2).reversed() {
+        let offset = endOffset - _children[k].layoutLength() - _newlines[k].intValue
+        context.addParagraphStyle(_children[k], offset..<endOffset)
+        endOffset = offset
+      }
+    }
+
     return sum
   }
 
@@ -386,17 +396,17 @@ internal class ElementNode: Node {
       }
     }
 
-    // current range covering deleted parts with padding
-    var deletedRange: Range<Int>?
+    // current range that covers deleted nodes which should be vacuumed
+    var vacuumRange: Range<Int>?
 
     var i = current.count - 1
     var j = original.count - 1
 
-    func updateDeletedRange() {
+    func updateVacuumRange() {
       if j >= 0 && original[j].mark == .deleted {
         if i >= 0 {
-          deletedRange =
-            if let range = deletedRange {
+          vacuumRange =
+            if let range = vacuumRange {
               max(0, i - 1)..<range.upperBound
             }
             else {
@@ -404,8 +414,8 @@ internal class ElementNode: Node {
             }
         }
         else {
-          deletedRange =
-            if let range = deletedRange {
+          vacuumRange =
+            if let range = vacuumRange {
               0..<range.upperBound
             }
             else {
@@ -425,7 +435,7 @@ internal class ElementNode: Node {
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
       do {
-        updateDeletedRange()
+        updateVacuumRange()
         while j >= 0 && original[j].mark == .deleted {
           if original[j].insertNewline { context.deleteBackwards(1) }
           context.deleteBackwards(original[j].layoutLength)
@@ -476,10 +486,10 @@ internal class ElementNode: Node {
     // add paragraph style forwards
     if self.isParagraphContainer {
       var location = context.layoutCursor
-      let deletedRange = deletedRange ?? 0..<0
+      let vacuumRange = vacuumRange ?? 0..<0
       for i in 0..<childCount {
         let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        if current[i].isAddedOrDirty || deletedRange.contains(i) {
+        if current[i].isAddedOrDirty || vacuumRange.contains(i) {
           context.addParagraphStyle(_children[i], location..<end)
         }
         location = end
