@@ -133,13 +133,13 @@ public final class DocumentManager {
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   internal func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> ReplaceResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     // remove contents if nodes is nil or empty
     guard let nodes, !nodes.isEmpty
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .replaced(_normalizeRange(result))
+        return .inserted(_normalizeRange(result))
       case .failure(let error):
         return .failure(error)
       }
@@ -190,9 +190,9 @@ public final class DocumentManager {
 
     switch result {
     case let .inserted(range):
-      return .replaced(_normalizeRange(range))
+      return .inserted(_normalizeRange(range))
     case let .paragraphInserted(range):
-      return .paragraphCreated(_normalizeRange(range))
+      return .paragraphInserted(_normalizeRange(range))
     case let .failure(error):
       return .failure(error)
     }
@@ -205,13 +205,13 @@ public final class DocumentManager {
   ///     single text node.
   internal func replaceCharacters(
     in range: RhTextRange, with string: RhString
-  ) -> ReplaceResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
     // just remove contents if string is empty
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .replaced(_normalizeRange(result))
+        return .inserted(_normalizeRange(result))
       case let .failure(error):
         return .failure(error)
       }
@@ -230,9 +230,9 @@ public final class DocumentManager {
     // perform insertion
     switch TreeUtils.insertString(string, at: location, rootNode) {
     case let .inserted(range):
-      return .replaced(_normalizeRange(range))
+      return .inserted(_normalizeRange(range))
     case let .paragraphInserted(range):
-      return .paragraphCreated(_normalizeRange(range))
+      return .paragraphInserted(_normalizeRange(range))
     case let .failure(error):
       return .failure(error)
     }
@@ -307,8 +307,8 @@ public final class DocumentManager {
       }
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
-      case let .replaced(range1),
-        let .paragraphCreated(range1):
+      case let .inserted(range1),
+        let .paragraphInserted(range1):
 
         guard let (object, location) = upstreamObject(from: range1.endLocation)
         else {
@@ -349,7 +349,7 @@ public final class DocumentManager {
   ///   an error.
   internal func removeMathComponent(
     _ range: RhTextRange, _ mathIndex: MathIndex
-  ) -> ReplaceResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     let location = range.location
     let end = range.endLocation
 
@@ -376,13 +376,13 @@ public final class DocumentManager {
       else {
         assert(remaining.count > 1)
         node.removeComponent(mathIndex, inStorage: true)
-        return .replaced(range)
+        return .inserted(range)
       }
 
     case let node as RadicalNode:
       if mathIndex == .index {
         node.removeComponent(mathIndex, inStorage: true)
-        return .replaced(range)
+        return .inserted(range)
       }
       else {
         return .failure(SatzError(.InvalidMathComponent))

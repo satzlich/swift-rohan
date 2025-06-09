@@ -5,7 +5,7 @@ enum InsertionResult<T> {
   case inserted(T)
   /// insertion is successful with a new paragraph created holding the inserted content.
   case paragraphInserted(T)
-  
+
   case failure(SatzError)
 
   func map<U>(_ transform: (T) throws -> U) rethrows -> InsertionResult<U> {
@@ -16,6 +16,48 @@ enum InsertionResult<T> {
       return .paragraphInserted(try transform(value))
     case .failure(let error):
       return .failure(error)
+    }
+  }
+
+  var isSuccess: Bool {
+    switch self {
+    case .inserted, .paragraphInserted:
+      return true
+    case .failure:
+      return false
+    }
+  }
+
+  var isFailure: Bool {
+    return !isSuccess
+  }
+
+  func success() -> T? {
+    switch self {
+    case .inserted(let value):
+      return value
+    case .paragraphInserted(let value):
+      return value
+    case .failure:
+      return nil
+    }
+  }
+
+  func failure() -> SatzError? {
+    switch self {
+    case .failure(let error):
+      return error
+    default:
+      return nil
+    }
+  }
+
+  var isInternalError: Bool {
+    switch self {
+    case .failure(let error):
+      return error.code.type == .InternalError
+    default:
+      return false
     }
   }
 }

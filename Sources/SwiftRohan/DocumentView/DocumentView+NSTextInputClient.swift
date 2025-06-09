@@ -152,7 +152,7 @@ extension DocumentView: NSTextInputClient {
       let markedRange = markedText.markedTextRange()
     else { return }
 
-    let result: ReplaceResult<RhTextRange> =
+    let result: InsertionResult<RhTextRange> =
       replaceCharacters(in: markedRange, with: "", registerUndo: false)
 
     guard let insertionRange = result.success()

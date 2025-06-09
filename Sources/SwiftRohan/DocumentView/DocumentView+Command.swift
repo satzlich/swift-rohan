@@ -19,11 +19,11 @@ extension DocumentView {
       let result = replaceContentsForEdit(in: range, with: content)
 
       switch result {
-      case .replaced:
+      case .inserted:
         for _ in 0..<insertExprs.backwardMoves {
           moveBackward(nil)
         }
-      case .paragraphCreated:
+      case .paragraphInserted:
         for _ in 0..<insertExprs.backwardMoves {
           moveBackward(nil)
         }
