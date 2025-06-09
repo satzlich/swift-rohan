@@ -57,7 +57,7 @@ class ArrayNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int { Self.unitLayoutLength }
+  final override func layoutLength() -> Int { UNIT_LENGTH }
 
   final override var isDirty: Bool { _isDirty }
 
@@ -136,14 +136,14 @@ class ArrayNode: Node {
       if needsFixLayout {
         matrixFragment.fixLayout(mathContext)
         if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(Self.unitLayoutLength)
+          context.invalidateBackwards(UNIT_LENGTH)
         }
         else {
-          context.skipBackwards(Self.unitLayoutLength)
+          context.skipBackwards(UNIT_LENGTH)
         }
       }
       else {
-        context.skipBackwards(Self.unitLayoutLength)
+        context.skipBackwards(UNIT_LENGTH)
       }
     }
 
@@ -152,7 +152,7 @@ class ArrayNode: Node {
     _editLog.removeAll()
     _addedNodes.removeAll()
 
-    return Self.unitLayoutLength
+    return UNIT_LENGTH
   }
 
   // MARK: - ArrayNode

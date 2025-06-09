@@ -248,8 +248,7 @@ extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
-  final func resolveAggregate<T>(_ styleSheet: StyleSheet) -> T
-  where T: PropertyAggregate {
+  final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
@@ -257,6 +256,4 @@ extension Node {
   final func resolveValue(_ key: PropertyKey, _ styleSheet: StyleSheet) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
-
-  static let unitLayoutLength: Int = 1
 }

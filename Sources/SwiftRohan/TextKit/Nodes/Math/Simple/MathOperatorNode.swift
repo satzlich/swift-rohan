@@ -30,7 +30,7 @@ final class MathOperatorNode: SimpleNode {
 
   // MARK: - Node(Layout)
 
-  final override func layoutLength() -> Int { Self.unitLayoutLength }  // always "1".
+  final override func layoutLength() -> Int { UNIT_LENGTH }  // always "1".
 
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
@@ -48,12 +48,12 @@ final class MathOperatorNode: SimpleNode {
       guard _mathOperatorFragment != nil
       else {
         assertionFailure("Fragment should exist")
-        return Self.unitLayoutLength
+        return UNIT_LENGTH
       }
-      context.skipBackwards(Self.unitLayoutLength)
+      context.skipBackwards(UNIT_LENGTH)
     }
 
-    return Self.unitLayoutLength
+    return UNIT_LENGTH
   }
 
   // MARK: - Node(Codable)
