@@ -739,14 +739,12 @@ internal class ElementNode: Node {
       }
 
       switch childOfLast {
-      case let matNode where isMathNode(matNode) || isArrayNode(matNode):
+      case let mathNode as GenMathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard
-          let segmentFrame =
-            context.getSegmentFrame(for: contextOffset, .upstream, matNode)
+        guard let segmentFrame = context.getSegmentFrame(contextOffset, .upstream)
         else {
-          resolveLastIndex(childOfLast: matNode)
+          resolveLastIndex(childOfLast: mathNode)
           return true
         }
 
@@ -758,16 +756,15 @@ internal class ElementNode: Node {
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
         let modified =
-          matNode.resolveTextLocation(
+          mathNode.resolveTextLocation(
             with: newPoint, context: context, trace: &trace, affinity: &affinity)
-        if !modified { resolveLastIndex(childOfLast: matNode) }
+        if !modified { resolveLastIndex(childOfLast: mathNode) }
         return true
 
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard
-          let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity, self)
+        guard let segmentFrame = context.getSegmentFrame(contextOffset, affinity)
         else {
           resolveLastIndex(childOfLast: elementNode)
           return true

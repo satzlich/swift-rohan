@@ -54,19 +54,6 @@ protocol LayoutContext {
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame?
 
-  /// Get the frame of the layout fragment at the given layout offset
-  /// - Parameters:
-  ///   - layoutOffset: the layout offset to query the frame for.
-  ///   - affinity: the affinity to use when querying the frame.
-  ///   - node: the node that contains the layout offset which is used
-  ///       for node-relative calculations.
-  ///
-  /// - Note: For this function, all frame origins are placed at the top-left corner,
-  ///     and is the position relative to the container frame's top-left corner.
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame?
-
   /// Enumerate text segments in `layoutRange` and process by `block`.
   /// - Returns: false if enumeration is interrupted by `block`, otherwise true.
   func enumerateTextSegments(

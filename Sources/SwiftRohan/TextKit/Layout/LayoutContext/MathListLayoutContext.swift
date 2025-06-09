@@ -136,12 +136,6 @@ final class MathListLayoutContext: LayoutContext {
     layoutFragment.getSegmentFrame(for: layoutOffset)
   }
 
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    self.getSegmentFrame(layoutOffset, affinity)
-  }
-
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
     type: DocumentManager.SegmentType,

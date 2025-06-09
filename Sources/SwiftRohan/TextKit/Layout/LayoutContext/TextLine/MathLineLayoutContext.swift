@@ -128,13 +128,6 @@ final class MathLineLayoutContext: LayoutContext {
     return layoutContext.getSegmentFrame(resolvedOffset, affinity)
   }
 
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
-    return layoutContext.getSegmentFrame(for: resolvedOffset, affinity, node)
-  }
-
   func enumerateTextSegments(
     _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,

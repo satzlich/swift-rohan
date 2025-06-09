@@ -162,24 +162,6 @@ final class TextLayoutContext: LayoutContext {
     return result
   }
 
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    switch node {
-    case let node as GenMathNode:
-      let nextOffset = layoutOffset + node.layoutLength()
-      guard var segmentFrame = getSegmentFrame(nextOffset, .upstream),
-        let wholeFragment = node.layoutFragment
-      else { return nil }
-      // adjust frame
-      segmentFrame.frame.origin.x -= wholeFragment.width
-      return segmentFrame
-
-    default:
-      return getSegmentFrame(layoutOffset, affinity)
-    }
-  }
-
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
     type: DocumentManager.SegmentType,

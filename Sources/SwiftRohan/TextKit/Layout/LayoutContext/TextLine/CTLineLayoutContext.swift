@@ -121,12 +121,6 @@ internal class CTLineLayoutContext: LayoutContext {
     return SegmentFrame(frame, ascent)
   }
 
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    self.getSegmentFrame(layoutOffset, affinity)
-  }
-
   /// - Note: Origins of the segment frame is relative to __the top-left corner__
   /// of the container.
   func enumerateTextSegments(
