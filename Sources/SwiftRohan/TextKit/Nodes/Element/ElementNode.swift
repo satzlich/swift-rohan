@@ -318,11 +318,11 @@ internal class ElementNode: Node {
 
     // update paragraph style for last paragraph to avoid unexpected alignment
     if self.isParagraphContainer {
-      var endOffset = context.layoutCursor + sum
+      var end = context.layoutCursor + sum
       for k in _children.indices.suffix(2).reversed() {
-        let offset = endOffset - _children[k].layoutLength() - _newlines[k].intValue
-        context.addParagraphStyle(_children[k], offset..<endOffset)
-        endOffset = offset
+        let location = end - _children[k].layoutLength() - _newlines[k].intValue
+        context.addParagraphStyle(_children[k], location..<end)
+        end = location
       }
     }
 
