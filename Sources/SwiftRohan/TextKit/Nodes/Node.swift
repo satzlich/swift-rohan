@@ -141,6 +141,9 @@ internal class Node: Codable {
   }
 
   /// How many length units the node contributes to the layout context.
+  /// - Invariant: For nodes whose layout length can be known since instantiation,
+  ///     this method must always return the same value. For the rest, this method
+  ///     must return the accurate length computed by the last call to `performLayout`.
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 
   /// Returns true if the node produces a block layout.
@@ -263,4 +266,6 @@ extension Node {
   ) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
+
+  static let unitLayoutLength: Int = 1
 }

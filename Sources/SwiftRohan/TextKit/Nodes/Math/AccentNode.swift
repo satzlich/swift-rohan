@@ -19,7 +19,9 @@ final class AccentNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -34,7 +36,7 @@ final class AccentNode: MathNode {
       guard let accentFragment = _nodeFragment
       else {
         assertionFailure("Accent fragment is nil")
-        return
+        return layoutLength()
       }
 
       // save metrics before any layout changes
@@ -55,12 +57,13 @@ final class AccentNode: MathNode {
         accentFragment.fixLayout(context.mathContext)
         if accentFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
-          return
+          return layoutLength()
         }
         // FALL THROUGH
       }
       context.skipBackwards(layoutLength())
     }
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

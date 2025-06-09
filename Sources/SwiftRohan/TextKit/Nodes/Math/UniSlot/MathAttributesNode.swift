@@ -20,7 +20,9 @@ final class MathAttributesNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -38,7 +40,7 @@ final class MathAttributesNode: MathNode {
       guard let attrFragment = _nodeFragment
       else {
         assertionFailure("classFragment should not be nil")
-        return
+        return layoutLength()
       }
 
       // save metrics before any layout changes
@@ -58,12 +60,13 @@ final class MathAttributesNode: MathNode {
         attrFragment.fixLayout(context.mathContext)
         if attrFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
-          return
+          return layoutLength()
         }
         // FALL THROUGH
       }
       context.skipBackwards(layoutLength())
     }
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

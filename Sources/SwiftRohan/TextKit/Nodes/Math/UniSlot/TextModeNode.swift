@@ -33,7 +33,9 @@ final class TextModeNode: MathNode {
 
   final override var isDirty: Bool { nucleus.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -48,7 +50,7 @@ final class TextModeNode: MathNode {
     else {
       guard let fragment = _nodeFragment else {
         assertionFailure("Layout fragment is nil")
-        return
+        return layoutLength()
       }
 
       let oldMetrics = fragment.boxMetrics
@@ -71,6 +73,8 @@ final class TextModeNode: MathNode {
         context.skipBackwards(layoutLength())
       }
     }
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

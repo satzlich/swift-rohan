@@ -51,6 +51,10 @@ final class ArgumentNode: Node {
     assertionFailure("should not be called")
   }
 
+  final override func contentDidChange() {
+    assertionFailure("should not be called")
+  }
+
   final override func layoutLength() -> Int { 1 }  // always "1".
 
   // MARK: - Node(Codable)

@@ -19,7 +19,9 @@ final class UnderOverNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -36,7 +38,7 @@ final class UnderOverNode: MathNode {
       guard let underOverFragment = _underOverFragment
       else {
         assertionFailure("underOverFragment should not be nil")
-        return
+        return layoutLength()
       }
 
       // save metrics before any layout changes
@@ -56,12 +58,14 @@ final class UnderOverNode: MathNode {
         underOverFragment.fixLayout(context.mathContext)
         if underOverFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
-          return
+          return layoutLength()
         }
         // FALL THROUGH
       }
       context.skipBackwards(layoutLength())
     }
+    
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

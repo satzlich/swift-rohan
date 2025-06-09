@@ -19,7 +19,9 @@ final class LeftRightNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -34,7 +36,7 @@ final class LeftRightNode: MathNode {
       guard let leftRightFragment = _nodeFragment
       else {
         assertionFailure("LeftRightNode should have a layout fragment")
-        return
+        return layoutLength()
       }
 
       // save old metrics before any layout changes
@@ -54,12 +56,14 @@ final class LeftRightNode: MathNode {
         leftRightFragment.fixLayout(context.mathContext)
         if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
-          return
+          return layoutLength()
         }
         // FALL THROUGH
       }
       context.skipBackwards(layoutLength())
     }
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

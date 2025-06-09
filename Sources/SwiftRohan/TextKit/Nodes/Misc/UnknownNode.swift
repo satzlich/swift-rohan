@@ -32,8 +32,16 @@ final class UnknownNode: SimpleNode {
 
   final override func layoutLength() -> Int { PLACEHOLDER.length }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    context.insertText(PLACEHOLDER, self)
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      context.insertText(PLACEHOLDER, self)
+    }
+    else {
+      assertionFailure("UnknownNode should not be laid out again")
+    }
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

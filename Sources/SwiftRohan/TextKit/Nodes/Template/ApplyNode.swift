@@ -60,11 +60,17 @@ final class ApplyNode: Node {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  final override func contentDidChange() {
+    parent?.contentDidChange()
+  }
+
   final override func layoutLength() -> Int { _content.layoutLength() }
 
   final override var isDirty: Bool { _content.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     _content.performLayout(context, fromScratch: fromScratch)
   }
 
@@ -278,7 +284,8 @@ final class ApplyNode: Node {
     // resolve text location in content
     var localTrace = Trace()
     let modified = _content.resolveTextLocation(
-      with: point, context: context, trace: &localTrace, affinity: &affinity, layoutRange: layoutRange)
+      with: point, context: context, trace: &localTrace, affinity: &affinity,
+      layoutRange: layoutRange)
     guard modified else { return false }
 
     // Returns true if the given node is a variable node associated to this

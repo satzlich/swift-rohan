@@ -43,7 +43,9 @@ final class MathStylesNode: MathNode {
 
   final override var isDirty: Bool { nucleus.isDirty }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -58,7 +60,7 @@ final class MathStylesNode: MathNode {
     else {
       guard let fragment = _nodeFragment else {
         assertionFailure("Layout fragment is nil")
-        return
+        return layoutLength()
       }
 
       var needsFixLayout = false
@@ -79,6 +81,8 @@ final class MathStylesNode: MathNode {
         context.skipBackwards(layoutLength())
       }
     }
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)

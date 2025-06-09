@@ -19,10 +19,20 @@ final class LinebreakNode: SimpleNode {
 
   // MARK: - Node(Layout)
 
-  final override func layoutLength() -> Int { 1 }
+  final override func layoutLength() -> Int { Self.unitLayoutLength }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    context.insertText("\n", self)
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+
+    if fromScratch {
+      context.insertText("\n", self)
+      return Self.unitLayoutLength
+    }
+    else {
+      assertionFailure("LinebreakNode should not be re-laid out")
+      return Self.unitLayoutLength
+    }
   }
 
   // MARK: - Node(Codable)

@@ -30,9 +30,11 @@ final class MathOperatorNode: SimpleNode {
 
   // MARK: - Node(Layout)
 
-  final override func layoutLength() -> Int { 1 }  // always "1".
+  final override func layoutLength() -> Int { Self.unitLayoutLength }  // always "1".
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
@@ -46,10 +48,12 @@ final class MathOperatorNode: SimpleNode {
       guard _mathOperatorFragment != nil
       else {
         assertionFailure("Fragment should exist")
-        return
+        return Self.unitLayoutLength
       }
-      context.skipBackwards(layoutLength())
+      context.skipBackwards(Self.unitLayoutLength)
     }
+
+    return Self.unitLayoutLength
   }
 
   // MARK: - Node(Codable)

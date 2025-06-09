@@ -83,9 +83,7 @@ internal class ElementNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int {
-    isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
-  }
+  final override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }

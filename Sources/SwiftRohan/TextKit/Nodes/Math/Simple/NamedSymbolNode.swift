@@ -18,7 +18,9 @@ final class NamedSymbolNode: SimpleNode {
 
   final override func layoutLength() -> Int { namedSymbol.string.length }
 
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
     switch context {
     case let context as MathListLayoutContext:
       if fromScratch {
@@ -46,6 +48,8 @@ final class NamedSymbolNode: SimpleNode {
         context.skipBackwards(layoutLength())
       }
     }
+
+    return layoutLength()
   }
 
   // MARK: - Node(Codable)
