@@ -442,7 +442,7 @@ public final class DocumentManager {
     textContentStorage.performEditingTransaction {
       let fromScratch = textContentStorage.documentRange.isEmpty
       guard rootNode.isDirty || fromScratch else { return }
-      rootNode.performLayout(layoutContext, fromScratch: fromScratch)
+      _ = rootNode.performLayout(layoutContext, fromScratch: fromScratch)
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)

@@ -65,7 +65,7 @@ enum LayoutUtils {
     let (context, fragment) =
       initMathLayoutContextAndFragment(for: component, parent: parent)
     context.beginEditing()
-    component.performLayout(context, fromScratch: true)
+    _ = component.performLayout(context, fromScratch: true)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
@@ -77,7 +77,7 @@ enum LayoutUtils {
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
-    component.performLayout(context, fromScratch: false)
+    _ = component.performLayout(context, fromScratch: false)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
@@ -89,7 +89,7 @@ enum LayoutUtils {
     let (context, fragment) =
       initMathLayoutContextAndFragment(for: component, parent: parent)
     context.beginEditing()
-    component.performLayout(context, fromScratch: true)
+    _ = component.performLayout(context, fromScratch: true)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
@@ -109,7 +109,7 @@ enum LayoutUtils {
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
-    component.performLayout(context, fromScratch: fromScratch)
+    _ = component.performLayout(context, fromScratch: fromScratch)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
