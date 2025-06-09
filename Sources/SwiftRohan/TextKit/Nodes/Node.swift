@@ -131,10 +131,6 @@ internal class Node: Codable {
 
   // MARK: - Layout
 
-  internal func contentDidChange(delta: Int, inStorage: Bool) {
-    preconditionFailure("overriding required")
-  }
-
   /// Notify the node that the content has changed.
   internal func contentDidChange() {
     preconditionFailure("overriding required")

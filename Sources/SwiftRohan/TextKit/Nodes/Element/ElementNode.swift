@@ -69,15 +69,6 @@ internal class ElementNode: Node {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    // apply delta
-    _layoutLength += delta
-    // content change implies dirty
-    if inStorage { _isDirty = true }
-    // propagate to parent
-    parent?.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
   final override func contentDidChange() {
     _isDirty = true
     parent?.contentDidChange()
@@ -118,10 +109,7 @@ internal class ElementNode: Node {
     self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
     self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
 
-    // length
-    self._layoutLength = _children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
-
-    // flags
+    self._layoutLength = 0
     self._isDirty = false
 
     try super.init(from: decoder)
@@ -169,7 +157,7 @@ internal class ElementNode: Node {
   internal init(_ children: ElementStore) {
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
-    self._layoutLength = children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+    self._layoutLength = 0
     self._isDirty = false
 
     super.init()
@@ -213,20 +201,6 @@ internal class ElementNode: Node {
 
   final func isMergeable(with other: ElementNode) -> Bool {
     NodePolicy.isMergeableElements(self.type, other.type)
-  }
-
-  private final func contentDidChangeLocally(
-    childrenDelta: Int, placeholderDelta: Int, newlinesDelta: Int, inStorage: Bool
-  ) {
-    // content change implies dirty
-    if inStorage { contentDidChange() }
-
-    //    // apply delta excluding placeholder and newlines
-    //    _layoutLength += childrenDelta
-    //
-    //    // propagate to parent
-    //    let delta = childrenDelta + placeholderDelta + newlinesDelta
-    //    parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   // MARK: - Layout Impl.
@@ -361,10 +335,6 @@ internal class ElementNode: Node {
     }
 
     assert(_children.isEmpty == false)
-
-    #if DEBUG
-    let layoutCursor = context.layoutCursor
-    #endif
 
     // records of current children
     let current: Array<ExtendedRecord>

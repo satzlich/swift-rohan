@@ -17,11 +17,6 @@ final class RadicalNode: MathNode {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
   final override func contentDidChange() {
     _isDirty = true
     super.contentDidChange()

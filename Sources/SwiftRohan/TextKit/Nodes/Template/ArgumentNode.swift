@@ -47,10 +47,6 @@ final class ArgumentNode: Node {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    assertionFailure("should not be called")
-  }
-
   final override func contentDidChange() {
     assertionFailure("should not be called")
   }

@@ -56,13 +56,7 @@ final class ApplyNode: Node {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    parent?.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
-  final override func contentDidChange() {
-    parent?.contentDidChange()
-  }
+  final override func contentDidChange() { parent?.contentDidChange() }
 
   final override func layoutLength() -> Int { _content.layoutLength() }
 

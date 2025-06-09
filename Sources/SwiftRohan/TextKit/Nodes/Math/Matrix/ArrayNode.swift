@@ -52,11 +52,6 @@ class ArrayNode: Node {
 
   // MARK: - Node(Layout)
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    parent?.contentDidChange(delta: 0, inStorage: inStorage)
-  }
-
   final override func contentDidChange() {
     _isDirty = true
     parent?.contentDidChange()

@@ -63,6 +63,8 @@ struct ResolveLocationTests {
         ]),
       ]
       for node in elementNodes {
+        TestUtils.updateLayoutLength(node)
+
         do {
           let offset = 0
           let result = node.getPosition(offset)

@@ -44,14 +44,7 @@ class MathNode: Node {
 
   // MARK: - Node(Layout)
 
-  override func contentDidChange(delta: Int, inStorage: Bool) {
-    // change of layout length is not propagated
-    parent?.contentDidChange(delta: 0, inStorage: inStorage)
-  }
-
-  override func contentDidChange() {
-    parent?.contentDidChange()
-  }
+  internal override func contentDidChange() { parent?.contentDidChange() }
 
   final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
 

@@ -15,11 +15,6 @@ final class AttachNode: MathNode {
 
   final override class var type: NodeType { .attach }
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    if inStorage { _isDirty = true }
-    super.contentDidChange(delta: delta, inStorage: inStorage)
-  }
-
   final override func contentDidChange() {
     _isDirty = true
     super.contentDidChange()
