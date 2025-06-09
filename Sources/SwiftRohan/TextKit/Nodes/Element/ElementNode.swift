@@ -44,7 +44,7 @@ internal class ElementNode: Node {
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
-      return .failure(error: SatzError(.InvalidLayoutOffset))
+      return .failure(SatzError(.InvalidLayoutOffset))
     }
 
     if _children.isEmpty {

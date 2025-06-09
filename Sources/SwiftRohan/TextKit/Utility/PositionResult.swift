@@ -10,7 +10,7 @@ public enum PositionResult<T> {
   /// no suitable value was found but no error was raised.
   case null
   /// a failure with an error.
-  case failure(error: SatzError)
+  case failure(SatzError)
 
   var isTerminal: Bool {
     if case .terminal = self { return true }
