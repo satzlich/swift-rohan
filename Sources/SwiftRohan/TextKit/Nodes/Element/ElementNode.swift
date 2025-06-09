@@ -267,15 +267,8 @@ internal class ElementNode: Node {
       sum += node.performLayout(context, fromScratch: true)
     }
 
-    // add paragraph style forwards
-    if self.isParagraphContainer {
-      var location = context.layoutCursor
-      for i in 0..<childCount {
-        let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        context.addParagraphStyle(_children[i], location..<end)
-        location = end
-      }
-    }
+    refreshParagraphStyle(context, { _ in true })
+
     return sum
   }
 
@@ -490,18 +483,32 @@ internal class ElementNode: Node {
     }
 
     // add paragraph style forwards
-    if self.isParagraphContainer {
-      var location = context.layoutCursor
+    do {
       let vacuumRange = vacuumRange ?? 0..<0
-      for i in 0..<_children.count {
-        let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        if current[i].isAddedOrDirty || vacuumRange.contains(i) {
-          context.addParagraphStyle(_children[i], location..<end)
-        }
-        location = end
-      }
+      refreshParagraphStyle(
+        context, { i in current[i].isAddedOrDirty || vacuumRange.contains(i) })
     }
+
     return sum
+  }
+
+  /// Refresh paragraph style for children that match the predicate.
+  /// - Precondition: layout cursor is at the start of the node.
+  /// - Postcondition: the cursor is unchanged.
+  @inline(__always)
+  private final func refreshParagraphStyle(
+    _ context: LayoutContext, _ predicate: (Int) -> Bool
+  ) {
+    guard self.isParagraphContainer else { return }
+
+    var location = context.layoutCursor
+    for i in 0..<_children.count {
+      let end = location + _children[i].layoutLength() + _newlines[i].intValue
+      if predicate(i) {
+        context.addParagraphStyle(_children[i], location..<end)
+      }
+      location = end
+    }
   }
 
   private final func getLayoutOffset(_ index: Int) -> Int? {
