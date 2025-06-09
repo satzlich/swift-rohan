@@ -36,13 +36,13 @@ internal class ElementNode: Node {
     return getLayoutOffset(index)
   }
 
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
   }
 
-  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
       return .failure(error: SatzError(.InvalidLayoutOffset))
     }
@@ -74,12 +74,12 @@ internal class ElementNode: Node {
     parent?.contentDidChange()
   }
 
-  override func layoutLength() -> Int { _layoutLength }
+  final override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
 
-  override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
 
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context)
