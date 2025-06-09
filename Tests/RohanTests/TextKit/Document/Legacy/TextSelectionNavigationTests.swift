@@ -415,7 +415,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         destinations.description == """
           [(location: [↓3,↓1]:15, affinity: downstream), \
           (location: [↓3,↓1]:13, affinity: downstream), \
-          (location: [↓3,↓1]:14, affinity: downstream), \
+          (location: []:4, affinity: downstream), \
           (location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream), \
           (anchor: [↓3,↓1]:14, focus: [↓3,↓1]:15, reversed: false, affinity: downstream), \
           (anchor: [↓3,↓1]:14, focus: [↓3,↓1]:13, reversed: true, affinity: downstream), \
