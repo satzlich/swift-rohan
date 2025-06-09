@@ -139,18 +139,26 @@ extension Trace {
     return (trace, layoutOffset - unconsumed)
   }
 
-  /// Build a __normalized__ text location from a trace.
-  /// - Note: By __"normalized"__, we mean:
-  ///      (a) if a location points to a transparent element, it is relocated to
-  ///          the beginning of its children;
-  ///      (b) if a location points to a text node, it is relocated to the
-  ///          beginning of the text node.
-  ///      (c) if a location points to a node having a text node as its left
-  ///          neighbour, it is relocated to the end of the text node.
-  /// - Invariant: if the trace is valid, the returned location must be __equivalent__
-  ///     to the original location for `replaceCharacters(in:with:)` and
-  ///     `replaceContents(in:with:)`.
-  func toTextLocation() -> TextLocation? {
+  /// Build a text location from a trace without relocation.
+  func toRawLocation() -> TextLocation? {
+    guard let last,
+      let lastIndex = last.index.index()
+    else { return nil }
+    let indices = _elements.dropLast().map(\.index)
+    return TextLocation(indices, lastIndex)
+  }
+
+  /// Build a **normal** text location from a trace.
+  /// - Note: A **normal** text location satisfies the following properties:
+  ///     (a) if a location points to a transparent element, it is relocated to
+  ///         the beginning of its children;
+  ///     (b) if a location points to a text node, it is relocated to the beginning
+  ///         of the text node;
+  ///     (c) if a location points to a node having a text node as its left neighbour,
+  ///         it is relocated to the end of the text node.
+  /// - Invariant: The returned text location should be equivalent to the trace for
+  ///     the purpose of text editing.
+  func toNormalLocation() -> TextLocation? {
     guard let last,
       var lastIndex = last.index.index()
     else { return nil }
@@ -201,12 +209,18 @@ extension Trace {
     }
   }
 
-  /// Build a __raw__ (unnormalized) text location from a trace.
-  func toRawTextLocation() -> TextLocation? {
-    guard let last,
-      let lastIndex = last.index.index()
-    else { return nil }
-    let indices = _elements.dropLast().map(\.index)
-    return TextLocation(indices, lastIndex)
+  /// Build a **user-space** text location from a trace.
+  /// - Note: A **user-space** text location satisfies the following properties
+  ///     where the first three items are the same as those of a canonical:
+  ///     (a) if a location points to a transparent element, it is relocated to
+  ///         the beginning of its children;
+  ///     (b) if a location points to a text node, it is relocated to the beginning
+  ///         of the text node;
+  ///     (c) if a location points to a node having a text node as its left neighbour,
+  ///         it is relocated to the end of the text node.
+  ///     (d) if a location points to the end of a root node whose last child is a
+  ///         paragraph node, it is relocated to the end of the last paragraph node.
+  func toUserSpaceLocation() -> TextLocation? {
+    preconditionFailure()
   }
 }

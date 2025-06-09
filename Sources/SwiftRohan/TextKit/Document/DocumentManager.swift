@@ -80,8 +80,8 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = TextLocation([], 0).normalized(for: rootNode)!
-    let endLocation = TextLocation([], rootNode.childCount).normalized(for: rootNode)!
+    let location = TextLocation([], 0).normalised(for: rootNode)!
+    let endLocation = TextLocation([], rootNode.childCount).normalised(for: rootNode)!
     return RhTextRange(location, endLocation)!
   }
 
@@ -516,7 +516,7 @@ public final class DocumentManager {
     let modified = rootNode.resolveTextLocation(
       with: point, context: context, trace: &trace, affinity: &affinity)
     if modified,
-      let location = trace.toTextLocation()
+      let location = trace.toUserSpaceLocation()
     {
       return AffineLocation(location, affinity)
     }
@@ -631,7 +631,7 @@ public final class DocumentManager {
         assert(range.lowerBound == offset)
         assert(range.upperBound <= textNode.string.length)
         trace.moveTo(.index(range.upperBound))
-        return trace.toTextLocation()
+        return trace.toRawLocation()
           .map { AffineLocation($0, .downstream) }  // always downstream
       }
     }
@@ -645,7 +645,7 @@ public final class DocumentManager {
         assert(range.upperBound == offset)
         assert(range.lowerBound >= 0)
         trace.moveTo(.index(range.lowerBound))
-        return trace.toTextLocation()
+        return trace.toRawLocation()
           .map { AffineLocation($0, .downstream) }  // always downstream
       }
     }
@@ -666,12 +666,12 @@ public final class DocumentManager {
 
     // location
     trace.moveTo(.index(range.lowerBound))
-    guard let location = trace.toRawTextLocation()
+    guard let location = trace.toRawLocation()
     else { return nil }
 
     // end location and range
     trace.moveTo(.index(range.upperBound))
-    guard let endLocation = trace.toRawTextLocation(),
+    guard let endLocation = trace.toRawLocation(),
       let destination = RhTextRange(location, endLocation)
     else { return nil }
 
@@ -849,7 +849,7 @@ public final class DocumentManager {
     }
 
     // return the location
-    return trace.toRawTextLocation()
+    return trace.toRawLocation()
   }
 
   /// Return layout offset from `location` to `endLocation` for the same text node.
@@ -910,7 +910,7 @@ public final class DocumentManager {
 
     guard let contextual = contextual,
       let childIndex = childIndex,
-      let target = trace.toRawTextLocation()
+      let target = trace.toRawLocation()
     else { return nil }
     return (contextual, target, childIndex)
   }
@@ -941,7 +941,7 @@ public final class DocumentManager {
         if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
           let string = node.substring(for: prevOffset..<offset)
           trace.moveTo(.index(prevOffset))
-          return (LocateableObject.text(String(string)), trace.toRawTextLocation()!)
+          return (LocateableObject.text(String(string)), trace.toRawLocation()!)
         }
         else {
           trace.truncate(to: trace.count - 1)
@@ -958,7 +958,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
+            return (LocateableObject.nonText(node), trace.toRawLocation()!)
           }
         }
         else {
@@ -977,14 +977,14 @@ public final class DocumentManager {
       return normalized
     }
     else {
-      // It is a programming error if the range cannot be normalized.
+      // It is a programming error if the range cannot be normalised.
       assertionFailure("Failed to normalize range")
       return range
     }
   }
 
   internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
-    location.normalized(for: rootNode)
+    location.normalised(for: rootNode)
   }
 
   /// Compute the visual delimiter range for a location in the tree and also
