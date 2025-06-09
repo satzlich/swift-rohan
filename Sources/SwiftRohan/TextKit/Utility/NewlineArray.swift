@@ -6,7 +6,7 @@ import BitCollections
 /// Array of boolean values that indicate whether a newline should be inserted
 /// at a given index.
 struct NewlineArray: Equatable, Hashable {
-  /// Mask that is AND-ed with the the last element of `_insertNewline`.
+  /// Mask value that is AND-ed with the the last element of `_insertNewline` if any.
   internal let mask: Bool
 
   private var _isBlock: BitArray
@@ -23,20 +23,20 @@ struct NewlineArray: Equatable, Hashable {
   var first: Bool? { _insertNewline.first }
   var last: Bool? { _insertNewline.last }
 
-  init() {
+  init(mask: Bool = false) {
     self._isBlock = BitArray()
     self._insertNewline = BitArray()
     self.newlineCount = 0
-    self.mask = false
+    self.mask = mask
   }
 
-  init<S>(_ isBlock: S)
+  init<S>(_ isBlock: S, mask: Bool = false)
   where S: Sequence, S.Element == Bool {
-    self.mask = false
     self._isBlock = BitArray(isBlock)
     self._insertNewline =
       _isBlock.isEmpty == false ? Self.computeNewlines(for: _isBlock, mask: mask) : []
     self.newlineCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
+    self.mask = mask
   }
 
   mutating func insert<C>(contentsOf isBlock: C, at index: Int)

@@ -155,10 +155,13 @@ internal class ElementNode: Node {
 
   final func childrenReadonly() -> ElementStore { _children }
 
+  private class func newlineArrayMask() -> Bool { self.type == .root }
+
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
-    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    self._newlines =
+      NewlineArray(children.lazy.map(\.isBlock), mask: Self.newlineArrayMask())
     self._layoutLength = 0
     self._isDirty = false
 
@@ -169,7 +172,7 @@ internal class ElementNode: Node {
   /// - Warning: Sync with other init() method.
   internal override init() {
     self._children = ElementStore()
-    self._newlines = NewlineArray()
+    self._newlines = NewlineArray(mask: Self.newlineArrayMask())
     self._layoutLength = 0
     self._isDirty = false
 
@@ -245,34 +248,35 @@ internal class ElementNode: Node {
 
     var sum = 0
 
-    if self._children.isEmpty {
+    if _children.isEmpty {
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
         sum += 1
       }
       return sum
     }
-    else {
-      // reconcile content backwards
-      for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
-        if insertNewline {
-          context.insertNewline(self)
-          sum += 1
-        }
-        sum += node.performLayout(context, fromScratch: true)
-      }
 
-      // add paragraph style forwards
-      if self.isParagraphContainer {
-        var location = context.layoutCursor
-        for i in 0..<childCount {
-          let end = location + _children[i].layoutLength() + _newlines[i].intValue
-          context.addParagraphStyle(_children[i], location..<end)
-          location = end
-        }
+    assert(_children.isEmpty == false)
+
+    // reconcile content backwards
+    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
+      if insertNewline {
+        context.insertNewline(self)
+        sum += 1
       }
-      return sum
+      sum += node.performLayout(context, fromScratch: true)
     }
+
+    // add paragraph style forwards
+    if self.isParagraphContainer {
+      var location = context.layoutCursor
+      for i in 0..<childCount {
+        let end = location + _children[i].layoutLength() + _newlines[i].intValue
+        context.addParagraphStyle(_children[i], location..<end)
+        location = end
+      }
+    }
+    return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -316,6 +320,14 @@ internal class ElementNode: Node {
       }
     }
 
+    if self.isParagraphContainer {
+      var end = context.layoutCursor + sum
+      for i in _children.indices.suffix(2).reversed() {
+        let location = end - _children[i].layoutLength() - _newlines[i].intValue
+        context.addParagraphStyle(_children[i], location..<end)
+        end = location
+      }
+    }
     return sum
   }
 
