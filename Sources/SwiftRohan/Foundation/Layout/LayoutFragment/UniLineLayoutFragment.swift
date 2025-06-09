@@ -124,7 +124,7 @@ extension UniLineLayoutFragment {
   ) -> UniLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, boundsOption)
     context.beginEditing()
-    node.performLayout(context, fromScratch: true)
+    _ = node.performLayout(context, fromScratch: true)
     context.endEditing()
     return UniLineLayoutFragment(context, boundsOption)
   }
@@ -134,7 +134,7 @@ extension UniLineLayoutFragment {
   ) -> UniLineLayoutFragment {
     let context = MathLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
-    node.performLayout(context, fromScratch: true)
+    _ = node.performLayout(context, fromScratch: true)
     context.endEditing()
     return UniLineLayoutFragment(context)
   }
@@ -166,7 +166,7 @@ extension UniLineLayoutFragment {
     precondition(fragment.layoutMode == .textMode)
     let context = TextLineLayoutContext(styleSheet, fragment)
     context.beginEditing()
-    node.performLayout(context, fromScratch: false)
+    _ = node.performLayout(context, fromScratch: false)
     context.endEditing()
     return UniLineLayoutFragment(context, fragment.boundsOption)
   }
@@ -178,7 +178,7 @@ extension UniLineLayoutFragment {
     precondition(fragment.layoutMode == .mathMode)
     let context = MathLineLayoutContext(styleSheet, fragment, mathContext)
     context.beginEditing()
-    node.performLayout(context, fromScratch: false)
+    _ = node.performLayout(context, fromScratch: false)
     context.endEditing()
     return UniLineLayoutFragment(context)
   }

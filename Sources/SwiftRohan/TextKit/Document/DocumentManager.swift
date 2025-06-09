@@ -131,14 +131,18 @@ public final class DocumentManager {
 
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
-  func replaceContents(
+  internal func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> SatzResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     // remove contents if nodes is nil or empty
     guard let nodes, !nodes.isEmpty
     else {
-      return _deleteContents(in: range)
-        .map { self._normalizeRange($0) }
+      switch _deleteContents(in: range) {
+      case let .success(result):
+        return .success(_normalizeRange(result))
+      case .failure(let error):
+        return .failure(error)
+      }
     }
 
     // forward to replaceCharacters() if nodes is a single text node
@@ -165,7 +169,7 @@ public final class DocumentManager {
     }
 
     // insert nodes
-    let result: SatzResult<RhTextRange>
+    let result: InsertionResult<RhTextRange>
     switch content {
     case .plaintext:
       assertionFailure("Unreachable")
@@ -176,9 +180,15 @@ public final class DocumentManager {
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
-      result = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
+      switch TreeUtils.insertParagraphNodes(nodes, at: location, rootNode) {
+      case let .success(range):
+        result = .success(range)
+      case let .failure(error):
+        return .failure(error)
+      }
     }
-    return result.map { self._normalizeRange($0) }
+
+    return result.map { _normalizeRange($0) }
   }
 
   /// Replace characters in range with string.
@@ -188,12 +198,16 @@ public final class DocumentManager {
   ///     single text node.
   internal func replaceCharacters(
     in range: RhTextRange, with string: RhString
-  ) -> SatzResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
     // just remove contents if string is empty
     if string.isEmpty {
-      return _deleteContents(in: range)
-        .map { self._normalizeRange($0) }
+      switch _deleteContents(in: range) {
+      case let .success(result):
+        return .success(_normalizeRange(result))
+      case let .failure(error):
+        return .failure(error)
+      }
     }
     // remove range
     let location: TextLocation
@@ -208,7 +222,7 @@ public final class DocumentManager {
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { self._normalizeRange($0) }
+      .map { _normalizeRange($0) }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -280,7 +294,9 @@ public final class DocumentManager {
       }
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
-      case let .success(range1):
+      case let .success(range1),
+        let .paragraphInserted(range1):
+
         guard let (object, location) = upstreamObject(from: range1.endLocation)
         else {
           return .failure(SatzError(.InvalidTextRange))
@@ -315,12 +331,12 @@ public final class DocumentManager {
   }
 
   /// Remove a math component from the math node at the given range.
-  /// - Returns: range of resuling math node if the math node remains, or
+  /// - Returns: range of resulting math node if the math node remains, or
   ///   range of the substituted nucleus if the math node is removed; otherwise,
   ///   an error.
   internal func removeMathComponent(
     _ range: RhTextRange, _ mathIndex: MathIndex
-  ) -> SatzResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     let location = range.location
     let end = range.endLocation
 
@@ -442,7 +458,7 @@ public final class DocumentManager {
     textContentStorage.performEditingTransaction {
       let fromScratch = textContentStorage.documentRange.isEmpty
       guard rootNode.isDirty || fromScratch else { return }
-      rootNode.performLayout(layoutContext, fromScratch: fromScratch)
+      _ = rootNode.performLayout(layoutContext, fromScratch: fromScratch)
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)

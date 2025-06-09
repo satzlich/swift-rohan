@@ -19,14 +19,13 @@ extension DocumentView {
       let result = replaceContentsForEdit(in: range, with: content)
 
       switch result {
-      case .success:
+      case .success, .paragraphInserted:
         for _ in 0..<insertExprs.backwardMoves {
           moveBackward(nil)
         }
-      case .userError:
-        break
-      case .internalError:
-        assertionFailure("Failed to replace contents")
+
+      case .failure(let error):
+        assert(error.code.type == .UserError)
       }
 
     case let .editMath(editMath):

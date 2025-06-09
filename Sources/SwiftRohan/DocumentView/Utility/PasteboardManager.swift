@@ -63,13 +63,16 @@ final class RohanPasteboardManager: PasteboardManager {
       // replace selected content with nodes
       let result = textView.replaceContentsForEdit(in: selection, with: nodes)
       switch result {
-      case .internalError:
-        assertionFailure("Internal error")
-        return .failure
-      case .userError:
-        return .successWithoutChange
-      case .success:
+      case .success, .paragraphInserted:
         return .success
+      case let .failure(error):
+        if error.code.type == .UserError {
+          return .successWithoutChange
+        }
+        else {
+          assertionFailure("Internal error: \(error)")
+          return .failure
+        }
       }
     }
     catch {
@@ -109,7 +112,7 @@ final class StringPasteboardManager: PasteboardManager {
     else { return .failure }
 
     // insert nodes/string
-    let result: EditResult
+    let result: InsertionResult<RhTextRange>
     if let nodes = StringUtils.getNodes(fromRaw: string) {
       result = textView.replaceContentsForEdit(in: selection, with: nodes)
     }
@@ -118,13 +121,16 @@ final class StringPasteboardManager: PasteboardManager {
     }
 
     switch result {
-    case .internalError:
-      assertionFailure("Internal error")
-      return .failure
-    case .userError:
-      return .successWithoutChange
-    case .success:
+    case .success, .paragraphInserted:
       return .success
+    case let .failure(error):
+      if error.code.type == .UserError {
+        return .successWithoutChange
+      }
+      else {
+        assertionFailure("Internal error: \(error)")
+        return .failure
+      }
     }
   }
 }

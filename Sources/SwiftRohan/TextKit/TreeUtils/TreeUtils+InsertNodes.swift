@@ -11,12 +11,12 @@ extension TreeUtils {
   /// - Throws: `SatzError(.InvalidTextLocation)`, `SatzError(.InsertStringFailure)`.
   static func insertString(
     _ string: RhString, at location: TextLocation, _ tree: RootNode
-  ) -> SatzResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     precondition(string.isEmpty == false)
     do {
       let location = location.toTextLocationSlice()
       let range = try insertString(string, at: location, tree)
-      return .success(range)
+      return range
     }
     catch let error as SatzError {
       return .failure(error)
@@ -32,7 +32,7 @@ extension TreeUtils {
   /// - Precondition: `string` is not empty.
   internal static func insertString(
     _ string: RhString, at location: TextLocationSlice, _ subtree: ElementNode
-  ) throws -> RhTextRange {
+  ) throws -> InsertionResult<RhTextRange> {
     precondition(!string.isEmpty)
 
     let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
@@ -43,8 +43,8 @@ extension TreeUtils {
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      let newRange = try argumentNode.insertString(string, at: newLocation)
-      return composeRange(trace.map(\.index), newRange)
+      return try argumentNode.insertString(string, at: newLocation)
+        .map { newRange in composeRange(trace.map(\.index), newRange) }
     }
     assert(truthMaker == nil)
     // otherwise, the final location is found
@@ -68,15 +68,19 @@ extension TreeUtils {
         insertString(string, textNode: textNode, offset: offset, parent, index)
       // compose range
       let prefix = trace.dropLast(2).map(\.index)
-      return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
+      let newRange = try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
+      return InsertionResult.success(newRange)
 
     case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
-      let (from, to) = insertString(string, paragraphContainer: container, index: index)
+      let newRange = insertString(string, paragraphContainer: container, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
-      return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
+
+      return try newRange.map { (from, to) in
+        try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
+      }
 
     case let elementNode as ElementNode:
       let index = location.offset
@@ -84,7 +88,8 @@ extension TreeUtils {
       let (from, to) = insertString(string, elementNode: elementNode, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
-      return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
+      let newRange = try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
+      return InsertionResult.success(newRange)
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -111,7 +116,7 @@ extension TreeUtils {
   ///     index, not offset).
   private static func insertString(
     _ string: RhString, paragraphContainer container: ElementNode, index: Int
-  ) -> ([Int], [Int]) {
+  ) -> InsertionResult<([Int], [Int])> {
     precondition(container.isParagraphContainer)
     precondition(index <= container.childCount)
 
@@ -121,13 +126,13 @@ extension TreeUtils {
       child.isTransparent
     {
       let (from, to) = insertString(string, elementNode: child, index: 0)
-      return ([index] + from, [index] + to)
+      return InsertionResult.success(([index] + from, [index] + to))
     }
     // otherwise, create a new paragraph node
     else {
       let paragraph = ParagraphNode([TextNode(string)])
       container.insertChild(paragraph, at: index, inStorage: true)
-      return ([index, 0, 0], [index + 1])
+      return InsertionResult.paragraphInserted(([index, 0, 0], [index + 1]))
     }
   }
 
@@ -168,14 +173,14 @@ extension TreeUtils {
   ///     otherwise, an error.
   static func insertInlineContent(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
-  ) -> SatzResult<RhTextRange> {
+  ) -> InsertionResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
     do {
       let location = location.toTextLocationSlice()
       let range = try insertInlineContent(nodes, at: location, tree)
-      return .success(range)
+      return range
     }
     catch let error as SatzError {
       return .failure(error)
@@ -190,7 +195,7 @@ extension TreeUtils {
   /// - Throws: `SatzError`
   internal static func insertInlineContent(
     _ nodes: [Node], at location: TextLocationSlice, _ subtree: ElementNode
-  ) throws -> RhTextRange {
+  ) throws -> InsertionResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
@@ -202,8 +207,8 @@ extension TreeUtils {
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      let newRange = try argumentNode.insertInlineContent(nodes, at: newLocation)
-      return composeRange(trace.map(\.index), newRange)
+      return try argumentNode.insertInlineContent(nodes, at: newLocation)
+        .map { newRange in composeRange(trace.map(\.index), newRange) }
     }
     assert(truthMaker == nil)
     // otherwise, the final location is found
@@ -227,17 +232,21 @@ extension TreeUtils {
         insertInlineContent(nodes, textNode: textNode, offset: offset, parent, index)
       // compose range
       let prefix = trace.dropLast(2).map(\.index)
-      return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
+      let newRange = try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
+      return InsertionResult.success(newRange)
 
     case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      let (from, to) =
+      let newRange =
         insertInlineContent(nodes, paragraphContainer: container, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
-      return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
+
+      return try newRange.map { (from, to) in
+        try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
+      }
 
     case let elementNode as ElementNode:
       let index = location.offset
@@ -246,7 +255,8 @@ extension TreeUtils {
       let (from, to) = insertInlineContent(nodes, elementNode: elementNode, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
-      return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
+      let newRange = try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
+      return InsertionResult.success(newRange)
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -345,7 +355,7 @@ extension TreeUtils {
   /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertInlineContent(
     _ nodes: [Node], paragraphContainer container: ElementNode, index: Int
-  ) -> ([Int], [Int]) {
+  ) -> InsertionResult<([Int], [Int])> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
     precondition(index <= container.childCount)
@@ -356,12 +366,13 @@ extension TreeUtils {
       child.isTransparent
     {
       let (from, to) = insertInlineContent(nodes, elementNode: child, index: 0)
-      return ([index] + from, [index] + to)
+      return InsertionResult.success(([index] + from, [index] + to))
     }
+    // otherwise, create a new paragraph node
     else {
       let paragraph = ParagraphNode(ElementStore(nodes))
       container.insertChild(paragraph, at: index, inStorage: true)
-      return ([index, 0], [index + 1])
+      return InsertionResult.paragraphInserted(([index, 0], [index + 1]))
     }
   }
 
