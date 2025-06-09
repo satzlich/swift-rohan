@@ -742,7 +742,8 @@ internal class ElementNode: Node {
       case let mathNode as GenMathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(contextOffset, .upstream)
+        guard
+          let segmentFrame = mathNode.getSegmentFrame(context, contextOffset, .upstream)
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
