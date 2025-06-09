@@ -157,6 +157,15 @@ internal class ElementNode: Node {
 
   private class func newlineArrayMask() -> Bool { self.type == .root }
 
+  /// Returns true if node is allowed to be empty.
+  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
+
+  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
+
+  final func isMergeable(with other: ElementNode) -> Bool {
+    NodePolicy.isMergeableElements(self.type, other.type)
+  }
+
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
@@ -197,15 +206,6 @@ internal class ElementNode: Node {
     }
   }
 
-  /// Returns true if node is allowed to be empty.
-  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
-
-  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
-
-  final func isMergeable(with other: ElementNode) -> Bool {
-    NodePolicy.isMergeableElements(self.type, other.type)
-  }
-
   // MARK: - Layout Impl.
 
   /// layout length contributed by the node.
@@ -224,7 +224,10 @@ internal class ElementNode: Node {
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   internal func snapshotDescription() -> Array<String>? {
-    _snapshotRecords.map { $0.map(\.description) }
+    if let snapshotRecords = _snapshotRecords {
+      return snapshotRecords.map(\.description)
+    }
+    return nil
   }
 
   /// Make snapshot once if not already made
@@ -237,8 +240,8 @@ internal class ElementNode: Node {
       _snapshotRecords = [SnapshotRecord.placeholder(1)]
     }
     else {
-      _snapshotRecords = zip(_children, _newlines.asBitArray)
-        .map { SnapshotRecord($0, $1) }
+      _snapshotRecords =
+        zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
     }
   }
 
@@ -504,9 +507,7 @@ internal class ElementNode: Node {
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let end = location + _children[i].layoutLength() + _newlines[i].intValue
-      if predicate(i) {
-        context.addParagraphStyle(_children[i], location..<end)
-      }
+      if predicate(i) { context.addParagraphStyle(_children[i], location..<end) }
       location = end
     }
   }
