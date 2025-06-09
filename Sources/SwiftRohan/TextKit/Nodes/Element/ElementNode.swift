@@ -85,20 +85,22 @@ internal class ElementNode: Node {
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+
     if fromScratch {
-      _performLayoutFromScratch(context)
+      _layoutLength = _performLayoutFromScratch(context)
+      _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _performLayoutSimple(context)
+      _layoutLength = _performLayoutSimple(context)
     }
     else {
-      _performLayoutFull(context)
+      _layoutLength = _performLayoutFull(context)
+      _snapshotRecords = nil
     }
-
-    // clear
     _isDirty = false
-    _snapshotRecords = nil
+
+    return _layoutLength
   }
 
   // MARK: - Node(Codable)
@@ -226,9 +228,9 @@ internal class ElementNode: Node {
 
   // MARK: - Layout Impl.
 
-  /// layout length **excluding** additional units added by newlines and placeholder.
+  /// layout length contributed by the node.
   private final var _layoutLength: Int
-  /// true if a newline should be added after i-th child
+  /// true if a newline should be added after i-th child.
   private final var _newlines: NewlineArray
   private final var _isDirty: Bool
 
@@ -261,32 +263,51 @@ internal class ElementNode: Node {
   }
 
   /// Perform layout for fromScratch=true.
-  private final func _performLayoutFromScratch(_ context: LayoutContext) {
+  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
-    // reconcile content
-    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
-      if insertNewline { context.insertNewline(self) }
-      node.performLayout(context, fromScratch: true)
-    }
+    var sum = 0
 
-    // add paragraph style
-    if self.isParagraphContainer {
-      var location = context.layoutCursor
-      for i in 0..<childCount {
-        let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        context.addParagraphStyle(_children[i], location..<end)
-        location = end
+    if self._children.isEmpty {
+      if self.isPlaceholderActive {
+        context.insertText("⬚", self)
+        sum += 1
       }
+      return sum
     }
+    else {
+      // reconcile content backwards
+      for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
+        if insertNewline {
+          context.insertNewline(self)
+          sum += 1
+        }
+        sum += node.performLayout(context, fromScratch: true)
+      }
 
-    if self.isPlaceholderActive { context.insertText("⬚", self) }
+      // add paragraph style forwards
+      if self.isParagraphContainer {
+        var location = context.layoutCursor
+        for i in 0..<childCount {
+          let end = location + _children[i].layoutLength() + _newlines[i].intValue
+          context.addParagraphStyle(_children[i], location..<end)
+          location = end
+        }
+      }
+      return sum
+    }
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
-  private final func _performLayoutSimple(_ context: LayoutContext) {
+  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
 
+    // _performLayoutSimple() is called only when the node is marked dirty and
+    // the set of child nodes is not added/deleted, so we can safely assume that
+    // the placeholder is not active.
+    assert(self.isPlaceholderActive == false)
+
+    var sum = 0
     var i = _children.count - 1
 
     while true {
@@ -294,69 +315,101 @@ internal class ElementNode: Node {
 
       // skip clean
       while i >= 0 && !_children[i].isDirty {
-        if _newlines[i] { context.skipBackwards(1) }
-        context.skipBackwards(_children[i].layoutLength())
+        if _newlines[i] {
+          context.skipBackwards(1)
+          sum += 1
+        }
+        do {
+          let length = _children[i].layoutLength()
+          context.skipBackwards(length)
+          sum += length
+        }
         i -= 1
       }
       assert(i < 0 || _children[i].isDirty)
 
       // process dirty
       if i >= 0 {
-        if _newlines[i] { context.skipBackwards(1) }
-        _children[i].performLayout(context, fromScratch: false)
+        if _newlines[i] {
+          context.skipBackwards(1)
+          sum += 1
+        }
+        sum += _children[i].performLayout(context, fromScratch: false)
         i -= 1
       }
     }
 
-    // Since _performLayoutSimple() is called only when the set of child nodes
-    // are not added/deleted, and `isPlaceholderActive==true` implies
-    // `_children.isEmpty`, we can safely assume that the placeholder is not
-    // active.
-    assert(self.isPlaceholderActive == false)
-    // For robustness, we still process the case when `isPlaceholderActive==true`.
-    if self.isPlaceholderActive { context.insertText("⬚", self) }
+    return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
-  private final func _performLayoutFull(_ context: LayoutContext) {
+  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
-    // ID's of current children
-    let currentIds = Set(_children.map(\.id))
-    // ID's of dirty (current) children
-    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-    // ID's of original children
-    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
+    var sum = 0
 
-    // records of current children
-    let current: [ExtendedRecord] = zip(_children, _newlines.asBitArray)
-      .map { (node, insertNewline) in
-        let mark: LayoutMark =
-          !originalIds.contains(node.id)
-          ? .added
-          : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline)
+    if _children.isEmpty {
+      context.deleteBackwards(_layoutLength)
+      if self.isPlaceholderActive {
+        context.insertText("⬚", self)
+        sum += 1
       }
-    // records of original children
-    let original: [ExtendedRecord] = _snapshotRecords!.map { record in
-      !currentIds.contains(record.nodeId)
-        ? ExtendedRecord(.deleted, record)
-        : dirtyIds.contains(record.nodeId)
-          ? ExtendedRecord(.dirty, record)
-          : ExtendedRecord(.none, record)
+      return sum
     }
 
-    func processInsertNewline(_ original: ExtendedRecord, _ current: ExtendedRecord) {
+    assert(_children.isEmpty == false)
+
+    #if DEBUG
+    let layoutCursor = context.layoutCursor
+    #endif
+
+    // records of current children
+    let current: Array<ExtendedRecord>
+    // records of original children
+    let original: Array<ExtendedRecord>
+
+    do {
+      // ID's of current children
+      let currentIds = Set(_children.map(\.id))
+      // ID's of the dirty part of current children
+      let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
+      // ID's of original children
+      let originalIds = Set(_snapshotRecords!.map(\.nodeId))
+
+      current =
+        zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+          let mark: LayoutMark =
+            !originalIds.contains(node.id)
+            ? .added
+            : (node.isDirty ? .dirty : .none)
+          return ExtendedRecord(mark, node, insertNewline)
+        }
+
+      original =
+        _snapshotRecords!.map { record in
+          !currentIds.contains(record.nodeId)
+            ? ExtendedRecord(.deleted, record)
+            : dirtyIds.contains(record.nodeId)
+              ? ExtendedRecord(.dirty, record)
+              : ExtendedRecord(.none, record)
+        }
+    }
+
+    func processNewline(
+      _ original: ExtendedRecord, _ current: ExtendedRecord, _ sum: inout Int
+    ) {
       precondition(original.nodeId == current.nodeId)
       switch (original.insertNewline, current.insertNewline) {
       case (false, false):
-        break
+        break  // no-op
       case (false, true):
         context.insertNewline(self)
+        sum += 1
       case (true, false):
         context.deleteBackwards(1)
       case (true, true):
         context.skipBackwards(1)
+        sum += 1
       }
     }
 
@@ -366,27 +419,40 @@ internal class ElementNode: Node {
     var i = current.count - 1
     var j = original.count - 1
 
-    // invariant:
-    //  [cursor, ...) is consistent with (i, ...)
-    //  [0, cursor) is consistent with [0, j]
+    func updateDeletedRange() {
+      if j >= 0 && original[j].mark == .deleted {
+        if i >= 0 {
+          deletedRange =
+            if let range = deletedRange {
+              max(0, i - 1)..<range.upperBound
+            }
+            else {
+              max(0, i - 1)..<min(childCount, i + 2)
+            }
+        }
+        else {
+          deletedRange =
+            if let range = deletedRange {
+              0..<range.upperBound
+            }
+            else {
+              0..<1
+            }
+        }
+      }
+    }
+
+    // reconcile content backwards
+    // Invariant:
+    //    [cursor, ...) is consistent with (i, ...)
+    //    [0, cursor) is consistent with [0, j]
     while true {
       if i < 0 && j < 0 { break }
 
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
       do {
-        if j >= 0 && original[j].mark == .deleted {
-          switch (deletedRange, i >= 0) {
-          case (.none, false):
-            deletedRange = 0..<1
-          case (.none, true):
-            deletedRange = max(0, i - 1)..<min(childCount, i + 2)
-          case (.some(let range), false):
-            deletedRange = 0..<range.upperBound
-          case (.some(let range), true):
-            deletedRange = max(0, i - 1)..<range.upperBound
-          }
-        }
+        updateDeletedRange()
         while j >= 0 && original[j].mark == .deleted {
           if original[j].insertNewline { context.deleteBackwards(1) }
           context.deleteBackwards(original[j].layoutLength)
@@ -396,8 +462,11 @@ internal class ElementNode: Node {
       }
 
       while i >= 0 && current[i].mark == .added {
-        if current[i].insertNewline { context.insertNewline(self) }
-        _children[i].performLayout(context, fromScratch: true)
+        if current[i].insertNewline {
+          context.insertNewline(self)
+          sum += 1
+        }
+        sum += _children[i].performLayout(context, fromScratch: true)
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
@@ -407,8 +476,9 @@ internal class ElementNode: Node {
         j >= 0 && original[j].mark == .none
       {
         assert(current[i].nodeId == original[j].nodeId)
-        processInsertNewline(original[j], current[i])
+        processNewline(original[j], current[i], &sum)
         context.skipBackwards(current[i].layoutLength)
+        sum += current[i].layoutLength
         i -= 1
         j -= 1
       }
@@ -423,26 +493,30 @@ internal class ElementNode: Node {
       if i >= 0 {
         assert(j >= 0 && current[i].nodeId == original[j].nodeId)
         assert(current[i].mark == .dirty && original[j].mark == .dirty)
-        processInsertNewline(original[j], current[i])
-        _children[i].performLayout(context, fromScratch: false)
+        processNewline(original[j], current[i], &sum)
+        sum += _children[i].performLayout(context, fromScratch: false)
         i -= 1
         j -= 1
       }
     }
 
-    // add paragraph style
+    #if DEBUG
+    assert(sum == layoutCursor - context.layoutCursor)
+    #endif
+
+    // add paragraph style forwards
     if self.isParagraphContainer {
       var location = context.layoutCursor
+      let deletedRange = deletedRange ?? 0..<0
       for i in 0..<childCount {
         let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        if current[i].isAddedOrDirty || deletedRange?.contains(i) == true {
+        if current[i].isAddedOrDirty || deletedRange.contains(i) {
           context.addParagraphStyle(_children[i], location..<end)
         }
         location = end
       }
     }
-
-    if self.isPlaceholderActive { context.insertText("⬚", self) }
+    return sum
   }
 
   private final func getLayoutOffset(_ index: Int) -> Int? {
