@@ -18,12 +18,19 @@ final class RootNode: ElementNode {
   // MARK: - Node(Positioning)
 
   final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    let layoutOffset = layoutOffset.clamped(0, super.layoutLength())
+    let layoutLength = super.layoutLength()
+    guard 0...layoutLength + 1 ~= layoutOffset else { return nil }
+
+    let layoutOffset = layoutOffset.clamped(0, layoutLength)
     return super.getRohanIndex(layoutOffset)
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    let layoutOffset = layoutOffset.clamped(0, super.layoutLength())
+    let layoutLength = super.layoutLength()
+    guard 0...layoutLength + 1 ~= layoutOffset else {
+      return .failure(error: SatzError(.InvalidLayoutOffset))
+    }
+    let layoutOffset = layoutOffset.clamped(0, layoutLength)
     return super.getPosition(layoutOffset)
   }
 
