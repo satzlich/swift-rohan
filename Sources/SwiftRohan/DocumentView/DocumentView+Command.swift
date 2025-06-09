@@ -24,7 +24,7 @@ extension DocumentView {
           moveBackward(nil)
         }
       case .paragraphCreated:
-        for _ in 0..<insertExprs.backwardMoves + 1 {
+        for _ in 0..<insertExprs.backwardMoves {
           moveBackward(nil)
         }
 

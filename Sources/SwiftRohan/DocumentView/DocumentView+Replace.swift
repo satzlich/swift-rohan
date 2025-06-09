@@ -361,8 +361,12 @@ extension DocumentView {
     _ result: ReplaceResult<RhTextRange>
   ) -> ReplaceResult<RhTextRange> {
     switch result {
-    case let .replaced(range), let .paragraphCreated(range):
+    case let .replaced(range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
+
+    case let .paragraphCreated(range):
+      documentManager.textSelection = RhTextSelection(range.endLocation)
+      moveBackward(nil)  // move backward to the end of the new paragraph
 
     case let .failure(error):
       if error.code.type == .UserError {
