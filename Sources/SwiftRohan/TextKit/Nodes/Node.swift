@@ -246,20 +246,15 @@ internal class Node: Codable {
 
 extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
-
-  /// Returns true if the node is pivotal.
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
-  /// Resolve the value of property aggregate for given type.
-  final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
+  final func resolveAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {
     T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
   /// Resolve the value of property for given key.
-  final func resolveProperty(
-    _ key: PropertyKey, _ styleSheet: StyleSheet
-  ) -> PropertyValue {
+  final func resolveValue(_ key: PropertyKey, _ styleSheet: StyleSheet) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 

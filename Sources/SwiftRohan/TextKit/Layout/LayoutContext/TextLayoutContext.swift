@@ -46,7 +46,7 @@ final class TextLayoutContext: LayoutContext {
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     precondition(isEditing)
-    let properties: ParagraphProperty = source.resolvePropertyAggregate(styleSheet)
+    let properties: ParagraphProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     textStorage.addAttributes(attributes, range: NSRange(range))
   }
@@ -84,7 +84,7 @@ final class TextLayoutContext: LayoutContext {
     precondition(isEditing)
     guard !text.isEmpty else { return }
     // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let properties: TextProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // create attributed string
     let attrString = NSAttributedString(string: String(text), attributes: attributes)
@@ -96,7 +96,7 @@ final class TextLayoutContext: LayoutContext {
   func insertNewline(_ source: Node) {
     precondition(isEditing)
     // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let properties: TextProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // create attributed string
     let attrString = NSAttributedString(string: "\n", attributes: attributes)
@@ -110,7 +110,7 @@ final class TextLayoutContext: LayoutContext {
     precondition(isEditing)
 
     // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let properties: TextProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // form attributed string
     let attrString = Self.attributedString(for: fragment, attributes)
