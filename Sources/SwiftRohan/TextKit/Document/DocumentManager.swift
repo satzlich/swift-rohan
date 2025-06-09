@@ -188,14 +188,7 @@ public final class DocumentManager {
       }
     }
 
-    switch result {
-    case let .inserted(range):
-      return .inserted(_normalizeRange(range))
-    case let .paragraphInserted(range):
-      return .paragraphInserted(_normalizeRange(range))
-    case let .failure(error):
-      return .failure(error)
-    }
+    return result.map { _normalizeRange($0) }
   }
 
   /// Replace characters in range with string.
@@ -228,14 +221,8 @@ public final class DocumentManager {
       location = location_
     }
     // perform insertion
-    switch TreeUtils.insertString(string, at: location, rootNode) {
-    case let .inserted(range):
-      return .inserted(_normalizeRange(range))
-    case let .paragraphInserted(range):
-      return .paragraphInserted(_normalizeRange(range))
-    case let .failure(error):
-      return .failure(error)
-    }
+    return TreeUtils.insertString(string, at: location, rootNode)
+      .map { _normalizeRange($0) }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -344,7 +331,7 @@ public final class DocumentManager {
   }
 
   /// Remove a math component from the math node at the given range.
-  /// - Returns: range of resuling math node if the math node remains, or
+  /// - Returns: range of resulting math node if the math node remains, or
   ///   range of the substituted nucleus if the math node is removed; otherwise,
   ///   an error.
   internal func removeMathComponent(

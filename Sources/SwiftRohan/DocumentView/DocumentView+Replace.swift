@@ -77,7 +77,9 @@ extension DocumentView {
     // perform replacement
     let result = replacementHandler(range)
     switch result {
-    case .inserted(let range), .paragraphInserted(let range):
+    case .inserted(let range),
+      .paragraphInserted(let range):
+
       // register undo action
       registerUndoReplaceContents(for: range, with: contentsCopy, undoManager)
 
