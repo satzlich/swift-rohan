@@ -266,9 +266,9 @@ internal class ElementNode: Node {
       if self.isParagraphContainer {
         var location = context.layoutCursor
         for i in 0..<childCount {
-          let end = location + _children[i].layoutLength() + _newlines[i].intValue
+          let end = location + _children[i].layoutLength()
           context.addParagraphStyle(_children[i], location..<end)
-          location = end
+          location = end + _newlines[i].intValue
         }
       }
       return sum
@@ -319,9 +319,11 @@ internal class ElementNode: Node {
     // update paragraph style for last paragraph to avoid unexpected alignment
     if self.isParagraphContainer {
       var end = context.layoutCursor + sum
+      assert(_newlines.isEmpty || _newlines.last!.intValue == 0)
       for k in _children.indices.suffix(2).reversed() {
-        let location = end - _children[k].layoutLength() - _newlines[k].intValue
-        context.addParagraphStyle(_children[k], location..<end)
+        let endMinus = end - _newlines[k].intValue
+        let location = endMinus - _children[k].layoutLength()
+        context.addParagraphStyle(_children[k], location..<endMinus)
         end = location
       }
     }
@@ -488,11 +490,11 @@ internal class ElementNode: Node {
       var location = context.layoutCursor
       let vacuumRange = vacuumRange ?? 0..<0
       for i in 0..<childCount {
-        let end = location + _children[i].layoutLength() + _newlines[i].intValue
+        let end = location + _children[i].layoutLength()
         if current[i].isAddedOrDirty || vacuumRange.contains(i) {
           context.addParagraphStyle(_children[i], location..<end)
         }
-        location = end
+        location = end + _newlines[i].intValue
       }
     }
     return sum
