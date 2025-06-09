@@ -503,10 +503,6 @@ internal class ElementNode: Node {
       }
     }
 
-    #if DEBUG
-    assert(sum == layoutCursor - context.layoutCursor)
-    #endif
-
     // add paragraph style forwards
     if self.isParagraphContainer {
       var location = context.layoutCursor
