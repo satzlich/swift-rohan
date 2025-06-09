@@ -14,7 +14,7 @@ extension DocumentView {
   internal func replaceContentsForEdit(
     in range: RhTextRange, with nodes: [Node]?,
     message: @autoclosure () -> String? = { nil }()
-  ) -> EditResult {
+  ) -> ReplaceResult<RhTextRange> {
     precondition(_isEditing == true)
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
     return performPostEditProcessing(result)
@@ -22,7 +22,7 @@ extension DocumentView {
 
   internal func replaceCharacters(
     in range: RhTextRange, with string: String, registerUndo: Bool
-  ) -> SatzResult<RhTextRange> {
+  ) -> ReplaceResult<RhTextRange> {
     replaceCharacters(in: range, with: RhString(string), registerUndo: registerUndo)
   }
 
@@ -30,7 +30,7 @@ extension DocumentView {
   /// - Note: For internal error, assertion failure is triggered.
   internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: String
-  ) -> EditResult {
+  ) -> ReplaceResult<RhTextRange> {
     precondition(_isEditing == true)
     let result = replaceCharacters(in: range, with: RhString(string), registerUndo: true)
     return performPostEditProcessing(result)
@@ -38,7 +38,7 @@ extension DocumentView {
 
   private func replaceCharacters(
     in range: RhTextRange, with string: RhString, registerUndo: Bool
-  ) -> SatzResult<RhTextRange> {
+  ) -> ReplaceResult<RhTextRange> {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceCharacters(in: range, with: string)
     }
@@ -46,7 +46,7 @@ extension DocumentView {
 
   private func replaceContents(
     in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
-  ) -> SatzResult<RhTextRange> {
+  ) -> ReplaceResult<RhTextRange> {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceContents(in: range, with: nodes)
     }
@@ -56,8 +56,8 @@ extension DocumentView {
   /// If the operation succeeds, register an undo action.
   private func _replaceContents(
     in range: RhTextRange, registerUndo: Bool,
-    _ replacementHandler: (RhTextRange) -> SatzResult<RhTextRange>
-  ) -> SatzResult<RhTextRange> {
+    _ replacementHandler: (RhTextRange) -> ReplaceResult<RhTextRange>
+  ) -> ReplaceResult<RhTextRange> {
     guard let undoManager = self.undoManager,
       registerUndo && undoManager.isUndoRegistrationEnabled
     else {
@@ -77,21 +77,15 @@ extension DocumentView {
     // perform replacement
     let result = replacementHandler(range)
     switch result {
-    case .success(let insertedRange):
+    case .replaced(let range), .paragraphCreated(let range):
       // register undo action
-      registerUndoReplaceContents(for: insertedRange, with: contentsCopy, undoManager)
-      return result
+      registerUndoReplaceContents(for: range, with: contentsCopy, undoManager)
 
     case .failure(let error):
-      if error.code.type == .UserError {
-        // user error is okay
-        return result
-      }
-      else {
-        assertionFailure("failed to replace contents")
-        return result
-      }
+      assert(error.code.type == .UserError)  // user error is okay
     }
+    return result
+
   }
 
   private func registerUndoReplaceContents(
@@ -120,7 +114,7 @@ extension DocumentView {
   /// - Returns: The new range of selection
   internal func addMathComponentForEdit(
     _ range: RhTextRange, _ mathIndex: MathIndex, _ component: ElementStore
-  ) -> EditResult {
+  ) -> ReplaceResult<RhTextRange> {
     let result = _addMathComponent(for: range, with: mathIndex, component)
     return performPostEditProcessing(result)
   }
@@ -129,7 +123,7 @@ extension DocumentView {
   /// - Returns: The new range of selection
   internal func removeMathComponentForEdit(
     _ range: RhTextRange, _ mathIndex: MathIndex
-  ) -> EditResult {
+  ) -> ReplaceResult<RhTextRange> {
     let result = _removeMathComponent(for: range, with: mathIndex)
     return performPostEditProcessing(result)
   }
@@ -139,7 +133,7 @@ extension DocumentView {
   /// - Returns: The new range of selection
   private func _addMathComponent(
     for range: RhTextRange, with mathIndex: MathIndex, _ component: ElementStore
-  ) -> SatzResult<RhTextRange> {
+  ) -> ReplaceResult<RhTextRange> {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
 
@@ -152,7 +146,7 @@ extension DocumentView {
       }
 
       if let newLocation = composeLocation(newRange.location, mathIndex) {
-        return .success(RhTextRange(newLocation))
+        return .replaced(RhTextRange(newLocation))
       }
       else {
         return .failure(SatzError(.ModifyMathFailure))
@@ -183,7 +177,7 @@ extension DocumentView {
   /// - Returns: The new range of selection
   private func _removeMathComponent(
     for range: RhTextRange, with mathIndex: MathIndex
-  ) -> SatzResult<RhTextRange> {
+  ) -> ReplaceResult<RhTextRange> {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
 
@@ -199,17 +193,14 @@ extension DocumentView {
     }
 
     let result = documentManager.removeMathComponent(range, mathIndex)
-    switch result {
-    case .success(let range):
+
+    return result.map { range in
       if _undoManager.isUndoRegistrationEnabled {
         registerUndoRemoveMathComponent(
           for: range, with: mathIndex, componentCopy, _undoManager)
       }
       let newRange = RhTextRange(range.endLocation)
-      return .success(newRange)
-
-    case .failure(let error):
-      return .failure(error)
+      return newRange
     }
   }
 
@@ -242,7 +233,7 @@ extension DocumentView {
   /// - Returns: The new range of selection.
   internal func modifyGridForEdit(
     _ range: RhTextRange, _ instruction: GridOperation
-  ) -> EditResult {
+  ) -> ReplaceResult<RhTextRange> {
     let result = _modifyGrid(range, instruction)
     return performPostEditProcessing(result)
   }
@@ -250,7 +241,7 @@ extension DocumentView {
   /// Modify grid as specified by the instruction. Undo action is registered.
   private func _modifyGrid(
     _ range: RhTextRange, _ instruction: GridOperation
-  ) -> SatzResult<RhTextRange> {
+  ) -> ReplaceResult<RhTextRange> {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
 
@@ -295,7 +286,7 @@ extension DocumentView {
           return .failure(SatzError(.ModifyGridFailure))
         }
         let newRange = RhTextRange(location)
-        return .success(newRange)
+        return .replaced(newRange)
 
       case .insertColumn(_, at: let column):
         let gridIndex = GridIndex(0, column)
@@ -305,11 +296,11 @@ extension DocumentView {
           return .failure(SatzError(.ModifyGridFailure))
         }
         let newRange = RhTextRange(location)
-        return .success(newRange)
+        return .replaced(newRange)
 
       case .removeRow, .removeColumn:
         let newRange = RhTextRange(range.endLocation)
-        return .success(newRange)
+        return .replaced(newRange)
       }
 
     case .failure(let error):
@@ -366,22 +357,24 @@ extension DocumentView {
 
   // MARK: - Post Edit Processing
 
-  private func performPostEditProcessing(_ result: SatzResult<RhTextRange>) -> EditResult
-  {
+  private func performPostEditProcessing(
+    _ result: ReplaceResult<RhTextRange>
+  ) -> ReplaceResult<RhTextRange> {
     switch result {
-    case .success(let range):
+    case let .replaced(range), let .paragraphCreated(range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
-      return .success(range)
 
     case let .failure(error):
-      if error.code == .InsertOperationRejected {
-        notifyOperationRejected()
-        return .userError(error)
+      if error.code.type == .UserError {
+        if error.code == .InsertOperationRejected {
+          notifyOperationRejected()
+        }
       }
       else {
         assertionFailure("Unexpected error: \(error)")
-        return .internalError(error)
       }
     }
+
+    return result
   }
 }

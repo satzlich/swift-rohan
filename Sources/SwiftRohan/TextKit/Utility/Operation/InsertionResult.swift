@@ -3,7 +3,7 @@
 enum InsertionResult<T> {
   /// insertion is successful.
   case inserted(T)
-  /// insertion is successful with a new paragraph holding the inserted content.
+  /// insertion is successful with a new paragraph created holding the inserted content.
   case paragraphInserted(T)
   
   case failure(SatzError)
