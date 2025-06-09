@@ -36,13 +36,13 @@ internal class ElementNode: Node {
     return getLayoutOffset(index)
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
   }
 
-  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+  override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
       return .failure(error: SatzError(.InvalidLayoutOffset))
     }
@@ -74,12 +74,12 @@ internal class ElementNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int { _layoutLength }
+  override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
 
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context)
@@ -266,9 +266,9 @@ internal class ElementNode: Node {
       if self.isParagraphContainer {
         var location = context.layoutCursor
         for i in 0..<childCount {
-          let end = location + _children[i].layoutLength()
+          let end = location + _children[i].layoutLength() + _newlines[i].intValue
           context.addParagraphStyle(_children[i], location..<end)
-          location = end + _newlines[i].intValue
+          location = end
         }
       }
       return sum
@@ -313,18 +313,6 @@ internal class ElementNode: Node {
         }
         sum += _children[i].performLayout(context, fromScratch: false)
         i -= 1
-      }
-    }
-
-    // update paragraph style for last paragraph to avoid unexpected alignment
-    if self.isParagraphContainer {
-      var end = context.layoutCursor + sum
-      assert(_newlines.isEmpty || _newlines.last!.intValue == 0)
-      for k in _children.indices.suffix(2).reversed() {
-        let endMinus = end - _newlines[k].intValue
-        let location = endMinus - _children[k].layoutLength()
-        context.addParagraphStyle(_children[k], location..<endMinus)
-        end = location
       }
     }
 
@@ -489,12 +477,12 @@ internal class ElementNode: Node {
     if self.isParagraphContainer {
       var location = context.layoutCursor
       let vacuumRange = vacuumRange ?? 0..<0
-      for i in 0..<childCount {
-        let end = location + _children[i].layoutLength()
+      for i in 0..<_children.count {
+        let end = location + _children[i].layoutLength() + _newlines[i].intValue
         if current[i].isAddedOrDirty || vacuumRange.contains(i) {
           context.addParagraphStyle(_children[i], location..<end)
         }
-        location = end + _newlines[i].intValue
+        location = end
       }
     }
     return sum
