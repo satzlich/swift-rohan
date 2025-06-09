@@ -153,6 +153,8 @@ internal class ElementNode: Node {
 
   private final var _children: ElementStore
 
+  final func childrenReadonly() -> ElementStore { _children }
+
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
@@ -191,8 +193,6 @@ internal class ElementNode: Node {
       child.setParent(self)
     }
   }
-
-  final func childrenReadonly() -> ElementStore { _children }
 
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
@@ -962,58 +962,58 @@ internal class ElementNode: Node {
     nodes.removeSubrange(i..<j)
     return range.lowerBound..<i
   }
-}
 
-// MARK: - Facilities for Layout
+  // MARK: - Facilities for Layout
 
-private struct SnapshotRecord: CustomStringConvertible {
-  let nodeId: NodeIdentifier
-  let insertNewline: Bool
-  let layoutLength: Int
+  private struct SnapshotRecord: CustomStringConvertible {
+    let nodeId: NodeIdentifier
+    let insertNewline: Bool
+    let layoutLength: Int
 
-  init(_ node: Node, _ insertNewline: Bool) {
-    self.nodeId = node.id
-    self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength()
+    init(_ node: Node, _ insertNewline: Bool) {
+      self.nodeId = node.id
+      self.insertNewline = insertNewline
+      self.layoutLength = node.layoutLength()
+    }
+
+    private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
+      self.nodeId = nodeId
+      self.insertNewline = insertNewline
+      self.layoutLength = layoutLength
+    }
+
+    /// Create a placeholder record with given layout length.
+    static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
+      SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
+    }
+
+    var description: String {
+      "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
+    }
   }
 
-  private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
-    self.nodeId = nodeId
-    self.insertNewline = insertNewline
-    self.layoutLength = layoutLength
+  private enum LayoutMark { case none; case dirty; case deleted; case added }
+
+  private struct ExtendedRecord {
+    let mark: LayoutMark
+    let nodeId: NodeIdentifier
+    let insertNewline: Bool
+    let layoutLength: Int
+
+    init(_ mark: LayoutMark, _ record: SnapshotRecord) {
+      self.mark = mark
+      self.nodeId = record.nodeId
+      self.insertNewline = record.insertNewline
+      self.layoutLength = record.layoutLength
+    }
+
+    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
+      self.mark = mark
+      self.nodeId = node.id
+      self.insertNewline = insertNewline
+      self.layoutLength = node.layoutLength()
+    }
+
+    var isAddedOrDirty: Bool { mark == .added || mark == .deleted }
   }
-
-  /// Create a placeholder record with given layout length.
-  static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
-    SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
-  }
-
-  var description: String {
-    "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
-  }
-}
-
-private enum LayoutMark { case none; case dirty; case deleted; case added }
-
-private struct ExtendedRecord {
-  let mark: LayoutMark
-  let nodeId: NodeIdentifier
-  let insertNewline: Bool
-  let layoutLength: Int
-
-  init(_ mark: LayoutMark, _ record: SnapshotRecord) {
-    self.mark = mark
-    self.nodeId = record.nodeId
-    self.insertNewline = record.insertNewline
-    self.layoutLength = record.layoutLength
-  }
-
-  init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
-    self.mark = mark
-    self.nodeId = node.id
-    self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength()
-  }
-
-  var isAddedOrDirty: Bool { mark == .added || mark == .deleted }
 }
