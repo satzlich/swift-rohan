@@ -320,14 +320,18 @@ internal class ElementNode: Node {
       }
     }
 
+    // workaround for text alignment issue:
+    //  the last paragraph with no text occasionally use the alignment of the
+    //  previous paragraph.
     if self.isParagraphContainer {
       var end = context.layoutCursor + sum
-      for i in _children.indices.suffix(2).reversed() {
+      for i in _children.indices.suffix(1).reversed() {
         let location = end - _children[i].layoutLength() - _newlines[i].intValue
         context.addParagraphStyle(_children[i], location..<end)
         end = location
       }
     }
+
     return sum
   }
 
