@@ -937,7 +937,7 @@ internal class ElementNode: Node {
           trace.append(contentsOf: value)
 
           // compute coordinate relative to glyph origin.
-          let contextOffset = layoutRange.contextRange.lowerBound + consumed
+          let contextOffset = layoutRange.contextRange.lowerBound - localOffset + consumed
           guard
             let segmentFrame = mathNode.getSegmentFrame(context, contextOffset, .upstream)
           else {

@@ -155,7 +155,8 @@ extension Trace {
     while true {
       assert(isElementNode(current) || isTextNode(current))
 
-      let result: PositionResult<RohanIndex> = current.getPosition(layoutOffset)
+      let result: PositionResult<RohanIndex> =
+        current.getPosition(layoutOffset - accumulated)
 
       switch result {
       case .terminal(let value, let target):
