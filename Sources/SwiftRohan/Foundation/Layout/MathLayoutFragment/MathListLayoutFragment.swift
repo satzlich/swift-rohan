@@ -416,8 +416,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return (n..<n, 0)
     }
 
-    guard let i = getFragment(interactingAt: point)
-    else { return (0..<0, 0) }
+    guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
 
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
     // check point selection

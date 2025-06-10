@@ -101,7 +101,7 @@ struct MathListLayoutFragmentTests {
       #expect(segment.fragmentIndex(6) == 6)
       #expect(segment.fragmentIndex(7) == 7)
       #expect(segment.fragmentIndex(8) == 7)
-      #expect(segment.distanceThroughSegment(4) == 1.388888888)
+      #expect(segment.distanceThroughSegment(4).isNearlyEqual(to: 1.38888888))
       #expect(segment.distanceThroughSegment(5).isNearlyEqual(to: 8.58888888))
       #expect(segment.distanceThroughSegment(6).isNearlyEqual(to: 13.1688888))
       #expect(segment.distanceThroughSegment(7).isNearlyEqual(to: 20.6588888))
