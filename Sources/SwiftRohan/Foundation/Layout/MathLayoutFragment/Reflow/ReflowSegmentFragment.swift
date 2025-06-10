@@ -119,6 +119,13 @@ final class ReflowSegmentFragment: MathLayoutFragment {
     }
   }
 
+  /// Convert the distance from the upstream edge of the segment to the
+  /// **equivalent** distance from the upstream edge of the math list layout
+  /// fragment.
+  func equivalentPosition(_ x: Double) -> Double {
+    x - upstream + source.get(range.lowerBound).glyphOrigin.x
+  }
+
   /// **Cursor distance** from the position given by the index to the
   /// upstream boundary of the segment.
   func cursorDistanceThroughSegment(_ index: Int) -> Double {

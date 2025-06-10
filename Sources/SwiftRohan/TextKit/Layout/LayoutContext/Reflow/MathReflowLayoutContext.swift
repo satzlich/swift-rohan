@@ -129,8 +129,17 @@ final class MathReflowLayoutContext: LayoutContext {
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     precondition(!isEditing && textOffset >= 0)
-
-    preconditionFailure()
+    guard mathLayoutContext.reflowSegmentCount > 0,
+      let result = textLayoutContext.getLayoutRange(interactingAt: point)
+    else { return nil }
+    let i = result.layoutRange.lowerBound - textOffset
+    guard i >= 0 && i < mathLayoutContext.reflowSegmentCount,
+      let frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
+    else { return nil }
+    var relPoint = point.relative(to: frame.frame.origin)
+    let segment = mathLayoutContext.reflowSegments[i]
+    relPoint.x = segment.equivalentPosition(relPoint.x)
+    return mathLayoutContext.getLayoutRange(interactingAt: relPoint)
   }
 
   func rayshoot(
