@@ -504,29 +504,6 @@ public final class DocumentManager {
 
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
-  internal func resolveTextLocation(with point: CGPoint) -> AffineLocation? {
-    #if LOG_PICKING_POINT
-    Rohan.logger.debug("Interacting at \(point.debugDescription)")
-    #endif
-
-    let context = _getLayoutContext()
-    var trace = Trace()
-    var affinity = RhTextSelection.Affinity.downstream
-
-    let modified = rootNode.resolveTextLocation(
-      with: point, context: context, trace: &trace, affinity: &affinity)
-    if modified,
-      let location = trace.toUserSpaceLocation()
-    {
-      return AffineLocation(location, affinity)
-    }
-    else {
-      return nil
-    }
-  }
-
-  /// Resolve the text location for the given point.
-  /// - Returns: The resolved text location if successful; otherwise, nil.
   internal func resolveTextLocation_v2(with point: CGPoint) -> AffineLocation? {
     #if LOG_TEXT_SELECTION
     Rohan.logger.debug("Interacting at \(point.debugDescription)")

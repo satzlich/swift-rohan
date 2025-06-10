@@ -169,18 +169,6 @@ final class ArgumentNode: Node {
     return false
   }
 
-  override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
-  ) -> Bool {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). \
-      The work is done by ApplyNode.
-      """)
-    return false
-  }
-
   final override func resolveTextLocation_v2(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity

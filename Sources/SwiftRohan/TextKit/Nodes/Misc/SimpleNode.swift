@@ -65,14 +65,6 @@ class SimpleNode: Node {  // default implementation for simple nodes
     return false
   }
 
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
-  ) -> Bool {
-    // do nothing
-    return false
-  }
-
   final override func resolveTextLocation_v2(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity

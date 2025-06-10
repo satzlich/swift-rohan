@@ -256,54 +256,6 @@ final class ApplyNode: Node {
     return true
   }
 
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
-  ) -> Bool {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). 
-      The work is done by the other overload of \(#function) with layoutRange.
-      """
-    )
-    return false
-  }
-
-  /// Resolve text location with given point, and (layoutRange, fraction) pair.
-  final func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity,
-    _ layoutRange: LayoutRange
-  ) -> Bool {
-    // resolve text location in content
-    var localTrace = Trace()
-    let modified = _content.resolveTextLocation(
-      with: point, context: context, trace: &localTrace, affinity: &affinity,
-      layoutRange: layoutRange)
-    guard modified else { return false }
-
-    // Returns true if the given node is a variable node associated to this
-    // apply node
-    func match(_ node: Node) -> Bool {
-      if let variableNode = node as? VariableNode,
-        variableNode.isAssociated(with: self)
-      {
-        return true
-      }
-      return false
-    }
-
-    // fix trace according to new trace
-    guard let indexMatched = localTrace.firstIndex(where: { match($0.node) }),
-      let argumentIndex = (localTrace[indexMatched].node as? VariableNode)?.argumentIndex
-    else { return false }
-    // append argument index
-    trace.emplaceBack(self, .argumentIndex(argumentIndex))
-    // copy part of local trace
-    trace.append(contentsOf: localTrace[indexMatched...])
-    return true
-  }
-
   final override func resolveTextLocation_v2(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity

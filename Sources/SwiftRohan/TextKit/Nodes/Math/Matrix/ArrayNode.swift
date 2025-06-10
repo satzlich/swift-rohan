@@ -396,41 +396,6 @@ class ArrayNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, trace: inout Trace,
-    affinity: inout RhTextSelection.Affinity
-  ) -> Bool {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    // resolve grid index for point
-    guard let index: GridIndex = getGridIndex(interactingAt: point),
-      let component = getCell(index),
-      let fragment = getFragment(index)
-    else { return false }
-    // create sub-context
-    let newContext =
-      LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
-    let relPoint = {
-      // top-left corner of component fragment relative to container fragment
-      // in the glyph coordinate sytem of container fragment
-      let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
-      // convert to relative position to top-left corner of component fragment
-      return point.relative(to: frameOrigin)
-    }()
-    // append to trace
-    trace.emplaceBack(self, .gridIndex(index))
-    // recurse
-    let modified =
-      component.resolveTextLocation(
-        with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
-    // fix accordingly
-    if !modified {
-      trace.emplaceBack(component, .index(0))
-    }
-    return true
-  }
-
   final override func resolveTextLocation_v2(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
