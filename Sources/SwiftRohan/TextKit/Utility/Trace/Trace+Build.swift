@@ -139,6 +139,65 @@ extension Trace {
     return (trace, layoutOffset - unconsumed)
   }
 
+  /// Returns the trace segment picked by the given layout offset in a subtree.
+  /// - Postcondition:
+  ///     (a) terminal => last.node is ElementNode/TextNode, or last.getChild() is
+  ///         SimpleNode;
+  ///     (b) halfway => last.getChild() is pivotal.
+  static func getTraceSegment(
+    _ layoutOffset: Int, _ subtree: ElementNode
+  ) -> PositionResult<Trace> {
+
+    var trace = Trace()
+    var current: Node = subtree
+    var accumulated = 0
+
+    while true {
+      assert(isElementNode(current) || isTextNode(current))
+
+      let result: PositionResult<RohanIndex> = current.getPosition(layoutOffset)
+
+      switch result {
+      case .terminal(let value, let target):
+        assert(isElementNode(current) || isTextNode(current))
+        trace.emplaceBack(current, value)
+        accumulated += target
+        return .terminal(value: trace, target: accumulated)
+
+      case .halfway(let value, let consumed):
+        assert(isElementNode(current))
+        // ASSERT: current.isEmpty == false
+
+        trace.emplaceBack(current, value)
+        accumulated += consumed
+
+        guard let next = current.getChild(value),  // getChild() must return non-nil
+          next.isPivotal == false
+        else {
+          // next is pivotal.
+          return .halfway(value: trace, consumed: accumulated)
+        }
+        // Since ApplyNode/MathNode/ArrayNode are pivotal, it holds that `next` is
+        // not any of them. And more, ArgumentNode must be a child of ApplyNode,
+        // so `next` cannot be ArgumentNode.
+
+        if isSimpleNode(next) {
+          return .terminal(value: trace, target: accumulated)
+        }
+        assert(isElementNode(next) || isTextNode(next))
+        current = next
+
+      case .null:
+        assertionFailure("unexpected case")
+        return .null
+
+      case .failure(let satzError):
+        assert(satzError.code == .InvalidLayoutOffset)
+        return .failure(satzError)
+      }
+    }
+  }
+
   /// Build a text location from a trace without relocation.
   func toRawLocation() -> TextLocation? {
     guard let last,

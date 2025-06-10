@@ -256,7 +256,7 @@ final class ApplyNode: Node {
     return true
   }
 
-  override func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -302,6 +302,22 @@ final class ApplyNode: Node {
     // copy part of local trace
     trace.append(contentsOf: localTrace[indexMatched...])
     return true
+  }
+
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+  ) -> Bool {
+    assertionFailure("Work is done in another function")
+    return false
+  }
+
+  final func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity,
+    layoutRange: LayoutRange
+  ) -> Bool {
+    preconditionFailure()
   }
 
   override func rayshoot(

@@ -27,7 +27,8 @@ enum NodePolicy {
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [
       .apply,
-      .unknown,
+      // Array
+      .matrix,
       // Math
       .accent,
       .attach,
@@ -35,9 +36,7 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .mathAttributes,
-      // namedSymbol is NOT pivotal
       .mathStyles,
-      .matrix,
       .radical,
       .textMode,
       .underOver,

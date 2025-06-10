@@ -801,6 +801,186 @@ internal class ElementNode: Node {
     }
   }
 
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+  ) -> Bool {
+    guard let result = context.getLayoutRange(interactingAt: point)
+    else { return false }
+
+    let layoutRange =
+      LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
+    affinity = result.affinity
+
+    return resolveTextLocation_v2(
+      with: point, context: context, layoutOffset: layoutOffset,
+      trace: &trace, affinity: &affinity, layoutRange: layoutRange)
+  }
+
+  /// Resolve the text location at the given point and layout range.
+  /// - Returns: true if trace is modified.
+  /// - Note: For TextLayoutContext, the point is relative to the **top-left corner**
+  ///   of the container. For MathLayoutContext, the point is relative to the
+  ///   **top-left corner** of the math list.
+  final func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity,
+    layoutRange: LayoutRange
+  ) -> Bool {
+    if layoutRange.isEmpty {
+      let localOffset = layoutRange.localRange.lowerBound
+      guard localOffset <= self.layoutLength() else {
+        trace.emplaceBack(self, .index(self.childCount))
+        return true
+      }
+      let result = Trace.getTraceSegment(localOffset, self)
+
+      switch result {
+      case .terminal(let value, let target):
+        trace.append(contentsOf: value)
+        return true
+
+      case .halfway(let value, let consumed):
+        assert(value.isEmpty == false)
+        trace.append(contentsOf: value)
+
+        // if the tip is ApplyNode, recurse into it.
+        if let child = trace.last?.getChild(),
+          let applyNode = child as? ApplyNode
+        {
+          // The content of ApplyNode is treated as being expanded in-place.
+          // So keep the original point.
+          _ = applyNode.resolveTextLocation_v2(
+            with: point, context: context,
+            layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity,
+            layoutRange: layoutRange.deducted(with: consumed))
+          return true
+        }
+        else {
+          return true
+        }
+
+      case .null:
+        return false
+      case .failure(let satzError):
+        return false
+      }
+    }
+    else {
+      let localOffset = layoutRange.localRange.lowerBound
+
+      func computeFraction(_ target: Int, _ child: Node) -> Double {
+        let lowerBound = Double(localOffset - target)
+        let location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
+        let fraction = location / Double(child.layoutLength())
+        return fraction
+      }
+
+      let result = Trace.getTraceSegment(localOffset, self)
+      switch result {
+      case .terminal(let value, let target):
+        assert(value.isEmpty == false)
+        guard let last = value.last else { return false }
+        switch last.node {
+        case let node as TextNode:
+          trace.append(contentsOf: value)
+          let fraction = layoutRange.fraction
+          let index = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+          trace.moveTo(.index(index))
+          return true
+
+        case let node as ElementNode:
+          let index = last.index.index()!
+          if index == node.childCount {
+            trace.append(contentsOf: value)
+            return true
+          }
+          else {
+            let child = node.getChild(index)
+            if isSimpleNode(child) {
+              trace.append(contentsOf: value)
+              let fraction = computeFraction(target, child)
+              let resolved = index + (fraction > 0.5 ? 1 : 0)
+              trace.moveTo(.index(resolved))
+              return true
+            }
+            else {
+              assertionFailure("unexpected node type: \(Swift.type(of: child))")
+              return false
+            }
+          }
+
+        default:
+          assertionFailure("unexpected node type: \(Swift.type(of: last.node))")
+          return false
+        }
+
+      case .halfway(let value, let consumed):
+        assert(value.isEmpty == false)
+        guard let last = value.last,
+          let child = last.getChild(),
+          let index = last.index.index()
+        else { return false }
+        assert(child.isPivotal)
+
+        func fallbackLast() {
+          let fraction = computeFraction(consumed, child)
+          let resolved = index + (fraction > 0.5 ? 1 : 0)
+          trace.moveTo(.index(resolved))
+        }
+
+        switch child {
+        case let mathNode as GenMathNode:
+          trace.append(contentsOf: value)
+
+          // compute coordinate relative to glyph origin.
+          let contextOffset = layoutRange.contextRange.lowerBound + consumed
+          guard
+            let segmentFrame = mathNode.getSegmentFrame(context, contextOffset, .upstream)
+          else {
+            fallbackLast()
+            return true
+          }
+          let newPoint = point.relative(to: segmentFrame.frame.origin)
+            // The origin of the segment frame may be incorrect for MathNode due to
+            // the discrepancy between TextKit and our math layout system.
+            // We obtain the coorindate relative to glyph origin by subtracting the
+            // baseline position which is aligned across the two systems.
+            .with(yDelta: -segmentFrame.baselinePosition)
+
+          let modified = mathNode.resolveTextLocation_v2(
+            with: newPoint, context: context, layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity)
+          if !modified { fallbackLast() }
+          return true
+
+        case let applyNode as ApplyNode:
+          // content of ApplyNode is effectively expanded in-place.
+          // so use the original point.
+          trace.append(contentsOf: value)
+          let modified = applyNode.resolveTextLocation_v2(
+            with: point, context: context, layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity,
+            layoutRange: layoutRange.deducted(with: consumed))
+          if !modified { fallbackLast() }
+          return true
+
+        default:
+          assertionFailure("unexpected node type: \(Swift.type(of: child))")
+        // fallback and return
+
+        }
+
+        preconditionFailure()
+      case .null:
+        return false
+      case .failure(let satzError):
+        return false
+      }
+    }
+  }
+
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
