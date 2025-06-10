@@ -620,7 +620,7 @@ internal class ElementNode: Node {
     }
   }
 
-  final override func resolveTextLocation_v2(
+  final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -629,7 +629,7 @@ internal class ElementNode: Node {
     let layoutRange = LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
     affinity = result.affinity
 
-    return resolveTextLocation_v2(
+    return resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset,
       trace: &trace, affinity: &affinity, layoutRange: layoutRange)
   }
@@ -639,7 +639,7 @@ internal class ElementNode: Node {
   /// - Note: For TextLayoutContext, the point is relative to the **top-left corner**
   ///   of the container. For MathLayoutContext, the point is relative to the
   ///   **top-left corner** of the math list.
-  final func resolveTextLocation_v2(
+  final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity,
     layoutRange: LayoutRange
@@ -667,7 +667,7 @@ internal class ElementNode: Node {
         {
           // The content of ApplyNode is treated as being expanded in-place.
           // So keep the original point.
-          _ = applyNode.resolveTextLocation_v2(
+          _ = applyNode.resolveTextLocation(
             with: point, context: context,
             layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
@@ -770,7 +770,7 @@ internal class ElementNode: Node {
             // baseline position which is aligned across the two systems.
             .with(yDelta: -segmentFrame.baselinePosition)
 
-          let modified = mathNode.resolveTextLocation_v2(
+          let modified = mathNode.resolveTextLocation(
             with: newPoint, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity)
           if !modified { fallbackLastIndex() }
@@ -780,7 +780,7 @@ internal class ElementNode: Node {
           // content of ApplyNode is effectively expanded in-place.
           // so use the original point.
           trace.append(contentsOf: value)
-          let modified = applyNode.resolveTextLocation_v2(
+          let modified = applyNode.resolveTextLocation(
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
             layoutRange: layoutRange.deducted(with: consumed))

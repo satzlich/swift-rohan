@@ -171,7 +171,7 @@ class MathNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation_v2(
+  final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -194,7 +194,7 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
-      component.resolveTextLocation_v2(
+      component.resolveTextLocation(
         with: relPoint, context: newContext, layoutOffset: 0,
         trace: &trace, affinity: &affinity)
     // fix accordingly
