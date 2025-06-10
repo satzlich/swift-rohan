@@ -20,7 +20,8 @@ extension GenMathNode {
       guard let layoutFragment = layoutFragment else { return nil }
 
       let nextOffset = layoutOffset + layoutLength()
-      guard var segmentFrame = context.getSegmentFrame(nextOffset, affinity)
+      // query with affinity=upstream.
+      guard var segmentFrame = context.getSegmentFrame(nextOffset, .upstream)
       else { return nil }
       segmentFrame.frame.origin.x -= layoutFragment.width
       return segmentFrame

@@ -373,7 +373,7 @@ class ArrayNode: Node {
       let fragment = getFragment(index)
     else { return false }
 
-    // obtain super frame with given layout offset (affinity can be arbitrary)
+    // query with affinity=downstream.
     guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return false }
     // set new layout offset
@@ -441,8 +441,8 @@ class ArrayNode: Node {
       let component = getCell(index),
       let fragment = getFragment(index)
     else { return nil }
-    // obtain super frame with given layout offset
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return nil }
     // create sub-context
     let newContext =

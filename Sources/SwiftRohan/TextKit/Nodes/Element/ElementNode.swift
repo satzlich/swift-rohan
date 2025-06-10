@@ -752,13 +752,13 @@ internal class ElementNode: Node {
         }
 
         switch child {
-        case let mathNode as GenMathNode:
+        case let node as GenMathNode:
           trace.append(contentsOf: value)
 
           // compute coordinate relative to glyph origin.
           let contextOffset = layoutRange.contextRange.lowerBound - localOffset + consumed
           guard
-            let segmentFrame = mathNode.getSegmentFrame(context, contextOffset, .upstream)
+            let segmentFrame = node.getSegmentFrame(context, contextOffset, .downstream)
           else {
             fallbackLastIndex()
             return true
@@ -770,7 +770,7 @@ internal class ElementNode: Node {
             // baseline position which is aligned across the two systems.
             .with(yDelta: -segmentFrame.baselinePosition)
 
-          let modified = mathNode.resolveTextLocation(
+          let modified = node.resolveTextLocation(
             with: newPoint, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity)
           if !modified { fallbackLastIndex() }

@@ -275,7 +275,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
   /// of the container.
-  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
+  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
     if self.isEmpty {
       return SegmentFrame(.zero, 0)

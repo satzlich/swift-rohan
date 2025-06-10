@@ -153,8 +153,8 @@ class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
 
-    // obtain super frame with given layout offset
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return false }
     // compute new origin correction
     let originCorrection: CGPoint =
@@ -223,8 +223,8 @@ class MathNode: Node {
         context: newContext, layoutOffset: 0)
     else { return nil }
 
-    // obtain super frame with given layout offset
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return nil }
 
     // if resolved, return origin-corrected result
