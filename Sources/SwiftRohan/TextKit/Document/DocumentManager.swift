@@ -532,7 +532,18 @@ public final class DocumentManager {
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
 
-    preconditionFailure()
+    let context = _getLayoutContext()
+    var trace = Trace()
+    var affinity = RhTextSelection.Affinity.downstream
+
+    let modified = rootNode.resolveTextLocation_v2(
+      with: point, context: context, layoutOffset: 0, trace: &trace, affinity: &affinity)
+    if modified,
+      let location = trace.toUserSpaceLocation()
+    {
+      return AffineLocation(location, affinity)
+    }
+    return nil
   }
 
   // MARK: - Navigation

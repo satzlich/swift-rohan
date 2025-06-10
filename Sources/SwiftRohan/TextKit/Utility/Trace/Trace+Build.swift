@@ -141,8 +141,8 @@ extension Trace {
 
   /// Returns the trace segment picked by the given layout offset in a subtree.
   /// - Postcondition:
-  ///     (a) terminal => last.node is ElementNode/TextNode, or last.getChild() is
-  ///         SimpleNode;
+  ///     (a) terminal => last.node is TextNode or child-free ElementNode, or
+  ///         an ElementNode whose child is SimpleNode.
   ///     (b) halfway => last.getChild() is pivotal.
   static func getTraceSegment(
     _ layoutOffset: Int, _ subtree: ElementNode
@@ -171,7 +171,7 @@ extension Trace {
         trace.emplaceBack(current, value)
         accumulated += consumed
 
-        guard let next = current.getChild(value),  // getChild() must return non-nil
+        guard let next = current.getChild(value),  // getChild() must succeed.
           next.isPivotal == false
         else {
           // next is pivotal.

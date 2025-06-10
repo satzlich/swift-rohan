@@ -805,11 +805,9 @@ internal class ElementNode: Node {
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
-    guard let result = context.getLayoutRange(interactingAt: point)
-    else { return false }
+    guard let result = context.getLayoutRange(interactingAt: point) else { return false }
 
-    let layoutRange =
-      LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
+    let layoutRange = LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
     affinity = result.affinity
 
     return resolveTextLocation_v2(
@@ -836,7 +834,7 @@ internal class ElementNode: Node {
       let result = Trace.getTraceSegment(localOffset, self)
 
       switch result {
-      case .terminal(let value, let target):
+      case .terminal(let value, _):
         trace.append(contentsOf: value)
         return true
 
@@ -863,15 +861,18 @@ internal class ElementNode: Node {
 
       case .null:
         return false
-      case .failure(let satzError):
+      case .failure:
         return false
       }
     }
     else {
       let localOffset = layoutRange.localRange.lowerBound
 
-      func computeFraction(_ target: Int, _ child: Node) -> Double {
-        let lowerBound = Double(localOffset - target)
+      /// compute fraction from upstream of child.
+      /// - Parameter startOffset: the offset of the child relative to the start
+      ///     of this node.
+      func computeFraction(_ startOffset: Int, _ child: Node) -> Double {
+        let lowerBound = Double(localOffset - startOffset)
         let location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
         let fraction = location / Double(child.layoutLength())
         return fraction
@@ -882,12 +883,13 @@ internal class ElementNode: Node {
       case .terminal(let value, let target):
         assert(value.isEmpty == false)
         guard let last = value.last else { return false }
+
         switch last.node {
-        case let node as TextNode:
+        case _ as TextNode:
           trace.append(contentsOf: value)
           let fraction = layoutRange.fraction
-          let index = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
-          trace.moveTo(.index(index))
+          let resolved = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+          trace.moveTo(.index(resolved))
           return true
 
         case let node as ElementNode:
@@ -924,7 +926,7 @@ internal class ElementNode: Node {
         else { return false }
         assert(child.isPivotal)
 
-        func fallbackLast() {
+        func fallbackLastIndex() {
           let fraction = computeFraction(consumed, child)
           let resolved = index + (fraction > 0.5 ? 1 : 0)
           trace.moveTo(.index(resolved))
@@ -939,7 +941,7 @@ internal class ElementNode: Node {
           guard
             let segmentFrame = mathNode.getSegmentFrame(context, contextOffset, .upstream)
           else {
-            fallbackLast()
+            fallbackLastIndex()
             return true
           }
           let newPoint = point.relative(to: segmentFrame.frame.origin)
@@ -952,7 +954,7 @@ internal class ElementNode: Node {
           let modified = mathNode.resolveTextLocation_v2(
             with: newPoint, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity)
-          if !modified { fallbackLast() }
+          if !modified { fallbackLastIndex() }
           return true
 
         case let applyNode as ApplyNode:
@@ -963,19 +965,18 @@ internal class ElementNode: Node {
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
             layoutRange: layoutRange.deducted(with: consumed))
-          if !modified { fallbackLast() }
+          if !modified { fallbackLastIndex() }
           return true
 
         default:
           assertionFailure("unexpected node type: \(Swift.type(of: child))")
-        // fallback and return
-
+          // fallback and return
+          fallbackLastIndex()
+          return true
         }
-
-        preconditionFailure()
       case .null:
         return false
-      case .failure(let satzError):
+      case .failure:
         return false
       }
     }

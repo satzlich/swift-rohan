@@ -26,9 +26,9 @@ class SimpleNode: Node {  // default implementation for simple nodes
   final override func firstIndex() -> RohanIndex? { nil }
   final override func lastIndex() -> RohanIndex? { nil }
 
-  override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
 
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     nil
   }
 
@@ -55,7 +55,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
 
   // MARK: - Implementation
 
-  override final func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -65,7 +65,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
     return false
   }
 
-  override final func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -73,7 +73,15 @@ class SimpleNode: Node {  // default implementation for simple nodes
     return false
   }
 
-  override final func rayshoot(
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+  ) -> Bool {
+    // no-op, always return false
+    return false
+  }
+
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,

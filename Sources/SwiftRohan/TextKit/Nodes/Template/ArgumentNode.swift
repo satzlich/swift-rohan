@@ -181,6 +181,14 @@ final class ArgumentNode: Node {
     return false
   }
 
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+  ) -> Bool {
+    assertionFailure("Work is done in ApplyNode.")
+    return false
+  }
+
   override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,

@@ -312,12 +312,38 @@ final class ApplyNode: Node {
     return false
   }
 
+  /// Resolve text location with given point and layout range.
   final func resolveTextLocation_v2(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity,
     layoutRange: LayoutRange
   ) -> Bool {
-    preconditionFailure()
+    var localTrace = Trace()
+    let modified = _content.resolveTextLocation_v2(
+      with: point, context: context, layoutOffset: layoutOffset, trace: &localTrace,
+      affinity: &affinity, layoutRange: layoutRange)
+    guard modified else { return false }
+
+    /// Returns true if the given node is a variable node associated to this
+    /// apply node.
+    func matchVariable(_ node: Node) -> Bool {
+      if let variableNode = node as? VariableNode,
+        variableNode.isAssociated(with: self)
+      {
+        return true
+      }
+      return false
+    }
+
+    // fix trace according to new trace
+    guard let indexMatched = localTrace.firstIndex(where: { matchVariable($0.node) }),
+      let argumentIndex = (localTrace[indexMatched].node as? VariableNode)?.argumentIndex
+    else { return false }
+    // append argument index
+    trace.emplaceBack(self, .argumentIndex(argumentIndex))
+    // copy part of local trace
+    trace.append(contentsOf: localTrace[indexMatched...])
+    return true
   }
 
   override func rayshoot(
