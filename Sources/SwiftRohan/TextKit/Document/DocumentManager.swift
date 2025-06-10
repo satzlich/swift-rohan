@@ -610,7 +610,7 @@ public final class DocumentManager {
         }
         // FALL THROUGH
       }
-      return resolveTextLocation(with: position)
+      return resolveTextLocation_v2(with: position)
 
     default:
       assertionFailure("Invalid direction")
