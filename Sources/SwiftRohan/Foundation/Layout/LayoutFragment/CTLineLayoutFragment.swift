@@ -7,7 +7,7 @@ import TTFParser
 import UnicodeMathClass
 
 /// Fragment for a single line of text or math layout.
-final class UniLineLayoutFragment: LayoutFragment {
+final class CTLineLayoutFragment: LayoutFragment {
 
   /// Rendered string.
   private(set) var attrString: NSMutableAttributedString
@@ -118,68 +118,68 @@ final class UniLineLayoutFragment: LayoutFragment {
   var descent: Double { _descent }
 }
 
-extension UniLineLayoutFragment {
+extension CTLineLayoutFragment {
   static func createTextMode(
     _ node: Node, _ styleSheet: StyleSheet, _ boundsOption: BoundsOption
-  ) -> UniLineLayoutFragment {
+  ) -> CTLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, boundsOption)
     context.beginEditing()
     _ = node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return UniLineLayoutFragment(context, boundsOption)
+    return CTLineLayoutFragment(context, boundsOption)
   }
 
   static func createMathMode(
     _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
-  ) -> UniLineLayoutFragment {
+  ) -> CTLineLayoutFragment {
     let context = MathLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
     _ = node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return UniLineLayoutFragment(context)
+    return CTLineLayoutFragment(context)
   }
 
   static func createTextMode(
     _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ boundsOption: BoundsOption
-  ) -> UniLineLayoutFragment {
+  ) -> CTLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, boundsOption)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return UniLineLayoutFragment(context, boundsOption)
+    return CTLineLayoutFragment(context, boundsOption)
   }
 
   static func createMathMode(
     _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
-  ) -> UniLineLayoutFragment {
+  ) -> CTLineLayoutFragment {
     let context = MathLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return UniLineLayoutFragment(context)
+    return CTLineLayoutFragment(context)
   }
 
   /// Reconciles a `TextLineLayoutFragment` with a `Node`.
   static func reconcileTextMode(
-    _ fragment: UniLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet
-  ) -> UniLineLayoutFragment {
+    _ fragment: CTLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet
+  ) -> CTLineLayoutFragment {
     precondition(fragment.layoutMode == .textMode)
     let context = TextLineLayoutContext(styleSheet, fragment)
     context.beginEditing()
     _ = node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return UniLineLayoutFragment(context, fragment.boundsOption)
+    return CTLineLayoutFragment(context, fragment.boundsOption)
   }
 
   static func reconcileMathMode(
-    _ fragment: UniLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet,
+    _ fragment: CTLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet,
     _ mathContext: MathContext
-  ) -> UniLineLayoutFragment {
+  ) -> CTLineLayoutFragment {
     precondition(fragment.layoutMode == .mathMode)
     let context = MathLineLayoutContext(styleSheet, fragment, mathContext)
     context.beginEditing()
     _ = node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return UniLineLayoutFragment(context)
+    return CTLineLayoutFragment(context)
   }
 }

@@ -46,9 +46,9 @@ final class MathAttributesLayoutFragment<T: MathLayoutFragment>: MathLayoutFragm
     nucleus.draw(at: point, in: context)
   }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "class \(boxDescription)"
-    let wrapped = nucleus.debugPrint("wrapped")
-    return PrintUtils.compose([description], [wrapped])
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): MathAttributesLayoutFragment"
+    let nucleus = nucleus.debugPrint("\(MathIndex.nuc)")
+    return PrintUtils.compose([description], [nucleus])
   }
 }

@@ -367,17 +367,16 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     }
   }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "attach \(boxDescription)"
-    let children: [Array<String>]
-    do {
-      let lsub = self.lsub?.debugPrint("\(MathIndex.lsub)")
-      let lsup = self.lsup?.debugPrint("\(MathIndex.lsup)")
-      let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
-      let sub = self.sub?.debugPrint("\(MathIndex.sub)")
-      let sup = self.sup?.debugPrint("\(MathIndex.sup)")
-      children = [lsub, lsup, nucleus, sub, sup].compactMap { $0 }
-    }
+  // MARK: - Debug
+
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): MathAttachLayoutFragment"
+    let lsub = self.lsub?.debugPrint("\(MathIndex.lsub)")
+    let lsup = self.lsup?.debugPrint("\(MathIndex.lsup)")
+    let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
+    let sub = self.sub?.debugPrint("\(MathIndex.sub)")
+    let sup = self.sup?.debugPrint("\(MathIndex.sup)")
+    let children = [lsub, lsup, nucleus, sub, sup].compactMap { $0 }
     return PrintUtils.compose([description], children)
   }
 }

@@ -38,12 +38,11 @@ final class MathFragmentWrapper<T: MathFragment>: MathLayoutFragment {
 
   let layoutLength: Int
 
-  func fixLayout(_ mathContext: MathContext) {
-    // no-op
-  }
+  func fixLayout(_ mathContext: MathContext) { /* no-op */  }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "layoutwrapper \(boxDescription)"
-    return PrintUtils.compose([description], [])
+  func debugPrint(_ name: String) -> Array<String> {
+    [
+      "\(name): MathFragmentWrapper"
+    ]
   }
 }

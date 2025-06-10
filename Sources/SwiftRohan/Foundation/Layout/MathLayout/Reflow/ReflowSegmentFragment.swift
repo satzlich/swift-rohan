@@ -84,7 +84,9 @@ final class ReflowSegmentFragment: MathLayoutFragment {
 
   func fixLayout(_ mathContext: MathContext) { /* no-op */  }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    ["reflow-segment \(name ?? "")"]
+  func debugPrint(_ name: String) -> Array<String> {
+    [
+      "\(name): ReflowSegmentFragment"
+    ]
   }
 }

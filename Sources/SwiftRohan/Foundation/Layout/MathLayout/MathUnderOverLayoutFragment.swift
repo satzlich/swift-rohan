@@ -227,12 +227,10 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
       width: total_width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description =
-      (name.map { "\($0): " } ?? "") + "spreader \(boxDescription)"
-    let subtype = ["subtype: \(self.spreader)"]
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): MathUnderOverLayoutFragment"
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
-    return PrintUtils.compose([description], [subtype, nucleus])
+    return PrintUtils.compose([description], [nucleus])
   }
 
   // MARK: - Mouse Pick

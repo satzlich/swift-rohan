@@ -218,7 +218,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
 
     // update position and annotation from startIndex
-    var position: CGPoint = startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
+    var position: CGPoint = (startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin)
     for i in startIndex..<_fragments.endIndex {
       let ii = i - startIndex
       let fragment = _fragments[i]
@@ -444,11 +444,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
   }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "mlist \(boxDescription)"
+  // MARK: - Debug
 
-    let children: [Array<String>] = _fragments
-      .lazy.map(\.fragment).enumerated()
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): \(type(of: self))"
+
+    let children =
+      _fragments.map(\.fragment).enumerated()
       .map { (i, fragment) in fragment.debugPrint("\(i)") }
 
     return PrintUtils.compose([description], children)

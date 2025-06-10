@@ -11,9 +11,7 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
   /// Re-establish the layout from the constituent fragments.
   func fixLayout(_ mathContext: MathContext)
 
-  // MARK: - Debug
-
-  func debugPrint(_ name: String?) -> Array<String>
+  func debugPrint(_ name: String) -> Array<String>
 }
 
 extension MathLayoutFragment {
@@ -29,7 +27,4 @@ extension MathLayoutFragment {
     return "\(origin) \(boxMetrics)"
   }
 
-  func debugPrint() -> Array<String> {
-    return debugPrint(nil)
-  }
 }

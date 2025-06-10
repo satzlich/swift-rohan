@@ -216,7 +216,7 @@ struct MathLayoutFragmentsTests {
     do {
       let attrString = NSMutableAttributedString(string: "x")
       let ctLine = CTLineCreateWithAttributedString(attrString)
-      let textLine = UniLineLayoutFragment(
+      let textLine = CTLineLayoutFragment(
         attrString, ctLine, .textMode, .typographicBounds)
       let textMode = TextModeNode._NodeFragment(textLine)
       textMode.fixLayout(context)
@@ -236,7 +236,7 @@ struct MathLayoutFragmentsTests {
       _ = fragment.limits
       _ = fragment.isSpaced
       _ = fragment.isTextLike
-      _ = fragment.debugPrint()
+      _ = fragment.debugPrint("test")
     }
   }
 
