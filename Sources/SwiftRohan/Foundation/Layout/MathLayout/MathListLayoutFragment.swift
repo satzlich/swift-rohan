@@ -8,13 +8,15 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-  private var _fragments: Deque<AnnotatedFragment> = []
   private var _textColor: Color
-  private var _textSize: CGFloat
+  private var _fontSize: CGFloat
+
+  private var _fragments: Deque<AnnotatedFragment> = []
+  private var _penaltyCount: Int = 0
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
-    self._textSize = mathContext.getFontSize()
+    self._fontSize = mathContext.getFontSize()
   }
 
   // MARK: - State
@@ -191,10 +193,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // find the start index
     assert(dirtyIndex <= _fragments.count)
-    let startIndex = _fragments[..<dirtyIndex].lastIndex { !$0.clazz.isVariable } ?? 0
+    let startIndex =
+      _fragments[..<dirtyIndex].lastIndex { $0.clazz.isVariable == false } ?? 0
 
     func updateMetrics(_ width: CGFloat) {
-      // update metrics
       _width = width
       _ascent = _fragments.lazy.map(\.ascent).max() ?? 0
       _descent = _fragments.lazy.map(\.descent).max() ?? 0
@@ -255,11 +257,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
       if i + 1 < _fragments.endIndex {
         let current = resolvedClasses[ii]
         let next = resolvedClasses[ii + 1]
-        _fragments[i].penalty =
-          current == .Binary || (current == .Relation && next != .Relation)
+        let penalty = (current == .Binary) || (current == .Relation && next != .Relation)
+        let old = Swift.exchange(&_fragments[i].penalty, with: penalty)
+        if old != penalty { _penaltyCount += penalty ? 1 : -1 }
       }
       else {  // no penalty for the last fragment
-        _fragments[i].penalty = false
+        let old = Swift.exchange(&_fragments[i].penalty, with: false)
+        if old { _penaltyCount -= 1 }
       }
     }
 
@@ -459,6 +463,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: - Reflow
 
+  internal var reflowSegmentCount: Int { _fragments.isEmpty ? 0 : _penaltyCount + 1 }
+
   /// Convert a layout offset to a reflowed offset assuming the initial text offset
   /// is zero.`
   func reflowedOffset(for layoutOffset: Int) -> Int { layoutOffset * 2 }
@@ -499,7 +505,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     var unusedPrevious: CGFloat = 0
     for (current, next) in _fragments.adjacentPairs() {
-      let space = current.spacing.floatValue * _textSize
+      let space = current.spacing.floatValue * _fontSize
       let usedSpace: CGFloat
       switch next.cursorPosition {
       case .downstream:
