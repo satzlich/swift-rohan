@@ -483,6 +483,10 @@ extension MathListLayoutFragment {
     var unusedPrevious: CGFloat = 0
     while i < _fragments.count {
       let fragment = _fragments[i]
+      i += 1
+      offset += fragment.layoutLength
+
+      // segment boundary
       if fragment.penalty {
         let upstream = unusedPrevious
         let downstream: Double
@@ -496,23 +500,21 @@ extension MathListLayoutFragment {
           downstream = spacing
         }
         unusedPrevious = spacing - downstream
-        // segment boundary
-        if first < i {
-          let range = first..<i + 1
-          let offsetRange = firstOffset..<offset
-          let segment =
-            ReflowSegmentFragment(
-              self, range, offsetRange, upstream: upstream, downstream: downstream)
-          _reflowSegments.append(segment)
-        }
-        first = i + 1
+
+        let range = first..<i
+        let offsetRange = firstOffset..<offset
+        let segment =
+          ReflowSegmentFragment(
+            self, range, offsetRange, upstream: upstream, downstream: downstream)
+        _reflowSegments.append(segment)
+
+        first = i
         firstOffset = offset
       }
-      i += 1
-      offset += fragment.layoutLength
     }
     do {
       assert(i == _fragments.count)
+      assert(offset == contentLayoutLength)
       let range = first..<i
       let offsetRange = firstOffset..<offset
       let segment =

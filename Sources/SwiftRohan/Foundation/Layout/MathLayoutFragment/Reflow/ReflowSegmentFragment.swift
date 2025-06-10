@@ -129,8 +129,8 @@ final class ReflowSegmentFragment: MathLayoutFragment {
     }
     else if index < range.upperBound {
       let first = source.get(range.lowerBound)
-      let fragment = source.getAnnotated(index)
-      var distance = upstream + fragment.glyphOrigin.x - first.glyphOrigin.x
+      let fragment = source.getAnnotated(index - 1)
+      var distance = upstream + fragment.fragment.maxX - first.minX
       switch fragment.cursorPosition {
       case .upstream:
         break
