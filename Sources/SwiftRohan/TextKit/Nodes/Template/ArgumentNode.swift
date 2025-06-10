@@ -35,11 +35,6 @@ final class ArgumentNode: Node {
     return nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    assertionFailure("should not be called")
-    return nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     assertionFailure("should not be called")
     return .null
@@ -169,15 +164,11 @@ final class ArgumentNode: Node {
     return false
   }
 
-  override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext,
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). \
-      The work is done by ApplyNode.
-      """)
+    assertionFailure("Work is done in ApplyNode.")
     return false
   }
 
@@ -214,7 +205,7 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertString(
     _ string: RhString, at location: TextLocationSlice
-  ) throws -> InsertionResult<RhTextRange> {
+  ) throws -> EditResult<RhTextRange> {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {
       _ = try TreeUtils.insertString(string, at: location, variable)
@@ -226,7 +217,7 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertInlineContent(
     _ nodes: [Node], at location: TextLocationSlice
-  ) throws -> InsertionResult<RhTextRange> {
+  ) throws -> EditResult<RhTextRange> {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }

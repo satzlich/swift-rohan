@@ -132,15 +132,9 @@ final class TextNode: Node {
     return offset
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    guard 0..<layoutLength() ~= layoutOffset else { return nil }
-    let index = _getUpstreamBoundary(layoutOffset)
-    return (.index(index), index)
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
-      return .failure(error: SatzError(.InvalidLayoutOffset))
+      return .failure(SatzError(.InvalidLayoutOffset))
     }
     let index = _getUpstreamBoundary(layoutOffset)
     return .terminal(value: .index(index), target: index)
@@ -191,11 +185,11 @@ final class TextNode: Node {
       layouRange, type: type, options: options, using: newBlock(_:_:_:))
   }
 
-  final override func resolveTextLocation(
-    with point: CGPoint, context: LayoutContext,
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
-    // do nothing
+    // no-op
     return false
   }
 
@@ -281,7 +275,7 @@ final class TextNode: Node {
     for range: Range<Int>, _ styleSheet: StyleSheet
   ) -> NSAttributedString {
     let substring = StringUtils.substring(of: _string, for: range)
-    let properties: TextProperty = resolvePropertyAggregate(styleSheet)
+    let properties: TextProperty = resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     return NSAttributedString(string: String(substring), attributes: attributes)
   }

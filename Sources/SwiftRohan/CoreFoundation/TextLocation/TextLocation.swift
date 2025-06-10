@@ -87,8 +87,8 @@ extension TextLocation: CustomStringConvertible {
 
 extension TextLocation {
   /// Normalize the text location for a given tree.
-  func normalized(for tree: RootNode) -> TextLocation? {
-    Trace.from(self, tree)?.toTextLocation()
+  func normalised(for tree: RootNode) -> TextLocation? {
+    Trace.from(self, tree)?.toNormalLocation()
   }
 
   /// Returns the text location with the given offset.

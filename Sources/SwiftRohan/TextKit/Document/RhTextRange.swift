@@ -66,13 +66,13 @@ extension RhTextRange: CustomStringConvertible {
 
 extension RhTextRange {
   /// Normalize the text range.
-  func normalized(for tree: RootNode) -> RhTextRange? {
+  func normalised(for tree: RootNode) -> RhTextRange? {
     if isEmpty {
-      return location.normalized(for: tree).map(RhTextRange.init)
+      return location.normalised(for: tree).map(RhTextRange.init)
     }
     else {
-      guard let location = location.normalized(for: tree),
-        let endLocation = endLocation.normalized(for: tree)
+      guard let location = location.normalised(for: tree),
+        let endLocation = endLocation.normalised(for: tree)
       else { return nil }
       return RhTextRange(location, endLocation)
     }

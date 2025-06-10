@@ -112,7 +112,7 @@ final class StringPasteboardManager: PasteboardManager {
     else { return .failure }
 
     // insert nodes/string
-    let result: InsertionResult<RhTextRange>
+    let result: EditResult<RhTextRange>
     if let nodes = StringUtils.getNodes(fromRaw: string) {
       result = textView.replaceContentsForEdit(in: selection, with: nodes)
     }

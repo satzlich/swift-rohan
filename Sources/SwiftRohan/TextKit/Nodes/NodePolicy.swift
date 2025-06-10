@@ -5,6 +5,10 @@ import Foundation
 enum NodePolicy {
   // MARK: - Properties
 
+  /// Returns true if the node is transparent.
+  /// - Note: A characterising property of **transparent node** is: insertion any
+  ///     content into the interior of a transparent node can split the node into
+  ///     two nodes, with the inserted content in between.
   @inline(__always)
   static func isTransparent(_ nodeType: NodeType) -> Bool {
     [.paragraph, .text].contains(nodeType)
@@ -23,7 +27,8 @@ enum NodePolicy {
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [
       .apply,
-      .unknown,
+      // Array
+      .matrix,
       // Math
       .accent,
       .attach,
@@ -31,9 +36,7 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .mathAttributes,
-      // namedSymbol is NOT pivotal
       .mathStyles,
-      .matrix,
       .radical,
       .textMode,
       .underOver,
@@ -44,13 +47,6 @@ enum NodePolicy {
   @inline(__always)
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
-  }
-
-  /// Returns true if a node of given kind needs a leading ZWSP.
-  @inline(__always)
-  static func needsLeadingZWSP(_ nodeType: NodeType) -> Bool {
-    false
-//    [.heading, .paragraph].contains(nodeType)
   }
 
   @inline(__always)
@@ -68,7 +64,7 @@ enum NodePolicy {
 
   /// Returns true if the node is inline-math.
   static func isInlineMath(_ node: Node) -> Bool {
-    isEquationNode(node) && !node.isBlock
+    isEquationNode(node) && node.isBlock == false
   }
 
   /// Returns true if the node is inline but not inline-math.

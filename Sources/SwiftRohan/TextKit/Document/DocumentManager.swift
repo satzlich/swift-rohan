@@ -80,8 +80,8 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = TextLocation([], 0).normalized(for: rootNode)!
-    let endLocation = TextLocation([], rootNode.childCount).normalized(for: rootNode)!
+    let location = TextLocation([], 0).normalised(for: rootNode)!
+    let endLocation = TextLocation([], rootNode.childCount).normalised(for: rootNode)!
     return RhTextRange(location, endLocation)!
   }
 
@@ -133,13 +133,13 @@ public final class DocumentManager {
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   internal func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> InsertionResult<RhTextRange> {
+  ) -> EditResult<RhTextRange> {
     // remove contents if nodes is nil or empty
     guard let nodes, !nodes.isEmpty
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normalizeRange(result))
+        return .success(_normaliseRange(result))
       case .failure(let error):
         return .failure(error)
       }
@@ -169,7 +169,7 @@ public final class DocumentManager {
     }
 
     // insert nodes
-    let result: InsertionResult<RhTextRange>
+    let result: EditResult<RhTextRange>
     switch content {
     case .plaintext:
       assertionFailure("Unreachable")
@@ -188,7 +188,7 @@ public final class DocumentManager {
       }
     }
 
-    return result.map { _normalizeRange($0) }
+    return result.map { _normaliseRange($0) }
   }
 
   /// Replace characters in range with string.
@@ -198,13 +198,13 @@ public final class DocumentManager {
   ///     single text node.
   internal func replaceCharacters(
     in range: RhTextRange, with string: RhString
-  ) -> InsertionResult<RhTextRange> {
+  ) -> EditResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
     // just remove contents if string is empty
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normalizeRange(result))
+        return .success(_normaliseRange(result))
       case let .failure(error):
         return .failure(error)
       }
@@ -222,7 +222,7 @@ public final class DocumentManager {
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { _normalizeRange($0) }
+      .map { _normaliseRange($0) }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -336,7 +336,7 @@ public final class DocumentManager {
   ///   an error.
   internal func removeMathComponent(
     _ range: RhTextRange, _ mathIndex: MathIndex
-  ) -> InsertionResult<RhTextRange> {
+  ) -> EditResult<RhTextRange> {
     let location = range.location
     let end = range.endLocation
 
@@ -504,8 +504,8 @@ public final class DocumentManager {
 
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
-  internal func resolveTextLocation(with point: CGPoint) -> AffineLocation? {
-    #if LOG_PICKING_POINT
+  internal func resolveTextLocation_v2(with point: CGPoint) -> AffineLocation? {
+    #if LOG_TEXT_SELECTION
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
 
@@ -513,26 +513,14 @@ public final class DocumentManager {
     var trace = Trace()
     var affinity = RhTextSelection.Affinity.downstream
 
-    let modified = rootNode.resolveTextLocation(
-      with: point, context: context, trace: &trace, affinity: &affinity)
+    let modified = rootNode.resolveTextLocation_v2(
+      with: point, context: context, layoutOffset: 0, trace: &trace, affinity: &affinity)
     if modified,
-      let location = trace.toTextLocation()
+      let location = trace.toUserSpaceLocation()
     {
       return AffineLocation(location, affinity)
     }
-    else {
-      return nil
-    }
-  }
-
-  /// Resolve the text location for the given point.
-  /// - Returns: The resolved text location if successful; otherwise, nil.
-  internal func resolveTextLocation_v2(with point: CGPoint) -> AffineLocation? {
-    #if LOG_TEXT_SELECTION
-    Rohan.logger.debug("Interacting at \(point.debugDescription)")
-    #endif
-
-    preconditionFailure()
+    return nil
   }
 
   // MARK: - Navigation
@@ -599,7 +587,7 @@ public final class DocumentManager {
         }
         // FALL THROUGH
       }
-      return resolveTextLocation(with: position)
+      return resolveTextLocation_v2(with: position)
 
     default:
       assertionFailure("Invalid direction")
@@ -631,7 +619,7 @@ public final class DocumentManager {
         assert(range.lowerBound == offset)
         assert(range.upperBound <= textNode.string.length)
         trace.moveTo(.index(range.upperBound))
-        return trace.toTextLocation()
+        return trace.toRawLocation()
           .map { AffineLocation($0, .downstream) }  // always downstream
       }
     }
@@ -645,7 +633,7 @@ public final class DocumentManager {
         assert(range.upperBound == offset)
         assert(range.lowerBound >= 0)
         trace.moveTo(.index(range.lowerBound))
-        return trace.toTextLocation()
+        return trace.toRawLocation()
           .map { AffineLocation($0, .downstream) }  // always downstream
       }
     }
@@ -666,12 +654,12 @@ public final class DocumentManager {
 
     // location
     trace.moveTo(.index(range.lowerBound))
-    guard let location = trace.toRawTextLocation()
+    guard let location = trace.toRawLocation()
     else { return nil }
 
     // end location and range
     trace.moveTo(.index(range.upperBound))
-    guard let endLocation = trace.toRawTextLocation(),
+    guard let endLocation = trace.toRawLocation(),
       let destination = RhTextRange(location, endLocation)
     else { return nil }
 
@@ -849,7 +837,7 @@ public final class DocumentManager {
     }
 
     // return the location
-    return trace.toRawTextLocation()
+    return trace.toRawLocation()
   }
 
   /// Return layout offset from `location` to `endLocation` for the same text node.
@@ -910,7 +898,7 @@ public final class DocumentManager {
 
     guard let contextual = contextual,
       let childIndex = childIndex,
-      let target = trace.toRawTextLocation()
+      let target = trace.toRawLocation()
     else { return nil }
     return (contextual, target, childIndex)
   }
@@ -941,7 +929,7 @@ public final class DocumentManager {
         if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
           let string = node.substring(for: prevOffset..<offset)
           trace.moveTo(.index(prevOffset))
-          return (LocateableObject.text(String(string)), trace.toRawTextLocation()!)
+          return (LocateableObject.text(String(string)), trace.toRawLocation()!)
         }
         else {
           trace.truncate(to: trace.count - 1)
@@ -958,7 +946,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
+            return (LocateableObject.nonText(node), trace.toRawLocation()!)
           }
         }
         else {
@@ -972,19 +960,19 @@ public final class DocumentManager {
   }
 
   /// Normalize the given range or return the fallback range.
-  private func _normalizeRange(_ range: RhTextRange) -> RhTextRange {
-    if let normalized = range.normalized(for: rootNode) {
+  private func _normaliseRange(_ range: RhTextRange) -> RhTextRange {
+    if let normalized = range.normalised(for: rootNode) {
       return normalized
     }
     else {
-      // It is a programming error if the range cannot be normalized.
+      // It is a programming error if the range cannot be normalised.
       assertionFailure("Failed to normalize range")
       return range
     }
   }
 
-  internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
-    location.normalized(for: rootNode)
+  internal func normaliseLocation(_ location: TextLocation) -> TextLocation? {
+    location.normalised(for: rootNode)
   }
 
   /// Compute the visual delimiter range for a location in the tree and also

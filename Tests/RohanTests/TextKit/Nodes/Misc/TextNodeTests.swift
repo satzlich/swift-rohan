@@ -41,11 +41,14 @@ struct TextNodeTests {
   }
 
   @Test
-  static func test_getRohanIndex() {
+  static func test_getPosition() {
     let textNode = TextNode("ab😀c")
-    #expect(textNode.getRohanIndex(2)! == (RohanIndex.index(2), 2))
-    #expect(textNode.getRohanIndex(3)! == (RohanIndex.index(2), 2))
-    #expect(textNode.getRohanIndex(4)! == (RohanIndex.index(4), 4))
+    #expect(
+      textNode.getPosition(2) == PositionResult.terminal(value: .index(2), target: 2))
+    #expect(
+      textNode.getPosition(3) == PositionResult.terminal(value: .index(2), target: 2))
+    #expect(
+      textNode.getPosition(4) == PositionResult.terminal(value: .index(4), target: 4))
   }
 
   @Test

@@ -51,106 +51,86 @@ extension Trace {
     return (trace, nil)
   }
 
-  /// Trace nodes with `[layoutOffset, _ + 1)` in a subtree so that either of the
-  /// following holds:
-  /// a) the node of the last trace element is a text node, and the interior of
-  ///    the trace (first element excluded) are NOT __pivotal__.
-  /// b) a child can be obtained from the last element of the trace and that
-  ///    child is pivotal, or is a child-free element node or a simple node.
-  ///
-  /// - Returns: The trace and consumed offset for the trace if the probed part
-  ///     of location is valid, otherwise nil.
-  /// - Note: It is possible that consumed > layoutOffset, in which case the caller
-  ///     should make adjustment accordingly.
-  /// - Warning: The implementation is very __tricky__. Don't change it unless you
-  ///     understand it well.
-  static func tryFrom(
+  /// Returns the trace segment picked by the given layout offset in a subtree.
+  /// - Postcondition:
+  ///     (a) terminal => last.node is TextNode or child-free ElementNode, or
+  ///         an ElementNode whose child is SimpleNode.
+  ///     (b) halfway => last.getChild() is pivotal.
+  static func getTraceSegment(
     _ layoutOffset: Int, _ subtree: ElementNode
-  ) -> (Trace, consumed: Int)? {
-    // ensure [layoutOffset, _ + 1) is a valid range in the subtree.
-    guard 0..<subtree.layoutLength() ~= layoutOffset else { return nil }
-    // ASSERT:  ¬CF(subtree)
+  ) -> PositionResult<Trace> {
 
     var trace = Trace()
-    var node: Node = subtree
-    var unconsumed = layoutOffset
+    var current: Node = subtree
+    var accumulated = 0
 
-    /*
-     Define notations as follows.
-      n:= trace.count
-      $node[k]:= trace[k].node
-      $child[k]:= trace[k].getChild()
-    
-     Define predicates as follows.
-      T(node):= node is TextNode
-      P(node):= node is pivotal
-      CF(node):= node is child-free ElementNode ∨ is SimpleNode
-      ETS(node):= node is ElementNode ∨ is TextNode ∨ is SimpleNode
-    
-     Invariant:
-      n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)
-    
-     On exit:
-      n>=1 ∧ (n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)) ∧
-        (T($node[n-1]) ∨ P($child[n-1]) ∨ CF($child[n-1]))
-     */
     while true {
-      // ASSERT: n=0  ⇒ node = subtree ∧ ¬CF(node)
-      // ASSERT: n>=1 ⇒ node = $child[n-1] ∧ ETS(node)
-      // ASSERT: n>=1 ⇒ ¬P(node)
+      assert(isElementNode(current) || isTextNode(current))
 
-      assert(isElementNode(node) || isTextNode(node) || isSimpleNode(node))
+      let result: PositionResult<RohanIndex> =
+        current.getPosition(layoutOffset - accumulated)
 
-      // For method `getRohanIndex(_:)`,
-      // (a) TextNode always return non-nil;
-      // (b) ElementNode returns nil iff it is child-free.
-      // (c) Simple node always return nil.
-      guard let (index, consumed) = node.getRohanIndex(unconsumed) else {
-        // ASSERT: node = $child[n-1] ∧ CF(node)
-        break
+      switch result {
+      case .terminal(let value, let target):
+        assert(isElementNode(current) || isTextNode(current))
+        trace.emplaceBack(current, value)
+        accumulated += target
+        return .terminal(value: trace, target: accumulated)
+
+      case .halfway(let value, let consumed):
+        assert(isElementNode(current))
+        // ASSERT: current.isEmpty == false
+
+        trace.emplaceBack(current, value)
+        accumulated += consumed
+
+        guard let next = current.getChild(value),  // getChild() must succeed.
+          next.isPivotal == false
+        else {
+          // next is pivotal.
+          return .halfway(value: trace, consumed: accumulated)
+        }
+        // Since ApplyNode/MathNode/ArrayNode are pivotal, it holds that `next` is
+        // not any of them. And more, ArgumentNode must be a child of ApplyNode,
+        // so `next` cannot be ArgumentNode.
+
+        if isSimpleNode(next) {
+          return .terminal(value: trace, target: accumulated)
+        }
+        assert(isElementNode(next) || isTextNode(next))
+        current = next
+
+      case .null:
+        assertionFailure("unexpected case")
+        return .null
+
+      case .failure(let satzError):
+        assert(satzError.code == .InvalidLayoutOffset)
+        return .failure(satzError)
       }
-      assert(isElementNode(node) || isTextNode(node))
-
-      // n ← n+1
-      trace.emplaceBack(node, index)
-      unconsumed -= consumed
-
-      // For method `getChild(_:)`, and index obtained with `getRohanIndex(_:)`,
-      // (a) TextNode always return nil;
-      // (b) ElementNode always return non-nil.
-      guard let child = node.getChild(index),
-        child.isPivotal == false
-      else {
-        // ASSERT: node = $node[n-1]  ∧ (T(node) ∨ (child = $child[n-1] ∧ P(child)))
-        break
-      }
-      // ASSERT: ¬P(child)
-
-      // Since ApplyNode and MathNode's are pivotal, it holds that `child` is
-      // not ApplyNode or MathNode. And more, ArgumentNode must be a child
-      // of ApplyNode, so `child` cannot be ArgumentNode. So ETS(child) is true.
-
-      // ASSERT: ETS(child)
-      node = child
-      // ASSERT: ¬P(node)
-      // ASSERT: ETS(node)
     }
-
-    return (trace, layoutOffset - unconsumed)
   }
 
-  /// Build a __normalized__ text location from a trace.
-  /// - Note: By __"normalized"__, we mean:
-  ///      (a) if a location points to a transparent element, it is relocated to
-  ///          the beginning of its children;
-  ///      (b) if a location points to a text node, it is relocated to the
-  ///          beginning of the text node.
-  ///      (c) if a location points to a node having a text node as its left
-  ///          neighbour, it is relocated to the end of the text node.
-  /// - Invariant: if the trace is valid, the returned location must be __equivalent__
-  ///     to the original location for `replaceCharacters(in:with:)` and
-  ///     `replaceContents(in:with:)`.
-  func toTextLocation() -> TextLocation? {
+  /// Build a text location from a trace without relocation.
+  func toRawLocation() -> TextLocation? {
+    guard let last,
+      let lastIndex = last.index.index()
+    else { return nil }
+    let indices = _elements.dropLast().map(\.index)
+    return TextLocation(indices, lastIndex)
+  }
+
+  /// Build a **normal** text location from a trace.
+  /// - Note: A **normal** text location satisfies the following properties:
+  ///     (a) if a location points to a transparent element, it is relocated to
+  ///         the beginning of its children;
+  ///     (b) if a location points to a text node, it is relocated to the beginning
+  ///         of the text node;
+  ///     (c) if a location points to a node having a text node as its left neighbour,
+  ///         it is relocated to the end of the text node.
+  /// - Invariant: The returned text location should be equivalent to the trace for
+  ///     the purpose of text editing.
+  func toNormalLocation() -> TextLocation? {
     guard let last,
       var lastIndex = last.index.index()
     else { return nil }
@@ -201,12 +181,36 @@ extension Trace {
     }
   }
 
-  /// Build a __raw__ (unnormalized) text location from a trace.
-  func toRawTextLocation() -> TextLocation? {
+  /// Build a **user-space** text location from a trace.
+  /// - Note: A **user-space** text location satisfies the following properties
+  ///     where the first three items are the same as those of a canonical:
+  ///     (a) if a location points to a transparent element, it is relocated to
+  ///         the beginning of its children;
+  ///     (b) if a location points to a text node, it is relocated to the beginning
+  ///         of the text node;
+  ///     (c) if a location points to a node having a text node as its left neighbour,
+  ///         it is relocated to the end of the text node.
+  ///     (d) if a location points to the end of a root node whose last child is a
+  ///         paragraph node, it is relocated to the end of the last paragraph node.
+  mutating func toUserSpaceLocation() -> TextLocation? {
     guard let last,
       let lastIndex = last.index.index()
     else { return nil }
-    let indices = _elements.dropLast().map(\.index)
-    return TextLocation(indices, lastIndex)
+
+    let lastNode = last.node
+
+    if let root = lastNode as? RootNode {
+      let childCount = root.childCount
+      if childCount > 0,
+        lastIndex == childCount,
+        let paragraph = root.getChild(childCount - 1) as? ParagraphNode
+      {
+        self.moveTo(.index(childCount - 1))
+        self.emplaceBack(paragraph, .index(paragraph.childCount))
+        return self.toNormalLocation()
+      }
+      // FALL THROUGH
+    }
+    return self.toNormalLocation()
   }
 }

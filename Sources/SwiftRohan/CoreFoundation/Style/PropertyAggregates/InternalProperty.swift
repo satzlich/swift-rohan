@@ -8,11 +8,11 @@ public struct InternalProperty: PropertyAggregate {
   public static func resolveAggregate(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> InternalProperty {
-    func resolve(_ key: PropertyKey) -> PropertyValue {
+    func resolved(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, fallback)
     }
 
-    return InternalProperty(nestedLevel: resolve(nestedLevel).integer()!)
+    return InternalProperty(nestedLevel: resolved(nestedLevel).integer()!)
   }
 
   public static let allKeys: [PropertyKey] = [

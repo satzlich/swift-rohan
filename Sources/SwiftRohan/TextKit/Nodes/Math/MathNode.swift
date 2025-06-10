@@ -32,11 +32,6 @@ class MathNode: Node {
     return nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset for math component is not well-defined and is unused
-    return nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // layout offset for math component is not well-defined and is unused
     return .null
@@ -159,7 +154,7 @@ class MathNode: Node {
     else { return false }
 
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
     else { return false }
     // compute new origin correction
     let originCorrection: CGPoint =
@@ -176,10 +171,8 @@ class MathNode: Node {
       type: type, options: options, using: block)
   }
 
-  /// - Parameters:
-  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext,
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // resolve math index for point
@@ -201,8 +194,9 @@ class MathNode: Node {
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
-      component.resolveTextLocation(
-        with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
+      component.resolveTextLocation_v2(
+        with: relPoint, context: newContext, layoutOffset: 0,
+        trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified { trace.emplaceBack(component, .index(0)) }
     return true
@@ -230,7 +224,7 @@ class MathNode: Node {
     else { return nil }
 
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
     else { return nil }
 
     // if resolved, return origin-corrected result

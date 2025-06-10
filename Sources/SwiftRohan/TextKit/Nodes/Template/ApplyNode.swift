@@ -44,11 +44,6 @@ final class ApplyNode: Node {
     nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset is not well-defined for ApplyNode
-    nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // layout offset is not well-defined for ApplyNode
     .null
@@ -256,35 +251,29 @@ final class ApplyNode: Node {
     return true
   }
 
-  override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext,
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). 
-      The work is done by the other overload of \(#function) with layoutRange.
-      """
-    )
+    assertionFailure("Work is done in another function")
     return false
   }
 
-  /// Resolve text location with given point, and (layoutRange, fraction) pair.
-  final func resolveTextLocation(
-    with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity,
-    _ layoutRange: LayoutRange
+  /// Resolve text location with given point and layout range.
+  final func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity,
+    layoutRange: LayoutRange
   ) -> Bool {
-    // resolve text location in content
     var localTrace = Trace()
-    let modified = _content.resolveTextLocation(
-      with: point, context: context, trace: &localTrace, affinity: &affinity,
-      layoutRange: layoutRange)
+    let modified = _content.resolveTextLocation_v2(
+      with: point, context: context, layoutOffset: layoutOffset, trace: &localTrace,
+      affinity: &affinity, layoutRange: layoutRange)
     guard modified else { return false }
 
-    // Returns true if the given node is a variable node associated to this
-    // apply node
-    func match(_ node: Node) -> Bool {
+    /// Returns true if the given node is a variable node associated to this
+    /// apply node.
+    func matchVariable(_ node: Node) -> Bool {
       if let variableNode = node as? VariableNode,
         variableNode.isAssociated(with: self)
       {
@@ -294,7 +283,7 @@ final class ApplyNode: Node {
     }
 
     // fix trace according to new trace
-    guard let indexMatched = localTrace.firstIndex(where: { match($0.node) }),
+    guard let indexMatched = localTrace.firstIndex(where: { matchVariable($0.node) }),
       let argumentIndex = (localTrace[indexMatched].node as? VariableNode)?.argumentIndex
     else { return false }
     // append argument index

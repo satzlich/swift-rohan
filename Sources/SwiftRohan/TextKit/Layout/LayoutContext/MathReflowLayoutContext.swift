@@ -92,14 +92,6 @@ final class MathReflowLayoutContext: LayoutContext {
     return textLayoutContext.getSegmentFrame(reflowedOffset, affinity)
   }
 
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    precondition(!isEditing && textOffset != nil)
-    let reflowedOffset = reflowedOffset(for: layoutOffset)
-    return textLayoutContext.getSegmentFrame(for: reflowedOffset, affinity, node)
-  }
-
   func enumerateTextSegments(
     _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,

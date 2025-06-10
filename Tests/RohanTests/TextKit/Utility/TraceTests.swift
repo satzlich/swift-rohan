@@ -18,14 +18,14 @@ struct TraceTests {
     for _ in 0..<10 {
       trace.moveForward()
     }
-    #expect("\(trace.toTextLocation()!)" == "[]:0")
+    #expect("\(trace.toNormalLocation()!)" == "[]:0")
     for _ in 0..<10 {
       trace.moveBackward()
     }
-    #expect("\(trace.toTextLocation()!)" == "[]:0")
+    #expect("\(trace.toNormalLocation()!)" == "[]:0")
 
     //
-    _ = trace.toRawTextLocation()
+    _ = trace.toRawLocation()
   }
 
   @Test
@@ -46,11 +46,11 @@ struct TraceTests {
       for _ in 0..<10 {
         trace.moveForward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[↓0]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[↓0]:0")
       for _ in 0..<10 {
         trace.moveBackward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[↓0]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[↓0]:0")
     }
     do {
       let location = TextLocation.parse("[]:1")!
@@ -63,11 +63,11 @@ struct TraceTests {
       for _ in 0..<10 {
         trace.moveForward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[↓0]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[↓0]:0")
       for _ in 0..<10 {
         trace.moveBackward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[↓0]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[↓0]:0")
     }
   }
 
@@ -87,11 +87,11 @@ struct TraceTests {
       for _ in 0..<10 {
         trace.moveForward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[]:1")
+      #expect("\(trace.toNormalLocation()!)" == "[]:1")
       for _ in 0..<10 {
         trace.moveBackward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[]:0")
     }
   }
 
@@ -120,11 +120,11 @@ struct TraceTests {
       for _ in 0..<20 {
         trace.moveForward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[]:1")
+      #expect("\(trace.toNormalLocation()!)" == "[]:1")
       for _ in 0..<20 {
         trace.moveBackward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[]:0")
     }
   }
 
@@ -156,12 +156,12 @@ struct TraceTests {
       for _ in 0..<20 {
         trace.moveForward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[]:1")
+      #expect("\(trace.toNormalLocation()!)" == "[]:1")
 
       for _ in 0..<20 {
         trace.moveBackward()
       }
-      #expect("\(trace.toTextLocation()!)" == "[]:0")
+      #expect("\(trace.toNormalLocation()!)" == "[]:0")
     }
   }
 

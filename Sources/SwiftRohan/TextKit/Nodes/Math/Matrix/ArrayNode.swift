@@ -57,7 +57,7 @@ class ArrayNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int { Self.unitLayoutLength }
+  final override func layoutLength() -> Int { UNIT_LENGTH }
 
   final override var isDirty: Bool { _isDirty }
 
@@ -136,14 +136,14 @@ class ArrayNode: Node {
       if needsFixLayout {
         matrixFragment.fixLayout(mathContext)
         if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(Self.unitLayoutLength)
+          context.invalidateBackwards(UNIT_LENGTH)
         }
         else {
-          context.skipBackwards(Self.unitLayoutLength)
+          context.skipBackwards(UNIT_LENGTH)
         }
       }
       else {
-        context.skipBackwards(Self.unitLayoutLength)
+        context.skipBackwards(UNIT_LENGTH)
       }
     }
 
@@ -152,7 +152,7 @@ class ArrayNode: Node {
     _editLog.removeAll()
     _addedNodes.removeAll()
 
-    return Self.unitLayoutLength
+    return UNIT_LENGTH
   }
 
   // MARK: - ArrayNode
@@ -347,11 +347,6 @@ class ArrayNode: Node {
     nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset for matrix is not well-defined and is unused
-    nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // layout offset for matrix is not well-defined and is unused
     .null
@@ -377,7 +372,7 @@ class ArrayNode: Node {
     else { return false }
 
     // obtain super frame with given layout offset (affinity can be arbitrary)
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, .downstream, self)
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return false }
     // set new layout offset
     let layoutOffset = 0
@@ -396,9 +391,9 @@ class ArrayNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, trace: inout Trace,
-    affinity: inout RhTextSelection.Affinity
+  final override func resolveTextLocation_v2(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
@@ -411,23 +406,23 @@ class ArrayNode: Node {
     // create sub-context
     let newContext =
       LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
-    let relPoint = {
+    let relPoint: CGPoint
+    do {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
       let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
       // convert to relative position to top-left corner of component fragment
-      return point.relative(to: frameOrigin)
-    }()
+      relPoint = point.relative(to: frameOrigin)
+    }
     // append to trace
     trace.emplaceBack(self, .gridIndex(index))
     // recurse
     let modified =
-      component.resolveTextLocation(
-        with: relPoint, context: newContext, trace: &trace, affinity: &affinity)
+      component.resolveTextLocation_v2(
+        with: relPoint, context: newContext, layoutOffset: 0,
+        trace: &trace, affinity: &affinity)
     // fix accordingly
-    if !modified {
-      trace.emplaceBack(component, .index(0))
-    }
+    if !modified { trace.emplaceBack(component, .index(0)) }
     return true
   }
 
@@ -445,7 +440,7 @@ class ArrayNode: Node {
       let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
     else { return nil }
     // create sub-context
     let newContext =

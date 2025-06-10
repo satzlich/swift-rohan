@@ -16,7 +16,7 @@ final class TextLineLayoutContext: CTLineLayoutContext {
     precondition(isEditing)
     guard !text.isEmpty else { return }
     // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let properties: TextProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
     // create attributed string
     let attrString = NSAttributedString(string: String(text), attributes: attributes)

@@ -82,8 +82,8 @@ final class MathLineLayoutContext: LayoutContext {
     guard !text.isEmpty else { return }
 
     //
-    let mathProperty = source.resolvePropertyAggregate(styleSheet) as MathProperty
-    let textProperty = source.resolvePropertyAggregate(styleSheet) as TextProperty
+    let mathProperty = source.resolveAggregate(styleSheet) as MathProperty
+    let textProperty = source.resolveAggregate(styleSheet) as TextProperty
     let attributes = mathProperty.getAttributes(
       isFlipped: true,  // flip for CTLine
       textProperty, mathContext)
@@ -126,13 +126,6 @@ final class MathLineLayoutContext: LayoutContext {
   ) -> SegmentFrame? {
     let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
     return layoutContext.getSegmentFrame(resolvedOffset, affinity)
-  }
-
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
-    return layoutContext.getSegmentFrame(for: resolvedOffset, affinity, node)
   }
 
   func enumerateTextSegments(

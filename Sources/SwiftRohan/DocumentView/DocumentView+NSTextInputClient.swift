@@ -152,7 +152,7 @@ extension DocumentView: NSTextInputClient {
       let markedRange = markedText.markedTextRange()
     else { return }
 
-    let result: InsertionResult<RhTextRange> =
+    let result: EditResult<RhTextRange> =
       replaceCharacters(in: markedRange, with: "", registerUndo: false)
 
     guard let insertionRange = result.success()
@@ -212,7 +212,7 @@ extension DocumentView: NSTextInputClient {
 
     let point = contentView.convert(window.convertPoint(fromScreen: point), from: nil)
 
-    guard let location = documentManager.resolveTextLocation(with: point)
+    guard let location = documentManager.resolveTextLocation_v2(with: point)
     else { return NSNotFound }
 
     return documentManager.llOffset(from: markedText.location, to: location.value)

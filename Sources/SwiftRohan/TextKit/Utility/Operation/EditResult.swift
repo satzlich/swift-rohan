@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum InsertionResult<T> {
+enum EditResult<T> {
   /// insertion is successful.
   case success(T)
   /// insertion is successful with a new paragraph created holding the inserted content.
@@ -8,7 +8,7 @@ enum InsertionResult<T> {
 
   case failure(SatzError)
 
-  func map<U>(_ transform: (T) throws -> U) rethrows -> InsertionResult<U> {
+  func map<U>(_ transform: (T) throws -> U) rethrows -> EditResult<U> {
     switch self {
     case .success(let value):
       return .success(try transform(value))

@@ -16,11 +16,11 @@ extension TreeUtils {
     switch direction {
     case .forward:
       trace.moveForward()
-      return trace.toTextLocation()
+      return trace.toUserSpaceLocation()
 
     case .backward:
       trace.moveBackward()
-      return trace.toTextLocation()
+      return trace.toUserSpaceLocation()
 
     default:
       assertionFailure("Unexpected direction")

@@ -26,7 +26,7 @@ extension TreeUtils {
       let end = element.childCount
       guard end > 0,
         let range = RhTextRange(TextLocation(prefix, 0), TextLocation(prefix, end)),
-        let level = element.resolveProperty(InternalProperty.nestedLevel, styleSheet)
+        let level = element.resolveValue(InternalProperty.nestedLevel, styleSheet)
           .integer()
       else { return nil }
       return (range, level)
@@ -37,7 +37,7 @@ extension TreeUtils {
       guard end > 0,
         let range = RhTextRange(TextLocation(prefix, 0), TextLocation(prefix, end)),
         let variableNode = argument.variableNodes.first,
-        let level = variableNode.resolveProperty(key, styleSheet).integer()
+        let level = variableNode.resolveValue(key, styleSheet).integer()
       else { return nil }
       return (range, level)
 

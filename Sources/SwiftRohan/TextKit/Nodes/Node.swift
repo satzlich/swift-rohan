@@ -110,16 +110,6 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /// Returns the rohan index of the child node that is picked by `[layoutOffset, _ + 1)`
-  /// together with the layout offset of the child.
-  /// - Parameter layoutOffset: layout offset
-  /// - Invariant: If return value is non-nil, then access child/character with
-  ///     the returned index must succeed.
-  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
-  internal func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    preconditionFailure("overriding required")
-  }
-
   /// Returns a position within the node that is picked by `layoutOffset`.
   /// - Parameter layoutOffset: layout offset
   /// - Invariant: If return value is non-nil, then the index must be valid for the node.
@@ -220,11 +210,11 @@ internal class Node: Codable {
   }
 
   /// Resolve the text location for the given point within the node.
-  /// - Returns: true if text location is resolved, false otherwise.
-  /// - Note: In the case of success, the text location is implicitly stored in the trace.
-  internal func resolveTextLocation(
-    with point: CGPoint, context: LayoutContext, trace: inout Trace,
-    affinity: inout RhTextSelection.Affinity
+  /// - Returns: true if trace is modified, false otherwise.
+  /// - Postcondition: the location is stored implicitly in the trace.
+  internal func resolveTextLocation_v2(
+    with point: CGPoint, context: LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     preconditionFailure("overriding required")
   }
@@ -246,22 +236,14 @@ internal class Node: Codable {
 
 extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
-
-  /// Returns true if the node is pivotal.
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
-  /// Resolve the value of property aggregate for given type.
-  final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
-  where T: PropertyAggregate {
+  final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
   /// Resolve the value of property for given key.
-  final func resolveProperty(
-    _ key: PropertyKey, _ styleSheet: StyleSheet
-  ) -> PropertyValue {
+  final func resolveValue(_ key: PropertyKey, _ styleSheet: StyleSheet) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
   }
-
-  static let unitLayoutLength: Int = 1
 }

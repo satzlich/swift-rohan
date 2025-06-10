@@ -97,7 +97,7 @@ final class MathListLayoutContext: LayoutContext {
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0)
     guard !text.isEmpty else { assertionFailure("empty text is invalid"); return }
-    let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
+    let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
     let fragments = fragmentFactory.makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
   }
@@ -124,7 +124,7 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   internal func getFragments(for string: String, _ source: Node) -> Array<MathFragment> {
-    let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
+    let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
     return fragmentFactory.makeFragments(from: string, mathProperty)
   }
 
@@ -134,12 +134,6 @@ final class MathListLayoutContext: LayoutContext {
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     layoutFragment.getSegmentFrame(for: layoutOffset)
-  }
-
-  func getSegmentFrame(
-    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
-  ) -> SegmentFrame? {
-    self.getSegmentFrame(layoutOffset, affinity)
   }
 
   func enumerateTextSegments(
