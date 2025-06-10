@@ -179,7 +179,7 @@ final class MathListLayoutContext: LayoutContext {
     }
   }
 
-  func lineFrame(
+  func neighbourLineFrame(
     from layoutOffset: Int,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction

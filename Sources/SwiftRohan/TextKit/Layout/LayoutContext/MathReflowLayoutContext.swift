@@ -124,13 +124,13 @@ final class MathReflowLayoutContext: LayoutContext {
       from: reflowedRange, affinity: affinity, direction: direction)
   }
 
-  func lineFrame(
+  func neighbourLineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset != nil)
     let reflowedOffset = reflowedOffset(for: layoutOffset)
-    return textLayoutContext.lineFrame(
+    return textLayoutContext.neighbourLineFrame(
       from: reflowedOffset, affinity: affinity, direction: direction)
   }
 
