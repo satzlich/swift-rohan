@@ -464,10 +464,9 @@ extension MathListLayoutFragment {
 
   var reflowSegmentCount: Int { _reflowSegments.count }
 
-  func reflowSegment(at index: Int) -> ReflowSegmentFragment {
+  var reflowSegments: Array<ReflowSegmentFragment> {
     precondition(!isEditing)
-    precondition(index >= 0 && index < _reflowSegments.count)
-    return _reflowSegments[index]
+    return _reflowSegments
   }
 
   func performReflow() {

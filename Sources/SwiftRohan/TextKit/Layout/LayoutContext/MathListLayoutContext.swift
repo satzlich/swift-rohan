@@ -192,8 +192,8 @@ extension MathListLayoutContext {
 
   var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
 
-  func reflowSegment(at index: Int) -> ReflowSegmentFragment {
-    layoutFragment.reflowSegment(at: index)
+  var reflowSegments: Array<ReflowSegmentFragment> {
+    layoutFragment.reflowSegments
   }
 
   func performReflow() {

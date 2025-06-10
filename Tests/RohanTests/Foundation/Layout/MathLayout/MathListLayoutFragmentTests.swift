@@ -53,23 +53,17 @@ struct MathListLayoutFragmentTests {
     #expect(mathList.count == 7)
     #expect(mathList.reflowSegmentCount == 3)
 
+    let reflowSegments = mathList.reflowSegments
     do {
-      let count = mathList.reflowSegmentCount
-      let width =
-        (0..<count).lazy
-        .map { mathList.reflowSegment(at: $0).width }
-        .reduce(0, +)
+      let width = reflowSegments.map(\.width).reduce(0, +)
       #expect(width.isNearlyEqual(to: mathList.width))
 
-      let layoutLength =
-        (0..<count).lazy
-        .map { mathList.reflowSegment(at: $0).offsetRange.count }
-        .reduce(0, +)
+      let layoutLength = reflowSegments.map(\.offsetRange.count).reduce(0, +)
       #expect(layoutLength == mathList.contentLayoutLength)
     }
 
     do {
-      let segment = mathList.reflowSegment(at: 0)
+      let segment = reflowSegments[0]
       #expect(segment.range == 0..<2)
       #expect(segment.offsetRange == 0..<2)
       #expect(segment.fragmentIndex(0) == 0)
@@ -83,7 +77,7 @@ struct MathListLayoutFragmentTests {
       #expect(segment.cursorDistanceThroughSegment(2).isNearlyEqual(to: 16.43444444))
     }
     do {
-      let segment = mathList.reflowSegment(at: 1)
+      let segment = reflowSegments[1]
       #expect(segment.range == 2..<4)
       #expect(segment.offsetRange == 2..<4)
       #expect(segment.fragmentIndex(2) == 2)
@@ -97,7 +91,7 @@ struct MathListLayoutFragmentTests {
       #expect(segment.cursorDistanceThroughSegment(4).isNearlyEqual(to: 16.19666666))
     }
     do {
-      let segment = mathList.reflowSegment(at: 2)
+      let segment = reflowSegments[2]
       #expect(segment.range == 4..<7)
       #expect(segment.offsetRange == 4..<7)
       #expect(segment.fragmentIndex(3) == 4)
