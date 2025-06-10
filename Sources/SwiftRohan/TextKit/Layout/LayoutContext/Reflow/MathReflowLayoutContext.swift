@@ -122,3 +122,7 @@ final class MathReflowLayoutContext: LayoutContext {
     preconditionFailure()
   }
 }
+
+extension MathReflowLayoutContext {
+  
+}
