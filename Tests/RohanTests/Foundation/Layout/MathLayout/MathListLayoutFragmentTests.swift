@@ -47,7 +47,7 @@ struct MathListLayoutFragmentTests {
 
   @Test
   func reflowMultiFragments() {
-    let glyphs = "x+y=z/w".map { getGlyph(for: $0) }
+    let glyphs = "x+y=+zw".map { getGlyph(for: $0) }
     let mathList = reflowExample(glyphs)
 
     #expect(mathList.count == 7)
@@ -71,7 +71,11 @@ struct MathListLayoutFragmentTests {
       #expect(segment.fragmentIndex(1) == 1)
       #expect(segment.fragmentIndex(2) == 2)
       #expect(segment.distanceThroughSegment(0) == 0)
-      #expect(segment.distanceThroughSegment(1).isNearlyEqual(to: 7.012))
+      #expect(segment.distanceThroughSegment(1).isNearlyEqual(to: 7.0122222))
+      #expect(segment.distanceThroughSegment(2).isNearlyEqual(to: 14.21222222))
+      #expect(segment.cursorDistanceThroughSegment(0) == 0)
+      #expect(segment.cursorDistanceThroughSegment(1).isNearlyEqual(to: 4.79))
+      #expect(segment.cursorDistanceThroughSegment(2).isNearlyEqual(to: 16.43444444))
     }
     do {
       let segment = reflowSegments[1]
@@ -80,6 +84,12 @@ struct MathListLayoutFragmentTests {
       #expect(segment.fragmentIndex(2) == 2)
       #expect(segment.fragmentIndex(3) == 3)
       #expect(segment.fragmentIndex(4) == 4)
+      #expect(segment.distanceThroughSegment(2) == 0)
+      #expect(segment.distanceThroughSegment(3).isNearlyEqual(to: 7.6077777))
+      #expect(segment.distanceThroughSegment(4).isNearlyEqual(to: 14.8077777))
+      #expect(segment.cursorDistanceThroughSegment(2) == 0)
+      #expect(segment.cursorDistanceThroughSegment(3).isNearlyEqual(to: 4.82999999))
+      #expect(segment.cursorDistanceThroughSegment(4).isNearlyEqual(to: 16.19666666))
     }
     do {
       let segment = reflowSegments[2]
@@ -91,6 +101,14 @@ struct MathListLayoutFragmentTests {
       #expect(segment.fragmentIndex(6) == 6)
       #expect(segment.fragmentIndex(7) == 7)
       #expect(segment.fragmentIndex(8) == 7)
+      #expect(segment.distanceThroughSegment(4) == 1.388888888)
+      #expect(segment.distanceThroughSegment(5).isNearlyEqual(to: 8.58888888))
+      #expect(segment.distanceThroughSegment(6).isNearlyEqual(to: 13.1688888))
+      #expect(segment.distanceThroughSegment(7).isNearlyEqual(to: 20.6588888))
+      #expect(segment.cursorDistanceThroughSegment(4) == 0)
+      #expect(segment.cursorDistanceThroughSegment(5).isNearlyEqual(to: 8.5888888))
+      #expect(segment.cursorDistanceThroughSegment(6).isNearlyEqual(to: 13.1688888))
+      #expect(segment.cursorDistanceThroughSegment(7).isNearlyEqual(to: 20.65888888))
     }
   }
 }

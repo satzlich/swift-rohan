@@ -102,9 +102,11 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   // MARK: - ReflowSegmentFragment
 
   /// **Exact distance** from the fragment identified by index to the
-  /// upstream boundary of the segment.
+  /// upstream boundary of the segment. When the index is at the upper
+  /// bound, the distance is from the downstream edge of the last fragment.
   func distanceThroughSegment(_ index: Int) -> Double {
-    precondition(range ~= index)
+    precondition(index >= range.lowerBound)
+    precondition(index <= range.upperBound)
     if index == range.lowerBound {
       return upstream
     }
@@ -113,8 +115,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
         - source.get(range.lowerBound).glyphOrigin.x
     }
     else {
-      // Unreachable if index is within the range.
-      return totalWidth
+      return totalWidth - downstream
     }
   }
 
