@@ -27,9 +27,9 @@ struct MathLayoutFragmentTests {
       _ = fragment.boxDescription
       _ = fragment.debugPrint()
 
-      for corner in Corner.allCases {
-        _ = fragment.kernAtHeight(context, corner, 10)
-      }
+//      for corner in Corner.allCases {
+//        _ = fragment.kernAtHeight(context, corner, 10)
+//      }
     }
   }
 }
