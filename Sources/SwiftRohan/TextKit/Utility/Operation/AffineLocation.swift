@@ -5,9 +5,9 @@ import Foundation
 /// Location resolved from coordinates
 struct AffineLocation {
   let value: TextLocation
-  let affinity: RhTextSelection.Affinity
+  let affinity: TextAffinity
 
-  init(_ value: TextLocation, _ affinity: RhTextSelection.Affinity) {
+  init(_ value: TextLocation, _ affinity: TextAffinity) {
     self.value = value
     self.affinity = affinity
   }

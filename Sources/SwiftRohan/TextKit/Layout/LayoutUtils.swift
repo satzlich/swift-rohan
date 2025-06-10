@@ -150,7 +150,7 @@ enum LayoutUtils {
 
   /// Rayshoot further if the result is not resolved.
   static func relayRayshoot(
-    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity,
+    _ layoutOffset: Int, _ affinity: TextAffinity,
     _ direction: TextSelectionNavigation.Direction,
     _ result: RayshootResult, _ context: LayoutContext
   ) -> RayshootResult? {

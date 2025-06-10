@@ -64,7 +64,7 @@ public struct RhTextSelection: CustomStringConvertible {
   }
 }
 
-extension RhTextSelection.Affinity: @retroactive CustomStringConvertible {
+extension TextAffinity: @retroactive CustomStringConvertible {
   public var description: String {
     switch self {
     case .downstream:

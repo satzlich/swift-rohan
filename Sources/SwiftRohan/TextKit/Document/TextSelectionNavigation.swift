@@ -169,7 +169,7 @@ public struct TextSelectionNavigation {
 
   private func createTextSelection(
     from anchor: TextLocation, _ focus: TextLocation,
-    affinity: RhTextSelection.Affinity
+    affinity: TextAffinity
   ) -> RhTextSelection? {
     guard let textRange = RhTextRange(unordered: anchor, focus),
       let repairedRange = documentManager.repairTextRange(textRange).unwrap()

@@ -130,7 +130,7 @@ final class MathListLayoutContext: LayoutContext {
   // MARK: - Query
 
   func getSegmentFrame(
-    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+    _ layoutOffset: Int, _ affinity: TextAffinity
   ) -> SegmentFrame? {
     layoutFragment.getSegmentFrame(layoutOffset)
   }
@@ -156,7 +156,7 @@ final class MathListLayoutContext: LayoutContext {
 
   func rayshoot(
     from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    affinity: TextAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     guard let segmentFrame = getSegmentFrame(layoutOffset, affinity) else { return nil }
@@ -179,7 +179,7 @@ final class MathListLayoutContext: LayoutContext {
 
   func neighbourLineFrame(
     from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    affinity: TextAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil

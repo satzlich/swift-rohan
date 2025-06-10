@@ -622,7 +622,7 @@ internal class ElementNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+    trace: inout Trace, affinity: inout TextAffinity
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point) else { return false }
 
@@ -641,7 +641,7 @@ internal class ElementNode: Node {
   ///   **top-left corner** of the math list.
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity,
+    trace: inout Trace, affinity: inout TextAffinity,
     layoutRange: LayoutRange
   ) -> Bool {
     if layoutRange.isEmpty {
@@ -803,7 +803,7 @@ internal class ElementNode: Node {
 
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    affinity: RhTextSelection.Affinity,
+    affinity: TextAffinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
