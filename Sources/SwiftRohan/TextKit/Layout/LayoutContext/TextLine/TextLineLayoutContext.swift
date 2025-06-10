@@ -4,7 +4,7 @@ import CoreText
 import Foundation
 
 final class TextLineLayoutContext: CTLineLayoutContext {
-  override init(_ styleSheet: StyleSheet, _ fragment: UniLineLayoutFragment) {
+  override init(_ styleSheet: StyleSheet, _ fragment: CTLineLayoutFragment) {
     super.init(styleSheet, fragment)
   }
 

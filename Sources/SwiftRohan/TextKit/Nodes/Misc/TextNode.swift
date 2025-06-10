@@ -210,7 +210,7 @@ final class TextNode: Node {
     else {
       return nil
     }
-    return LayoutUtils.rayshootFurther(newOffset, affinity, direction, result, context)
+    return LayoutUtils.relayRayshoot(newOffset, affinity, direction, result, context)
   }
 
   // MARK: - TextNode Specific

@@ -21,9 +21,7 @@ final class LayoutFragmentWrapper<T: LayoutFragment>: MathLayoutFragment {
     glyphOrigin = origin
   }
 
-  func fixLayout(_ mathContext: MathContext) {
-    // no-op
-  }
+  func fixLayout(_ mathContext: MathContext) { /* no-op */  }
 
   var layoutLength: Int { nucleus.layoutLength }
 
@@ -45,8 +43,9 @@ final class LayoutFragmentWrapper<T: LayoutFragment>: MathLayoutFragment {
   var isSpaced: Bool { false }
   var isTextLike: Bool { false }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "mathwrapper \(boxDescription)"
-    return PrintUtils.compose([description], [])
+  func debugPrint(_ name: String) -> Array<String> {
+    [
+      "\(name): LayoutFragmentWrapper"
+    ]
   }
 }

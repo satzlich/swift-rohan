@@ -249,15 +249,10 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
   // MARK: - Debug Description
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "fraction \(boxDescription)"
-    let children: [Array<String>]
-    do {
-      let ruler: [String] = ["ruler \(rulePosition.formatted(2))"]
-      let numerator = self.numerator.debugPrint("\(MathIndex.num)")
-      let denominator = self.denominator.debugPrint("\(MathIndex.denom)")
-      children = [ruler, numerator, denominator]
-    }
-    return PrintUtils.compose([description], children)
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): MathFractionLayoutFragment"
+    let numerator = self.numerator.debugPrint("\(MathIndex.num)")
+    let denominator = self.denominator.debugPrint("\(MathIndex.denom)")
+    return PrintUtils.compose([description], [numerator, denominator])
   }
 }

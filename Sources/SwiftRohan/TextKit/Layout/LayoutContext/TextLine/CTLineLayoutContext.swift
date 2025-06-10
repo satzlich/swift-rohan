@@ -9,10 +9,10 @@ internal class CTLineLayoutContext: LayoutContext {
   final private(set) var ctLine: CTLine
   final let layoutMode: LayoutMode
 
-  typealias BoundsOption = UniLineLayoutFragment.BoundsOption
+  typealias BoundsOption = CTLineLayoutFragment.BoundsOption
   final let boundsOption: BoundsOption
 
-  init(_ styleSheet: StyleSheet, _ fragment: UniLineLayoutFragment) {
+  init(_ styleSheet: StyleSheet, _ fragment: CTLineLayoutFragment) {
     self.styleSheet = styleSheet
     self.renderedString = fragment.attrString
     self.ctLine = fragment.ctLine

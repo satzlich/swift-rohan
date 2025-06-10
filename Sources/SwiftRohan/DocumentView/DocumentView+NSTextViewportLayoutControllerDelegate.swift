@@ -71,7 +71,7 @@ extension DocumentView: NSTextViewportLayoutControllerDelegate {
     // 2) propagate text container height to view
     let page: PageProperty = documentManager.styleSheet.resolveDefault()
     let usageHeight =
-      documentManager.usageBounds.height + page.topMargin.ptValue
+      documentManager.usageBoundsForTextContainer.height + page.topMargin.ptValue
       + page.bottomMargin.ptValue
     let padding = page.height.ptValue / 2
     frame.size.height = max(usageHeight + padding, page.height.ptValue)

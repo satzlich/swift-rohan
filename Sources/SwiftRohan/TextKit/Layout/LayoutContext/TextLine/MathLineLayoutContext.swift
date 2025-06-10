@@ -17,7 +17,7 @@ final class MathLineLayoutContext: LayoutContext {
   var ctLine: CTLine { layoutContext.ctLine }
 
   init(
-    _ styleSheet: StyleSheet, _ fragment: UniLineLayoutFragment,
+    _ styleSheet: StyleSheet, _ fragment: CTLineLayoutFragment,
     _ mathContext: MathContext
   ) {
     self.mathContext = mathContext

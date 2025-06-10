@@ -41,7 +41,7 @@ final class TextModeNode: MathNode {
 
     if fromScratch {
       let nucleus =
-        UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
+        CTLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
       let fragment = _NodeFragment(nucleus)
       _nodeFragment = fragment
 
@@ -57,7 +57,7 @@ final class TextModeNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        fragment.nucleus = UniLineLayoutFragment.reconcileTextMode(
+        fragment.nucleus = CTLineLayoutFragment.reconcileTextMode(
           fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 
@@ -129,9 +129,9 @@ final class TextModeNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     precondition(parent is MathListLayoutContext)
-    precondition(fragment is UniLineLayoutFragment)
+    precondition(fragment is CTLineLayoutFragment)
     let context = parent as! MathListLayoutContext
-    let fragment = fragment as! UniLineLayoutFragment
+    let fragment = fragment as! CTLineLayoutFragment
     return TextLineLayoutContext(context.styleSheet, fragment)
   }
 
@@ -181,7 +181,7 @@ final class TextModeNode: MathNode {
 
   // MARK: - TextModeNode
 
-  internal typealias _NodeFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
+  internal typealias _NodeFragment = LayoutFragmentWrapper<CTLineLayoutFragment>
   private var _nodeFragment: _NodeFragment? = nil
 
   let nucleus: ContentNode

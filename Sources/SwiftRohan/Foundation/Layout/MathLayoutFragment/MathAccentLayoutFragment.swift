@@ -147,9 +147,9 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     }
   }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "accent \(boxDescription)"
-    let nucleus = nucleus.debugPrint("\(MathIndex.nuc)")
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): MathAccentLayoutFragment"
+    let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
     return PrintUtils.compose([description], [nucleus])
   }
 }

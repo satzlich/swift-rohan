@@ -63,7 +63,6 @@ struct MathFragmentsTests {
       //
       _ = fragment.bounds
       _ = fragment.boxMetrics
-      _ = fragment.size
       _ = fragment.isNearlyEqual(to: BoxMetrics(width: 0, ascent: 0, descent: 0))
     }
 

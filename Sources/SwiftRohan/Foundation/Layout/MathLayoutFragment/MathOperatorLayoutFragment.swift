@@ -6,13 +6,13 @@ import TTFParser
 import UnicodeMathClass
 
 final class MathOperatorLayoutFragment: MathLayoutFragment {
-  private let _textLine: UniLineLayoutFragment
+  private let _textLine: CTLineLayoutFragment
   private let _limits: Limits
 
   init(_ node: MathOperatorNode, _ styleSheet: StyleSheet, _ mathContext: MathContext) {
     let mathOp = node.mathOperator
     self._textLine =
-      UniLineLayoutFragment.createTextMode(mathOp.string, node, styleSheet, .imageBounds)
+      CTLineLayoutFragment.createTextMode(mathOp.string, node, styleSheet, .imageBounds)
     self._limits = mathOp.limits
     self.glyphOrigin = .zero
   }
@@ -43,14 +43,10 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   var isSpaced: Bool { false }
   var isTextLike: Bool { false }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let text = _textLine.attrString.string
-    let description =
-      (name.map { "\($0): " } ?? "") + "mathoperator(\(text)) \(boxDescription)"
-    return PrintUtils.compose([description], [])
-  }
+  func fixLayout(_ mathContext: MathContext) { /* no-op */  }
 
-  func fixLayout(_ mathContext: MathContext) {
-    // do nothing
+  func debugPrint(_ name: String) -> Array<String> {
+    let description = "\(name): MathOperatorLayoutFragment(\(_textLine.originalString))"
+    return [description]
   }
 }

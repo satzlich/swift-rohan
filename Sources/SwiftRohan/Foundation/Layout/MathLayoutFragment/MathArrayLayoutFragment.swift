@@ -217,10 +217,8 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       subtype.delimiters, target, shortfall: short_fall, mathContext)
   }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "array \(boxDescription)"
-    let ellipsis = ["(...)"]
-    return PrintUtils.compose([description], [ellipsis])
+  func debugPrint(_ name: String) -> Array<String> {
+    ["\(name): MathArrayLayoutFragment"]
   }
 
   // MARK: - Edit

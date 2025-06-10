@@ -59,13 +59,11 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
   let layoutLength: Int
 
-  func fixLayout(_ mathContext: MathContext) {
-    // no-op
-  }
+  func fixLayout(_ mathContext: MathContext) { /* no-op */  }
 
-  func debugPrint(_ name: String?) -> Array<String> {
-    let description =
-      (name.map { "\($0): " } ?? "") + "glyph(\(glyph.char)) \(boxDescription)"
-    return PrintUtils.compose([description], [])
+  func debugPrint(_ name: String) -> Array<String> {
+    [
+      "\(name): MathGlyphLayoutFragment '\(glyph.char)'"
+    ]
   }
 }
