@@ -14,7 +14,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private var _fragments: Deque<AnnotatedFragment> = []
 
   private var _reflowSegments: Array<ReflowSegmentFragment> = []
-  private var _penaltyCount: Int = 0
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
@@ -230,10 +229,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
         let space: CGFloat
         if i + 1 < _fragments.endIndex {
+          let clazz = resolvedClasses[ii]
+          let nextClazz = resolvedClasses[ii + 1]
           let spacing =
-            MathUtils.resolveSpacing(
-              resolvedClasses[ii], resolvedClasses[ii + 1], mathContext.mathStyle)
-            ?? .zero
+            MathUtils.resolveSpacing(clazz, nextClazz, mathContext.mathStyle) ?? .zero
           _fragments[i].spacing = spacing
           space = font.convertToPoints(spacing)
         }
@@ -260,12 +259,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
         let current = resolvedClasses[ii]
         let next = resolvedClasses[ii + 1]
         let penalty = (current == .Binary) || (current == .Relation && next != .Relation)
-        let old = Swift.exchange(&_fragments[i].penalty, with: penalty)
-        if old != penalty { _penaltyCount += penalty ? 1 : -1 }
+        _fragments[i].penalty = penalty
       }
       else {  // no penalty for the last fragment
-        let old = Swift.exchange(&_fragments[i].penalty, with: false)
-        if old { _penaltyCount -= 1 }
+        _fragments[i].penalty = false
       }
     }
 
@@ -456,10 +453,12 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     return PrintUtils.compose([description], children)
   }
+}
 
-  // MARK: - Reflow
+// MARK: - Reflow
 
-  /// Count of reflow segments.
+extension MathListLayoutFragment {
+
   var reflowSegmentCount: Int { _reflowSegments.count }
 
   func reflowSegments() -> Array<ReflowSegmentFragment> {
@@ -468,6 +467,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   func performReflow() {
+    precondition(!isEditing)
+
     _reflowSegments.removeAll(keepingCapacity: true)
 
     var i = 0
@@ -492,8 +493,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
         // segment boundary
         if i < j {
           let range = i..<j + 1
-          let segment = ReflowSegmentFragment(
-            self, range, upstream: upstream, downstream: downstream)
+          let segment =
+            ReflowSegmentFragment(self, range, upstream: upstream, downstream: downstream)
           _reflowSegments.append(segment)
         }
         i = j + 1
@@ -503,26 +504,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
     do {
       assert(j == _fragments.count)
       let range = i..<j
-      let segment = ReflowSegmentFragment(
-        self, range, upstream: unusedPrevious, downstream: 0)
+      let segment =
+        ReflowSegmentFragment(self, range, upstream: unusedPrevious, downstream: 0)
       _reflowSegments.append(segment)
     }
   }
-
-  /// Convert a layout offset to a reflowed offset assuming the initial text offset
-  /// is zero.`
-  func reflowedOffset(for layoutOffset: Int) -> Int {
-    preconditionFailure()
-  }
-
-  /// Convert a reflowed offset to a layout offset assuming the initial text offset
-  /// is zero.
-  /// - Note: This is not the inverse of `reflowedOffset(for:)`. If the reflowed
-  ///   offset aligns with the fragment boundaries, this returns the layout offset.
-  ///   If the reflowed offset is in the middle of a fragment, this returns the
-  ///   downstream layout offset.
-  func originalOffset(for reflowedOffset: Int) -> Int {
-    preconditionFailure()
-  }
-
 }

@@ -7,7 +7,7 @@ final class MathReflowLayoutContext: LayoutContext {
   var styleSheet: StyleSheet { textLayoutContext.styleSheet }
 
   private let textLayoutContext: TextLayoutContext
-  private let mathListLayoutContext: MathListLayoutContext
+  private let mathLayoutContext: MathListLayoutContext
 
   /// The node that initiated the reflow operation.
   private let sourceNode: EquationNode
@@ -24,55 +24,55 @@ final class MathReflowLayoutContext: LayoutContext {
     _ textOffset: Int? = nil
   ) {
     self.textLayoutContext = textLayoutContext
-    self.mathListLayoutContext = mathListLayoutContext
+    self.mathLayoutContext = mathListLayoutContext
     self.sourceNode = sourceNode
     self.textOffset = textOffset
   }
 
-  var layoutCursor: Int { mathListLayoutContext.layoutCursor }
+  var layoutCursor: Int { mathLayoutContext.layoutCursor }
 
   func resetCursor() {
-    mathListLayoutContext.resetCursor()
+    mathLayoutContext.resetCursor()
   }
 
-  var isEditing: Bool { mathListLayoutContext.isEditing }
+  var isEditing: Bool { mathLayoutContext.isEditing }
 
   func beginEditing() {
-    mathListLayoutContext.beginEditing()
+    mathLayoutContext.beginEditing()
   }
 
   func endEditing() {
-    mathListLayoutContext.endEditing()
+    mathLayoutContext.endEditing()
   }
 
   // MARK: - Layout
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
-    mathListLayoutContext.addParagraphStyle(source, range)
+    mathLayoutContext.addParagraphStyle(source, range)
   }
 
   func skipBackwards(_ n: Int) {
-    mathListLayoutContext.skipBackwards(n)
+    mathLayoutContext.skipBackwards(n)
   }
 
   func deleteBackwards(_ n: Int) {
-    mathListLayoutContext.deleteBackwards(n)
+    mathLayoutContext.deleteBackwards(n)
   }
 
   func invalidateBackwards(_ n: Int) {
-    mathListLayoutContext.invalidateBackwards(n)
+    mathLayoutContext.invalidateBackwards(n)
   }
 
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    mathListLayoutContext.insertText(text, source)
+    mathLayoutContext.insertText(text, source)
   }
 
   func insertNewline(_ context: Node) {
-    mathListLayoutContext.insertNewline(context)
+    mathLayoutContext.insertNewline(context)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    mathListLayoutContext.insertFragment(fragment, source)
+    mathLayoutContext.insertFragment(fragment, source)
   }
 
   // MARK: - Query
@@ -81,8 +81,9 @@ final class MathReflowLayoutContext: LayoutContext {
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset != nil)
-    let reflowedOffset = reflowedOffset(for: layoutOffset)
-    return textLayoutContext.getSegmentFrame(reflowedOffset, affinity)
+
+    preconditionFailure()
+
   }
 
   func enumerateTextSegments(
@@ -91,20 +92,16 @@ final class MathReflowLayoutContext: LayoutContext {
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     precondition(!isEditing && textOffset != nil)
-    let reflowedRange = reflowedRange(for: layoutRange)
-    return textLayoutContext.enumerateTextSegments(
-      reflowedRange, type: type, options: options, using: block)
+
+    preconditionFailure()
+
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     precondition(!isEditing && textOffset != nil)
-    if let result = textLayoutContext.getLayoutRange(interactingAt: point) {
-      let originalRange = originalRange(for: result.layoutRange)
-      return result.with(layoutRange: originalRange)
-    }
-    else {
-      return nil
-    }
+
+    preconditionFailure()
+
   }
 
   func rayshoot(
@@ -112,9 +109,8 @@ final class MathReflowLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     precondition(!isEditing && textOffset != nil)
-    let reflowedRange = reflowedOffset(for: layoutOffset)
-    return textLayoutContext.rayshoot(
-      from: reflowedRange, affinity: affinity, direction: direction)
+
+    preconditionFailure()
   }
 
   func neighbourLineFrame(
@@ -122,34 +118,7 @@ final class MathReflowLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset != nil)
-    let reflowedOffset = reflowedOffset(for: layoutOffset)
-    return textLayoutContext.neighbourLineFrame(
-      from: reflowedOffset, affinity: affinity, direction: direction)
-  }
 
-  // MARK: - Reflow
-
-  private func reflowedOffset(for layoutOffset: Int) -> Int {
-    precondition(!isEditing && textOffset != nil)
-    return textOffset! + mathListLayoutContext.reflowedOffset(for: layoutOffset)
-  }
-
-  private func reflowedRange(for layoutRange: Range<Int>) -> Range<Int> {
-    precondition(!isEditing && textOffset != nil)
-    let start = reflowedOffset(for: layoutRange.lowerBound)
-    let end = reflowedOffset(for: layoutRange.upperBound)
-    return start..<end
-  }
-
-  private func originalOffset(for reflowedOffset: Int) -> Int {
-    precondition(!isEditing && textOffset != nil)
-    return mathListLayoutContext.originalOffset(for: reflowedOffset - textOffset!)
-  }
-
-  private func originalRange(for reflowedRange: Range<Int>) -> Range<Int> {
-    precondition(!isEditing && textOffset != nil)
-    let start = originalOffset(for: reflowedRange.lowerBound)
-    let end = originalOffset(for: reflowedRange.upperBound)
-    return start..<end
+    preconditionFailure()
   }
 }

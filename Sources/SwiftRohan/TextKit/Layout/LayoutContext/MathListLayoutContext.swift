@@ -185,26 +185,18 @@ final class MathListLayoutContext: LayoutContext {
   ) -> SegmentFrame? {
     nil
   }
+}
 
+extension MathListLayoutContext {
   // MARK: - Reflow
 
-  /// Convert a layout offset to a reflowed offset assuming the initial text offset
-  /// is zero.`
-  func reflowedOffset(for layoutOffset: Int) -> Int {
-    layoutFragment.reflowedOffset(for: layoutOffset)
-  }
-
-  /// Convert a reflowed offset to a layout offset assuming the initial text offset
-  /// is zero.
-  func originalOffset(for reflowedOffset: Int) -> Int {
-    layoutFragment.originalOffset(for: reflowedOffset)
-  }
-
-  /// The layout length of the content when reflowed.
-  /// - Invariant: When the content is empty, this should be zero.
   var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
 
   func reflowSegments() -> Array<ReflowSegmentFragment> {
     layoutFragment.reflowSegments()
+  }
+
+  func performReflow() {
+    layoutFragment.performReflow()
   }
 }
