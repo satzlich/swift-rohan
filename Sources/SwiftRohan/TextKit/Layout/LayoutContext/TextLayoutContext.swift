@@ -274,7 +274,7 @@ final class TextLayoutContext: LayoutContext {
 
     let usageBounds = textLayoutManager.usageBoundsForTextContainer
     let lineFrame =
-      self.lineFrame(
+      self.neighbourLineFrame(
         from: layoutOffset, affinity: affinity, direction: direction)?.frame
       ?? usageBounds
 
@@ -299,7 +299,7 @@ final class TextLayoutContext: LayoutContext {
     }
   }
 
-  func lineFrame(
+  func neighbourLineFrame(
     from layoutOffset: Int,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction

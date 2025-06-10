@@ -504,7 +504,7 @@ public final class DocumentManager {
 
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
-  internal func resolveTextLocation_v2(with point: CGPoint) -> AffineLocation? {
+  internal func resolveTextLocation(with point: CGPoint) -> AffineLocation? {
     #if LOG_TEXT_SELECTION
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
@@ -513,7 +513,7 @@ public final class DocumentManager {
     var trace = Trace()
     var affinity = RhTextSelection.Affinity.downstream
 
-    let modified = rootNode.resolveTextLocation_v2(
+    let modified = rootNode.resolveTextLocation(
       with: point, context: context, layoutOffset: 0, trace: &trace, affinity: &affinity)
     if modified,
       let location = trace.toUserSpaceLocation()
@@ -587,7 +587,7 @@ public final class DocumentManager {
         }
         // FALL THROUGH
       }
-      return resolveTextLocation_v2(with: position)
+      return resolveTextLocation(with: position)
 
     default:
       assertionFailure("Invalid direction")

@@ -185,7 +185,7 @@ final class TextNode: Node {
       layouRange, type: type, options: options, using: newBlock(_:_:_:))
   }
 
-  final override func resolveTextLocation_v2(
+  final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {

@@ -147,12 +147,12 @@ final class MathLineLayoutContext: LayoutContext {
       from: resolvedOffset, affinity: affinity, direction: direction)
   }
 
-  func lineFrame(
+  func neighbourLineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
-    return layoutContext.lineFrame(
+    return layoutContext.neighbourLineFrame(
       from: resolvedOffset, affinity: affinity, direction: direction)
   }
 

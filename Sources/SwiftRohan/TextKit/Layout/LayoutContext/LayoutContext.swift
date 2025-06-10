@@ -87,7 +87,7 @@ protocol LayoutContext {
   /// Go from current offset in given direction and get a segment frame in the next line.
   /// - Note: We care about the vertical position of the line, horizontal position is
   ///     unused.
-  func lineFrame(
+  func neighbourLineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame?

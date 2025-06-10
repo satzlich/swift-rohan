@@ -159,7 +159,7 @@ enum LayoutUtils {
     switch context {
     case let textContext as TextLayoutContext:
       guard
-        let lineFrame = textContext.lineFrame(
+        let lineFrame = textContext.neighbourLineFrame(
           from: layoutOffset, affinity: affinity, direction: direction)
       else { return result }
 

@@ -251,7 +251,7 @@ final class ApplyNode: Node {
     return true
   }
 
-  final override func resolveTextLocation_v2(
+  final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -260,13 +260,13 @@ final class ApplyNode: Node {
   }
 
   /// Resolve text location with given point and layout range.
-  final func resolveTextLocation_v2(
+  final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout RhTextSelection.Affinity,
     layoutRange: LayoutRange
   ) -> Bool {
     var localTrace = Trace()
-    let modified = _content.resolveTextLocation_v2(
+    let modified = _content.resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset, trace: &localTrace,
       affinity: &affinity, layoutRange: layoutRange)
     guard modified else { return false }
