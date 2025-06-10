@@ -35,7 +35,7 @@ extension CGPoint {
 
   @inline(__always)
   internal func isNearlyEqual(to other: CGPoint) -> Bool {
-    x.isApproximatelyEqual(to: other.x) && y.isApproximatelyEqual(to: other.y)
+    x.isNearlyEqual(to: other.x) && y.isNearlyEqual(to: other.y)
   }
 
   internal func formatted(_ precision: Int) -> String {

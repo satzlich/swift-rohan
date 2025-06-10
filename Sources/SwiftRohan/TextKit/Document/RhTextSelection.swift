@@ -6,14 +6,12 @@ import Foundation
 /// Text selection.
 /// - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
 public struct RhTextSelection: CustomStringConvertible {
-  typealias Affinity = NSTextSelection.Affinity
-
   let anchor: TextLocation
   let focus: TextLocation
   let isReversed: Bool
   /// textRange may not equal to `[anchor, focus)` or `[focus, anchor)`
   let textRange: RhTextRange
-  let affinity: Affinity
+  let affinity: SelectionAffinity
 
   init(_ location: TextLocation) {
     anchor = location
@@ -31,7 +29,7 @@ public struct RhTextSelection: CustomStringConvertible {
     affinity = location.affinity
   }
 
-  init(_ textRange: RhTextRange, affinity: Affinity = .downstream) {
+  init(_ textRange: RhTextRange, affinity: SelectionAffinity = .downstream) {
     anchor = textRange.location
     focus = textRange.endLocation
     isReversed = false
@@ -41,7 +39,7 @@ public struct RhTextSelection: CustomStringConvertible {
 
   init?(
     _ anchor: TextLocation, _ focus: TextLocation, _ textRange: RhTextRange,
-    affinity: Affinity
+    affinity: SelectionAffinity
   ) {
     self.anchor = anchor
     self.focus = focus
@@ -64,7 +62,7 @@ public struct RhTextSelection: CustomStringConvertible {
   }
 }
 
-extension RhTextSelection.Affinity: @retroactive CustomStringConvertible {
+extension SelectionAffinity: @retroactive CustomStringConvertible {
   public var description: String {
     switch self {
     case .downstream:

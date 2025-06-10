@@ -140,7 +140,7 @@ final class TextLayoutContext: LayoutContext {
   // MARK: - Frame
 
   func getSegmentFrame(
-    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+    _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
 
@@ -201,7 +201,7 @@ final class TextLayoutContext: LayoutContext {
       return PickingResult(0..<0, 1.0, .downstream)
     }
 
-    func characterIndex(for point: CGPoint) -> (Int, RhTextSelection.Affinity)? {
+    func characterIndex(for point: CGPoint) -> (Int, SelectionAffinity)? {
       let selections = textLayoutManager.textSelectionNavigation.textSelections(
         interactingAt: point, inContainerAt: textLayoutManager.documentRange.location,
         anchors: [], modifiers: [], selecting: false,
@@ -264,7 +264,7 @@ final class TextLayoutContext: LayoutContext {
 
   func rayshoot(
     from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     precondition(isEditing == false)
@@ -283,14 +283,14 @@ final class TextLayoutContext: LayoutContext {
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.minY.clamped(lineFrame.minY, lineFrame.maxY)
       // if we are about to go beyond the top edge, resolved = false
-      let resolved = !y.isApproximatelyEqual(to: usageBounds.minY)
+      let resolved = !y.isNearlyEqual(to: usageBounds.minY)
       return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     case .down:
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.maxY.clamped(lineFrame.minY, lineFrame.maxY)
       // if we are about to go beyond the bottom edge, resolved = false
-      let resolved = !y.isApproximatelyEqual(to: usageBounds.maxY)
+      let resolved = !y.isNearlyEqual(to: usageBounds.maxY)
       return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     default:
@@ -301,7 +301,7 @@ final class TextLayoutContext: LayoutContext {
 
   func neighbourLineFrame(
     from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     guard let textLocation = textContentStorage.textLocation(for: layoutOffset)

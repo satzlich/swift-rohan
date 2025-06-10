@@ -140,7 +140,7 @@ class MathNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    let affinity: RhTextSelection.Affinity =
+    let affinity: SelectionAffinity =
       options.contains(.upstreamAffinity) ? .upstream : .downstream
 
     guard path.count >= 2,
@@ -153,8 +153,8 @@ class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
 
-    // obtain super frame with given layout offset
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return false }
     // compute new origin correction
     let originCorrection: CGPoint =
@@ -173,7 +173,7 @@ class MathNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
@@ -204,7 +204,7 @@ class MathNode: Node {
 
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    affinity: RhTextSelection.Affinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
@@ -223,8 +223,8 @@ class MathNode: Node {
         context: newContext, layoutOffset: 0)
     else { return nil }
 
-    // obtain super frame with given layout offset
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return nil }
 
     // if resolved, return origin-corrected result

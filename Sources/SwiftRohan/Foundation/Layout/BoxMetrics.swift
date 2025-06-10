@@ -15,9 +15,9 @@ struct BoxMetrics: Equatable, Hashable {
   }
 
   func isNearlyEqual(to other: BoxMetrics) -> Bool {
-    width.isApproximatelyEqual(to: other.width)
-      && ascent.isApproximatelyEqual(to: other.ascent)
-      && descent.isApproximatelyEqual(to: other.descent)
+    width.isNearlyEqual(to: other.width)
+      && ascent.isNearlyEqual(to: other.ascent)
+      && descent.isNearlyEqual(to: other.descent)
   }
 }
 

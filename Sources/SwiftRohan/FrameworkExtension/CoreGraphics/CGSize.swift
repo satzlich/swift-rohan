@@ -15,8 +15,8 @@ extension CGSize {
 
   @inline(__always)
   internal func isNearlyEqual(to other: CGSize) -> Bool {
-    width.isApproximatelyEqual(to: other.width)
-      && height.isApproximatelyEqual(to: other.height)
+    width.isNearlyEqual(to: other.width)
+      && height.isNearlyEqual(to: other.height)
   }
 
   internal func formatted(_ precision: Int) -> String {

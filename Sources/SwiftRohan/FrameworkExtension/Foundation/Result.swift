@@ -3,7 +3,7 @@
 import Foundation
 
 extension Result {
-  @inline(__always)
+  @inlinable @inline(__always)
   var isSuccess: Bool {
     switch self {
     case .success: return true
@@ -11,7 +11,7 @@ extension Result {
     }
   }
 
-  @inline(__always)
+  @inlinable @inline(__always)
   var isFailure: Bool {
     switch self {
     case .success: return false
@@ -19,7 +19,7 @@ extension Result {
     }
   }
 
-  @inline(__always)
+  @inlinable @inline(__always)
   func success() -> Success? {
     switch self {
     case let .success(value): return value
@@ -27,7 +27,7 @@ extension Result {
     }
   }
 
-  @inline(__always)
+  @inlinable @inline(__always)
   func failure() -> Failure? {
     switch self {
     case .success: return nil

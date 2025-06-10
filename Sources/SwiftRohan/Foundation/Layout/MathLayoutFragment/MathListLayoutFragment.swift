@@ -53,6 +53,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return _fragments[i].fragment
   }
 
+  func getAnnotated(_ i: Int) -> AnnotatedFragment {
+    precondition(i >= 0 && i < count)
+    return _fragments[i]
+  }
+
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     insert(contentsOf: [fragment], at: index)
   }
@@ -123,24 +128,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let j = searchIndexForward(i, distance: layoutRange.count)
     else { return nil }
     return i..<j
-  }
-
-  /// Returns the index of the fragment containing the layout offset. If the
-  /// layout offset is not contained in any fragment, return end index.
-  func index(containing layoutOffset: Int) -> (Int, offset: Int) {
-    precondition(layoutOffset >= 0)
-    let count = _fragments.count
-
-    var i = 0
-    var s = 0
-
-    // let s(i) = sum { fragments[k].layoutLength | k in [0, i) }
-    // result = argmin { s(i) >= layoutOffset }
-    while i < count && s < layoutOffset {
-      s += _fragments[i].layoutLength
-      i += 1
-    }
-    return (i, s)
   }
 
   // MARK: Frame
@@ -227,21 +214,18 @@ final class MathListLayoutFragment: MathLayoutFragment {
       do {
         fragment.setGlyphOrigin(position)
 
-        let space: CGFloat
         if i + 1 < _fragments.endIndex {
           let clazz = resolvedClasses[ii]
           let nextClazz = resolvedClasses[ii + 1]
           let spacing =
             MathUtils.resolveSpacing(clazz, nextClazz, mathContext.mathStyle) ?? .zero
-          _fragments[i].spacing = spacing
-          space = font.convertToPoints(spacing)
+          _fragments[i].spacing = font.convertToPoints(spacing)
         }
         else {
           _fragments[i].spacing = .zero
-          space = 0
         }
 
-        position.x += fragment.width + space
+        position.x += fragment.width + _fragments[i].spacing
       }
 
       // cursor position
@@ -291,7 +275,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
   /// of the container.
-  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
+  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
     if self.isEmpty {
       return SegmentFrame(.zero, 0)
@@ -414,8 +398,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return (n..<n, 0)
     }
 
-    guard let i = getFragment(interactingAt: point)
-    else { return (0..<0, 0) }
+    guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
 
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
     // check point selection
@@ -463,9 +446,17 @@ extension MathListLayoutFragment {
 
   var reflowSegmentCount: Int { _reflowSegments.count }
 
-  func reflowSegments() -> Array<ReflowSegmentFragment> {
+  var reflowSegments: Array<ReflowSegmentFragment> {
     precondition(!isEditing)
     return _reflowSegments
+  }
+
+  /// Returns the index of the segment containing the layout offset.
+  /// If the offset is not in any segment, returns the end index.
+  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
+    precondition(!isEditing)
+    return _reflowSegments.firstIndex { $0.offsetRange.contains(layoutOffset) }
+      ?? _reflowSegments.endIndex
   }
 
   func performReflow() {
@@ -473,41 +464,53 @@ extension MathListLayoutFragment {
 
     _reflowSegments.removeAll(keepingCapacity: true)
 
+    guard !_fragments.isEmpty else { return }
+
+    var first = 0
+    var firstOffset = 0
     var i = 0
-    var j = 0
+    var offset = 0
 
     var unusedPrevious: CGFloat = 0
-    while j < _fragments.count {
-      let fragment = _fragments[j]
+    while i < _fragments.count {
+      let fragment = _fragments[i]
+      i += 1
+      offset += fragment.layoutLength
+
+      // segment boundary
       if fragment.penalty {
         let upstream = unusedPrevious
         let downstream: Double
-        let space = fragment.spacing.floatValue * _fontSize
+        let spacing = fragment.spacing
         switch fragment.cursorPosition {
         case .upstream:
           downstream = 0
         case .middle:
-          downstream = space / 2
+          downstream = spacing / 2
         case .downstream:
-          downstream = space
+          downstream = spacing
         }
-        unusedPrevious = space - downstream
-        // segment boundary
-        if i < j {
-          let range = i..<j + 1
-          let segment =
-            ReflowSegmentFragment(self, range, upstream: upstream, downstream: downstream)
-          _reflowSegments.append(segment)
-        }
-        i = j + 1
+        unusedPrevious = spacing - downstream
+
+        let range = first..<i
+        let offsetRange = firstOffset..<offset
+        let segment =
+          ReflowSegmentFragment(
+            self, range, offsetRange, upstream: upstream, downstream: downstream)
+        _reflowSegments.append(segment)
+
+        first = i
+        firstOffset = offset
       }
-      j += 1
     }
     do {
-      assert(j == _fragments.count)
-      let range = i..<j
+      assert(i == _fragments.count)
+      assert(offset == contentLayoutLength)
+      let range = first..<i
+      let offsetRange = firstOffset..<offset
       let segment =
-        ReflowSegmentFragment(self, range, upstream: unusedPrevious, downstream: 0)
+        ReflowSegmentFragment(
+          self, range, offsetRange, upstream: unusedPrevious, downstream: 0)
       _reflowSegments.append(segment)
     }
   }

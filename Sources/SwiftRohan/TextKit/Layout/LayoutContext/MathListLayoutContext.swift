@@ -130,9 +130,9 @@ final class MathListLayoutContext: LayoutContext {
   // MARK: - Query
 
   func getSegmentFrame(
-    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+    _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame? {
-    layoutFragment.getSegmentFrame(for: layoutOffset)
+    layoutFragment.getSegmentFrame(layoutOffset)
   }
 
   func enumerateTextSegments(
@@ -156,11 +156,10 @@ final class MathListLayoutContext: LayoutContext {
 
   func rayshoot(
     from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
-    else { return nil }
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity) else { return nil }
     switch direction {
     case .up:
       let x = segmentFrame.frame.origin.x
@@ -180,7 +179,7 @@ final class MathListLayoutContext: LayoutContext {
 
   func neighbourLineFrame(
     from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil
@@ -192,8 +191,12 @@ extension MathListLayoutContext {
 
   var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
 
-  func reflowSegments() -> Array<ReflowSegmentFragment> {
-    layoutFragment.reflowSegments()
+  var reflowSegments: Array<ReflowSegmentFragment> {
+    layoutFragment.reflowSegments
+  }
+
+  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
+    layoutFragment.reflowSegmentIndex(layoutOffset)
   }
 
   func performReflow() {

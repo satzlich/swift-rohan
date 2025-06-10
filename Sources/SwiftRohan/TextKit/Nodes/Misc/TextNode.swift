@@ -187,7 +187,7 @@ final class TextNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     // no-op
     return false
@@ -195,7 +195,7 @@ final class TextNode: Node {
 
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    affinity: RhTextSelection.Affinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

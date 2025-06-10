@@ -12,7 +12,7 @@ extension ArrayNode: GenMathNode {}
 
 extension GenMathNode {
   func getSegmentFrame(
-    _ context: LayoutContext, _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
+    _ context: LayoutContext, _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame? {
 
     switch context {
@@ -20,7 +20,8 @@ extension GenMathNode {
       guard let layoutFragment = layoutFragment else { return nil }
 
       let nextOffset = layoutOffset + layoutLength()
-      guard var segmentFrame = context.getSegmentFrame(nextOffset, affinity)
+      // query with affinity=upstream.
+      guard var segmentFrame = context.getSegmentFrame(nextOffset, .upstream)
       else { return nil }
       segmentFrame.frame.origin.x -= layoutFragment.width
       return segmentFrame

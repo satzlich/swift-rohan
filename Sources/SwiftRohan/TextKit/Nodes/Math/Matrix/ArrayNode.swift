@@ -373,7 +373,7 @@ class ArrayNode: Node {
       let fragment = getFragment(index)
     else { return false }
 
-    // obtain super frame with given layout offset (affinity can be arbitrary)
+    // query with affinity=downstream.
     guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return false }
     // set new layout offset
@@ -395,7 +395,7 @@ class ArrayNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout RhTextSelection.Affinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
@@ -429,7 +429,7 @@ class ArrayNode: Node {
   }
 
   final override func rayshoot(
-    from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
+    from path: ArraySlice<RohanIndex>, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {
@@ -441,8 +441,8 @@ class ArrayNode: Node {
       let component = getCell(index),
       let fragment = getFragment(index)
     else { return nil }
-    // obtain super frame with given layout offset
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, affinity)
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
     else { return nil }
     // create sub-context
     let newContext =

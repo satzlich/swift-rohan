@@ -5,8 +5,8 @@ import UnicodeMathClass
 
 struct AnnotatedFragment {
   let fragment: any MathLayoutFragment
-  /// spacing between this fragment and the **next**
-  var spacing: Em = .zero
+  /// spacing (in points) between this fragment and the **next**.
+  var spacing: CGFloat = .zero
   /// cursor position between this fragment and the **next**
   var cursorPosition: CursorPosition = .upstream
   /// whether a penalty is inserted between this fragment and the next
