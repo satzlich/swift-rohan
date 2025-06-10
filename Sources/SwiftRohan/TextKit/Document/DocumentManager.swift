@@ -514,7 +514,7 @@ public final class DocumentManager {
 
     let context = _getLayoutContext()
     var trace = Trace()
-    var affinity = TextAffinity.downstream
+    var affinity = SelectionAffinity.downstream
 
     let modified = rootNode.resolveTextLocation(
       with: point, context: context, layoutOffset: 0, trace: &trace, affinity: &affinity)

@@ -214,7 +214,7 @@ internal class Node: Codable {
   /// - Postcondition: the location is stored implicitly in the trace.
   internal func resolveTextLocation(
     with point: CGPoint, context: LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout TextAffinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     preconditionFailure("overriding required")
   }
@@ -225,7 +225,7 @@ internal class Node: Codable {
   ///     it is guaranteed that no glyph will be hit.
   /// - Note: The position is with respect to the origin of layout context.
   internal func rayshoot(
-    from path: ArraySlice<RohanIndex>, affinity: TextAffinity,
+    from path: ArraySlice<RohanIndex>, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

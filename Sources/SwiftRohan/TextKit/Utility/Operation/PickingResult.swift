@@ -9,10 +9,10 @@ struct PickingResult {
   /// The fraction of distance from the upstream edge
   let fraction: Double
   /// Affinity of the selection
-  let affinity: TextAffinity
+  let affinity: SelectionAffinity
 
   init(
-    _ layoutRange: Range<Int>, _ fraction: Double, _ affinity: TextAffinity
+    _ layoutRange: Range<Int>, _ fraction: Double, _ affinity: SelectionAffinity
   ) {
     self.layoutRange = layoutRange
     self.fraction = fraction

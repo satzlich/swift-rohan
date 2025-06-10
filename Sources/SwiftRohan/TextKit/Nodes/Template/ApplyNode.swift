@@ -253,7 +253,7 @@ final class ApplyNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout TextAffinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     assertionFailure("Work is done in another function")
     return false
@@ -262,7 +262,7 @@ final class ApplyNode: Node {
   /// Resolve text location with given point and layout range.
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout TextAffinity,
+    trace: inout Trace, affinity: inout SelectionAffinity,
     layoutRange: LayoutRange
   ) -> Bool {
     var localTrace = Trace()
@@ -295,7 +295,7 @@ final class ApplyNode: Node {
 
   override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    affinity: TextAffinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
     context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

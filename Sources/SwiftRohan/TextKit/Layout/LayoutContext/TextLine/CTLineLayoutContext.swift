@@ -112,7 +112,7 @@ internal class CTLineLayoutContext: LayoutContext {
   // MARK: - Query
 
   func getSegmentFrame(
-    _ layoutOffset: Int, _ affinity: TextAffinity
+    _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
     let (_, ascent, descent) = getBounds()
@@ -187,7 +187,7 @@ internal class CTLineLayoutContext: LayoutContext {
   }
 
   func rayshoot(
-    from layoutOffset: Int, affinity: TextAffinity,
+    from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
@@ -211,7 +211,7 @@ internal class CTLineLayoutContext: LayoutContext {
   }
 
   func neighbourLineFrame(
-    from layoutOffset: Int, affinity: TextAffinity,
+    from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil

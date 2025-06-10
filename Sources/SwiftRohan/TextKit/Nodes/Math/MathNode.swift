@@ -140,7 +140,7 @@ class MathNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    let affinity: TextAffinity =
+    let affinity: SelectionAffinity =
       options.contains(.upstreamAffinity) ? .upstream : .downstream
 
     guard path.count >= 2,
@@ -173,7 +173,7 @@ class MathNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout TextAffinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
@@ -204,7 +204,7 @@ class MathNode: Node {
 
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    affinity: TextAffinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

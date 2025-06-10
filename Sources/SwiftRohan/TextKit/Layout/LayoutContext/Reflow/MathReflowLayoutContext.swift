@@ -84,7 +84,7 @@ final class MathReflowLayoutContext: LayoutContext {
   /// - Precondition: reflow segments is not empty.
   /// - Note: an index is called **accessible** if `index ∈ [0, reflowSegmentCount)`.
   private func getAccessibleIndex(
-    _ layoutOffset: Int, _ affinity: TextAffinity
+    _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> Int {
     precondition(!isEditing && textOffset >= 0)
     precondition(mathLayoutContext.reflowSegmentCount > 0)
@@ -115,7 +115,7 @@ final class MathReflowLayoutContext: LayoutContext {
   }
 
   func getSegmentFrame(
-    _ layoutOffset: Int, _ affinity: TextAffinity
+    _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
 
@@ -159,7 +159,7 @@ final class MathReflowLayoutContext: LayoutContext {
   }
 
   func rayshoot(
-    from layoutOffset: Int, affinity: TextAffinity,
+    from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     precondition(!isEditing && textOffset >= 0)
@@ -182,7 +182,7 @@ final class MathReflowLayoutContext: LayoutContext {
   }
 
   func neighbourLineFrame(
-    from layoutOffset: Int, affinity: TextAffinity,
+    from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)

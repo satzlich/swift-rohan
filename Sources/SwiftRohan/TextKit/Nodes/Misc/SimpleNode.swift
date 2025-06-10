@@ -63,7 +63,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout TextAffinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     // no-op, always return false
     return false
@@ -71,7 +71,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
 
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    affinity: TextAffinity,
+    affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
     context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

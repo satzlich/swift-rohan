@@ -395,7 +395,7 @@ class ArrayNode: Node {
 
   final override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout TextAffinity
+    trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
@@ -429,7 +429,7 @@ class ArrayNode: Node {
   }
 
   final override func rayshoot(
-    from path: ArraySlice<RohanIndex>, affinity: TextAffinity,
+    from path: ArraySlice<RohanIndex>, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {

@@ -51,7 +51,7 @@ protocol LayoutContext {
   /// - Note: For this function, all frame origins are placed at the **top-left corner**,
   ///     and is the position relative to the container frame's **top-left corner**.
   func getSegmentFrame(
-    _ layoutOffset: Int, _ affinity: TextAffinity
+    _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame?
 
   /// Enumerate text segments in `layoutRange` and process by `block`.
@@ -80,7 +80,7 @@ protocol LayoutContext {
   ///     container. For MathLayoutContext, the origin is the **top-left corner** of
   ///     the math list.
   func rayshoot(
-    from layoutOffset: Int, affinity: TextAffinity,
+    from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult?
 
@@ -88,7 +88,7 @@ protocol LayoutContext {
   /// - Note: We care about the vertical position of the line, horizontal position is
   ///     unused.
   func neighbourLineFrame(
-    from layoutOffset: Int, affinity: TextAffinity,
+    from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame?
 }
