@@ -8,71 +8,18 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-  private enum CursorPosition {
-    /// cursor is placed after the upstream fragment
-    case upstream
-    /// cursor is placed in the middle between two fragments
-    case middle
-    /// cursor is placed before the downstream fragment
-    case downstream
-  }
-
-  private struct AnnotatedFragment {
-    let fragment: any MathLayoutFragment
-    /// spacing between this fragment and the **next**
-    var spacing: Em = .zero
-    /// cursor position between this fragment and the **previous**
-    var cursorPosition: CursorPosition = .downstream
-    /// whether a penalty is inserted between this fragment and the next
-    var penalty: Bool = false
-
-    // exporse properties for convenience
-
-    var width: Double { fragment.width }
-    var ascent: Double { fragment.ascent }
-    var descent: Double { fragment.descent }
-    var height: Double { fragment.height }
-    var italicsCorrection: Double { fragment.italicsCorrection }
-    var accentAttachment: Double { fragment.accentAttachment }
-
-    var clazz: MathClass { fragment.clazz }
-    var limits: Limits { fragment.limits }
-    var isSpaced: Bool { fragment.isSpaced }
-    var isTextLike: Bool { fragment.isTextLike }
-
-    var layoutLength: Int { fragment.layoutLength }
-    var glyphOrigin: CGPoint { fragment.glyphOrigin }
-
-    func setGlyphOrigin(_ origin: CGPoint) {
-      fragment.setGlyphOrigin(origin)
-    }
-
-    func draw(at point: CGPoint, in context: CGContext) {
-      fragment.draw(at: point, in: context)
-    }
-
-    init(_ fragment: any MathLayoutFragment) {
-      self.fragment = fragment
-    }
-  }
-
   private var _fragments: Deque<AnnotatedFragment> = []
   private var _textColor: Color
   private var _textSize: CGFloat
-  /// least index of modified fragments since last fixLayout.
-  private var _dirtyIndex: Int? = nil
-  internal private(set) var isEditing: Bool = false
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
     self._textSize = mathContext.getFontSize()
   }
 
-  private func update(dirtyIndex: Int) {
-    _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
-  }
-
   // MARK: - State
+
+  internal private(set) var isEditing: Bool = false
 
   func beginEditing() {
     precondition(!isEditing && _dirtyIndex == nil)
@@ -86,6 +33,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: - Subfragments
 
+  /// least index of modified fragments since last fixLayout.
+  private var _dirtyIndex: Int? = nil
+
+  private func update(dirtyIndex: Int) {
+    _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
+  }
+
   var isEmpty: Bool { _fragments.isEmpty }
   var count: Int { _fragments.count }
   var first: MathLayoutFragment? { _fragments.first?.fragment }
@@ -97,13 +51,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
-    precondition(isEditing)
-    _fragments.insert(AnnotatedFragment(fragment), at: index)
-    contentLayoutLength += fragment.layoutLength
-    update(dirtyIndex: index)
+    insert(contentsOf: [fragment], at: index)
   }
 
-  func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
+  func insert(contentsOf fragments: Array<MathLayoutFragment>, at index: Int) {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments.map(AnnotatedFragment.init), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
