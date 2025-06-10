@@ -78,7 +78,9 @@ private final class LayoutFragmentView: RohanView {
 
   init(_ fragment: LayoutFragment) {
     self.fragment = fragment
-    super.init(frame: CGRect(origin: .zero, size: fragment.size))
+
+    let size = CGSize(width: fragment.width, height: fragment.height)
+    super.init(frame: CGRect(origin: .zero, size: size))
 
     // expose box metrics
     self.bounds = fragment.bounds
