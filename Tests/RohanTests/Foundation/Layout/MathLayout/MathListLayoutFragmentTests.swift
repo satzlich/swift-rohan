@@ -75,6 +75,8 @@ struct MathListLayoutFragmentTests {
       #expect(segment.cursorDistanceThroughSegment(0) == 0)
       #expect(segment.cursorDistanceThroughSegment(1).isNearlyEqual(to: 4.79))
       #expect(segment.cursorDistanceThroughSegment(2).isNearlyEqual(to: 16.43444444))
+      //
+      #expect(segment.equivalentPosition(0) == 0)
     }
     do {
       let segment = reflowSegments[1]
@@ -89,6 +91,8 @@ struct MathListLayoutFragmentTests {
       #expect(segment.cursorDistanceThroughSegment(2) == 0)
       #expect(segment.cursorDistanceThroughSegment(3).isNearlyEqual(to: 4.82999999))
       #expect(segment.cursorDistanceThroughSegment(4).isNearlyEqual(to: 16.19666666))
+      //
+      #expect(segment.equivalentPosition(0).isNearlyEqual(to: 16.434444444))
     }
     do {
       let segment = reflowSegments[2]
@@ -108,6 +112,8 @@ struct MathListLayoutFragmentTests {
       #expect(segment.cursorDistanceThroughSegment(5).isNearlyEqual(to: 8.5888888))
       #expect(segment.cursorDistanceThroughSegment(6).isNearlyEqual(to: 13.1688888))
       #expect(segment.cursorDistanceThroughSegment(7).isNearlyEqual(to: 20.65888888))
+      //
+      #expect(segment.equivalentPosition(0).isNearlyEqual(to: 32.63111111))
     }
   }
 }
