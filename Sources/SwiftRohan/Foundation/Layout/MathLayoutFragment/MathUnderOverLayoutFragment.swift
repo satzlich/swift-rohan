@@ -5,7 +5,7 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-private let SPREADER_GAP = Em(0.1)
+private let SPREADER_GAP = Em(0.1)  // typst use 0.25em
 private let SPREADER_SHORTFALL = Em(0.25)
 private let XARROW_EXTENDER = Em(0.5)
 
