@@ -79,8 +79,11 @@ final class MathReflowLayoutContext: LayoutContext {
 
   // MARK: - Query
 
+  /// Returns an **accessible** index for reflow segment that can answer queries
+  /// over given layout offset.
   /// - Precondition: reflow segments is not empty.
-  private func getSegmentIndex(
+  /// - Note: an index is called **accessible** if `index ∈ [0, reflowSegmentCount)`.
+  private func getAccessibleIndex(
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> Int {
     precondition(!isEditing && textOffset >= 0)
@@ -91,7 +94,7 @@ final class MathReflowLayoutContext: LayoutContext {
       i -= 1
     }
     else if affinity == .upstream {
-      var segment = mathLayoutContext.reflowSegments[i]
+      let segment = mathLayoutContext.reflowSegments[i]
       if i > 0 && segment.offsetRange.lowerBound == layoutOffset { i -= 1 }
     }
     return i
@@ -106,7 +109,7 @@ final class MathReflowLayoutContext: LayoutContext {
     guard mathLayoutContext.reflowSegmentCount > 0 else {
       return textLayoutContext.getSegmentFrame(textOffset, affinity)
     }
-    let i = getSegmentIndex(layoutOffset, affinity)
+    let i = getAccessibleIndex(layoutOffset, affinity)
     // query with affinity=downstream
     guard var frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
     else { return nil }
@@ -123,6 +126,8 @@ final class MathReflowLayoutContext: LayoutContext {
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     precondition(!isEditing && textOffset >= 0)
+
+    let preferUpstream = options.contains(.upstreamAffinity)
 
     preconditionFailure()
   }
@@ -152,7 +157,7 @@ final class MathReflowLayoutContext: LayoutContext {
       return textLayoutContext.rayshoot(
         from: textOffset, affinity: affinity, direction: direction)
     }
-    let i = getSegmentIndex(layoutOffset, affinity)
+    let i = getAccessibleIndex(layoutOffset, affinity)
     // query with affinity=downstream
     guard let frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
     else { return nil }
@@ -175,7 +180,7 @@ final class MathReflowLayoutContext: LayoutContext {
         from: textOffset, affinity: affinity, direction: direction)
     }
 
-    let i = getSegmentIndex(layoutOffset, affinity)
+    let i = getAccessibleIndex(layoutOffset, affinity)
     // query with affinity=downstream.
     return mathLayoutContext.neighbourLineFrame(
       from: textOffset + i, affinity: .downstream, direction: direction)
