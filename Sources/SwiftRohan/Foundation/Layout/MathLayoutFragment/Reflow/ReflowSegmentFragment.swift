@@ -5,6 +5,52 @@ import UnicodeMathClass
 
 /// A segment of math list layout that is used for reflowing the content.
 final class ReflowSegmentFragment: MathLayoutFragment {
+  // MARK: - MathLayoutFragment
+
+  var width: Double { totalWidth }
+  internal let ascent: Double
+  internal let descent: Double
+  internal var height: Double { ascent + descent }
+
+  var accentAttachment: Double { totalWidth / 2 }
+  var italicsCorrection: Double { 0 }
+
+  var clazz: MathClass { .Normal }
+  var limits: Limits { .never }
+  var isSpaced: Bool { false }
+  var isTextLike: Bool { false }
+
+  var layoutLength: Int { 1 }
+
+  private(set) var glyphOrigin: CGPoint
+
+  func setGlyphOrigin(_ origin: CGPoint) {
+    self.glyphOrigin = origin
+  }
+
+  func draw(at point: CGPoint, in context: CGContext) {
+    var point = point
+    point.x += upstream - source.get(range.lowerBound).glyphOrigin.x
+
+    context.saveGState()
+    context.translateBy(x: point.x, y: point.y)
+    for index in range {
+      let fragment = source.get(index)
+      fragment.draw(at: fragment.glyphOrigin, in: context)
+    }
+    context.restoreGState()
+  }
+
+  func fixLayout(_ mathContext: MathContext) { /* no-op */  }
+
+  func debugPrint(_ name: String) -> Array<String> {
+    [
+      "\(name): ReflowSegmentFragment"
+    ]
+  }
+
+  // MARK: - Implementation
+
   /// The source fragment that this segment is derived from.
   private let source: MathListLayoutFragment
   /// index range in the source fragment.
@@ -18,13 +64,6 @@ final class ReflowSegmentFragment: MathLayoutFragment {
 
   /// Total width of the segment, including upstream and downstream spaces.
   private let totalWidth: CGFloat
-
-  private(set) var glyphOrigin: CGPoint
-
-  var width: Double { totalWidth }
-  internal let ascent: Double
-  internal let descent: Double
-  internal var height: Double { ascent + descent }
 
   init(
     _ source: MathListLayoutFragment,
@@ -60,38 +99,35 @@ final class ReflowSegmentFragment: MathLayoutFragment {
     self.glyphOrigin = .zero
   }
 
-  var accentAttachment: Double { totalWidth / 2 }
-  var italicsCorrection: Double { 0 }
+  // MARK: - ReflowSegmentFragment
 
-  var clazz: MathClass { .Normal }
-  var limits: Limits { .never }
-  var isSpaced: Bool { false }
-  var isTextLike: Bool { false }
-
-  var layoutLength: Int { 1 }
-
-  func setGlyphOrigin(_ origin: CGPoint) {
-    self.glyphOrigin = origin
-  }
-
-  func draw(at point: CGPoint, in context: CGContext) {
-    var point = point
-    point.x += upstream - source.get(range.lowerBound).glyphOrigin.x
-
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y)
-    for index in range {
-      let fragment = source.get(index)
-      fragment.draw(at: fragment.glyphOrigin, in: context)
+  /// **Exact distance** from the fragment identified by index to the
+  /// upstream boundary of the segment.
+  func distanceThroughSegment(_ index: Int) -> Double {
+    precondition(range ~= index)
+    if index == range.lowerBound {
+      return upstream
     }
-    context.restoreGState()
+    else {
+      return upstream + source.get(index).glyphOrigin.x
+        - source.get(range.lowerBound).glyphOrigin.x
+    }
   }
 
-  func fixLayout(_ mathContext: MathContext) { /* no-op */  }
+  /// Returns the index of the fragment whose layout offset range contains
+  /// the given layout offset. If not found, clamps to the nearest index
+  /// within the segment range.
+  func fragmentIndex(_ layoutOffset: Int) -> Int {
+    guard layoutOffset >= offsetRange.lowerBound else { return range.lowerBound }
+    guard layoutOffset < offsetRange.upperBound else { return range.upperBound }
 
-  func debugPrint(_ name: String) -> Array<String> {
-    [
-      "\(name): ReflowSegmentFragment"
-    ]
+    var i = range.lowerBound
+    var offset = offsetRange.lowerBound
+    while i < range.upperBound && offset < layoutOffset {
+      let fragment = source.get(i)
+      offset += fragment.layoutLength
+      i += 1
+    }
+    return i
   }
 }

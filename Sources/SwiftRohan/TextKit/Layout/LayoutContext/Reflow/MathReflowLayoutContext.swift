@@ -117,7 +117,7 @@ final class MathReflowLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
-
+    
     preconditionFailure()
   }
 }
