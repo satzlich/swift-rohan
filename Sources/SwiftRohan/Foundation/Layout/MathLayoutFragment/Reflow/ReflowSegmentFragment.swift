@@ -148,7 +148,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   }
 
   /// Returns the index of the fragment whose layout offset range contains
-  /// the given layout offset. If not found, clamps to the nearest index
+  /// the given layout offset. If not found, **clamps to** the nearest index
   /// within the segment range.
   func fragmentIndex(_ layoutOffset: Int) -> Int {
     guard layoutOffset >= offsetRange.lowerBound else { return range.lowerBound }

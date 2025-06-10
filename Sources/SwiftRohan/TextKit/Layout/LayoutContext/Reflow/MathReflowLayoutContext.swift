@@ -77,14 +77,28 @@ final class MathReflowLayoutContext: LayoutContext {
 
   // MARK: - Query
 
+  // Note: layoutOffset aligns with the **math** layout context.
   func getSegmentFrame(
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
 
-    //    let segmentIndex = mathLayoutContext.getSegmentIndex(for: layoutOffset, affinity)
+    guard mathLayoutContext.reflowSegmentCount > 0 else {
+      return textLayoutContext.getSegmentFrame(textOffset, affinity)
+    }
+    
+    // resolve segment index
+    var i = mathLayoutContext.segmentIndex(layoutOffset)
+    if i == mathLayoutContext.reflowSegmentCount { i -= 1 }
 
-    preconditionFailure()
+    // query with affinity=downstream
+    guard var frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
+    else { return nil }
+    let segment = mathLayoutContext.reflowSegments[i]
+    let index = segment.fragmentIndex(layoutOffset)
+    let distance = segment.distanceThroughSegment(index)
+    frame.frame.origin.x += distance
+    return frame
   }
 
   func enumerateTextSegments(
@@ -117,7 +131,7 @@ final class MathReflowLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
-    
+
     preconditionFailure()
   }
 }

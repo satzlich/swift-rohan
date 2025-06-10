@@ -130,24 +130,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return i..<j
   }
 
-  /// Returns the index of the fragment containing the layout offset. If the
-  /// layout offset is not contained in any fragment, return end index.
-  func index(containing layoutOffset: Int) -> (Int, offset: Int) {
-    precondition(layoutOffset >= 0)
-    let count = _fragments.count
-
-    var i = 0
-    var s = 0
-
-    // let s(i) = sum { fragments[k].layoutLength | k in [0, i) }
-    // result = argmin { s(i) >= layoutOffset }
-    while i < count && s < layoutOffset {
-      s += _fragments[i].layoutLength
-      i += 1
-    }
-    return (i, s)
-  }
-
   // MARK: Frame
 
   /// origin with respect to enclosing frame
@@ -467,6 +449,14 @@ extension MathListLayoutFragment {
   var reflowSegments: Array<ReflowSegmentFragment> {
     precondition(!isEditing)
     return _reflowSegments
+  }
+
+  /// Returns the index of the segment containing the layout offset.
+  /// If the offset is not in any segment, returns the end index.
+  func segmentIndex(_ layoutOffset: Int) -> Int {
+    precondition(!isEditing)
+    return _reflowSegments.firstIndex { $0.offsetRange.contains(layoutOffset) }
+      ?? _reflowSegments.endIndex
   }
 
   func performReflow() {

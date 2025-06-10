@@ -196,6 +196,10 @@ extension MathListLayoutContext {
     layoutFragment.reflowSegments
   }
 
+  func segmentIndex(_ layoutOffset: Int) -> Int {
+    layoutFragment.segmentIndex(layoutOffset)
+  }
+
   func performReflow() {
     layoutFragment.performReflow()
   }
