@@ -86,19 +86,41 @@ final class MathReflowLayoutContext: LayoutContext {
     guard mathLayoutContext.reflowSegmentCount > 0 else {
       return textLayoutContext.getSegmentFrame(textOffset, affinity)
     }
-    
-    // resolve segment index
-    var i = mathLayoutContext.segmentIndex(layoutOffset)
-    if i == mathLayoutContext.reflowSegmentCount { i -= 1 }
 
-    // query with affinity=downstream
-    guard var frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
-    else { return nil }
-    let segment = mathLayoutContext.reflowSegments[i]
-    let index = segment.fragmentIndex(layoutOffset)
-    let distance = segment.distanceThroughSegment(index)
-    frame.frame.origin.x += distance
-    return frame
+    if affinity == .downstream {
+      // resolve segment index
+      var i = mathLayoutContext.segmentIndex(layoutOffset)
+      if i == mathLayoutContext.reflowSegmentCount { i -= 1 }
+
+      // query with affinity=downstream
+      guard var frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
+      else { return nil }
+      let segment = mathLayoutContext.reflowSegments[i]
+      let index = segment.fragmentIndex(layoutOffset)
+      let distance = segment.distanceThroughSegment(index)
+      frame.frame.origin.x += distance
+      return frame
+    }
+    else {
+      assert(affinity == .upstream)
+      // resolve segment index
+      var i = mathLayoutContext.segmentIndex(layoutOffset)
+      if i == mathLayoutContext.reflowSegmentCount {
+        return textLayoutContext.getSegmentFrame(textOffset + i, .upstream)
+      }
+      var segment = mathLayoutContext.reflowSegments[i]
+      if i > 0 && segment.offsetRange.lowerBound == layoutOffset {
+        i -= 1
+        segment = mathLayoutContext.reflowSegments[i]
+      }
+      // query with affinity=downstream
+      guard var frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
+      else { return nil }
+      let index = segment.fragmentIndex(layoutOffset)
+      let distance = segment.distanceThroughSegment(index)
+      frame.frame.origin.x += distance
+      return frame
+    }
   }
 
   func enumerateTextSegments(
