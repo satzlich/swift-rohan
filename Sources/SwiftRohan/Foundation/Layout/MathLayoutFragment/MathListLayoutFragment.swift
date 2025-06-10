@@ -227,21 +227,18 @@ final class MathListLayoutFragment: MathLayoutFragment {
       do {
         fragment.setGlyphOrigin(position)
 
-        let space: CGFloat
         if i + 1 < _fragments.endIndex {
           let clazz = resolvedClasses[ii]
           let nextClazz = resolvedClasses[ii + 1]
           let spacing =
             MathUtils.resolveSpacing(clazz, nextClazz, mathContext.mathStyle) ?? .zero
-          _fragments[i].spacing = spacing
-          space = font.convertToPoints(spacing)
+          _fragments[i].spacing = font.convertToPoints(spacing)
         }
         else {
           _fragments[i].spacing = .zero
-          space = 0
         }
 
-        position.x += fragment.width + space
+        position.x += fragment.width + _fragments[i].spacing
       }
 
       // cursor position
@@ -484,16 +481,16 @@ extension MathListLayoutFragment {
       if fragment.penalty {
         let upstream = unusedPrevious
         let downstream: Double
-        let space = fragment.spacing.floatValue * _fontSize
+        let spacing = fragment.spacing
         switch fragment.cursorPosition {
         case .upstream:
           downstream = 0
         case .middle:
-          downstream = space / 2
+          downstream = spacing / 2
         case .downstream:
-          downstream = space
+          downstream = spacing
         }
-        unusedPrevious = space - downstream
+        unusedPrevious = spacing - downstream
         // segment boundary
         if first < i {
           let range = first..<i + 1
