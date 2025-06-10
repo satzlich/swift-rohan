@@ -10,4 +10,10 @@ public struct SatzError: Error {
   }
 }
 
+extension SatzError: Equatable {
+  public static func == (lhs: SatzError, rhs: SatzError) -> Bool {
+    lhs.code == rhs.code && lhs.message == rhs.message
+  }
+}
+
 public typealias SatzResult<T> = Result<T, SatzError>

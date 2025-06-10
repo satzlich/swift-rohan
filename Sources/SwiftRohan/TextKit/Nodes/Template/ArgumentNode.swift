@@ -35,11 +35,6 @@ final class ArgumentNode: Node {
     return nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    assertionFailure("should not be called")
-    return nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     assertionFailure("should not be called")
     return .null

@@ -32,11 +32,6 @@ class MathNode: Node {
     return nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset for math component is not well-defined and is unused
-    return nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // layout offset for math component is not well-defined and is unused
     return .null

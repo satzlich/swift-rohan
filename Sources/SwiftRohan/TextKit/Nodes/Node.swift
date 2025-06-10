@@ -110,16 +110,6 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /// Returns the rohan index of the child node that is picked by `[layoutOffset, _ + 1)`
-  /// together with the layout offset of the child.
-  /// - Parameter layoutOffset: layout offset
-  /// - Invariant: If return value is non-nil, then access child/character with
-  ///     the returned index must succeed.
-  /// - Invariant: `consumed == nil || consumed <= layoutOffset`
-  internal func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    preconditionFailure("overriding required")
-  }
-
   /// Returns a position within the node that is picked by `layoutOffset`.
   /// - Parameter layoutOffset: layout offset
   /// - Invariant: If return value is non-nil, then the index must be valid for the node.

@@ -43,3 +43,5 @@ public enum PositionResult<T> {
     }
   }
 }
+
+extension PositionResult: Equatable where T: Equatable {}

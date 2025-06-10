@@ -132,12 +132,6 @@ final class TextNode: Node {
     return offset
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    guard 0..<layoutLength() ~= layoutOffset else { return nil }
-    let index = _getUpstreamBoundary(layoutOffset)
-    return (.index(index), index)
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))

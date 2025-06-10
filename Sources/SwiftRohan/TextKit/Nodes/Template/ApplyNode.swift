@@ -44,11 +44,6 @@ final class ApplyNode: Node {
     nil
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    // layout offset is not well-defined for ApplyNode
-    nil
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // layout offset is not well-defined for ApplyNode
     .null

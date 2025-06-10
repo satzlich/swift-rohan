@@ -36,12 +36,6 @@ internal class ElementNode: Node {
     return getLayoutOffset(index)
   }
 
-  final override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
-    // assert(consumed <= layoutOffset)
-    return (.index(i), consumed)
-  }
-
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0...layoutLength() ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
