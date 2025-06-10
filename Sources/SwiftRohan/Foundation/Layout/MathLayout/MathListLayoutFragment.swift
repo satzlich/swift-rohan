@@ -393,14 +393,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // ASSERT: range not empty
     else {
       let (minAscent, minDescent) = minAscentDescent
-      let ascent = {
-        let ascent = _fragments[range].lazy.map(\.ascent).max()!
-        return Swift.max(ascent, minAscent)
-      }()
-      let descent = {
-        let descent = _fragments[range].lazy.map(\.descent).max()!
-        return Swift.max(descent, minDescent)
-      }()
+      let ascent = Swift.max(_fragments[range].lazy.map(\.ascent).max()!, minAscent)
+      let descent = Swift.max(_fragments[range].lazy.map(\.descent).max()!, minDescent)
 
       let origin = getNiceOrigin(range.lowerBound)
       let endOrigin = getNiceOrigin(range.upperBound)
