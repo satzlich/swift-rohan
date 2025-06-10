@@ -89,7 +89,7 @@ final class MathReflowLayoutContext: LayoutContext {
     precondition(!isEditing && textOffset >= 0)
     precondition(mathLayoutContext.reflowSegmentCount > 0)
 
-    var i = mathLayoutContext.segmentIndex(layoutOffset)
+    var i = mathLayoutContext.reflowSegmentIndex(layoutOffset)
     if i == mathLayoutContext.reflowSegmentCount {
       i -= 1
     }
@@ -100,7 +100,20 @@ final class MathReflowLayoutContext: LayoutContext {
     return i
   }
 
-  // Note: layoutOffset aligns with the **math** layout context.
+  /// Returns the segment frame of the reflow segment at given index.
+  /// - Parameter index: index of the reflow segment, **not** the layout offset.
+  private func getReflowSegmentFrame(_ index: Int) -> SegmentFrame? {
+    precondition(!isEditing && textOffset >= 0)
+    guard index >= 0 && index < mathLayoutContext.reflowSegmentCount else { return nil }
+
+    let nextOffset = textOffset + index + 1
+    // query for downstream edge with affinity=upstream.
+    guard var frame = textLayoutContext.getSegmentFrame(nextOffset, .upstream)
+    else { return nil }
+    frame.frame.origin.x -= mathLayoutContext.reflowSegments[index].width
+    return frame
+  }
+
   func getSegmentFrame(
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
@@ -110,9 +123,7 @@ final class MathReflowLayoutContext: LayoutContext {
       return textLayoutContext.getSegmentFrame(textOffset, affinity)
     }
     let i = getAccessibleIndex(layoutOffset, affinity)
-    // query with affinity=downstream
-    guard var frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
-    else { return nil }
+    guard var frame = getReflowSegmentFrame(i) else { return nil }
     let segment = mathLayoutContext.reflowSegments[i]
     let index = segment.fragmentIndex(layoutOffset)
     let distance = segment.distanceThroughSegment(index)
@@ -139,7 +150,7 @@ final class MathReflowLayoutContext: LayoutContext {
     else { return nil }
     let i = result.layoutRange.lowerBound - textOffset
     guard i >= 0 && i < mathLayoutContext.reflowSegmentCount,
-      let frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
+      let frame = getReflowSegmentFrame(i)
     else { return nil }
     var relPoint = point.relative(to: frame.frame.origin)
     let segment = mathLayoutContext.reflowSegments[i]
@@ -158,14 +169,15 @@ final class MathReflowLayoutContext: LayoutContext {
         from: textOffset, affinity: affinity, direction: direction)
     }
     let i = getAccessibleIndex(layoutOffset, affinity)
-    // query with affinity=downstream
-    guard let frame = textLayoutContext.getSegmentFrame(textOffset + i, .downstream)
-    else { return nil }
+    guard let segmentFrame = getReflowSegmentFrame(i) else { return nil }
+
     let segment = mathLayoutContext.reflowSegments[i]
     let index = segment.fragmentIndex(layoutOffset)
     let distance = segment.cursorDistanceThroughSegment(index)
-    let x = frame.frame.origin.x + distance
-    let y = (direction == .up ? frame.frame.minY : frame.frame.maxY)
+
+    let frame = segmentFrame.frame
+    let x = frame.origin.x + distance
+    let y = (direction == .up ? frame.minY : frame.maxY)
     return RayshootResult(CGPoint(x: x, y: y), false)
   }
 
