@@ -53,6 +53,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return _fragments[i].fragment
   }
 
+  func getAnnotated(_ i: Int) -> AnnotatedFragment {
+    precondition(i >= 0 && i < count)
+    return _fragments[i]
+  }
+
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     insert(contentsOf: [fragment], at: index)
   }

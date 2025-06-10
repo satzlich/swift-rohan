@@ -108,9 +108,41 @@ final class ReflowSegmentFragment: MathLayoutFragment {
     if index == range.lowerBound {
       return upstream
     }
-    else {
+    else if index < range.upperBound {
       return upstream + source.get(index).glyphOrigin.x
         - source.get(range.lowerBound).glyphOrigin.x
+    }
+    else {
+      // Unreachable if index is within the range.
+      return totalWidth
+    }
+  }
+
+  /// **Cursor distance** from the position given by the index to the
+  /// upstream boundary of the segment.
+  func cursorDistanceThroughSegment(_ index: Int) -> Double {
+    precondition(index >= range.lowerBound)
+    precondition(index <= range.upperBound)
+
+    if index == range.lowerBound {
+      return 0
+    }
+    else if index < range.upperBound {
+      let first = source.get(range.lowerBound)
+      let fragment = source.getAnnotated(index)
+      var distance = upstream + fragment.glyphOrigin.x - first.glyphOrigin.x
+      switch fragment.cursorPosition {
+      case .upstream:
+        break
+      case .middle:
+        distance += fragment.spacing / 2
+      case .downstream:
+        distance += fragment.spacing
+      }
+      return distance
+    }
+    else {
+      return totalWidth
     }
   }
 
