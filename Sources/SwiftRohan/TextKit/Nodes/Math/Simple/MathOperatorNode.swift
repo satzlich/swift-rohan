@@ -3,6 +3,8 @@
 import Foundation
 import _RopeModule
 
+private let UNIT_LENGTH = 1
+
 final class MathOperatorNode: SimpleNode {
   // MARK: - Node
 
@@ -30,7 +32,7 @@ final class MathOperatorNode: SimpleNode {
 
   // MARK: - Node(Layout)
 
-  final override func layoutLength() -> Int { UNIT_LENGTH }  // always "1".
+  final override func layoutLength() -> Int { UNIT_LENGTH }
 
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool

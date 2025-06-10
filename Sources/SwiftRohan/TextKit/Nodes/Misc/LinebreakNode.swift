@@ -3,6 +3,8 @@
 import Foundation
 import _RopeModule
 
+private let UNIT_LENGTH = 1
+
 final class LinebreakNode: SimpleNode {
   // MARK: - Node
 

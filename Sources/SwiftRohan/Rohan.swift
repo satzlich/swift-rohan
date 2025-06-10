@@ -4,8 +4,6 @@ import LatexParser
 import OSLog
 import _RopeModule
 
-let UNIT_LENGTH: Int = 1
-
 internal enum Rohan {
   static let domain = "net.satzlich.rohan"
   static let logger = Logger(subsystem: domain, category: "Rohan")

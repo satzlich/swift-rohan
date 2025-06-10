@@ -3,6 +3,8 @@
 import Foundation
 import _RopeModule
 
+private let UNIT_LENGTH = 1
+
 class ArrayNode: Node {
   // MARK: - Node(Styles)
 
