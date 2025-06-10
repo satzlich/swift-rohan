@@ -283,14 +283,14 @@ final class TextLayoutContext: LayoutContext {
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.minY.clamped(lineFrame.minY, lineFrame.maxY)
       // if we are about to go beyond the top edge, resolved = false
-      let resolved = !y.isApproximatelyEqual(to: usageBounds.minY)
+      let resolved = !y.isNearlyEqual(to: usageBounds.minY)
       return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     case .down:
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.maxY.clamped(lineFrame.minY, lineFrame.maxY)
       // if we are about to go beyond the bottom edge, resolved = false
-      let resolved = !y.isApproximatelyEqual(to: usageBounds.maxY)
+      let resolved = !y.isNearlyEqual(to: usageBounds.maxY)
       return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     default:

@@ -22,10 +22,10 @@ struct AbsLengthTests {
       let eps = 1e-6
 
       #expect(value.ptValue == 10)
-      #expect(value.mmValue.isApproximatelyEqual(to: 3.5277777, absoluteTolerance: eps))
-      #expect(value.cmValue.isApproximatelyEqual(to: 0.3527777, absoluteTolerance: eps))
-      #expect(value.picaValue.isApproximatelyEqual(to: 0.833333, absoluteTolerance: eps))
-      #expect(value.inchValue.isApproximatelyEqual(to: 0.138888, absoluteTolerance: eps))
+      #expect(value.mmValue.isNearlyEqual(to: 3.5277777, absoluteTolerance: eps))
+      #expect(value.cmValue.isNearlyEqual(to: 0.3527777, absoluteTolerance: eps))
+      #expect(value.picaValue.isNearlyEqual(to: 0.833333, absoluteTolerance: eps))
+      #expect(value.inchValue.isNearlyEqual(to: 0.138888, absoluteTolerance: eps))
       #expect(value.isFinite)
 
       _ = "\(value)"

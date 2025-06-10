@@ -24,35 +24,73 @@ struct MathListLayoutFragmentTests {
 
   // MARK: - Test
 
-  @Test
-  func reflow() {
+  private func reflowExample(
+    _ fragments: Array<MathLayoutFragment>
+  ) -> MathListLayoutFragment {
     let mathList = MathListLayoutFragment(mathContext)
-    let glyphs = "x+y=z/w".map { getGlyph(for: $0) }
 
     mathList.beginEditing()
-    mathList.insert(contentsOf: glyphs, at: 0)
+    mathList.insert(contentsOf: fragments, at: 0)
     mathList.endEditing()
     mathList.fixLayout(mathContext)
-
     #expect(mathList.reflowSegmentCount == 0)
-
     mathList.performReflow()
+
+    return mathList
+  }
+
+  @Test
+  func reflowEmpty() {
+    let mathList = reflowExample([])
+    #expect(mathList.reflowSegmentCount == 0)
+  }
+
+  @Test
+  func reflowMultiFragments() {
+    let glyphs = "x+y=z/w".map { getGlyph(for: $0) }
+    let mathList = reflowExample(glyphs)
+
+    #expect(mathList.count == 7)
     #expect(mathList.reflowSegmentCount == 3)
 
     let reflowSegments = mathList.reflowSegments()
 
     do {
       let width = reflowSegments.lazy.map(\.width).reduce(0, +)
-      #expect(width.isApproximatelyEqual(to: mathList.width))
+      #expect(width.isNearlyEqual(to: mathList.width))
 
       let layoutLength = reflowSegments.lazy.map(\.offsetRange.count).reduce(0, +)
       #expect(layoutLength == mathList.contentLayoutLength)
     }
-    
+
     do {
-      let segment = reflowSegments.last!
-      
+      let segment = reflowSegments[0]
+      #expect(segment.range == 0..<2)
+      #expect(segment.offsetRange == 0..<2)
+      #expect(segment.fragmentIndex(0) == 0)
+      #expect(segment.fragmentIndex(1) == 1)
+      #expect(segment.fragmentIndex(2) == 2)
+      #expect(segment.distanceThroughSegment(0) == 0)
+      #expect(segment.distanceThroughSegment(1).isNearlyEqual(to: 7.012))
+    }
+    do {
+      let segment = reflowSegments[1]
+      #expect(segment.range == 2..<4)
+      #expect(segment.offsetRange == 2..<4)
+      #expect(segment.fragmentIndex(2) == 2)
+      #expect(segment.fragmentIndex(3) == 3)
       #expect(segment.fragmentIndex(4) == 4)
+    }
+    do {
+      let segment = reflowSegments[2]
+      #expect(segment.range == 4..<7)
+      #expect(segment.offsetRange == 4..<7)
+      #expect(segment.fragmentIndex(3) == 4)
+      #expect(segment.fragmentIndex(4) == 4)
+      #expect(segment.fragmentIndex(5) == 5)
+      #expect(segment.fragmentIndex(6) == 6)
+      #expect(segment.fragmentIndex(7) == 7)
+      #expect(segment.fragmentIndex(8) == 7)
     }
   }
 }

@@ -475,6 +475,8 @@ extension MathListLayoutFragment {
 
     _reflowSegments.removeAll(keepingCapacity: true)
 
+    guard !_fragments.isEmpty else { return }
+
     var first = 0
     var firstOffset = 0
     var i = 0
