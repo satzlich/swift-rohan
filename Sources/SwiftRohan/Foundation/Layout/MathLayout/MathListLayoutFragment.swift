@@ -28,26 +28,26 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // exporse properties for convenience
 
-    @inline(__always) var width: Double { fragment.width }
-    @inline(__always) var ascent: Double { fragment.ascent }
-    @inline(__always) var descent: Double { fragment.descent }
-    @inline(__always) var height: Double { fragment.height }
-    @inline(__always) var italicsCorrection: Double { fragment.italicsCorrection }
-    @inline(__always) var accentAttachment: Double { fragment.accentAttachment }
+    var width: Double { fragment.width }
+    var ascent: Double { fragment.ascent }
+    var descent: Double { fragment.descent }
+    var height: Double { fragment.height }
+    var italicsCorrection: Double { fragment.italicsCorrection }
+    var accentAttachment: Double { fragment.accentAttachment }
 
-    @inline(__always) var clazz: MathClass { fragment.clazz }
-    @inline(__always) var limits: Limits { fragment.limits }
-    @inline(__always) var isSpaced: Bool { fragment.isSpaced }
-    @inline(__always) var isTextLike: Bool { fragment.isTextLike }
+    var clazz: MathClass { fragment.clazz }
+    var limits: Limits { fragment.limits }
+    var isSpaced: Bool { fragment.isSpaced }
+    var isTextLike: Bool { fragment.isTextLike }
 
-    @inline(__always) var layoutLength: Int { fragment.layoutLength }
-    @inline(__always) var glyphOrigin: CGPoint { fragment.glyphOrigin }
+    var layoutLength: Int { fragment.layoutLength }
+    var glyphOrigin: CGPoint { fragment.glyphOrigin }
 
-    @inline(__always) func setGlyphOrigin(_ origin: CGPoint) {
+    func setGlyphOrigin(_ origin: CGPoint) {
       fragment.setGlyphOrigin(origin)
     }
 
-    @inline(__always) func draw(at point: CGPoint, in context: CGContext) {
+    func draw(at point: CGPoint, in context: CGContext) {
       fragment.draw(at: point, in: context)
     }
 
