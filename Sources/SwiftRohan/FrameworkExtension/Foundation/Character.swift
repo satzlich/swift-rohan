@@ -3,7 +3,8 @@
 import Foundation
 
 extension Character {
-  @inline(__always) var length: Int { utf16.count }
+  @inlinable @inline(__always)
+  var length: Int { utf16.count }
 }
 
 extension Character: Codable {
