@@ -202,11 +202,9 @@ final class MathListLayoutContext: LayoutContext {
 
   /// The layout length of the content when reflowed.
   /// - Invariant: When the content is empty, this should be zero.
-  var reflowedLength: Int { layoutFragment.reflowedLength }
+  var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
 
-  internal typealias ReflowElement = MathListLayoutFragment.ReflowElement
-
-  func reflowedContent() -> Array<ReflowElement> {
-    layoutFragment.reflowedContent()
+  func reflowSegments() -> Array<ReflowSegmentFragment> {
+    layoutFragment.reflowSegments()
   }
 }

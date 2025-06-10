@@ -12,6 +12,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private var _fontSize: CGFloat
 
   private var _fragments: Deque<AnnotatedFragment> = []
+
+  private var _reflowSegments: Array<ReflowSegmentFragment> = []
   private var _penaltyCount: Int = 0
 
   init(_ mathContext: MathContext) {
@@ -244,13 +246,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
       }
 
       // cursor position
-      if i == 0 {
-        _fragments[i].cursorPosition = .downstream
+      if i + 1 < _fragments.count {
+        let current = fragment.clazz
+        let next = _fragments[i + 1].clazz
+        _fragments[i].cursorPosition = Self.resolveCursorPosition(current, next)
       }
       else {
-        let previous = _fragments[i - 1].clazz
-        let current = fragment.clazz
-        _fragments[i].cursorPosition = Self.resolveCursorPosition(previous, current)
+        _fragments[i].cursorPosition = .upstream
       }
 
       // penalty
@@ -272,13 +274,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the cursor position between two fragments.
   private static func resolveCursorPosition(
-    _ previous: MathClass, _ current: MathClass
+    _ lhs: MathClass, _ rhs: MathClass
   ) -> CursorPosition {
     func isTextLike(_ clazz: MathClass) -> Bool {
       clazz == .Alphabetic || clazz == .Normal
     }
 
-    switch (isTextLike(previous), isTextLike(current)) {
+    switch (isTextLike(lhs), isTextLike(rhs)) {
     case (true, true):
       return .downstream  // middle works, but downstream is simpler
     case (true, false):
@@ -351,14 +353,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
     else if index == 0 {  // first
       return _fragments[index].glyphOrigin
     }
-    else if index < self.count {  // middle
-      let cursorPosition = _fragments[index].cursorPosition
-      switch cursorPosition {
+    else if index < _fragments.count {  // middle
+      let previous = _fragments[index - 1]
+      switch previous.cursorPosition {
       case .upstream:
-        let lhs = _fragments[index - 1].fragment
+        let lhs = previous.fragment
         return lhs.glyphOrigin.with(xDelta: lhs.width)
       case .middle:
-        let lhs = _fragments[index - 1].fragment
+        let lhs = previous.fragment
         let rhs = _fragments[index].fragment
         return CGPoint(x: (lhs.maxX + rhs.minX) / 2, y: rhs.glyphOrigin.y)
       case .downstream:
@@ -463,11 +465,61 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: - Reflow
 
-  internal var reflowSegmentCount: Int { _fragments.isEmpty ? 0 : _penaltyCount + 1 }
+  /// Count of reflow segments.
+  var reflowSegmentCount: Int { _reflowSegments.count }
+
+  func reflowSegments() -> Array<ReflowSegmentFragment> {
+    precondition(!isEditing)
+    return _reflowSegments
+  }
+
+  func performReflow() {
+    _reflowSegments.removeAll(keepingCapacity: true)
+
+    var i = 0
+    var j = 0
+
+    var unusedPrevious: CGFloat = 0
+    while j < _fragments.count {
+      let fragment = _fragments[j]
+      if fragment.penalty {
+        let upstream = unusedPrevious
+        let downstream: Double
+        let space = fragment.spacing.floatValue * _fontSize
+        switch fragment.cursorPosition {
+        case .upstream:
+          downstream = 0
+        case .middle:
+          downstream = space / 2
+        case .downstream:
+          downstream = space
+        }
+        unusedPrevious = space - downstream
+        // segment boundary
+        if i < j {
+          let range = i..<j + 1
+          let segment = ReflowSegmentFragment(
+            self, range, upstream: upstream, downstream: downstream)
+          _reflowSegments.append(segment)
+        }
+        i = j + 1
+      }
+      j += 1
+    }
+    do {
+      assert(j == _fragments.count)
+      let range = i..<j
+      let segment = ReflowSegmentFragment(
+        self, range, upstream: unusedPrevious, downstream: 0)
+      _reflowSegments.append(segment)
+    }
+  }
 
   /// Convert a layout offset to a reflowed offset assuming the initial text offset
   /// is zero.`
-  func reflowedOffset(for layoutOffset: Int) -> Int { layoutOffset * 2 }
+  func reflowedOffset(for layoutOffset: Int) -> Int {
+    preconditionFailure()
+  }
 
   /// Convert a reflowed offset to a layout offset assuming the initial text offset
   /// is zero.
@@ -476,62 +528,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   ///   If the reflowed offset is in the middle of a fragment, this returns the
   ///   downstream layout offset.
   func originalOffset(for reflowedOffset: Int) -> Int {
-    precondition(reflowedOffset >= 0 && reflowedOffset <= reflowedLength)
-
-    let (i, offset) = index(containing: reflowedOffset / 2)
-    if offset * 2 == reflowedOffset {
-      return offset
-    }
-    else {
-      assert(i < _fragments.count)
-      return offset + _fragments[i].layoutLength
-    }
+    preconditionFailure()
   }
 
-  /// The layout length of the content when reflowed.
-  /// - Invariant: When the content is empty, this should be zero.
-  var reflowedLength: Int { contentLayoutLength * 2 }
-
-  internal enum ReflowElement {
-    case fragment(MathLayoutFragment)
-    case string(String)
-  }
-
-  func reflowedContent() -> Array<ReflowElement> {
-    precondition(!isEditing)
-
-    var content: Array<ReflowElement> = []
-    content.reserveCapacity(_fragments.count * 2)
-
-    var unusedPrevious: CGFloat = 0
-    for (current, next) in _fragments.adjacentPairs() {
-      let space = current.spacing.floatValue * _fontSize
-      let usedSpace: CGFloat
-      switch next.cursorPosition {
-      case .downstream:
-        usedSpace = space
-      case .middle:
-        usedSpace = space / 2
-      case .upstream:
-        usedSpace = 0
-      }
-      let sandwich = FragmentSandwich(
-        upstream: unusedPrevious, downstream: usedSpace, wrapped: current.fragment)
-      content.append(.fragment(sandwich))
-      let remainder = current.layoutLength * 2 - 1
-      let filler = current.penalty ? Chars.ZWSP : Chars.wordJoiner
-      content.append(.string(String(repeating: filler, count: remainder)))
-
-      unusedPrevious = space - usedSpace
-    }
-    // last fragment
-    if let last = _fragments.last {
-      let sandwich = FragmentSandwich(
-        upstream: unusedPrevious, downstream: 0, wrapped: last.fragment)
-      content.append(.fragment(sandwich))
-      let remainder = last.layoutLength * 2 - 1
-      content.append(.string(String(repeating: Chars.wordJoiner, count: remainder)))
-    }
-    return content
-  }
 }

@@ -25,7 +25,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   internal var height: Double { ascent + descent }
 
   init(
-    source: MathListLayoutFragment, range: Range<Int>,
+    _ source: MathListLayoutFragment, _ range: Range<Int>,
     upstream: CGFloat, downstream: CGFloat
   ) {
     precondition(range.isEmpty == false)
