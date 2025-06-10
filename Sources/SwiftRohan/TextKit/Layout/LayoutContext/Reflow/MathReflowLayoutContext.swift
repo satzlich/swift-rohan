@@ -48,37 +48,30 @@ final class MathReflowLayoutContext: LayoutContext {
   // MARK: - Layout
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
-    precondition(isEditing)
     mathListLayoutContext.addParagraphStyle(source, range)
   }
 
   func skipBackwards(_ n: Int) {
-    precondition(isEditing)
     mathListLayoutContext.skipBackwards(n)
   }
 
   func deleteBackwards(_ n: Int) {
-    precondition(isEditing)
     mathListLayoutContext.deleteBackwards(n)
   }
 
   func invalidateBackwards(_ n: Int) {
-    precondition(isEditing)
     mathListLayoutContext.invalidateBackwards(n)
   }
 
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
     mathListLayoutContext.insertText(text, source)
   }
 
   func insertNewline(_ context: Node) {
-    precondition(isEditing)
     mathListLayoutContext.insertNewline(context)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
     mathListLayoutContext.insertFragment(fragment, source)
   }
 

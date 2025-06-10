@@ -10,8 +10,8 @@ final class MathListLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
   let layoutFragment: MathListLayoutFragment
 
+  internal var mathContext: MathContext { fragmentFactory.mathContext }
   private var fragmentFactory: FragmentFactory
-  var mathContext: MathContext { fragmentFactory.mathContext }
 
   init(
     _ styleSheet: StyleSheet, _ mathContext: MathContext,
@@ -51,15 +51,13 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
-    // do nothing
-  }
+  func addParagraphStyle(_ source: Node, _ range: Range<Int>) { /* no-op */  }
 
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 
     guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
-    else { preconditionFailure("index not found; there may be a bug") }
+    else { preconditionFailure("index not found") }
 
     // update location
     layoutCursor -= n
@@ -70,7 +68,7 @@ final class MathListLayoutContext: LayoutContext {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 
     guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
-    else { preconditionFailure("index not found; there may be a bug") }
+    else { preconditionFailure("index not found") }
 
     // remove
     layoutFragment.removeSubrange(index..<fragmentIndex)
@@ -84,7 +82,7 @@ final class MathListLayoutContext: LayoutContext {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 
     guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
-    else { preconditionFailure("index not found; there may be a bug") }
+    else { preconditionFailure("index not found") }
 
     // invalidate
     layoutFragment.invalidateSubrange(index..<fragmentIndex)
@@ -96,7 +94,7 @@ final class MathListLayoutContext: LayoutContext {
 
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0)
-    guard !text.isEmpty else { assertionFailure("empty text is invalid"); return }
+    guard !text.isEmpty else { return }
     let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
     let fragments = fragmentFactory.makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
@@ -123,6 +121,7 @@ final class MathListLayoutContext: LayoutContext {
     }
   }
 
+  /// Get math fragments for the given string.
   internal func getFragments(for string: String, _ source: Node) -> Array<MathFragment> {
     let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
     return fragmentFactory.makeFragments(from: string, mathProperty)
@@ -209,110 +208,5 @@ final class MathListLayoutContext: LayoutContext {
 
   func reflowedContent() -> Array<ReflowElement> {
     layoutFragment.reflowedContent()
-  }
-}
-
-private struct FragmentFactory {
-  let mathContext: MathContext
-  private let font: Font
-
-  init(_ mathContext: MathContext) {
-    self.mathContext = mathContext
-    self.font = mathContext.getFont()
-  }
-
-  private lazy var _fallbackContext: MathContext = {
-    MathUtils.fallbackMathContext(for: mathContext)
-  }()
-
-  /// Glyph from fallback context
-  private mutating func _fallbackGlyph(for char: Character) -> GlyphFragment? {
-    let font = _fallbackContext.getFont()
-    let table = _fallbackContext.table
-    return GlyphFragment(char: char, font, table)
-  }
-
-  /// Replacement glyph for invalid character
-  mutating func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
-    let glyph = _fallbackGlyph(for: Chars.replacementChar)!
-    return MathGlyphLayoutFragment(glyph, layoutLength)
-  }
-
-  mutating func makeFragments<S: Collection<Character>>(
-    from string: S, _ property: MathProperty
-  ) -> [any MathLayoutFragment] {
-    string.map { char in
-      let styled = MathUtils.resolveCharacter(char, property)
-      return makeFragment(for: styled, char.length)
-    }
-  }
-
-  private mutating func makeFragment(
-    for char: Character, _ layoutLength: Int
-  ) -> MathLayoutFragment {
-
-    if Chars.isPrime(char) {
-      if let fragment =
-        primeFragment(char, mathContext) ?? primeFragment(char, _fallbackContext)
-      {
-        return MathGlyphVariantLayoutFragment(fragment, layoutLength)
-      }
-      else {
-        return replacementGlyph(layoutLength)
-      }
-    }
-    else {
-      let table = mathContext.table
-      guard
-        let glyph = GlyphFragment(char: char, font, table) ?? _fallbackGlyph(for: char)
-      else {
-        return replacementGlyph(layoutLength)
-      }
-      if glyph.clazz == .Large && mathContext.mathStyle == .display {
-        let constants = mathContext.constants
-        let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
-        let axisHeight = font.convertToPoints(constants.axisHeight)
-        let height = max(minHeight, glyph.height * 2.squareRoot())
-        let variant = glyph.stretch(
-          orientation: .vertical, target: height, shortfall: 0, mathContext)
-        return MathGlyphVariantLayoutFragment.createCentered(
-          variant, layoutLength, axisHeight: axisHeight)
-      }
-      else {
-        return MathGlyphLayoutFragment(glyph, layoutLength)
-      }
-    }
-  }
-
-  /// Resolve a character to a styled character
-  mutating func resolveCharacter(
-    _ char: Character, _ property: MathProperty
-  ) -> (Character, original: Character) {
-    let substituted = MathUtils.SUBS[char] ?? char
-    let styled = MathUtils.styledChar(
-      for: substituted, variant: property.variant, bold: property.bold,
-      italic: property.italic, autoItalic: true)
-    return (styled, char)
-  }
-
-  /// Fragment for prime character
-  private mutating func primeFragment(
-    _ char: Character, _ mathContext: MathContext
-  ) -> MathFragment? {
-    precondition(Chars.isPrime(char))
-
-    let table = mathContext.table
-    if let scaledUp = mathContext.mathStyle.scaleUp() {
-      let font = mathContext.getFont(for: scaledUp)
-
-      // xHeight may be negative
-      // 0.8 works well for Latin Modern, Libertinus, STIX Two
-      let shiftDown = Swift.abs(font.xHeight) * 0.8
-      return GlyphFragment(char: char, font, table)
-        .map { glyph in TranslatedFragment(source: glyph, shiftDown: shiftDown) }
-    }
-    else {
-      return GlyphFragment(char: char, font, table)
-    }
   }
 }
