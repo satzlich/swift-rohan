@@ -12,9 +12,10 @@ public final class DocumentManager {
   typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
   typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
-  /// The root node of the document
+  /// The content of the document.
   private let content: DocumentContent
-  private var rootNode: RootNode { @inline(__always) get { content.rootNode } }
+  /// The root node of the document.
+  private var rootNode: RootNode { content.rootNode }
 
   /// The style sheet for the document
   public var styleSheet: StyleSheet {
@@ -31,12 +32,7 @@ public final class DocumentManager {
     }
   }
 
-  /// base text content storage
-  private(set) var textContentStorage: NSTextContentStorage
-  /// base text layout manager
-  private(set) var textLayoutManager: NSTextLayoutManager
-
-  var textSelection: RhTextSelection? {
+  internal var textSelection: RhTextSelection? {
     didSet {
       #if LOG_TEXT_SELECTION
       let string = textSelection?.description ?? "no selection"
@@ -46,6 +42,28 @@ public final class DocumentManager {
   }
 
   private(set) lazy var textSelectionNavigation: TextSelectionNavigation = .init(self)
+
+  // MARK: - base Layout Manager
+
+  /// base text content storage
+  private(set) var textContentStorage: NSTextContentStorage
+  /// base text layout manager
+  private(set) var textLayoutManager: NSTextLayoutManager
+
+  internal var textContainer: NSTextContainer? {
+    get { textLayoutManager.textContainer }
+    _modify { yield &textLayoutManager.textContainer }
+  }
+
+  internal var usageBoundsForTextContainer: CGRect {
+    textLayoutManager.usageBoundsForTextContainer
+  }
+
+  internal var textViewportLayoutController: NSTextViewportLayoutController {
+    textLayoutManager.textViewportLayoutController
+  }
+
+  // MARK: - Init
 
   convenience init(_ rootNode: RootNode, _ styleSheet: StyleSheet) {
     self.init(content: DocumentContent(rootNode), styleSheet)
@@ -62,19 +80,6 @@ public final class DocumentManager {
     // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
-  }
-
-  // MARK: - Properties of base layout manager
-
-  internal var textContainer: NSTextContainer? {
-    get { textLayoutManager.textContainer }
-    _modify { yield &textLayoutManager.textContainer }
-  }
-
-  internal var usageBounds: CGRect { textLayoutManager.usageBoundsForTextContainer }
-
-  internal var textViewportLayoutController: NSTextViewportLayoutController {
-    textLayoutManager.textViewportLayoutController
   }
 
   // MARK: - Query
@@ -119,8 +124,6 @@ public final class DocumentManager {
     }
   }
 
-  // MARK: - Editing
-
   internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
     TreeUtils.containerCategory(for: location, rootNode)
   }
@@ -128,6 +131,8 @@ public final class DocumentManager {
   internal func contentCategory(of nodes: [Node]) -> ContentCategory? {
     TreeUtils.contentCategory(of: nodes)
   }
+
+  // MARK: - Editing
 
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
@@ -226,16 +231,14 @@ public final class DocumentManager {
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
-  func resolveInsertParagraphBreak(at range: RhTextRange) -> [Node] {
-    func paragraphs(_ n: Int = 2) -> [ParagraphNode] {
+  func resolveInsertParagraphBreak(at range: RhTextRange) -> Array<Node> {
+    func paragraphs(_ n: Int) -> Array<ParagraphNode> {
       (0..<n).map { _ in ParagraphNode() }
     }
 
-    guard range.isEmpty else { return paragraphs() }
-
-    let location = range.location
-    guard let trace = Trace.from(location, rootNode)
-    else { return paragraphs() }
+    guard range.isEmpty,
+      let trace = Trace.from(range.location, rootNode)
+    else { return paragraphs(2) }
 
     let node = trace.last!.node
     let index = trace.last!.index
@@ -247,14 +250,14 @@ public final class DocumentManager {
       if node.childCount == 0
         || (index < node.childCount && node.getChild(index).isTransparent)
       {
-        return paragraphs()
+        return paragraphs(2)
       }
       else {
         return paragraphs(1)
       }
     }
     else {
-      return paragraphs()
+      return paragraphs(2)
     }
   }
 
@@ -576,13 +579,13 @@ public final class DocumentManager {
         if position.y < 0 {
           return AffineLocation(documentRange.location, .downstream)
         }
-        else if position.y > usageBounds.height {
+        else if position.y > usageBoundsForTextContainer.height {
           return AffineLocation(documentRange.endLocation, .downstream)
         }
         // FALL THROUGH
       }
       else {
-        if position.y < 0 || position.y > usageBounds.height {
+        if position.y < 0 || position.y > usageBoundsForTextContainer.height {
           return location  // unchanged
         }
         // FALL THROUGH
@@ -871,8 +874,8 @@ public final class DocumentManager {
   }
 
   /// Determine the __contextual node__ the location is in.
-  /// - Returns: The contextual node, its location, and its child index if successful;
-  ///   otherwise, nil.
+  /// - Returns: The contextual node, its location, and its associated index for
+  ///     accessing the next-level node if successful; otherwise, nil.
   /// - Note: Skip text nodes and content nodes.
   internal func contextualNode(
     for location: TextLocation

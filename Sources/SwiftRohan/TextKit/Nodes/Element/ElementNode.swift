@@ -820,7 +820,7 @@ internal class ElementNode: Node {
       else {
         return nil
       }
-      return LayoutUtils.rayshootFurther(
+      return LayoutUtils.relayRayshoot(
         newLayoutOffset, affinity, direction, result, context)
     }
     else {
