@@ -8,7 +8,9 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   /// The source fragment that this segment is derived from.
   private let source: MathListLayoutFragment
   /// index range in the source fragment.
-  private let range: Range<Int>
+  internal let range: Range<Int>
+  /// Layout offset range in the source fragment.
+  internal let offsetRange: Range<Int>
   /// Added upstream space before the segment.
   private let upstream: CGFloat
   /// Added downstream space after the segment.
@@ -25,12 +27,15 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   internal var height: Double { ascent + descent }
 
   init(
-    _ source: MathListLayoutFragment, _ range: Range<Int>,
+    _ source: MathListLayoutFragment,
+    _ range: Range<Int>,
+    _ offsetRange: Range<Int>,
     upstream: CGFloat, downstream: CGFloat
   ) {
     precondition(range.isEmpty == false)
     self.source = source
     self.range = range
+    self.offsetRange = offsetRange
     self.upstream = upstream
     self.downstream = downstream
 

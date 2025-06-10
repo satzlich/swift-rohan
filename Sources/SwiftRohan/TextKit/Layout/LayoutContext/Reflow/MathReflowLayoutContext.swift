@@ -14,14 +14,14 @@ final class MathReflowLayoutContext: LayoutContext {
 
   /// Starting offset in the text layoutcontext where the math list starts.
   /// This is used to calculate the original text offset for reflowed segments.
-  /// Unavailable when `isEditing` is true.
-  private let textOffset: Int?
+  /// Invalid when `isEditing` is true as the text layout context is not finalized yet.
+  private let textOffset: Int
 
   init(
     _ textLayoutContext: TextLayoutContext,
     _ mathListLayoutContext: MathListLayoutContext,
     _ sourceNode: EquationNode,
-    _ textOffset: Int? = nil
+    _ textOffset: Int = -1
   ) {
     self.textLayoutContext = textLayoutContext
     self.mathLayoutContext = mathListLayoutContext
@@ -80,10 +80,11 @@ final class MathReflowLayoutContext: LayoutContext {
   func getSegmentFrame(
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
-    precondition(!isEditing && textOffset != nil)
+    precondition(!isEditing && textOffset >= 0)
+
+    //    let segmentIndex = mathLayoutContext.getSegmentIndex(for: layoutOffset, affinity)
 
     preconditionFailure()
-
   }
 
   func enumerateTextSegments(
@@ -91,24 +92,22 @@ final class MathReflowLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    precondition(!isEditing && textOffset != nil)
+    precondition(!isEditing && textOffset >= 0)
 
     preconditionFailure()
-
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
-    precondition(!isEditing && textOffset != nil)
+    precondition(!isEditing && textOffset >= 0)
 
     preconditionFailure()
-
   }
 
   func rayshoot(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    precondition(!isEditing && textOffset != nil)
+    precondition(!isEditing && textOffset >= 0)
 
     preconditionFailure()
   }
@@ -117,12 +116,12 @@ final class MathReflowLayoutContext: LayoutContext {
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
-    precondition(!isEditing && textOffset != nil)
+    precondition(!isEditing && textOffset >= 0)
 
     preconditionFailure()
   }
 }
 
 extension MathReflowLayoutContext {
-  
+
 }

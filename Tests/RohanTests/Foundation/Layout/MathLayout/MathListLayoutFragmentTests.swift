@@ -39,7 +39,11 @@ struct MathListLayoutFragmentTests {
     mathList.performReflow()
     #expect(mathList.reflowSegmentCount == 3)
 
-    let width = mathList.reflowSegments().lazy.map(\.width).reduce(0, +)
+    let reflowSegments = mathList.reflowSegments()
+    let width = reflowSegments.lazy.map(\.width).reduce(0, +)
     #expect(width.isApproximatelyEqual(to: mathList.width))
+    
+    let layoutLength = reflowSegments.lazy.map(\.offsetRange.count).reduce(0, +)
+    #expect(layoutLength == mathList.contentLayoutLength)
   }
 }
