@@ -241,7 +241,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
   /// of the container.
   func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
-    guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
+    guard let i = self.index(matching: layoutOffset) else { return nil }
     if self.isEmpty {
       return SegmentFrame(.zero, 0)
     }
@@ -395,8 +395,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the index of the first fragment that is __exactly__ n units
   /// of `layoutLength` away from i, or nil if no such fragment
+  /// - Precondition: Use this during editing or when fixLayout.
   /// - Complexity: O(n).
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
+    precondition(isEditing || isLayoutDirty)
     precondition(i >= 0 && i <= count)
     if n >= 0 {
       return searchIndexForward(i, distance: n)
@@ -408,6 +410,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Search for the index after i by n units of layout length
   private func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
+    precondition(isEditing || isLayoutDirty)
     precondition(n >= 0)
     var j = i
     var s = 0
@@ -422,6 +425,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Search for the index before i by n units of layout length
   private func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
+    precondition(isEditing || isLayoutDirty)
     precondition(n >= 0)
     var j = i
     var s = 0
