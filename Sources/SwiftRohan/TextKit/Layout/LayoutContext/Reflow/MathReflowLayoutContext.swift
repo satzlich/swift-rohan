@@ -276,10 +276,20 @@ final class MathReflowLayoutContext: LayoutContext {
     guard i >= 0 && i < mathLayoutContext.reflowSegmentCount,
       let frame = getReflowSegmentFrame(i)
     else { return nil }
-    var relPoint = point.relative(to: frame.frame.origin)
+    let relPoint = point.relative(to: frame.frame.origin)
     let segment = mathLayoutContext.reflowSegments[i]
-    relPoint.x = segment.equivalentPosition(relPoint.x)
-    return mathLayoutContext.getLayoutRange(interactingAt: relPoint)
+    if relPoint.x < segment.upstream {
+      let offset = segment.offsetRange.lowerBound
+      return PickingResult(offset..<offset, 0, .downstream)
+    }
+    else if relPoint.x > segment.width {
+      let offset = segment.offsetRange.upperBound
+      return PickingResult(offset..<offset, 0, .upstream)
+    }
+    else {
+      let x = segment.equivalentPosition(relPoint.x)
+      return mathLayoutContext.getLayoutRange(interactingAt: relPoint.with(x: x))
+    }
   }
 
   func rayshoot(

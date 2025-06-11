@@ -58,7 +58,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   /// Layout offset range in the source fragment.
   internal let offsetRange: Range<Int>
   /// Added upstream space before the segment.
-  private let upstream: CGFloat
+  internal let upstream: CGFloat
   /// Added downstream space after the segment.
   private let downstream: CGFloat
 
