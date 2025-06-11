@@ -152,16 +152,13 @@ final class EquationNode: MathNode {
       // must not fork
       index == endIndex,
       let component = getComponent(index),
-      let fragment = getFragment(index)
+      let fragment = getFragment(index) as? MathListLayoutFragment
     else { return false }
 
-    let newContext: MathReflowLayoutContext
-    do {
-      let fragment = fragment as! MathListLayoutFragment
-      let mathContext =
-        LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
-      newContext = MathReflowLayoutContext(context, mathContext, self, layoutOffset)
-    }
+    let newContext: MathReflowLayoutContext =
+      createReflowContext(
+        component, fragment, parent: context, layoutOffset: layoutOffset)
+
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), context: newContext,
       // reset layoutOffset to "0".
@@ -169,6 +166,36 @@ final class EquationNode: MathNode {
       // use the original originCorrection.
       originCorrection: originCorrection,
       type: type, options: options, using: block)
+  }
+
+  final override func rayshoot(
+    from path: ArraySlice<RohanIndex>, affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction, context: any LayoutContext,
+    layoutOffset: Int
+  ) -> RayshootResult? {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    guard isReflowActive else {
+      return super.rayshoot(
+        from: path, affinity: affinity, direction: direction, context: context,
+        layoutOffset: layoutOffset)
+    }
+
+    guard path.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let component = getComponent(index),
+      let fragment = getFragment(index) as? MathListLayoutFragment
+    else { return nil }
+
+    // create sub-context
+    let newContext =
+      createReflowContext(
+        component, fragment, parent: context, layoutOffset: layoutOffset)
+    // rayshoot in the component with layout offset reset to "0"
+    return component.rayshoot(
+      from: path.dropFirst(), affinity: affinity, direction: direction,
+      context: newContext, layoutOffset: 0)
   }
 
   // MARK: - MathNode(Component)
@@ -285,4 +312,19 @@ final class EquationNode: MathNode {
       : TargetSelector(.equation)
   }
 
+  /// Create reflow context for the equation node.
+  /// - Parameters:
+  ///     - component: The content component of the equation node.
+  ///     - fragment: The math list layout fragment of the content component.
+  ///     - context: The parent text layout context.
+  ///     - layoutOffset: The layout offset of the equation node.
+  private final func createReflowContext(
+    _ component: ContentNode, _ fragment: MathListLayoutFragment,
+    parent context: TextLayoutContext, layoutOffset: Int
+  ) -> MathReflowLayoutContext {
+    precondition(self.isReflowActive)
+    let mathContext =
+      LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
+    return MathReflowLayoutContext(context, mathContext, self, layoutOffset)
+  }
 }
