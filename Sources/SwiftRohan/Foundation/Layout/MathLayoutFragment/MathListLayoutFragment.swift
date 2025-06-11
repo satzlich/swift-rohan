@@ -258,7 +258,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    guard let range = indexRange(layoutRange) else { return false }
+    guard let range = indexRange(matching: layoutRange) else { return false }
     let (cursorAscent, cursorDescent) = cursorHeight(range, minAscentDescent)
 
     let segmentFrame: SegmentFrame
@@ -341,8 +341,45 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return jj > 0 ? jj - 1 : 0
   }
 
+  /// Returns the index of fragment that **matches** the layout offset.
+  /// - Precondition: the math list is not in editing mode and there is no dirty index.
+  func index(matching layoutOffset: Int) -> Int? {
+    precondition(!isEditing && _dirtyIndex == nil)
+    precondition(layoutOffset >= 0)
+    let i = self.index(containing: layoutOffset)
+    if i < _fragments.count {
+      if _fragments[i].layoutOffset == layoutOffset { return i }
+    }
+    else {
+      assert(i == _fragments.count)
+      if layoutOffset == contentLayoutLength { return i }
+    }
+    return nil
+  }
+
+  /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
+  /// if no such fragments exist.
+  /// - Precondition: the math list is not in editing mode and there is no dirty index.
+  func indexRange(matching layoutRange: Range<Int>) -> Range<Int>? {
+    precondition(!isEditing && _dirtyIndex == nil)
+    guard let i = index(matching: layoutRange.lowerBound),
+      let j = index(matching: layoutRange.upperBound)
+    else { return nil }
+    return i..<j
+  }
+
+  /// Returns the index of the fragment whose layout offset range contains the given
+  /// layout offset. If no such fragment exists, returns fragment count.
+  /// - Precondition: the math list is not in editing mode and there is no dirty index.
+  func index(containing layoutOffset: Int) -> Int {
+    precondition(!isEditing && _dirtyIndex == nil)
+    precondition(layoutOffset >= 0)
+    return Satz.lowerBound(_fragments, layoutOffset) { $0.layoutOffset < $1 }
+  }
+
   /// Returns the index of the first fragment that is __exactly__ n units
   /// of `layoutLength` away from i, or nil if no such fragment
+  /// - Complexity: O(n).
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(i >= 0 && i <= count)
     if n >= 0 {
@@ -379,15 +416,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
       j -= 1
     }
     return n == s ? j : nil
-  }
-
-  /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
-  /// if no such fragments exist.
-  internal func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
-    guard let i = searchIndexForward(0, distance: layoutRange.lowerBound),
-      let j = searchIndexForward(i, distance: layoutRange.count)
-    else { return nil }
-    return i..<j
   }
 
   // MARK: - Cursor Facility

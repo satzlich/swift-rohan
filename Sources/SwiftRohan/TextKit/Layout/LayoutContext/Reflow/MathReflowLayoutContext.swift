@@ -144,7 +144,7 @@ final class MathReflowLayoutContext: LayoutContext {
 
     guard layoutRange.lowerBound >= 0,
       layoutRange.upperBound <= mathList.contentLayoutLength,
-      let indexRange = mathList.indexRange(layoutRange)
+      let indexRange = mathList.indexRange(matching: layoutRange)
     else { return false }
 
     let minAscentDescent = mathLayoutContext.mathContext.cursorHeight()
