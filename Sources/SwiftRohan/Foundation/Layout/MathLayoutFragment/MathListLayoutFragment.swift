@@ -287,19 +287,18 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
     else if i < self.count {
       let fragment = _fragments[i]
-      // origin moved to top-left corner
-      let origin = fragment.glyphOrigin.with(yDelta: -fragment.ascent + self.ascent)
-      let size = CGSize(width: 0, height: fragment.height)
-      return SegmentFrame(CGRect(origin: origin, size: size), fragment.ascent)
+      let segmentFrame = composeSegmentFrame(
+        fragment.glyphOrigin, width: 0,
+        ascent: fragment.ascent, descent: fragment.descent)
+      return segmentFrame
     }
     else if i == self.count {
       let fragment = _fragments[i - 1]
-      // origin moved to top-left corner
-      let origin = fragment.glyphOrigin
-        .with(xDelta: fragment.width)
-        .with(yDelta: -fragment.ascent + self.ascent)
-      let size = CGSize(width: 0, height: fragment.height)
-      return SegmentFrame(CGRect(origin: origin, size: size), fragment.ascent)
+      var segmentFrame = composeSegmentFrame(
+        fragment.glyphOrigin, width: 0,
+        ascent: fragment.ascent, descent: fragment.descent)
+      segmentFrame.frame.origin.x += fragment.width
+      return segmentFrame
     }
     else {
       return nil
@@ -320,14 +319,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     if self.isEmpty {
       guard range.isEmpty && range.lowerBound == 0 else { return false }
-      let segmentFrame = glyphSegmentFrame(
+      let segmentFrame = composeSegmentFrame(
         .zero, width: 0, ascent: minAscent, descent: minDescent)
       return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
     else if range.isEmpty {
       guard range.lowerBound <= _fragments.count else { return false }
       let x = cursorDistanceThroughUpstream(range.lowerBound)
-      let segmentFrame = glyphSegmentFrame(
+      let segmentFrame = composeSegmentFrame(
         CGPoint(x: x, y: 0), width: 0, ascent: minAscent, descent: minDescent)
       return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
@@ -427,17 +426,20 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
+  /// Compose a segment frame whose origin is at the **top-left** corner and is relative
+  /// to the **top-left** corner of this math list.
+  /// - Parameters:
+  ///   - glyphOrigin: glyph origin relative to the **glyph origin** of the math list.
+  ///
   /// - Invariant: the method satisfies: `f(p1+p2) = f(p1) + p2` where "+" is translation.
-  internal func glyphSegmentFrame(
+  internal func composeSegmentFrame(
     _ glyphOrigin: CGPoint, width: CGFloat, ascent: CGFloat, descent: CGFloat
   ) -> SegmentFrame {
-    // origin moved to top-left corner
     let frame = CGRect(
       x: glyphOrigin.x, y: glyphOrigin.y - ascent + self.ascent,
       width: 0, height: ascent + descent)
     return SegmentFrame(frame, ascent)
   }
-
 }
 
 // MARK: - Reflow
