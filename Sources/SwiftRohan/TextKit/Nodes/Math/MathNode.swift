@@ -256,7 +256,7 @@ class MathNode: Node {
     else { return nil }
 
     // if resolved or not equation node, return corrected result.
-    if nodeResult.isResolved || isEquationNode(self) == false {
+    if nodeResult.isResolved || !shouldRelayRayshoot(context) {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -276,6 +276,10 @@ class MathNode: Node {
       return LayoutUtils.relayRayshoot(
         layoutOffset, affinity, direction, result, context)
     }
-  }
 
+    // Helper
+    func shouldRelayRayshoot(_ context: LayoutContext) -> Bool {
+      context is MathReflowLayoutContext || context is TextLayoutContext
+    }
+  }
 }
