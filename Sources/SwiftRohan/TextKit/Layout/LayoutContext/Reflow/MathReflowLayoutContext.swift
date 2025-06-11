@@ -151,6 +151,15 @@ final class MathReflowLayoutContext: LayoutContext {
     let (cursorAscent, cursorDescent) =
       mathList.cursorHeight(indexRange, minAscentDescent)
 
+    func localBlock(
+      _ segmentRange: Range<Int>?, _ frame: CGRect, _ baseline: CGFloat
+    ) -> Bool {
+      let original = SegmentFrame(frame, baseline)
+      let recomposed =
+        SegmentFrame.recompose(original, ascent: cursorAscent, descent: cursorDescent)
+      return block(segmentRange, recomposed.frame, recomposed.baselinePosition)
+    }
+
     let affinity: SelectionAffinity =
       options.contains(.upstreamAffinity) ? .upstream : .downstream
 
@@ -184,7 +193,7 @@ final class MathReflowLayoutContext: LayoutContext {
           frame.frame.origin.x += d0
           // the range is empty.
           if offset == endOffset {
-            shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+            shouldContinue = localBlock(nil, frame.frame, frame.baselinePosition)
             // no more segments, end the loop.
             state = .exit
           }
@@ -193,7 +202,7 @@ final class MathReflowLayoutContext: LayoutContext {
             let i1 = segment.fragmentIndex(endOffset)
             let d1 = segment.cursorDistanceThroughSegment(i1)
             frame.frame.size.width = d1 - d0
-            shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+            shouldContinue = localBlock(nil, frame.frame, frame.baselinePosition)
             // no more segments, end the loop.
             state = .exit
           }
@@ -202,7 +211,7 @@ final class MathReflowLayoutContext: LayoutContext {
             let i1 = segment.fragmentIndex(segment.offsetRange.upperBound)
             let d1 = segment.cursorDistanceThroughSegment(i1)
             frame.frame.size.width = d1 - d0
-            shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+            shouldContinue = localBlock(nil, frame.frame, frame.baselinePosition)
             // prepare state for next round.
             if shouldContinue,
               i + 1 < segmentCount
@@ -240,7 +249,7 @@ final class MathReflowLayoutContext: LayoutContext {
         }
         let range = textOffset + i..<textOffset + j + 1
         shouldContinue = textLayoutContext.enumerateTextSegments(
-          range, type: type, options: options, using: block)
+          range, type: type, options: options, using: localBlock)
         // prepare state for next round.
         if shouldContinue,
           j + 1 < segmentCount
@@ -263,7 +272,7 @@ final class MathReflowLayoutContext: LayoutContext {
         let d1 = segment.cursorDistanceThroughSegment(i1)
         frame.frame.size.width = d1
 
-        shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+        shouldContinue = localBlock(nil, frame.frame, frame.baselinePosition)
         // no more segments, end the loop.
         state = .exit
 
