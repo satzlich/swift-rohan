@@ -306,53 +306,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
-  /// Get a visually pleasing (inexact) segment frame for the fragment at index.
-  /// - Parameters:
-  ///   - index: The index of the fragment.
-  ///   - minAscentDescent: The minimum ascent and descent of the segment frame.
-  /// - Returns: The segment frame for the fragment at index whose origin is relative
-  ///       to __the top-left corner__ of the container.
-  internal func cursorFrame(
-    for index: Int, _ minAscentDescent: (CGFloat, CGFloat)
-  ) -> SegmentFrame? {
-    guard index <= self.count else { return nil }
-
-    let (ascent, descent) = minAscentDescent
-    let cursorX = cursorDistanceThroughUpstream(index)
-    // origin moved to top-left corner
-    let frame = CGRect(
-      x: cursorX, y: -ascent + self.ascent,
-      width: 0, height: ascent + descent)
-    return SegmentFrame(frame, ascent)
-  }
-
-  /// Returns cursor distance for the given position from the upstream of math list.
-  internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
-    precondition(0 <= index && index <= _fragments.count)
-    if _fragments.isEmpty {
-      return 0
-    }
-    else if index == 0 {
-      return 0  // it's an invariant of math list
-    }
-    else if index < _fragments.count {
-      let fragment = _fragments[index - 1]
-      var distance = fragment.fragment.maxX
-      switch fragment.cursorPosition {
-      case .upstream:
-        break
-      case .middle:
-        distance += fragment.spacing / 2
-      case .downstream:
-        distance += fragment.spacing
-      }
-      return distance
-    }
-    else {
-      return _width  // it's an invariant of math list.
-    }
-  }
-
   /// - Note: Origins of the segment frame is relative to __the top-left corner__
   /// of the container.
   func enumerateTextSegments(
@@ -363,16 +316,24 @@ final class MathListLayoutFragment: MathLayoutFragment {
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     guard let range = indexRange(layoutRange) else { return false }
+    let (minAscent, minDescent) = minAscentDescent
 
-    if self.isEmpty || range.isEmpty {
-      guard let segmentFrame = self.cursorFrame(for: range.lowerBound, minAscentDescent)
-      else { return false }
+    if self.isEmpty {
+      guard range.isEmpty && range.lowerBound == 0 else { return false }
+      let segmentFrame = glyphSegmentFrame(
+        .zero, width: 0, ascent: minAscent, descent: minDescent)
+      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+    }
+    else if range.isEmpty {
+      guard range.lowerBound <= _fragments.count else { return false }
+      let x = cursorDistanceThroughUpstream(range.lowerBound)
+      let segmentFrame = glyphSegmentFrame(
+        CGPoint(x: x, y: 0), width: 0, ascent: minAscent, descent: minDescent)
       return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
     // ASSERT: fragments not empty
     // ASSERT: range not empty
     else {
-      let (minAscent, minDescent) = minAscentDescent
       let ascent = Swift.max(_fragments[range].lazy.map(\.ascent).max()!, minAscent)
       let descent = Swift.max(_fragments[range].lazy.map(\.descent).max()!, minDescent)
 
@@ -436,6 +397,47 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     return PrintUtils.compose([description], children)
   }
+
+  // MARK: - Cursor Facility
+
+  /// Returns cursor distance for the given position from the upstream of math list.
+  internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
+    precondition(0 <= index && index <= _fragments.count)
+    if _fragments.isEmpty {
+      return 0
+    }
+    else if index == 0 {
+      return 0  // it's an invariant of math list
+    }
+    else if index < _fragments.count {
+      let fragment = _fragments[index - 1]
+      var distance = fragment.fragment.maxX
+      switch fragment.cursorPosition {
+      case .upstream:
+        break
+      case .middle:
+        distance += fragment.spacing / 2
+      case .downstream:
+        distance += fragment.spacing
+      }
+      return distance
+    }
+    else {
+      return _width  // it's an invariant of math list.
+    }
+  }
+
+  /// - Invariant: the method satisfies: `f(p1+p2) = f(p1) + p2` where "+" is translation.
+  internal func glyphSegmentFrame(
+    _ glyphOrigin: CGPoint, width: CGFloat, ascent: CGFloat, descent: CGFloat
+  ) -> SegmentFrame {
+    // origin moved to top-left corner
+    let frame = CGRect(
+      x: glyphOrigin.x, y: glyphOrigin.y - ascent + self.ascent,
+      width: 0, height: ascent + descent)
+    return SegmentFrame(frame, ascent)
+  }
+
 }
 
 // MARK: - Reflow
