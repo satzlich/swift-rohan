@@ -140,9 +140,6 @@ class MathNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    let affinity: SelectionAffinity =
-      options.contains(.upstreamAffinity) ? .upstream : .downstream
-
     guard path.count >= 2,
       endPath.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
