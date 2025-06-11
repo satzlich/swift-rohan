@@ -335,12 +335,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     else {
       let ascent = Swift.max(_fragments[range].lazy.map(\.ascent).max()!, minAscent)
       let descent = Swift.max(_fragments[range].lazy.map(\.descent).max()!, minDescent)
-
       let x0 = cursorDistanceThroughUpstream(range.lowerBound)
       let x1 = cursorDistanceThroughUpstream(range.upperBound)
-      let frame =
-        CGRect(x: x0, y: -ascent + self.ascent, width: x1 - x0, height: ascent + descent)
-      return block(layoutRange, frame, ascent)
+      let segmentFrame = composeSegmentFrame(
+        CGPoint(x: x0, y: 0), width: x1 - x0, ascent: ascent, descent: descent)
+      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
   }
 
