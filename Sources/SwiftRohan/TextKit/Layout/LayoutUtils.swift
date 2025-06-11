@@ -177,20 +177,14 @@ enum LayoutUtils {
   ) -> RayshootResult? {
     guard result.isResolved == false else { return result }
 
-    switch context {
-    case let textContext as TextLayoutContext:
-      guard
-        let lineFrame = textContext.neighbourLineFrame(
-          from: layoutOffset, affinity: affinity, direction: direction)
-      else { return result }
+    guard
+      let lineFrame = context.neighbourLineFrame(
+        from: layoutOffset, affinity: affinity, direction: direction)
+    else { return result }
 
-      let frame = lineFrame.frame
-      let y = result.position.y.clamped(frame.minY, frame.maxY)
-      let point = result.position.with(y: y)
-      return RayshootResult(point, true)
-
-    default:
-      return result
-    }
+    let frame = lineFrame.frame
+    let y = result.position.y.clamped(frame.minY, frame.maxY)
+    let point = result.position.with(y: y)
+    return RayshootResult(point, true)
   }
 }

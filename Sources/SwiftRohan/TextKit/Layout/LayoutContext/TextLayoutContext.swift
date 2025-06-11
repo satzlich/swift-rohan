@@ -305,9 +305,7 @@ final class TextLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     guard let textLocation = textContentStorage.textLocation(for: layoutOffset)
-    else {
-      return nil
-    }
+    else { return nil }
 
     let selection = NSTextSelection(textLocation, affinity: affinity)
 
@@ -316,9 +314,7 @@ final class TextLayoutContext: LayoutContext {
         for: selection, direction: direction, destination: .character, extending: false,
         confined: false),
       let targetLocation = target.textRanges.first?.location
-    else {
-      return nil
-    }
+    else { return nil }
 
     let targetOffset = textContentStorage.characterIndex(for: targetLocation)
     return getSegmentFrame(targetOffset, target.affinity)
