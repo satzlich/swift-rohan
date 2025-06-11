@@ -186,21 +186,6 @@ final class EquationNode: MathNode {
     return _nodeFragment
   }
 
-  final override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment,
-    parent context: any LayoutContext
-  ) -> any LayoutContext {
-    precondition(context is TextLayoutContext)
-    precondition(fragment is MathListLayoutFragment)
-    precondition(isReflowActive == false)
-    let context = context as! TextLayoutContext
-    let fragment = fragment as! MathListLayoutFragment
-
-    let newContext =
-      LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
-    return newContext
-  }
-
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     _nodeFragment != nil ? .nuc : nil
   }

@@ -58,6 +58,27 @@ enum LayoutUtils {
     return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }
 
+  static func safeInitMathListLayoutContext(
+    for component: ContentNode,
+    _ fragment: MathListLayoutFragment,
+    parent context: any LayoutContext
+  ) -> MathListLayoutContext {
+    switch context {
+    case let textContext as TextLayoutContext:
+      return initMathListLayoutContext(for: component, fragment, parent: textContext)
+
+    case let mathContext as MathListLayoutContext:
+      return initMathListLayoutContext(for: component, fragment, parent: mathContext)
+
+    case let reflowContext as MathReflowLayoutContext:
+      return initMathListLayoutContext(
+        for: component, fragment, parent: reflowContext.mathLayoutContext)
+
+    default:
+      preconditionFailure("Unsupported layout context type: \(type(of: context))")
+    }
+  }
+
   /// Layout the given component from scratch.
   static func buildMathListLayoutFragment(
     _ component: ContentNode, parent: TextLayoutContext

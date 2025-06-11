@@ -126,11 +126,10 @@ final class TextModeNode: MathNode {
   }
 
   final override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+    for component: ContentNode, _ fragment: any LayoutFragment,
+    parent context: any LayoutContext
   ) -> any LayoutContext {
-    precondition(parent is MathListLayoutContext)
     precondition(fragment is CTLineLayoutFragment)
-    let context = parent as! MathListLayoutContext
     let fragment = fragment as! CTLineLayoutFragment
     return TextLineLayoutContext(context.styleSheet, fragment)
   }

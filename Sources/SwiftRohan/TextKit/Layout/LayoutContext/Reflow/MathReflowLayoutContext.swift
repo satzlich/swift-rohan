@@ -9,7 +9,7 @@ final class MathReflowLayoutContext: LayoutContext {
   var styleSheet: StyleSheet { textLayoutContext.styleSheet }
 
   private let textLayoutContext: TextLayoutContext
-  private let mathLayoutContext: MathListLayoutContext
+  internal let mathLayoutContext: MathListLayoutContext
 
   /// The node that initiated the reflow operation.
   private let sourceNode: EquationNode

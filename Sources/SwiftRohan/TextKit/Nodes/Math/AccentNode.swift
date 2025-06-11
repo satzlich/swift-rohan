@@ -117,12 +117,6 @@ final class AccentNode: MathNode {
 
   final override var layoutFragment: (any MathLayoutFragment)? { _nodeFragment }
 
-  final override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc: return _nodeFragment?.nucleus
