@@ -285,7 +285,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
 
       #expect(
-        "\(destinations[0])" == "(location: [↓2,↓0,nuc,↓2]:3, affinity: downstream)")
+        "\(destinations[0])" == "(location: [↓2,↓0,nuc,↓2]:3, affinity: upstream)")
       #expect(
         "\(destinations[1])" == "(location: [↓2,↓0,nuc,↓2]:1, affinity: downstream)")
       #expect(
@@ -294,7 +294,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         "\(destinations[3])" == "(location: [↓1,↓0]:89, affinity: upstream)")
       #expect(
         "\(destinations[4])"
-          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:3, reversed: false, affinity: downstream)"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:3, reversed: false, affinity: upstream)"
       )
       #expect(
         "\(destinations[5])"
