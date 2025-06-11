@@ -635,10 +635,13 @@ internal class ElementNode: Node {
   }
 
   /// Resolve the text location at the given point and layout range.
+  /// - Parameters:
+  ///   - point: the point relative to the layout context, relative to the
+  ///       **top-left corner** of the context. For TextKit, it's relative to
+  ///       the **top-left corner** of the container. For MathListLayoutContext,
+  ///       it's relative to the **top-left corner** of the math list, which is
+  ///       usually different from the glyph origin.
   /// - Returns: true if trace is modified.
-  /// - Note: For TextLayoutContext, the point is relative to the **top-left corner**
-  ///   of the container. For MathLayoutContext, the point is relative to the
-  ///   **top-left corner** of the math list.
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity,
@@ -752,48 +755,22 @@ internal class ElementNode: Node {
         }
 
         switch child {
-        case let equation as EquationNode where equation.isReflowActive:
-          trace.append(contentsOf: value)
-
-          let modified = equation.resolveTextLocation(
-            with: point, context: context, layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity)
-          if !modified { fallbackLastIndex() }
-          return true
-
         case let node as GenMathNode:
           trace.append(contentsOf: value)
-
-          // compute the context offset of the `node`.
-          let contextOffset =
-            layoutRange.contextRange.lowerBound - localOffset + consumed
-          // compute coordinate relative to glyph origin.
-          guard
-            let segmentFrame = node.getSegmentFrame(context, contextOffset, .downstream)
-          else {
-            fallbackLastIndex()
-            return true
-          }
-          let newPoint = point.relative(to: segmentFrame.frame.origin)
-            // The origin of the segment frame may be incorrect for MathNode due to
-            // the discrepancy between TextKit and our math layout system.
-            // We obtain the coorindate relative to glyph origin by subtracting the
-            // baseline position which is aligned across the two systems.
-            .with(yDelta: -segmentFrame.baselinePosition)
-
           let modified = node.resolveTextLocation(
-            with: newPoint, context: context, layoutOffset: layoutOffset + consumed,
+            with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity)
           if !modified { fallbackLastIndex() }
           return true
 
         case let applyNode as ApplyNode:
-          // content of ApplyNode is effectively expanded in-place.
-          // so use the original point.
+          // content of ApplyNode is effectively expanded in-place. Thus we recurse
+          // with the original point and subtract consumed from the layout range.
           trace.append(contentsOf: value)
           let modified = applyNode.resolveTextLocation(
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
+            // subtract consumed from the layout range
             layoutRange: layoutRange.safeSubtracting(consumed))
           if !modified { fallbackLastIndex() }
           return true

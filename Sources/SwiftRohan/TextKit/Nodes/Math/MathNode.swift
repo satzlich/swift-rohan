@@ -176,26 +176,27 @@ class MathNode: Node {
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     // resolve math index for point
-    guard let index: MathIndex = self.getMathIndex(interactingAt: point),
+    guard let point = convertToLocal(point, context, layoutOffset),
+      let index: MathIndex = self.getMathIndex(interactingAt: point),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return false }
     // append to trace
     trace.emplaceBack(self, .mathIndex(index))
 
-    let relPoint: CGPoint
+    let newPoint: CGPoint
     do {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
       let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
       // convert to relative position to top-left corner of component fragment
-      relPoint = point.relative(to: frameOrigin)
+      newPoint = point.relative(to: frameOrigin)
     }
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
       component.resolveTextLocation(
-        with: relPoint, context: newContext, layoutOffset: 0,
+        with: newPoint, context: newContext, layoutOffset: 0,
         trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified { trace.emplaceBack(component, .index(0)) }
