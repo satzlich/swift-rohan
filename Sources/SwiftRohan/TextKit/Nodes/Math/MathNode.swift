@@ -276,10 +276,10 @@ class MathNode: Node {
       return LayoutUtils.relayRayshoot(
         layoutOffset, affinity, direction, result, context)
     }
-
-    // Helper
-    func shouldRelayRayshoot(_ context: LayoutContext) -> Bool {
-      context is MathReflowLayoutContext || context is TextLayoutContext
-    }
   }
+}
+
+// True if the rayshoot result should be relayed to the parent context.
+func shouldRelayRayshoot(_ context: LayoutContext) -> Bool {
+  context is MathReflowLayoutContext || context is TextLayoutContext
 }
