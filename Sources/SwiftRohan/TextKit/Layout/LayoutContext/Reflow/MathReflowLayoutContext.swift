@@ -346,7 +346,7 @@ final class MathReflowLayoutContext: LayoutContext {
 
     let i = getAccessibleIndex(layoutOffset, affinity)
     // query with affinity=downstream.
-    return mathLayoutContext.neighbourLineFrame(
+    return textLayoutContext.neighbourLineFrame(
       from: textOffset + i, affinity: .downstream, direction: direction)
   }
 }
