@@ -320,11 +320,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           [(location: [↓2,↓0,nuc,↓1,num,↓0]:3, affinity: upstream), \
           (location: [↓2,↓0,nuc,↓1,num,↓0]:1, affinity: downstream), \
           (location: [↓2,↓0,nuc,↓1,denom,↓0]:2, affinity: upstream), \
-          (location: [↓2,↓0,nuc,↓1,num,↓0]:2, affinity: upstream), \
+          (location: [↓1,↓0]:86, affinity: downstream), \
           (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓2,↓0,nuc,↓1,num,↓0]:3, reversed: false, affinity: upstream), \
           (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓2,↓0,nuc,↓1,num,↓0]:1, reversed: true, affinity: downstream), \
           (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓2,↓0,nuc,↓1,denom,↓0]:2, reversed: false, affinity: upstream), \
-          (location: [↓2,↓0,nuc,↓1,num,↓0]:2, affinity: upstream)]
+          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓1,↓0]:86, reversed: true, affinity: downstream)]
           """)
     }
     do {
