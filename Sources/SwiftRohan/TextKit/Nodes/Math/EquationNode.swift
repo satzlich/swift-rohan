@@ -226,11 +226,12 @@ final class EquationNode: MathNode {
     let newContext =
       createReflowContext(
         component, fragment, parent: context, layoutOffset: layoutOffset)
-    // rayshoot in the component with layout offset reset to "0"
 
     return component.rayshoot(
       from: path.dropFirst(), affinity: affinity, direction: direction,
-      context: newContext, layoutOffset: 0)
+      context: newContext,
+      // reset layoutOffset to "0"
+      layoutOffset: 0)
   }
 
   // MARK: - MathNode(Component)

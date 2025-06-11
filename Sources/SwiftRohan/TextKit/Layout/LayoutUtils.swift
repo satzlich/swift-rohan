@@ -175,9 +175,8 @@ enum LayoutUtils {
     _ direction: TextSelectionNavigation.Direction,
     _ result: RayshootResult, _ context: LayoutContext
   ) -> RayshootResult? {
-    guard result.isResolved == false else { return result }
-
     guard
+      result.isResolved == false,
       let lineFrame = context.neighbourLineFrame(
         from: layoutOffset, affinity: affinity, direction: direction)
     else { return result }

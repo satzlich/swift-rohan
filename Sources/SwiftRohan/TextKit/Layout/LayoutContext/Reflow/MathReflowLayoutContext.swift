@@ -306,6 +306,7 @@ final class MathReflowLayoutContext: LayoutContext {
     else {
       let x = segment.equivalentPosition(relPoint.x)
       return mathLayoutContext.getLayoutRange(interactingAt: relPoint.with(x: x))
+        .map { $0.with(affinity: result.affinity) }
     }
   }
 
