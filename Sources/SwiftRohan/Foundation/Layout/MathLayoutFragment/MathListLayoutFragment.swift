@@ -8,40 +8,54 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
+  private struct _Flags: OptionSet {
+    let rawValue: Int8
+
+    static let isEditing = _Flags(rawValue: 1 << 0)
+    static let isReflowDirty = _Flags(rawValue: 1 << 1)
+  }
+
   private var _textColor: Color
-  private var _fontSize: CGFloat
-
   private var _fragments: Deque<AnnotatedFragment> = []
-
   private var _reflowSegments: Array<ReflowSegmentFragment> = []
+
+  private(set) var contentLayoutLength: Int = 0
+
+  /// minimum index of modified fragments since last fixLayout.
+  private var _dirtyIndex: Optional<Int> = nil
+  private var _flags: _Flags = []
+
+  private func _markDirty(_ dirtyIndex: Int) {
+    _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
+    _flags.insert(.isReflowDirty)
+  }
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
-    self._fontSize = mathContext.getFontSize()
   }
 
   // MARK: - State
 
-  internal private(set) var isEditing: Bool = false
+  @inlinable @inline(__always)
+  internal var isEditing: Bool { _flags.contains(.isEditing) }
+
+  @inlinable @inline(__always)
+  internal var isLayoutDirty: Bool { _dirtyIndex != nil }
+
+  @inlinable @inline(__always)
+  internal var isReflowDirty: Bool { _flags.contains(.isReflowDirty) }
 
   func beginEditing() {
-    precondition(!isEditing && _dirtyIndex == nil)
-    isEditing = true
+    precondition(!isEditing && !isLayoutDirty)
+    _flags.insert(.isEditing)
   }
 
   func endEditing() {
     precondition(isEditing)
-    isEditing = false
+    _flags.remove(.isEditing)
   }
 
-  // MARK: - Subfragments
-
-  /// least index of modified fragments since last fixLayout.
-  private var _dirtyIndex: Int? = nil
-
-  private func update(dirtyIndex: Int) {
-    _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
-  }
+  // MARK: - Content
 
   var isEmpty: Bool { _fragments.isEmpty }
   var count: Int { _fragments.count }
@@ -66,73 +80,23 @@ final class MathListLayoutFragment: MathLayoutFragment {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments.map(AnnotatedFragment.init), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
-    update(dirtyIndex: index)
+    _markDirty(index)
   }
 
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
-    update(dirtyIndex: range.lowerBound)
+    _markDirty(range.lowerBound)
   }
 
   func invalidateSubrange(_ range: Range<Int>) {
     precondition(isEditing)
-    update(dirtyIndex: range.lowerBound)
+    _markDirty(range.lowerBound)
   }
 
-  /// Returns the index of the first fragment that is __exactly__ n units
-  /// of `layoutLength` away from i, or nil if no such fragment
-  func index(_ i: Int, llOffsetBy n: Int) -> Int? {
-    precondition(i >= 0 && i <= count)
-    if n >= 0 {
-      return searchIndexForward(i, distance: n)
-    }
-    else {
-      return searchIndexBackward(i, distance: -n)
-    }
-  }
+  // MARK: - MathLayoutFragment
 
-  /// Search for the index after i by n units of layout length
-  private func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
-    precondition(n >= 0)
-    var j = i
-    var s = 0
-    // let s(j) = sum { fragments[k].layoutLength | k in [i, j) }
-    // result = argmin { s(j) >= n } st. s(j) == n
-    while s < n && j < _fragments.count {
-      s += _fragments[j].layoutLength
-      j += 1
-    }
-    return n == s ? j : nil
-  }
-
-  /// Search for the index before i by n units of layout length
-  private func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
-    precondition(n >= 0)
-    var j = i
-    var s = 0
-    // let s(j) = sum { fragments[k].layoutLength | k in [j, i) }
-    // result = argmax { s(j) >= |n| } st. s(j) == |n|
-    while s < n && j > 0 {
-      s += _fragments[j - 1].layoutLength
-      j -= 1
-    }
-    return n == s ? j : nil
-  }
-
-  /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
-  /// if no such fragments exist.
-  internal func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
-    guard let i = searchIndexForward(0, distance: layoutRange.lowerBound),
-      let j = searchIndexForward(i, distance: layoutRange.count)
-    else { return nil }
-    return i..<j
-  }
-
-  // MARK: Frame
-
-  /// origin with respect to enclosing frame
   private(set) var glyphOrigin: CGPoint = .zero
 
   func setGlyphOrigin(_ origin: CGPoint) {
@@ -176,7 +140,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   var layoutLength: Int { 1 }
-  private(set) var contentLayoutLength: Int = 0
 
   func fixLayout(_ mathContext: MathContext) {
     precondition(!isEditing)
@@ -207,13 +170,28 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let resolvedClasses =
       MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
 
-    let font = mathContext.getFont()
-
+    // initialize position and layout offset
+    var position: CGPoint
+    var layoutOffset: Int
+    if startIndex == 0 {
+      position = .zero
+      layoutOffset = 0
+    }
+    else {
+      position = _fragments[startIndex].glyphOrigin
+      layoutOffset = _fragments[startIndex].layoutOffset
+    }
     // update position and annotation from startIndex
-    var position: CGPoint = (startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin)
+    let font = mathContext.getFont()
     for i in startIndex..<_fragments.endIndex {
       let ii = i - startIndex
       let fragment = _fragments[i]
+
+      // layout offset
+      do {
+        _fragments[i].setLayoutOffset(layoutOffset)
+        layoutOffset += fragment.layoutLength
+      }
 
       // position and spacing
       do {
@@ -258,30 +236,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
     updateMetrics(position.x)
   }
 
-  /// Returns the cursor position between two fragments.
-  private static func resolveCursorPosition(
-    _ lhs: MathClass, _ rhs: MathClass
-  ) -> CursorPosition {
-    func isTextLike(_ clazz: MathClass) -> Bool {
-      clazz == .Alphabetic || clazz == .Normal
-    }
-
-    switch (isTextLike(lhs), isTextLike(rhs)) {
-    case (true, true):
-      return .downstream  // middle works, but downstream is simpler
-    case (true, false):
-      return .upstream
-    case (false, true):
-      return .downstream
-    case (false, false):
-      return .middle
-    }
-  }
-
   /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
   /// of the container.
   func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
-    guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
+    guard let i = self.index(matching: layoutOffset) else { return nil }
     if self.isEmpty {
       return SegmentFrame(.zero, 0)
     }
@@ -314,7 +272,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    guard let range = indexRange(layoutRange) else { return false }
+    guard let range = indexRange(matching: layoutRange) else { return false }
     let (cursorAscent, cursorDescent) = cursorHeight(range, minAscentDescent)
 
     let segmentFrame: SegmentFrame
@@ -346,41 +304,24 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// hit, return an empty range.
   /// - Note: `point` is relative to __the glyph origin__ of the container.
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double) {
-    if point.x < 0 {
+    precondition(!isEditing && !isLayoutDirty)
+
+    if point.x <= 0 {
       return (0..<0, 0)
     }
-    else if point.x > self.width {
-      let n = _fragments.lazy.map(\.layoutLength).reduce(0, +)
+    else if point.x >= self.width {
+      let n = self.contentLayoutLength
       return (n..<n, 0)
     }
 
     guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
-    let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
-    let fraction = fractionOfDistanceThroughGlyph(for: point, i)
-    let last = first + _fragments[i].layoutLength
-    return (first..<last, fraction)
-  }
+    assert(0..<_fragments.count ~= i)
 
-  /// Returns the index of the fragment hit by point (inexactly). If the fragment
-  /// list is empty, return nil.
-  /// - Note: point is relative to __the glyph origin__ of the container.
-  private func getFragment(interactingAt point: CGPoint) -> Int? {
-    guard !self.isEmpty else { return nil }
-    // j ← arg max { f[i].minX < point.x | i ∈ [0, count) }
-    // jj = j+1 ← arg min { ¬(f[i].minX < point.x) | i ∈ [0, count) }
-    let jj = Satz.lowerBound(_fragments, point.x) { $0.glyphOrigin.x < $1 }
-    return jj > 0 ? jj - 1 : 0
-  }
-
-  /// The fraction of distance from the upstream edge.
-  /// - Parameters:
-  ///   - point: the point to compute for.
-  ///   - i: the index of the fragment picked by given point.
-  /// - Note: point is relative to __the glyph origin__.
-  private func fractionOfDistanceThroughGlyph(for point: CGPoint, _ i: Int) -> Double {
-    precondition(i >= 0 && i < _fragments.count)
     let fragment = _fragments[i]
-    return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
+    let offset = _fragments[i].layoutOffset
+    let end = offset + fragment.layoutLength
+    let fraction = (point.x - fragment.glyphOrigin.x) / fragment.width
+    return (offset..<end, fraction.clamped(0, 1))
   }
 
   // MARK: - Debug
@@ -395,11 +336,104 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return PrintUtils.compose([description], children)
   }
 
+  // MARK: - Query for Index
+
+  /// Returns the index of the fragment hit by point (inexactly). If the fragment
+  /// list is empty, return nil.
+  /// - Postcondition: if the return value is not nil, the index is in [0, count).
+  /// - Note: point is relative to __the glyph origin__ of the container.
+  private func getFragment(interactingAt point: CGPoint) -> Int? {
+    precondition(!isEditing && !isLayoutDirty)
+    guard !self.isEmpty else { return nil }
+    // j ← arg max { f[i].minX < point.x | i ∈ [0, count) }
+    // jj = j+1 ← arg min { ¬(f[i].minX < point.x) | i ∈ [0, count) }
+    let jj = Satz.lowerBound(_fragments, point.x) { $0.glyphOrigin.x < $1 }
+    return jj > 0 ? jj - 1 : 0
+  }
+
+  /// Returns the index of fragment that **matches** the layout offset.
+  /// - Precondition: the math list is not in editing mode and there is no dirty index.
+  func index(matching layoutOffset: Int) -> Int? {
+    precondition(!isEditing && !isLayoutDirty)
+    precondition(layoutOffset >= 0)
+    let i = self.index(containing: layoutOffset)
+    if i < _fragments.count {
+      if _fragments[i].layoutOffset == layoutOffset { return i }
+    }
+    else {
+      assert(i == _fragments.count)
+      if layoutOffset == contentLayoutLength { return i }
+    }
+    return nil
+  }
+
+  /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
+  /// if no such fragments exist.
+  /// - Precondition: the math list is not in editing mode and there is no dirty index.
+  func indexRange(matching layoutRange: Range<Int>) -> Range<Int>? {
+    precondition(!isEditing && !isLayoutDirty)
+    guard let i = index(matching: layoutRange.lowerBound),
+      let j = index(matching: layoutRange.upperBound)
+    else { return nil }
+    return i..<j
+  }
+
+  /// Returns the index of the fragment whose layout offset range contains the given
+  /// layout offset. If no such fragment exists, returns fragment count.
+  /// - Precondition: the math list is not in editing mode and there is no dirty index.
+  func index(containing layoutOffset: Int) -> Int {
+    precondition(!isEditing && !isLayoutDirty)
+    precondition(layoutOffset >= 0)
+    return Satz.lowerBound(_fragments, layoutOffset) { $0.layoutOffset < $1 }
+  }
+
+  /// Returns the index of the first fragment that is __exactly__ n units
+  /// of `layoutLength` away from i, or nil if no such fragment
+  /// - Precondition: Use this during editing or when fixLayout.
+  /// - Complexity: O(n).
+  func index(_ i: Int, llOffsetBy n: Int) -> Int? {
+    precondition(isEditing || isLayoutDirty)
+    precondition(i >= 0 && i <= count)
+    return n >= 0
+      ? searchIndexForward(i, distance: n)
+      : searchIndexBackward(i, distance: -n)
+
+    /// Search for the index after i by n units of layout length
+    func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
+      precondition(n >= 0)
+      var j = i
+      var s = 0
+      // let s(j) = sum { fragments[k].layoutLength | k in [i, j) }
+      // result = argmin { s(j) >= n } st. s(j) == n
+      while s < n && j < _fragments.count {
+        s += _fragments[j].layoutLength
+        j += 1
+      }
+      return n == s ? j : nil
+    }
+
+    /// Search for the index before i by n units of layout length
+    func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
+      precondition(n >= 0)
+      var j = i
+      var s = 0
+      // let s(j) = sum { fragments[k].layoutLength | k in [j, i) }
+      // result = argmax { s(j) >= |n| } st. s(j) == |n|
+      while s < n && j > 0 {
+        s += _fragments[j - 1].layoutLength
+        j -= 1
+      }
+      return n == s ? j : nil
+    }
+  }
+
   // MARK: - Cursor Facility
 
   /// Returns cursor distance for the given position from the upstream of math list.
   internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
+    precondition(!isEditing && !isLayoutDirty)
     precondition(0 <= index && index <= _fragments.count)
+
     if _fragments.isEmpty {
       return 0
     }
@@ -428,6 +462,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
   internal func cursorHeight(
     _ range: Range<Int>, _ minAsccentDescent: (ascent: Double, descent: Double)
   ) -> (ascent: Double, descent: Double) {
+    precondition(!isEditing && !isLayoutDirty)
+    precondition(0 <= range.lowerBound && range.upperBound <= _fragments.count)
+
     if range.isEmpty {
       return minAsccentDescent
     }
@@ -437,6 +474,26 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let ascent = _fragments[range].lazy.map(\.ascent).max() ?? 0
       let descent = _fragments[range].lazy.map(\.descent).max() ?? 0
       return (max(ascent, minAscent), max(descent, minDescent))
+    }
+  }
+
+  /// Returns the cursor position between two fragments.
+  internal static func resolveCursorPosition(
+    _ lhs: MathClass, _ rhs: MathClass
+  ) -> CursorPosition {
+    func isTextLike(_ clazz: MathClass) -> Bool {
+      clazz == .Alphabetic || clazz == .Normal
+    }
+
+    switch (isTextLike(lhs), isTextLike(rhs)) {
+    case (true, true):
+      return .downstream  // middle works, but downstream is simpler
+    case (true, false):
+      return .upstream
+    case (false, true):
+      return .downstream
+    case (false, false):
+      return .middle
     }
   }
 
@@ -463,22 +520,24 @@ extension MathListLayoutFragment {
   var reflowSegmentCount: Int { _reflowSegments.count }
 
   var reflowSegments: Array<ReflowSegmentFragment> {
-    precondition(!isEditing)
+    precondition(!isEditing && !isReflowDirty)
     return _reflowSegments
   }
 
   /// Returns the index of the segment containing the layout offset.
   /// If the offset is not in any segment, returns the end index.
-  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
-    precondition(!isEditing)
-    return _reflowSegments.firstIndex { $0.offsetRange.contains(layoutOffset) }
-      ?? _reflowSegments.endIndex
+  func reflowSegmentIndex(containing layoutOffset: Int) -> Int {
+    precondition(!isEditing && !isReflowDirty)
+    return Satz.lowerBound(_reflowSegments, layoutOffset) {
+      $0.offsetRange.upperBound <= $1
+    }
   }
 
   func performReflow() {
-    precondition(!isEditing)
+    precondition(!isEditing && !isLayoutDirty)
 
     _reflowSegments.removeAll(keepingCapacity: true)
+    defer { _flags.remove(.isReflowDirty) }
 
     guard !_fragments.isEmpty else { return }
 

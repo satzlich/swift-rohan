@@ -255,8 +255,8 @@ class MathNode: Node {
     guard let nodeResult = self.rayshoot(from: relPosition, index, in: direction)
     else { return nil }
 
-    // if resolved or not TextLayoutContext, return origin-corrected result
-    if nodeResult.isResolved || !(context is TextLayoutContext) {
+    // if resolved or not equation node, return corrected result.
+    if nodeResult.isResolved || !shouldRelayRayshoot(context) {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -266,19 +266,20 @@ class MathNode: Node {
       let corrected = nodeResult.position.translated(by: originCorrection)
       return nodeResult.with(position: corrected)
     }
-    // otherwise (not resolved and is TextLayoutContext), return up/bottom end
-    // of segment frame
+    // otherwise, return top/bottom position of the super frame.
     else {
       let x = nodeResult.position.x + superFrame.frame.origin.x
       let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
-
-      // The resolved flag is set to false here to ensure that further rayshooting
-      // adjustments are applied as intended via LayoutUtils.rayshootFurther.
+      // The resolved flag is set to false to ensure that rayshot relay
+      // is performed below.
       let result = RayshootResult(CGPoint(x: x, y: y), false)
-
       return LayoutUtils.relayRayshoot(
         layoutOffset, affinity, direction, result, context)
     }
-  }
 
+    // Helper
+    func shouldRelayRayshoot(_ context: LayoutContext) -> Bool {
+      context is MathReflowLayoutContext || context is TextLayoutContext
+    }
+  }
 }

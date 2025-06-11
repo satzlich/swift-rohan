@@ -207,9 +207,7 @@ final class TextNode: Node {
     guard
       let result = context.rayshoot(
         from: newOffset, affinity: affinity, direction: direction)
-    else {
-      return nil
-    }
+    else { return nil }
     return LayoutUtils.relayRayshoot(newOffset, affinity, direction, result, context)
   }
 

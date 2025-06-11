@@ -154,20 +154,8 @@ final class ReflowSegmentFragment: MathLayoutFragment {
     guard layoutOffset >= offsetRange.lowerBound else { return range.lowerBound }
     guard layoutOffset < offsetRange.upperBound else { return range.upperBound }
 
-    var i = range.lowerBound
-    var offset = offsetRange.lowerBound
-    while i < range.upperBound && offset < layoutOffset {
-      let fragment = source.get(i)
-      offset += fragment.layoutLength
-      i += 1
-    }
+    let i = source.index(containing: layoutOffset)
+    assert(range ~= i)
     return i
-  }
-
-  /// Return the fragment at given index.
-  /// - Precondition: index is in range (upper bound excluded).
-  func get(_ index: Int) -> MathLayoutFragment {
-    precondition(index >= range.lowerBound && index < range.upperBound)
-    return source.get(index)
   }
 }

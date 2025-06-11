@@ -22,4 +22,8 @@ struct PickingResult {
   func with(layoutRange: Range<Int>) -> PickingResult {
     PickingResult(layoutRange, fraction, affinity)
   }
+
+  func with(affinity: SelectionAffinity) -> PickingResult {
+    PickingResult(layoutRange, fraction, affinity)
+  }
 }

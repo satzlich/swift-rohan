@@ -331,8 +331,10 @@ struct ElementOperationTests {
     ])
     TestUtils.updateLayoutLength(root)
 
-    #expect(
-      root.layoutLengthSynopsis() == """
+    do {
+      let expected =
+        NodePolicy.isInlineMathReflowEnabled
+        ? """
         root 16
         ├ heading 8
         │ ├ text 3
@@ -343,7 +345,21 @@ struct ElementOperationTests {
           └ equation 2
             └ nuc 3
               └ text 3
-        """)
+        """
+        : """
+        root 15
+        ├ heading 8
+        │ ├ text 3
+        │ └ emphasis 5
+        │   └ text 5
+        └ paragraph 5
+          ├ text 4
+          └ equation 1
+            └ nuc 3
+              └ text 3
+        """
+      #expect(root.layoutLengthSynopsis() == expected)
+    }
 
     ((root.getChild(1) as! ParagraphNode)
       .getChild(1) as! EquationNode)
@@ -351,8 +367,10 @@ struct ElementOperationTests {
       .insertChild(TextNode("X"), at: 1, inStorage: false)
     TestUtils.updateLayoutLength(root)
 
-    #expect(
-      root.layoutLengthSynopsis() == """
+    do {
+      let expected =
+        NodePolicy.isInlineMathReflowEnabled
+        ? """
         root 16
         ├ heading 8
         │ ├ text 3
@@ -364,6 +382,21 @@ struct ElementOperationTests {
             └ nuc 4
               ├ text 3
               └ text 1
-        """)
+        """
+        : """
+        root 15
+        ├ heading 8
+        │ ├ text 3
+        │ └ emphasis 5
+        │   └ text 5
+        └ paragraph 5
+          ├ text 4
+          └ equation 1
+            └ nuc 4
+              ├ text 3
+              └ text 1
+        """
+      #expect(root.layoutLengthSynopsis() == expected)
+    }
   }
 }
