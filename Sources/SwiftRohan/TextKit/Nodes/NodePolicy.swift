@@ -6,7 +6,7 @@ enum NodePolicy {
   // MARK: - Properties
 
   /// True if reflow for inline math is enabled.
-  static let isInlineMathReflowEnabled: Bool = false
+  static let isInlineMathReflowEnabled: Bool = true
 
   /// Returns true if the node is transparent.
   /// - Note: A characterising property of **transparent node** is: insertion any

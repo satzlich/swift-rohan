@@ -333,14 +333,14 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 15
+        root 16
         ├ heading 8
         │ ├ text 3
         │ └ emphasis 5
         │   └ text 5
-        └ paragraph 5
+        └ paragraph 6
           ├ text 4
-          └ equation 1
+          └ equation 2
             └ nuc 3
               └ text 3
         """)
@@ -353,14 +353,14 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 15
+        root 16
         ├ heading 8
         │ ├ text 3
         │ └ emphasis 5
         │   └ text 5
-        └ paragraph 5
+        └ paragraph 6
           ├ text 4
-          └ equation 1
+          └ equation 2
             └ nuc 4
               ├ text 3
               └ text 1

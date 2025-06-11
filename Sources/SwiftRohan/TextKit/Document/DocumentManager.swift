@@ -564,8 +564,11 @@ public final class DocumentManager {
   ) -> AffineLocation? {
     switch direction {
     case .forward, .backward:
-      return TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
-        .map { AffineLocation($0, .downstream) }  // always downstream
+      guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
+      else { return nil }
+      return direction == .forward
+        ? AffineLocation(target, .upstream)
+        : AffineLocation(target, .downstream)
 
     case .up, .down:
       guard

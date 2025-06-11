@@ -123,7 +123,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
   /// if no such fragments exist.
-  func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
+  internal func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
     guard let i = searchIndexForward(0, distance: layoutRange.lowerBound),
       let j = searchIndexForward(i, distance: layoutRange.count)
     else { return nil }
@@ -161,10 +161,15 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var isTextLike: Bool { _fragments.getOnlyElement()?.isTextLike ?? false }
 
   func draw(at point: CGPoint, in context: CGContext) {
+    drawSubrange(0..<_fragments.count, at: point, in: context)
+  }
+
+  func drawSubrange(_ range: Range<Int>, at point: CGPoint, in context: CGContext) {
+    precondition(0 <= range.lowerBound && range.upperBound <= _fragments.count)
     context.saveGState()
     context.setFillColor(_textColor.cgColor)
     context.translateBy(x: point.x, y: point.y)
-    for fragment in _fragments {
+    for fragment in _fragments[range] {
       fragment.draw(at: fragment.glyphOrigin, in: context)
     }
     context.restoreGState()
@@ -282,75 +287,21 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
     else if i < self.count {
       let fragment = _fragments[i]
-      // origin moved to top-left corner
-      let origin = fragment.glyphOrigin.with(yDelta: -fragment.ascent + self.ascent)
-      let size = CGSize(width: 0, height: fragment.height)
-      return SegmentFrame(CGRect(origin: origin, size: size), fragment.ascent)
+      let segmentFrame = composeSegmentFrame(
+        fragment.glyphOrigin, width: 0,
+        ascent: fragment.ascent, descent: fragment.descent)
+      return segmentFrame
     }
     else if i == self.count {
       let fragment = _fragments[i - 1]
-      // origin moved to top-left corner
-      let origin = fragment.glyphOrigin
-        .with(xDelta: fragment.width)
-        .with(yDelta: -fragment.ascent + self.ascent)
-      let size = CGSize(width: 0, height: fragment.height)
-      return SegmentFrame(CGRect(origin: origin, size: size), fragment.ascent)
+      var segmentFrame = composeSegmentFrame(
+        fragment.glyphOrigin, width: 0,
+        ascent: fragment.ascent, descent: fragment.descent)
+      segmentFrame.frame.origin.x += fragment.width
+      return segmentFrame
     }
     else {
       return nil
-    }
-  }
-
-  /// Get a visually pleasing (inexact) segment frame for the fragment at index.
-  /// - Parameters:
-  ///   - index: The index of the fragment.
-  ///   - minAscentDescent: The minimum ascent and descent of the segment frame.
-  /// - Returns: The segment frame for the fragment at index whose origin is relative
-  ///       to __the top-left corner__ of the container.
-  private func getNiceFrame(
-    for index: Int,
-    _ minAscentDescent: (CGFloat, CGFloat)
-  ) -> SegmentFrame? {
-    guard index <= self.count else { return nil }
-
-    let (ascent, descent) = minAscentDescent
-    let origin: CGPoint = getNiceOrigin(index)
-    // origin moved to top-left corner
-    let frame = CGRect(
-      x: origin.x, y: origin.y - ascent + self.ascent,
-      width: 0, height: ascent + descent)
-    return SegmentFrame(frame, ascent)
-  }
-
-  /// Get a visually pleasing (inexact) origin for the fragment at index.
-  /// - Parameter index: The index of the fragment.
-  /// - Returns: The origin for the fragment at index whose origin is relative to
-  ///     __the glyph origin__ of the container.
-  private func getNiceOrigin(_ index: Int) -> CGPoint {
-    precondition(0...count ~= index)
-    if self.isEmpty {  // empty
-      return .zero
-    }
-    else if index == 0 {  // first
-      return _fragments[index].glyphOrigin
-    }
-    else if index < _fragments.count {  // middle
-      let previous = _fragments[index - 1]
-      switch previous.cursorPosition {
-      case .upstream:
-        let lhs = previous.fragment
-        return lhs.glyphOrigin.with(xDelta: lhs.width)
-      case .middle:
-        let lhs = previous.fragment
-        let rhs = _fragments[index].fragment
-        return CGPoint(x: (lhs.maxX + rhs.minX) / 2, y: rhs.glyphOrigin.y)
-      case .downstream:
-        return _fragments[index].glyphOrigin
-      }
-    }
-    else {  // last
-      let fragment = _fragments[count - 1]
-      return fragment.glyphOrigin.with(xDelta: fragment.width)
     }
   }
 
@@ -358,32 +309,37 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// of the container.
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
-    _ minAscentDescent: (CGFloat, CGFloat),
+    _ minAscentDescent: (Double, Double),
     type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     guard let range = indexRange(layoutRange) else { return false }
+    let (cursorAscent, cursorDescent) = cursorHeight(range, minAscentDescent)
 
-    if self.isEmpty || range.isEmpty {
-      guard let segmentFrame = self.getNiceFrame(for: range.lowerBound, minAscentDescent)
-      else { return false }
-      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+    let segmentFrame: SegmentFrame
+    if self.isEmpty {
+      guard range.isEmpty && range.lowerBound == 0 else { return false }
+      segmentFrame = composeSegmentFrame(
+        .zero, width: 0, ascent: cursorAscent, descent: cursorDescent)
+    }
+    else if range.isEmpty {
+      guard range.lowerBound <= _fragments.count else { return false }
+      let x = cursorDistanceThroughUpstream(range.lowerBound)
+      segmentFrame = composeSegmentFrame(
+        CGPoint(x: x, y: 0), width: 0, ascent: cursorAscent, descent: cursorDescent)
     }
     // ASSERT: fragments not empty
     // ASSERT: range not empty
     else {
-      let (minAscent, minDescent) = minAscentDescent
-      let ascent = Swift.max(_fragments[range].lazy.map(\.ascent).max()!, minAscent)
-      let descent = Swift.max(_fragments[range].lazy.map(\.descent).max()!, minDescent)
-
-      let origin = getNiceOrigin(range.lowerBound)
-      let endOrigin = getNiceOrigin(range.upperBound)
-      let frame = CGRect(
-        origin: CGPoint(x: origin.x, y: origin.y - ascent + self.ascent),
-        size: CGSize(width: endOrigin.x - origin.x, height: ascent + descent))
-      return block(layoutRange, frame, ascent)
+      let x0 = cursorDistanceThroughUpstream(range.lowerBound)
+      let x1 = cursorDistanceThroughUpstream(range.upperBound)
+      segmentFrame = composeSegmentFrame(
+        CGPoint(x: x0, y: 0), width: x1 - x0,
+        ascent: cursorAscent, descent: cursorDescent)
     }
+
+    return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
   }
 
   /// Returns the layout range for the glyph selected by point. If no fragment is
@@ -399,11 +355,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
 
     guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
-
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
-    // check point selection
-    let fraction = fractionOfDistanceThroughGlyph(for: point)
-    // do range selection
+    let fraction = fractionOfDistanceThroughGlyph(for: point, i)
     let last = first + _fragments[i].layoutLength
     return (first..<last, fraction)
   }
@@ -420,9 +373,12 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /// The fraction of distance from the upstream edge.
+  /// - Parameters:
+  ///   - point: the point to compute for.
+  ///   - i: the index of the fragment picked by given point.
   /// - Note: point is relative to __the glyph origin__.
-  private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double {
-    guard let i = getFragment(interactingAt: point) else { return 0 }
+  private func fractionOfDistanceThroughGlyph(for point: CGPoint, _ i: Int) -> Double {
+    precondition(i >= 0 && i < _fragments.count)
     let fragment = _fragments[i]
     return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
   }
@@ -437,6 +393,66 @@ final class MathListLayoutFragment: MathLayoutFragment {
       .map { (i, fragment) in fragment.debugPrint("\(i)") }
 
     return PrintUtils.compose([description], children)
+  }
+
+  // MARK: - Cursor Facility
+
+  /// Returns cursor distance for the given position from the upstream of math list.
+  internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
+    precondition(0 <= index && index <= _fragments.count)
+    if _fragments.isEmpty {
+      return 0
+    }
+    else if index == 0 {
+      return 0  // it's an invariant of math list
+    }
+    else if index < _fragments.count {
+      let fragment = _fragments[index - 1]
+      var distance = fragment.fragment.maxX
+      switch fragment.cursorPosition {
+      case .upstream:
+        break
+      case .middle:
+        distance += fragment.spacing / 2
+      case .downstream:
+        distance += fragment.spacing
+      }
+      return distance
+    }
+    else {
+      return _width  // it's an invariant of math list.
+    }
+  }
+
+  /// Compute cursor height (ascent, descent) for the index range.
+  internal func cursorHeight(
+    _ range: Range<Int>, _ minAsccentDescent: (ascent: Double, descent: Double)
+  ) -> (ascent: Double, descent: Double) {
+    if range.isEmpty {
+      return minAsccentDescent
+    }
+    else {
+      let (minAscent, minDescent) = minAsccentDescent
+      let range = range.clamped(to: 0..<_fragments.count)
+      let ascent = _fragments[range].lazy.map(\.ascent).max() ?? 0
+      let descent = _fragments[range].lazy.map(\.descent).max() ?? 0
+      return (max(ascent, minAscent), max(descent, minDescent))
+    }
+  }
+
+  /// Compose a segment frame whose origin is at the **top-left** corner and is relative
+  /// to the **top-left** corner of this math list.
+  /// - Parameters:
+  ///   - glyphOrigin: glyph origin relative to the **glyph origin** of the math list.
+  ///
+  /// - Invariant: the method satisfies: `f(p1+p2) = f(p1) + p2` where "+" is translation.
+  internal func composeSegmentFrame(
+    _ glyphOrigin: CGPoint, width: CGFloat, ascent: CGFloat, descent: CGFloat
+  ) -> SegmentFrame {
+    let frame = CGRect(
+      x: glyphOrigin.x, y: glyphOrigin.y - ascent + self.ascent,
+      width: width, height: ascent + descent)
+    return SegmentFrame(frame, ascent)
   }
 }
 

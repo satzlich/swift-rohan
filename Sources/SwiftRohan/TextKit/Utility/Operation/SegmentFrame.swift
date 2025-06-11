@@ -13,3 +13,18 @@ struct SegmentFrame {
     self.baselinePosition = baselinePosition
   }
 }
+
+extension SegmentFrame {
+  static func recompose(
+    _ segmentFrame: SegmentFrame, ascent: CGFloat, descent: CGFloat
+  ) -> SegmentFrame {
+    let y = segmentFrame.frame.origin.y + segmentFrame.baselinePosition - ascent
+
+    var segmentFrame = segmentFrame
+    segmentFrame.frame.origin.y = y
+    segmentFrame.frame.size.height = ascent + descent
+    segmentFrame.baselinePosition = ascent
+
+    return segmentFrame
+  }
+}

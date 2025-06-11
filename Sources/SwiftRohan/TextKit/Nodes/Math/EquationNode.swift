@@ -128,6 +128,110 @@ final class EquationNode: MathNode {
     }
   }
 
+  // MARK: - Node(Tree API)
+
+  final override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) -> Bool {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    guard isReflowActive else {
+      return super.enumerateTextSegments(
+        path, endPath, context: context, layoutOffset: layoutOffset,
+        originCorrection: originCorrection, type: type, options: options, using: block)
+    }
+
+    guard path.count >= 2,
+      endPath.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let endIndex: MathIndex = endPath.first?.mathIndex(),
+      // must not fork
+      index == endIndex,
+      let component = getComponent(index),
+      let fragment = getFragment(index) as? MathListLayoutFragment
+    else { return false }
+
+    let newContext: MathReflowLayoutContext =
+      createReflowContext(
+        component, fragment, parent: context, layoutOffset: layoutOffset)
+
+    return component.enumerateTextSegments(
+      path.dropFirst(), endPath.dropFirst(), context: newContext,
+      // reset layoutOffset to "0".
+      layoutOffset: 0,
+      // use the original originCorrection.
+      originCorrection: originCorrection,
+      type: type, options: options, using: block)
+  }
+
+  final override func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity
+  ) -> Bool {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    guard isReflowActive else {
+      return super.resolveTextLocation(
+        with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+        affinity: &affinity)
+    }
+
+    // set component, fragment, and index
+    let index = MathIndex.nuc
+    let component = nucleus
+    guard let fragment = _nodeFragment else { return false }
+    // append to trace
+    trace.emplaceBack(self, .mathIndex(index))
+
+    let newContext =
+      createReflowContext(
+        component, fragment, parent: context, layoutOffset: layoutOffset)
+
+    // recurse
+    let modified = component.resolveTextLocation(
+      with: point, context: newContext,
+      // reset layoutOffset to "0".
+      layoutOffset: 0, trace: &trace, affinity: &affinity)
+    // fix accordingly
+    if !modified { trace.emplaceBack(component, .index(0)) }
+    return true
+  }
+
+  final override func rayshoot(
+    from path: ArraySlice<RohanIndex>, affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction, context: any LayoutContext,
+    layoutOffset: Int
+  ) -> RayshootResult? {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    guard isReflowActive else {
+      return super.rayshoot(
+        from: path, affinity: affinity, direction: direction, context: context,
+        layoutOffset: layoutOffset)
+    }
+
+    guard path.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let component = getComponent(index),
+      let fragment = getFragment(index) as? MathListLayoutFragment
+    else { return nil }
+
+    // create sub-context
+    let newContext =
+      createReflowContext(
+        component, fragment, parent: context, layoutOffset: layoutOffset)
+    // rayshoot in the component with layout offset reset to "0"
+    return component.rayshoot(
+      from: path.dropFirst(), affinity: affinity, direction: direction,
+      context: newContext, layoutOffset: 0)
+  }
+
   // MARK: - MathNode(Component)
 
   final override func enumerateComponents() -> [MathNode.Component] {
@@ -141,19 +245,6 @@ final class EquationNode: MathNode {
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     guard index == .nuc else { return nil }
     return _nodeFragment
-  }
-
-  final override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment,
-    parent context: any LayoutContext
-  ) -> any LayoutContext {
-    // TODO: handle reflowed segments
-    precondition(context is TextLayoutContext)
-    precondition(fragment is MathListLayoutFragment)
-    let context = context as! TextLayoutContext
-    let fragment = fragment as! MathListLayoutFragment
-    return
-      LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
@@ -255,4 +346,19 @@ final class EquationNode: MathNode {
       : TargetSelector(.equation)
   }
 
+  /// Create reflow context for the equation node.
+  /// - Parameters:
+  ///     - component: The content component of the equation node.
+  ///     - fragment: The math list layout fragment of the content component.
+  ///     - context: The parent text layout context.
+  ///     - layoutOffset: The layout offset of the equation node.
+  private final func createReflowContext(
+    _ component: ContentNode, _ fragment: MathListLayoutFragment,
+    parent context: TextLayoutContext, layoutOffset: Int
+  ) -> MathReflowLayoutContext {
+    precondition(self.isReflowActive)
+    let mathContext =
+      LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
+    return MathReflowLayoutContext(context, mathContext, self, layoutOffset)
+  }
 }

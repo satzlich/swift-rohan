@@ -143,12 +143,6 @@ final class MathStylesNode: MathNode {
     }
   }
 
-  final override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard _nodeFragment != nil else { return nil }
     return .nuc

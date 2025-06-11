@@ -141,8 +141,7 @@ final class MathListLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    let font = mathContext.getFont()
-    let (minAscent, minDescent) = (font.ascent, font.descent)
+    let (minAscent, minDescent) = mathContext.cursorHeight()
     return layoutFragment.enumerateTextSegments(
       layoutRange, (minAscent, minDescent),
       type: type, options: options, using: block)
@@ -151,7 +150,8 @@ final class MathListLayoutContext: LayoutContext {
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     let point = CGPoint(x: point.x, y: point.y - layoutFragment.ascent)
     let (range, fraction) = layoutFragment.getLayoutRange(interactingAt: point)
-    return PickingResult(range, fraction, .downstream)
+    let affinity: SelectionAffinity = fraction > 0.51 ? .upstream : .downstream
+    return PickingResult(range, fraction, affinity)
   }
 
   func rayshoot(
@@ -186,18 +186,18 @@ final class MathListLayoutContext: LayoutContext {
   }
 }
 
-extension MathListLayoutContext {
-  // MARK: - Reflow
-
-  var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
-
-  var reflowSegments: Array<ReflowSegmentFragment> { layoutFragment.reflowSegments }
-
-  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
-    layoutFragment.reflowSegmentIndex(layoutOffset)
-  }
-
-  func performReflow() {
-    layoutFragment.performReflow()
-  }
-}
+//extension MathListLayoutContext {
+//  // MARK: - Reflow
+//
+//  var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
+//
+//  var reflowSegments: Array<ReflowSegmentFragment> { layoutFragment.reflowSegments }
+//
+//  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
+//    layoutFragment.reflowSegmentIndex(layoutOffset)
+//  }
+//
+//  func performReflow() {
+//    layoutFragment.performReflow()
+//  }
+//}

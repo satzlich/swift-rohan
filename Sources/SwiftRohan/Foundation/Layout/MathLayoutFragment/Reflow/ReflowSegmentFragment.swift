@@ -31,14 +31,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   func draw(at point: CGPoint, in context: CGContext) {
     var point = point
     point.x += upstream - source.get(range.lowerBound).glyphOrigin.x
-
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y)
-    for index in range {
-      let fragment = source.get(index)
-      fragment.draw(at: fragment.glyphOrigin, in: context)
-    }
-    context.restoreGState()
+    source.drawSubrange(range, at: point, in: context)
   }
 
   func fixLayout(_ mathContext: MathContext) { /* no-op */  }
@@ -58,7 +51,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   /// Layout offset range in the source fragment.
   internal let offsetRange: Range<Int>
   /// Added upstream space before the segment.
-  private let upstream: CGFloat
+  internal let upstream: CGFloat
   /// Added downstream space after the segment.
   private let downstream: CGFloat
 
@@ -156,7 +149,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
 
   /// Returns the index of the fragment whose layout offset range contains
   /// the given layout offset. If not found, **clamps to** the nearest index
-  /// within the segment range.
+  /// within the segment range (upper bound included).
   func fragmentIndex(_ layoutOffset: Int) -> Int {
     guard layoutOffset >= offsetRange.lowerBound else { return range.lowerBound }
     guard layoutOffset < offsetRange.upperBound else { return range.upperBound }
@@ -169,5 +162,12 @@ final class ReflowSegmentFragment: MathLayoutFragment {
       i += 1
     }
     return i
+  }
+
+  /// Return the fragment at given index.
+  /// - Precondition: index is in range (upper bound excluded).
+  func get(_ index: Int) -> MathLayoutFragment {
+    precondition(index >= range.lowerBound && index < range.upperBound)
+    return source.get(index)
   }
 }

@@ -81,9 +81,12 @@ class MathNode: Node {
 
   /// Initialize a layout context for the component with the given fragment.
   internal func initLayoutContext(
-    for component: ContentNode, _ fragment: LayoutFragment, parent: LayoutContext
+    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
   ) -> LayoutContext {
-    preconditionFailure("overriding required")
+    precondition(fragment is MathListLayoutFragment)
+    let fragment = fragment as! MathListLayoutFragment
+    return
+      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
   }
 
   /// Returns the math index for the given point.
@@ -124,14 +127,13 @@ class MathNode: Node {
   }
 
   /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
-  final func defaultInitLayoutContext(
+  static func defaultInitLayoutContext(
     for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
   ) -> LayoutContext {
-    precondition(context is MathListLayoutContext && fragment is MathListLayoutFragment)
-    let context = context as! MathListLayoutContext
+    precondition(fragment is MathListLayoutFragment)
     let fragment = fragment as! MathListLayoutFragment
-    return LayoutUtils.initMathListLayoutContext(
-      for: component, fragment, parent: context)
+    return
+      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
   }
 
   internal override func enumerateTextSegments(
@@ -140,9 +142,6 @@ class MathNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    let affinity: SelectionAffinity =
-      options.contains(.upstreamAffinity) ? .upstream : .downstream
-
     guard path.count >= 2,
       endPath.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),

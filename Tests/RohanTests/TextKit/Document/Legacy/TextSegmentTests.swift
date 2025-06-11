@@ -108,9 +108,9 @@ final class TextSegmentTests: TextKitTestsBase {
     ]
     let expectedFrames: [String] = [
       "[(5.00, 34.00, 18.12, 30.05)]",
-      "[(70.66, 40.88, 33.31, 20.00)]",
+      "[(70.66, 40.88, 24.45, 20.00), (95.11, 40.88, 8.86, 20.00)]",
       "[(130.42, 37.84, 23.18, 14.00)]",
-      "[(70.66, 40.88, 93.34, 23.17)]",
+      "[(70.66, 40.88, 24.45, 23.17), (95.11, 40.88, 33.31, 23.17), (128.42, 40.88, 35.58, 23.17)]",
       """
       [(174.80, 64.05, 49.66, 17.00),\
        (5.00, 81.05, 22.01, 17.00),\
@@ -130,7 +130,7 @@ final class TextSegmentTests: TextKitTestsBase {
 
     let fileName = String(#function.dropLast(2))
     for (i, (point, frame)) in zip(points, frames).enumerated() {
-      outputPDF("\(fileName)_\(i+1)", point, frame, documentManager)
+      outputPDF("\(fileName)_\(i)", point, frame, documentManager)
     }
   }
 

@@ -172,12 +172,6 @@ final class AttachNode: MathNode {
 
   final override var layoutFragment: (any MathLayoutFragment)? { _attachFragment }
 
-  final override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     guard let attachFragment = _attachFragment else { return nil }
     switch index {
