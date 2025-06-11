@@ -10,6 +10,7 @@ final class MathReflowLayoutContext: LayoutContext {
 
   private let textLayoutContext: TextLayoutContext
   internal let mathLayoutContext: MathListLayoutContext
+  private var mathList: MathListLayoutFragment { mathLayoutContext.layoutFragment }
 
   /// The node that initiated the reflow operation.
   private let sourceNode: EquationNode
@@ -87,14 +88,14 @@ final class MathReflowLayoutContext: LayoutContext {
     _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> Int {
     precondition(!isEditing && textOffset >= 0)
-    precondition(mathLayoutContext.reflowSegmentCount > 0)
+    precondition(mathList.reflowSegmentCount > 0)
 
-    var i = mathLayoutContext.reflowSegmentIndex(layoutOffset)
-    if i == mathLayoutContext.reflowSegmentCount {
+    var i = mathList.reflowSegmentIndex(layoutOffset)
+    if i == mathList.reflowSegmentCount {
       i -= 1
     }
     else if affinity == .upstream {
-      let segment = mathLayoutContext.reflowSegments[i]
+      let segment = mathList.reflowSegments[i]
       if i > 0 && segment.offsetRange.lowerBound == layoutOffset { i -= 1 }
     }
     return i
@@ -104,14 +105,14 @@ final class MathReflowLayoutContext: LayoutContext {
   /// - Parameter index: index of the reflow segment, **not** the layout offset.
   private func getReflowSegmentFrame(_ index: Int) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
-    guard index >= 0 && index < mathLayoutContext.reflowSegmentCount else { return nil }
+    guard index >= 0 && index < mathList.reflowSegmentCount else { return nil }
 
     let nextOffset = textOffset + index + 1
     // query for downstream edge with affinity=upstream.
     guard var frame = textLayoutContext.getSegmentFrame(nextOffset, .upstream)
     else { return nil }
     // subtracting the width to obtain the upstream edge.
-    frame.frame.origin.x -= mathLayoutContext.reflowSegments[index].width
+    frame.frame.origin.x -= mathList.reflowSegments[index].width
     return frame
   }
 
@@ -120,12 +121,12 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
 
-    guard mathLayoutContext.reflowSegmentCount > 0 else {
+    guard mathList.reflowSegmentCount > 0 else {
       return textLayoutContext.getSegmentFrame(textOffset, affinity)
     }
     let i = getAccessibleIndex(layoutOffset, affinity)
     guard var frame = getReflowSegmentFrame(i) else { return nil }
-    let segment = mathLayoutContext.reflowSegments[i]
+    let segment = mathList.reflowSegments[i]
 
     // compute distance from the fragment edge to segment upstream edge.
     let index = segment.fragmentIndex(layoutOffset)
@@ -141,15 +142,17 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(!isEditing && textOffset >= 0)
 
+
     guard layoutRange.lowerBound >= 0,
-      layoutRange.upperBound <= mathLayoutContext.layoutFragment.contentLayoutLength
+      layoutRange.upperBound <= mathList.contentLayoutLength,
+      let indexRange = mathList.indexRange(layoutRange)
     else { return false }
 
     let affinity: SelectionAffinity =
       options.contains(.upstreamAffinity) ? .upstream : .downstream
 
     // alias
-    let segments = mathLayoutContext.reflowSegments
+    let segments = mathList.reflowSegments
     let segmentCount = segments.count
 
     // iteration
@@ -271,15 +274,15 @@ final class MathReflowLayoutContext: LayoutContext {
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     precondition(!isEditing && textOffset >= 0)
-    guard mathLayoutContext.reflowSegmentCount > 0,
+    guard mathList.reflowSegmentCount > 0,
       let result = textLayoutContext.getLayoutRange(interactingAt: point)
     else { return nil }
     let i = result.layoutRange.lowerBound - textOffset
-    guard i >= 0 && i < mathLayoutContext.reflowSegmentCount,
+    guard i >= 0 && i < mathList.reflowSegmentCount,
       let frame = getReflowSegmentFrame(i)
     else { return nil }
     let relPoint = point.relative(to: frame.frame.origin)
-    let segment = mathLayoutContext.reflowSegments[i]
+    let segment = mathList.reflowSegments[i]
     if relPoint.x < segment.upstream {
       let offset = segment.offsetRange.lowerBound
       return PickingResult(offset..<offset, 0, .downstream)
@@ -300,14 +303,14 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> RayshootResult? {
     precondition(!isEditing && textOffset >= 0)
 
-    guard mathLayoutContext.reflowSegmentCount > 0 else {
+    guard mathList.reflowSegmentCount > 0 else {
       return textLayoutContext.rayshoot(
         from: textOffset, affinity: affinity, direction: direction)
     }
     let i = getAccessibleIndex(layoutOffset, affinity)
     guard let segmentFrame = getReflowSegmentFrame(i) else { return nil }
 
-    let segment = mathLayoutContext.reflowSegments[i]
+    let segment = mathList.reflowSegments[i]
     let index = segment.fragmentIndex(layoutOffset)
     let distance = segment.cursorDistanceThroughSegment(index)
 
@@ -323,7 +326,7 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> SegmentFrame? {
     precondition(!isEditing && textOffset >= 0)
 
-    guard mathLayoutContext.reflowSegmentCount > 0 else {
+    guard mathList.reflowSegmentCount > 0 else {
       return textLayoutContext.neighbourLineFrame(
         from: textOffset, affinity: affinity, direction: direction)
     }

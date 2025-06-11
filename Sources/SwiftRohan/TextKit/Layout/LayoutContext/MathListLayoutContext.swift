@@ -187,18 +187,18 @@ final class MathListLayoutContext: LayoutContext {
   }
 }
 
-extension MathListLayoutContext {
-  // MARK: - Reflow
-
-  var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
-
-  var reflowSegments: Array<ReflowSegmentFragment> { layoutFragment.reflowSegments }
-
-  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
-    layoutFragment.reflowSegmentIndex(layoutOffset)
-  }
-
-  func performReflow() {
-    layoutFragment.performReflow()
-  }
-}
+//extension MathListLayoutContext {
+//  // MARK: - Reflow
+//
+//  var reflowSegmentCount: Int { layoutFragment.reflowSegmentCount }
+//
+//  var reflowSegments: Array<ReflowSegmentFragment> { layoutFragment.reflowSegments }
+//
+//  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
+//    layoutFragment.reflowSegmentIndex(layoutOffset)
+//  }
+//
+//  func performReflow() {
+//    layoutFragment.performReflow()
+//  }
+//}

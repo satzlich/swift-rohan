@@ -123,7 +123,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
   /// if no such fragments exist.
-  func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
+  internal func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
     guard let i = searchIndexForward(0, distance: layoutRange.lowerBound),
       let j = searchIndexForward(i, distance: layoutRange.count)
     else { return nil }
