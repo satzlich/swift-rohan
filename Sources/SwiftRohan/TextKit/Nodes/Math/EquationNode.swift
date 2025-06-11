@@ -128,6 +128,49 @@ final class EquationNode: MathNode {
     }
   }
 
+  // MARK: - Node(Tree API)
+
+  final override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) -> Bool {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    guard isReflowActive else {
+      return super.enumerateTextSegments(
+        path, endPath, context: context, layoutOffset: layoutOffset,
+        originCorrection: originCorrection, type: type, options: options, using: block)
+    }
+
+    guard path.count >= 2,
+      endPath.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let endIndex: MathIndex = endPath.first?.mathIndex(),
+      // must not fork
+      index == endIndex,
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return false }
+
+    let newContext: MathReflowLayoutContext
+    do {
+      let fragment = fragment as! MathListLayoutFragment
+      let mathContext =
+        LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
+      newContext = MathReflowLayoutContext(context, mathContext, self, layoutOffset)
+    }
+    return component.enumerateTextSegments(
+      path.dropFirst(), endPath.dropFirst(), context: newContext,
+      // reset layoutOffset to "0".
+      layoutOffset: 0,
+      // use the original originCorrection.
+      originCorrection: originCorrection,
+      type: type, options: options, using: block)
+  }
+
   // MARK: - MathNode(Component)
 
   final override func enumerateComponents() -> [MathNode.Component] {
@@ -147,13 +190,15 @@ final class EquationNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment,
     parent context: any LayoutContext
   ) -> any LayoutContext {
-    // TODO: handle reflowed segments
     precondition(context is TextLayoutContext)
     precondition(fragment is MathListLayoutFragment)
+    precondition(isReflowActive == false)
     let context = context as! TextLayoutContext
     let fragment = fragment as! MathListLayoutFragment
-    return
+
+    let newContext =
       LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
+    return newContext
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
