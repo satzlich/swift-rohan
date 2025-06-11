@@ -274,7 +274,7 @@ class MathNode: Node {
       // is performed below.
       let result = RayshootResult(CGPoint(x: x, y: y), false)
       return LayoutUtils.relayRayshoot(
-        layoutOffset, affinity, direction, result, context)
+        layoutOffset, .downstream, direction, result, context)
     }
   }
 }
