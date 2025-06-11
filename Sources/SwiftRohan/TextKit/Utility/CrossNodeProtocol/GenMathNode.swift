@@ -47,7 +47,7 @@ extension GenMathNode {
     let newPoint = point.relative(to: segmentFrame.frame.origin)
       // We compute the coordinate relative to **glyph origin** by subtracting
       // the baseline position from the frame origin, which works for both
-      // TextKit and MathListLayoutContext.
+      // TextKit, MathListLayoutContext and MathReflowLayoutContext.
       .with(yDelta: -segmentFrame.baselinePosition)
     return newPoint
   }

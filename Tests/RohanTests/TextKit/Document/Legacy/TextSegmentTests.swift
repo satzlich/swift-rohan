@@ -130,7 +130,7 @@ final class TextSegmentTests: TextKitTestsBase {
 
     let fileName = String(#function.dropLast(2))
     for (i, (point, frame)) in zip(points, frames).enumerated() {
-      outputPDF("\(fileName)_\(i+1)", point, frame, documentManager)
+      outputPDF("\(fileName)_\(i)", point, frame, documentManager)
     }
   }
 
