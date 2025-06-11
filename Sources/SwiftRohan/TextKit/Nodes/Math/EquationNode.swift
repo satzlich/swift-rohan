@@ -34,34 +34,59 @@ final class EquationNode: MathNode {
     return _cachedProperties!
   }
 
-  // MARK: - Node(Storage)
+  // MARK: - Node(Layout)
 
   final override var isBlock: Bool { subtype == .block }
   final override var isDirty: Bool { nucleus.isDirty }
+
+  final override func layoutLength() -> Int { _layoutLength }
 
   final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
 
     if fromScratch {
-      let nucleusFragment =
-        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      _nucleusFragment = nucleusFragment
+      let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      _nodeFragment = nodeFragment
 
-      context.insertFragment(nucleusFragment, self)
+      if !isReflowActive {
+        context.insertFragment(nodeFragment, self)
+        _layoutLength = 1
+      }
+      else {
+        _layoutLength = emitReflowSegments(nodeFragment)
+      }
     }
     else {
-      guard let nucFragment = _nucleusFragment
-      else {
-        assertionFailure("Nucleus fragment should not be nil")
-        return layoutLength()
+      guard let nodeFragment = _nodeFragment else {
+        assertionFailure("expected _nodeFragment to be non-nil")
+        return _layoutLength
       }
 
-      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
-      context.invalidateBackwards(layoutLength())
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
+
+      if !isReflowActive {
+        context.invalidateBackwards(1)
+        _layoutLength = 1
+      }
+      else {
+        // delete segments emitted in previous layout, and emit new segments
+        context.deleteBackwards(_layoutLength)
+        _layoutLength = emitReflowSegments(nodeFragment)
+      }
     }
-    
-    return layoutLength()
+
+    return _layoutLength
+
+    /// Returns the number of segments emitted.
+    func emitReflowSegments(_ nodeFragment: MathListLayoutFragment) -> Int {
+      precondition(self.isReflowActive)
+      nodeFragment.performReflow()
+      for fragment in nodeFragment.reflowSegments.reversed() {
+        context.insertFragment(fragment, self)
+      }
+      return nodeFragment.reflowSegments.count
+    }
   }
 
   // MARK: - Node(Codable)
@@ -111,11 +136,11 @@ final class EquationNode: MathNode {
 
   // MARK: - MathNode(Layout)
 
-  final override var layoutFragment: MathLayoutFragment? { _nucleusFragment }
+  final override var layoutFragment: MathLayoutFragment? { _nodeFragment }
 
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     guard index == .nuc else { return nil }
-    return _nucleusFragment
+    return _nodeFragment
   }
 
   final override func initLayoutContext(
@@ -127,19 +152,19 @@ final class EquationNode: MathNode {
     precondition(fragment is MathListLayoutFragment)
     let context = context as! TextLayoutContext
     let fragment = fragment as! MathListLayoutFragment
-    return LayoutUtils.initMathListLayoutContext(
-      for: component, fragment, parent: context)
+    return
+      LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _nucleusFragment != nil ? .nuc : nil
+    _nodeFragment != nil ? .nuc : nil
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _nucleusFragment,
+    guard let fragment = _nodeFragment,
       component == .nuc
     else { return nil }
 
@@ -186,7 +211,12 @@ final class EquationNode: MathNode {
 
   internal let subtype: Subtype
   internal let nucleus: ContentNode
-  private var _nucleusFragment: MathListLayoutFragment? = nil
+
+  private var _layoutLength: Int = 1
+  private var _nodeFragment: MathListLayoutFragment? = nil
+
+  /// True if the layout of the equation should be reflowed.
+  private var isReflowActive: Bool { NodePolicy.isReflowEnabled && subtype == .inline }
 
   init(_ subtype: Subtype, _ nucleus: ElementStore = []) {
     self.subtype = subtype

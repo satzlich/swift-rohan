@@ -41,7 +41,7 @@ class MathNode: Node {
 
   internal override func contentDidChange() { parent?.contentDidChange() }
 
-  final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
+  internal override func layoutLength() -> Int { 1 }  // "1" except for reflowed math.
 
   // MARK: - MathNode(Component)
 
@@ -134,7 +134,7 @@ class MathNode: Node {
       for: component, fragment, parent: context)
   }
 
-  final override func enumerateTextSegments(
+  internal override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -171,7 +171,7 @@ class MathNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation(
+  internal override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
@@ -202,7 +202,7 @@ class MathNode: Node {
     return true
   }
 
-  final override func rayshoot(
+  internal override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
