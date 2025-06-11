@@ -86,7 +86,12 @@ struct ElementNodeTests {
       EquationNode(.inline, [TextNode("a+b")]),
     ])
     TestUtils.updateLayoutLength(paragraph)
-    #expect(paragraph.layoutLength() == 6)
+    if NodePolicy.isInlineMathReflowEnabled {
+      #expect(paragraph.layoutLength() == 6)
+    }
+    else {
+      #expect(paragraph.layoutLength() == 5)
+    }
 
     let root = RootNode([
       ParagraphNode([
@@ -96,7 +101,10 @@ struct ElementNodeTests {
       ParagraphNode([TextNode("def")]),
     ])
     TestUtils.updateLayoutLength(root)
-    #expect(root.layoutLength() == 11)
+    do {
+      let expected = NodePolicy.isInlineMathReflowEnabled ? 11 : 10
+      #expect(root.layoutLength() == expected)
+    }
   }
 
   @Test

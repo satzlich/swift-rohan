@@ -8,32 +8,30 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-  private struct Flags: OptionSet {
+  private struct _Flags: OptionSet {
     let rawValue: Int8
 
-    static let isEditing = Flags(rawValue: 1 << 0)
-    static let isReflowDirty = Flags(rawValue: 1 << 1)
+    static let isEditing = _Flags(rawValue: 1 << 0)
+    static let isReflowDirty = _Flags(rawValue: 1 << 1)
   }
 
   private var _textColor: Color
-  private var _fontSize: CGFloat
   private var _fragments: Deque<AnnotatedFragment> = []
   private var _reflowSegments: Array<ReflowSegmentFragment> = []
 
   private(set) var contentLayoutLength: Int = 0
 
-  /// least index of modified fragments since last fixLayout.
+  /// minimum index of modified fragments since last fixLayout.
   private var _dirtyIndex: Optional<Int> = nil
-  private var _flags: Flags = []
+  private var _flags: _Flags = []
 
-  private func markDirty(_ dirtyIndex: Int) {
+  private func _markDirty(_ dirtyIndex: Int) {
     _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
     _flags.insert(.isReflowDirty)
   }
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
-    self._fontSize = mathContext.getFontSize()
   }
 
   // MARK: - State
@@ -82,19 +80,19 @@ final class MathListLayoutFragment: MathLayoutFragment {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments.map(AnnotatedFragment.init), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
-    markDirty(index)
+    _markDirty(index)
   }
 
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
-    markDirty(range.lowerBound)
+    _markDirty(range.lowerBound)
   }
 
   func invalidateSubrange(_ range: Range<Int>) {
     precondition(isEditing)
-    markDirty(range.lowerBound)
+    _markDirty(range.lowerBound)
   }
 
   // MARK: - MathLayoutFragment
