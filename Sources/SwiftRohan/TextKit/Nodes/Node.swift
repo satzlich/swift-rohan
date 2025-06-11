@@ -210,6 +210,12 @@ internal class Node: Codable {
   }
 
   /// Resolve the text location for the given point within the node.
+  /// - Parameters:
+  ///   - point: the point to resolve, with respect to the **origin** of layout context.
+  ///   - context: the layout context.
+  ///   - layoutOffset: the accumulated layout offset for the layout context.
+  ///   - trace: the trace to maintain. The location is stored implicitly in the trace.
+  ///   - affinity: the selection affinity to maintain.
   /// - Returns: true if trace is modified, false otherwise.
   /// - Postcondition: the location is stored implicitly in the trace.
   internal func resolveTextLocation(

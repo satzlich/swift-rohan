@@ -671,7 +671,7 @@ internal class ElementNode: Node {
             with: point, context: context,
             layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
-            layoutRange: layoutRange.deducted(with: consumed))
+            layoutRange: layoutRange.safeSubtracting(consumed))
           return true
         }
         else {
@@ -752,11 +752,22 @@ internal class ElementNode: Node {
         }
 
         switch child {
+        case let equation as EquationNode where equation.isReflowActive:
+          trace.append(contentsOf: value)
+
+          let modified = equation.resolveTextLocation(
+            with: point, context: context, layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity)
+          if !modified { fallbackLastIndex() }
+          return true
+
         case let node as GenMathNode:
           trace.append(contentsOf: value)
 
+          // compute the context offset of the `node`.
+          let contextOffset =
+            layoutRange.contextRange.lowerBound - localOffset + consumed
           // compute coordinate relative to glyph origin.
-          let contextOffset = layoutRange.contextRange.lowerBound - localOffset + consumed
           guard
             let segmentFrame = node.getSegmentFrame(context, contextOffset, .downstream)
           else {
@@ -783,7 +794,7 @@ internal class ElementNode: Node {
           let modified = applyNode.resolveTextLocation(
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
-            layoutRange: layoutRange.deducted(with: consumed))
+            layoutRange: layoutRange.safeSubtracting(consumed))
           if !modified { fallbackLastIndex() }
           return true
 
