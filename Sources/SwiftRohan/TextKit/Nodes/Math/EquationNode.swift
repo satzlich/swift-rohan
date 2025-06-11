@@ -168,6 +168,40 @@ final class EquationNode: MathNode {
       type: type, options: options, using: block)
   }
 
+  final override func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity
+  ) -> Bool {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    guard isReflowActive else {
+      return super.resolveTextLocation(
+        with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+        affinity: &affinity)
+    }
+
+    // set component, fragment, and index
+    let index = MathIndex.nuc
+    let component = nucleus
+    guard let fragment = _nodeFragment else { return false }
+    // append to trace
+    trace.emplaceBack(self, .mathIndex(index))
+
+    let newContext =
+      createReflowContext(
+        component, fragment, parent: context, layoutOffset: layoutOffset)
+
+    // recurse
+    let modified = component.resolveTextLocation(
+      with: point, context: newContext,
+      // reset layoutOffset to "0".
+      layoutOffset: 0, trace: &trace, affinity: &affinity)
+    // fix accordingly
+    if !modified { trace.emplaceBack(component, .index(0)) }
+    return true
+  }
+
   final override func rayshoot(
     from path: ArraySlice<RohanIndex>, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
