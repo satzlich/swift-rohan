@@ -42,7 +42,7 @@ struct MathLayoutFragmentsTests {
     }
 
     for fragment in fragments {
-      callStandardMethods(fragment, context)
+      callStandardMethods(fragment)
     }
   }
 
@@ -62,7 +62,7 @@ struct MathLayoutFragmentsTests {
     attach.fixLayout(context)
 
     //
-    callStandardMethods(attach, context)
+    callStandardMethods(attach)
   }
 
   @Test
@@ -76,7 +76,7 @@ struct MathLayoutFragmentsTests {
     attributes.fixLayout(context)
 
     //
-    callStandardMethods(attributes, context)
+    callStandardMethods(attributes)
   }
 
   @Test
@@ -107,7 +107,7 @@ struct MathLayoutFragmentsTests {
     }
 
     for fragment in fragments {
-      callStandardMethods(fragment, context)
+      callStandardMethods(fragment)
     }
   }
 
@@ -130,7 +130,7 @@ struct MathLayoutFragmentsTests {
 
     //
     for fragment in fragments {
-      callStandardMethods(fragment, context)
+      callStandardMethods(fragment)
     }
   }
 
@@ -157,7 +157,7 @@ struct MathLayoutFragmentsTests {
     }
 
     // standard methods
-    callStandardMethods(leftRight, context)
+    callStandardMethods(leftRight)
   }
 
   @Test
@@ -169,7 +169,7 @@ struct MathLayoutFragmentsTests {
     }
 
     // standard methods
-    callStandardMethods(list, context)
+    callStandardMethods(list)
   }
 
   @Test
@@ -191,7 +191,7 @@ struct MathLayoutFragmentsTests {
     matrix.fixLayout(context)
 
     //
-    callStandardMethods(matrix, context)
+    callStandardMethods(matrix)
   }
 
   @Test
@@ -203,7 +203,7 @@ struct MathLayoutFragmentsTests {
     mathOp.fixLayout(context)
 
     //
-    callStandardMethods(mathOp, context)
+    callStandardMethods(mathOp)
   }
 
   @Test
@@ -236,7 +236,7 @@ struct MathLayoutFragmentsTests {
     }
     //
     for fragment in fragments {
-      callStandardMethods(fragment, context)
+      callStandardMethods(fragment)
     }
   }
 
@@ -253,7 +253,7 @@ struct MathLayoutFragmentsTests {
 
     //
     for fragment in fragments {
-      callStandardMethods(fragment, context)
+      callStandardMethods(fragment)
     }
   }
 
@@ -267,7 +267,7 @@ struct MathLayoutFragmentsTests {
     textMode.fixLayout(context)
 
     //
-    callStandardMethods(textMode, context)
+    callStandardMethods(textMode)
   }
 
   @Test
@@ -400,10 +400,16 @@ struct MathLayoutFragmentsTests {
     }
   }
 
+  private func callStandardMethods(_ fragment: MathLayoutFragment) {
+    Self.callStandardMethods(fragment, context)
+  }
+
   /// Call standard methods on the fragment.
-  private func callStandardMethods(_ fragment: MathLayoutFragment, _ context: MathContext)
-  {
+  internal static func callStandardMethods(
+    _ fragment: MathLayoutFragment, _ context: MathContext
+  ) {
     // protocol methods
+    _ = fragment.layoutLength
     fragment.setGlyphOrigin(CGPoint(x: 10, y: 0))
     fragment.fixLayout(context)
     _ = fragment.width

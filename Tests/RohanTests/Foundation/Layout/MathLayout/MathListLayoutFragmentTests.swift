@@ -60,6 +60,10 @@ struct MathListLayoutFragmentTests {
 
       let layoutLength = reflowSegments.map(\.offsetRange.count).reduce(0, +)
       #expect(layoutLength == mathList.contentLayoutLength)
+      
+      for fragment in reflowSegments {
+        MathLayoutFragmentsTests.callStandardMethods(fragment, mathContext)
+      }
     }
 
     do {
