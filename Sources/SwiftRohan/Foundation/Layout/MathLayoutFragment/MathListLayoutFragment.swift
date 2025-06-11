@@ -399,11 +399,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
 
     guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
-
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
-    // check point selection
-    let fraction = fractionOfDistanceThroughGlyph(for: point)
-    // do range selection
+    let fraction = fractionOfDistanceThroughGlyph(for: point, i)
     let last = first + _fragments[i].layoutLength
     return (first..<last, fraction)
   }
@@ -420,9 +417,12 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /// The fraction of distance from the upstream edge.
+  /// - Parameters:
+  ///   - point: the point to compute for.
+  ///   - i: the index of the fragment picked by given point.
   /// - Note: point is relative to __the glyph origin__.
-  private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double {
-    guard let i = getFragment(interactingAt: point) else { return 0 }
+  private func fractionOfDistanceThroughGlyph(for point: CGPoint, _ i: Int) -> Double {
+    precondition(i >= 0 && i < _fragments.count)
     let fragment = _fragments[i]
     return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
   }

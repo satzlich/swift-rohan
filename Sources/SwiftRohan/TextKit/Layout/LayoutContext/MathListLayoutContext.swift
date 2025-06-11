@@ -151,7 +151,8 @@ final class MathListLayoutContext: LayoutContext {
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     let point = CGPoint(x: point.x, y: point.y - layoutFragment.ascent)
     let (range, fraction) = layoutFragment.getLayoutRange(interactingAt: point)
-    return PickingResult(range, fraction, .downstream)
+    let affinity: SelectionAffinity = fraction > 0.51 ? .upstream : .downstream
+    return PickingResult(range, fraction, affinity)
   }
 
   func rayshoot(
