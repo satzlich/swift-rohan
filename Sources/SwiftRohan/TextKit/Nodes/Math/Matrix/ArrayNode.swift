@@ -503,8 +503,9 @@ class ArrayNode: Node {
       // The resolved flag is set to false to ensure that rayshot relay
       // is performed below.
       let result = RayshootResult(CGPoint(x: x, y: y), false)
+      // query with "downstream" affinity.
       return LayoutUtils.relayRayshoot(
-        layoutOffset, affinity, direction, result, context)
+        layoutOffset, .downstream, direction, result, context)
     }
   }
 
