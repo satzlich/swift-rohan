@@ -342,10 +342,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let segmentFrame = composeSegmentFrame(
         CGPoint(x: x0, y: 0), width: x1 - x0, ascent: ascent, descent: descent)
       return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
-
-//      let frame =
-//        CGRect(x: x0, y: -ascent + self.ascent, width: x1 - x0, height: ascent + descent)
-//      return block(layoutRange, frame, ascent)
     }
   }
 
