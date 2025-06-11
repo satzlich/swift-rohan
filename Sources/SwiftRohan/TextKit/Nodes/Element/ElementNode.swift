@@ -37,7 +37,7 @@ internal class ElementNode: Node {
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    guard 0...layoutLength() ~= layoutOffset else {
+    guard 0..._layoutLength ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
 
@@ -535,35 +535,6 @@ internal class ElementNode: Node {
     }
   }
 
-  /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
-  /// with the layout offset of the child.
-  /// - Returns: nil if layout offset is out of bounds. Otherwise, returns (k, s)
-  ///     where k is the index of the child containing the layout offset and s is
-  ///     the layout offset of the child.
-  /// - Invariant: `consumed <= layoutOffset`.
-  private final func getChildIndex(_ layoutOffset: Int) -> (Int, consumed: Int)? {
-    let layoutLength = self.layoutLength()
-    guard layoutOffset >= 0,
-      layoutOffset < layoutLength || (isBlock && layoutOffset == layoutLength)
-    else { return nil }
-
-    // Invariant: isPlaceholderActive => _children.isEmpty
-
-    var (k, s) = (0, isPlaceholderActive.intValue)
-    // notations: LO:= layoutOffset
-    //            ell(i):= children[i].layoutLength + _newlines[i].intValue
-    //            b:= isBlock.intValue
-    // invariant: s(k) = b + sum:i∈[0,k):ell(i)
-    //            s(k) ≤ LO
-    //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
-    while k < _children.count {
-      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
-      if ss > layoutOffset { break }
-      (k, s) = (k + 1, ss)
-    }
-    return (k, s)
-  }
-
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
@@ -592,7 +563,8 @@ internal class ElementNode: Node {
     else { assertionFailure("Invalid path"); return false }
 
     if self.isPlaceholderActive {
-      assert(path.count == 1 && endPath.count == 1 && index == endIndex)
+      assert(path.count == 1 && endPath.count == 1)
+      assert(index == endIndex && index == 0)
       guard let endOffset = TreeUtils.computeLayoutOffset(for: path, self)
       else { assertionFailure("Invalid path"); return false }
       let offset = endOffset - 1
@@ -649,7 +621,7 @@ internal class ElementNode: Node {
   ) -> Bool {
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound
-      guard localOffset <= self.layoutLength() else {
+      guard localOffset <= _layoutLength else {
         trace.emplaceBack(self, .index(self.childCount))
         return true
       }
