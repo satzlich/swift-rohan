@@ -8,6 +8,13 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
+  private struct Flags: OptionSet {
+    let rawValue: Int8
+
+    static let isEditing = Flags(rawValue: 1 << 0)
+    static let isReflowDirty = Flags(rawValue: 1 << 1)
+  }
+
   private var _textColor: Color
   private var _fontSize: CGFloat
   private var _fragments: Deque<AnnotatedFragment> = []
@@ -17,9 +24,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// least index of modified fragments since last fixLayout.
   private var _dirtyIndex: Optional<Int> = nil
+  private var _flags: Flags = []
 
-  private func update(dirtyIndex: Int) {
+  private func markDirty(_ dirtyIndex: Int) {
     _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
+    _flags.insert(.isReflowDirty)
   }
 
   init(_ mathContext: MathContext) {
@@ -29,16 +38,23 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: - State
 
-  internal private(set) var isEditing: Bool = false
+  @inlinable @inline(__always)
+  internal var isEditing: Bool { _flags.contains(.isEditing) }
+
+  @inlinable @inline(__always)
+  internal var isLayoutDirty: Bool { _dirtyIndex != nil }
+
+  @inlinable @inline(__always)
+  internal var isReflowDirty: Bool { _flags.contains(.isReflowDirty) }
 
   func beginEditing() {
-    precondition(!isEditing && _dirtyIndex == nil)
-    isEditing = true
+    precondition(!isEditing && !isLayoutDirty)
+    _flags.insert(.isEditing)
   }
 
   func endEditing() {
     precondition(isEditing)
-    isEditing = false
+    _flags.remove(.isEditing)
   }
 
   // MARK: - Content
@@ -66,19 +82,19 @@ final class MathListLayoutFragment: MathLayoutFragment {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments.map(AnnotatedFragment.init), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
-    update(dirtyIndex: index)
+    markDirty(index)
   }
 
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
-    update(dirtyIndex: range.lowerBound)
+    markDirty(range.lowerBound)
   }
 
   func invalidateSubrange(_ range: Range<Int>) {
     precondition(isEditing)
-    update(dirtyIndex: range.lowerBound)
+    markDirty(range.lowerBound)
   }
 
   // MARK: - MathLayoutFragment
@@ -344,7 +360,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// Returns the index of fragment that **matches** the layout offset.
   /// - Precondition: the math list is not in editing mode and there is no dirty index.
   func index(matching layoutOffset: Int) -> Int? {
-    precondition(!isEditing && _dirtyIndex == nil)
+    precondition(!isEditing && !isLayoutDirty)
     precondition(layoutOffset >= 0)
     let i = self.index(containing: layoutOffset)
     if i < _fragments.count {
@@ -361,7 +377,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// if no such fragments exist.
   /// - Precondition: the math list is not in editing mode and there is no dirty index.
   func indexRange(matching layoutRange: Range<Int>) -> Range<Int>? {
-    precondition(!isEditing && _dirtyIndex == nil)
+    precondition(!isEditing && !isLayoutDirty)
     guard let i = index(matching: layoutRange.lowerBound),
       let j = index(matching: layoutRange.upperBound)
     else { return nil }
@@ -372,7 +388,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// layout offset. If no such fragment exists, returns fragment count.
   /// - Precondition: the math list is not in editing mode and there is no dirty index.
   func index(containing layoutOffset: Int) -> Int {
-    precondition(!isEditing && _dirtyIndex == nil)
+    precondition(!isEditing && !isLayoutDirty)
     precondition(layoutOffset >= 0)
     return Satz.lowerBound(_fragments, layoutOffset) { $0.layoutOffset < $1 }
   }
@@ -422,7 +438,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns cursor distance for the given position from the upstream of math list.
   internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
+    precondition(!isEditing && !isLayoutDirty)
     precondition(0 <= index && index <= _fragments.count)
+
     if _fragments.isEmpty {
       return 0
     }
@@ -451,6 +469,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
   internal func cursorHeight(
     _ range: Range<Int>, _ minAsccentDescent: (ascent: Double, descent: Double)
   ) -> (ascent: Double, descent: Double) {
+    precondition(!isEditing && !isLayoutDirty)
+    precondition(0 <= range.lowerBound && range.upperBound <= _fragments.count)
+
     if range.isEmpty {
       return minAsccentDescent
     }
@@ -506,22 +527,28 @@ extension MathListLayoutFragment {
   var reflowSegmentCount: Int { _reflowSegments.count }
 
   var reflowSegments: Array<ReflowSegmentFragment> {
-    precondition(!isEditing)
+    precondition(!isEditing && !isReflowDirty)
     return _reflowSegments
   }
 
   /// Returns the index of the segment containing the layout offset.
   /// If the offset is not in any segment, returns the end index.
   func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
-    precondition(!isEditing)
+    precondition(!isEditing && !isReflowDirty)
+
+    //    return Satz.lowerBound(_reflowSegments, layoutOffset) {
+    //      $0.offsetRange.lowerBound < $1
+    //    }
+
     return _reflowSegments.firstIndex { $0.offsetRange.contains(layoutOffset) }
       ?? _reflowSegments.endIndex
   }
 
   func performReflow() {
-    precondition(!isEditing)
+    precondition(!isEditing && !isLayoutDirty)
 
     _reflowSegments.removeAll(keepingCapacity: true)
+    defer { _flags.remove(.isReflowDirty) }
 
     guard !_fragments.isEmpty else { return }
 
