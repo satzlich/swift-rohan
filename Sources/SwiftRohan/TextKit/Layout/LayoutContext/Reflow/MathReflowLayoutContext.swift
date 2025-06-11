@@ -123,34 +123,15 @@ final class MathReflowLayoutContext: LayoutContext {
     guard mathLayoutContext.reflowSegmentCount > 0 else {
       return textLayoutContext.getSegmentFrame(textOffset, affinity)
     }
-
-    // compute segment frame of the reflow segment.
     let i = getAccessibleIndex(layoutOffset, affinity)
-    guard let frame = getReflowSegmentFrame(i) else { return nil }
+    guard var frame = getReflowSegmentFrame(i) else { return nil }
     let segment = mathLayoutContext.reflowSegments[i]
 
     // compute distance from the fragment edge to segment upstream edge.
     let index = segment.fragmentIndex(layoutOffset)
     let distance = segment.distanceThroughSegment(index)
-
-    // compute x-coord.
-    let x = frame.frame.origin.x + distance
-
-    // compute fragment
-    let range = segment.range
-    let fragment: MathLayoutFragment
-    if range ~= index {
-      fragment = segment.get(index)
-    }
-    else {
-      assert(index == range.upperBound)
-      fragment = segment.get(range.upperBound - 1)
-    }
-    // compute y-coordinate and baseline.
-    let baseline = fragment.ascent
-    let y = frame.frame.origin.y + frame.baselinePosition - baseline
-
-    return SegmentFrame(CGRect(x: x, y: y, width: 0, height: fragment.height), baseline)
+    frame.frame.origin.x += distance
+    return frame
   }
 
   func enumerateTextSegments(
