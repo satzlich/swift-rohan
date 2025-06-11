@@ -533,15 +533,11 @@ extension MathListLayoutFragment {
 
   /// Returns the index of the segment containing the layout offset.
   /// If the offset is not in any segment, returns the end index.
-  func reflowSegmentIndex(_ layoutOffset: Int) -> Int {
+  func reflowSegmentIndex(containing layoutOffset: Int) -> Int {
     precondition(!isEditing && !isReflowDirty)
-
-    //    return Satz.lowerBound(_reflowSegments, layoutOffset) {
-    //      $0.offsetRange.lowerBound < $1
-    //    }
-
-    return _reflowSegments.firstIndex { $0.offsetRange.contains(layoutOffset) }
-      ?? _reflowSegments.endIndex
+    return Satz.lowerBound(_reflowSegments, layoutOffset) {
+      $0.offsetRange.upperBound <= $1
+    }
   }
 
   func performReflow() {

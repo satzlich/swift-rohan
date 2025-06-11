@@ -90,7 +90,7 @@ final class MathReflowLayoutContext: LayoutContext {
     precondition(!isEditing && textOffset >= 0)
     precondition(mathList.reflowSegmentCount > 0)
 
-    var i = mathList.reflowSegmentIndex(layoutOffset)
+    var i = mathList.reflowSegmentIndex(containing: layoutOffset)
     if i == mathList.reflowSegmentCount {
       i -= 1
     }
@@ -142,14 +142,14 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(!isEditing && textOffset >= 0)
 
-    guard layoutRange.lowerBound >= 0,
+    guard mathList.reflowSegmentCount > 0,
+      layoutRange.lowerBound >= 0,
       layoutRange.upperBound <= mathList.contentLayoutLength,
       let indexRange = mathList.indexRange(matching: layoutRange)
     else { return false }
 
-    let minAscentDescent = mathLayoutContext.mathContext.cursorHeight()
     let (cursorAscent, cursorDescent) =
-      mathList.cursorHeight(indexRange, minAscentDescent)
+      mathList.cursorHeight(indexRange, mathLayoutContext.mathContext.cursorHeight())
 
     func localBlock(
       _ segmentRange: Range<Int>?, _ frame: CGRect, _ baseline: CGFloat
