@@ -309,15 +309,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// of the container.
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
-    _ minAscentDescent: (CGFloat, CGFloat),
+    _ minAscentDescent: (Double, Double),
     type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     guard let range = indexRange(layoutRange) else { return false }
-    let (minAscent, minDescent) = minAscentDescent
-
-    let (cursorAscent, cursorDescent) = cursorHeight(range, minAscent, minDescent)
+    let (cursorAscent, cursorDescent) = cursorHeight(range, minAscentDescent)
 
     let segmentFrame: SegmentFrame
     if self.isEmpty {
@@ -428,12 +426,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Compute cursor height (ascent, descent) for the index range.
   internal func cursorHeight(
-    _ range: Range<Int>, _ minAscent: CGFloat, _ minDescent: CGFloat
-  ) -> (ascent: CGFloat, descent: CGFloat) {
+    _ range: Range<Int>, _ minAsccentDescent: (ascent: Double, descent: Double)
+  ) -> (ascent: Double, descent: Double) {
     if range.isEmpty {
-      return (minAscent, minDescent)
+      return minAsccentDescent
     }
     else {
+      let (minAscent, minDescent) = minAsccentDescent
       let range = range.clamped(to: 0..<_fragments.count)
       let ascent = _fragments[range].lazy.map(\.ascent).max() ?? 0
       let descent = _fragments[range].lazy.map(\.descent).max() ?? 0

@@ -142,11 +142,14 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(!isEditing && textOffset >= 0)
 
-
     guard layoutRange.lowerBound >= 0,
       layoutRange.upperBound <= mathList.contentLayoutLength,
       let indexRange = mathList.indexRange(layoutRange)
     else { return false }
+
+    let minAscentDescent = mathLayoutContext.mathContext.cursorHeight()
+    let (cursorAscent, cursorDescent) =
+      mathList.cursorHeight(indexRange, minAscentDescent)
 
     let affinity: SelectionAffinity =
       options.contains(.upstreamAffinity) ? .upstream : .downstream

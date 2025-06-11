@@ -48,6 +48,12 @@ struct MathContext {
   func getFontSize() -> Double { mathFont.getFontSize(for: mathStyle) }
 
   func getFontSize(for style: MathStyle) -> Double { mathFont.getFontSize(for: style) }
+
+  /// Minimum cursor height (ascent, descent).
+  func cursorHeight() -> (ascent: Double, descent: Double) {
+    let font = self.getFont()
+    return (font.ascent, font.descent)
+  }
 }
 
 extension MathUtils {
