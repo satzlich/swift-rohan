@@ -146,17 +146,23 @@ final class MathReflowLayoutContext: LayoutContext {
     let affinity: SelectionAffinity =
       options.contains(.upstreamAffinity) ? .upstream : .downstream
 
+    // alias
+    let segments = mathLayoutContext.reflowSegments
+    let segmentCount = segments.count
+
+    // iteration
+    let endOffset = layoutRange.upperBound
+
     enum State { case initial, next, final, exit }
     var state: State = .initial
     var offset = layoutRange.lowerBound
-    let endOffset = layoutRange.upperBound
     var i = getAccessibleIndex(offset, affinity)
     var shouldContinue = true
 
     while state != .exit {
       switch state {
       case .initial:
-        let segment = mathLayoutContext.reflowSegments[i]
+        let segment = segments[i]
         assert(offset >= segment.offsetRange.lowerBound)
         // the upstream edge of the segment meets the offset.
         if offset == segment.offsetRange.lowerBound {
@@ -191,11 +197,11 @@ final class MathReflowLayoutContext: LayoutContext {
             shouldContinue = block(nil, frame.frame, frame.baselinePosition)
             // prepare state for next round.
             if shouldContinue,
-              i + 1 < mathLayoutContext.reflowSegmentCount
+              i + 1 < segmentCount
             {
+              offset = segment.offsetRange.upperBound
               i += 1
               state = .next
-              offset = segment.offsetRange.upperBound
             }
             else {
               // no more segments, end the loop.
@@ -205,41 +211,43 @@ final class MathReflowLayoutContext: LayoutContext {
         }
 
       case .next:
-        var j = i
-        var segment = mathLayoutContext.reflowSegments[j]
-        assert(offset == segment.offsetRange.lowerBound)
-        // determine the entire segments
-        while segment.offsetRange.upperBound <= endOffset {
-          j += 1
-          if j >= mathLayoutContext.reflowSegmentCount { break }
-          segment = mathLayoutContext.reflowSegments[j]
+        assert(offset == segments[i].offsetRange.lowerBound)
+
+        guard segments[i].offsetRange.upperBound <= endOffset
+        else {
+          // if there is no entire segment to process, transition to final state.
+          state = .final
+          continue
         }
-        // if there are entire segments to process,
-        if j > i {
-          let range = textOffset + i..<textOffset + j
-          shouldContinue = textLayoutContext.enumerateTextSegments(
-            range, type: type, options: options, using: block)
-          // prepare state for next round.
-          if shouldContinue,
-            j < mathLayoutContext.reflowSegmentCount
-          {
-            i = j
-            offset = segment.offsetRange.upperBound
-            state = .next
+
+        var j = i
+        // determine the last index which is entire.
+        while j + 1 < segmentCount {
+          if segments[j + 1].offsetRange.upperBound <= endOffset {
+            j += 1
           }
           else {
-            // no more segments, end the loop.
-            state = .exit
+            break
           }
         }
-        // if there is no entire segment to process,
-        else {
-          // transition to final state.
+        let range = textOffset + i..<textOffset + j + 1
+        shouldContinue = textLayoutContext.enumerateTextSegments(
+          range, type: type, options: options, using: block)
+        // prepare state for next round.
+        if shouldContinue,
+          j + 1 < segmentCount
+        {
+          i = j + 1
+          offset = segments[j].offsetRange.upperBound
           state = .final
+        }
+        else {
+          // no more segments, end the loop.
+          state = .exit
         }
 
       case .final:
-        let segment = mathLayoutContext.reflowSegments[i]
+        let segment = segments[i]
         assert(offset == segment.offsetRange.lowerBound)
         assert(endOffset <= segment.offsetRange.upperBound)
         guard var frame = getReflowSegmentFrame(i) else { return false }
