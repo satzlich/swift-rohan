@@ -491,7 +491,7 @@ public final class DocumentManager {
   }
 
   /// Enumerate text segments in the given range.
-  /// - Note: `block` should return `false` to break out of enumeration.
+  /// - Note: `block` should return **false** to break out of enumeration.
   func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
     // (textSegmentRange, textSegmentFrame, baselinePosition) -> continue

@@ -55,7 +55,14 @@ protocol LayoutContext {
   ) -> SegmentFrame?
 
   /// Enumerate text segments in `layoutRange` and process by `block`.
-  /// - Returns: false if enumeration is interrupted by `block`, otherwise true.
+  /// - Parameters:
+  ///   - layoutRange: the range of layout offsets to enumerate.
+  ///   - type: the type of segments to generate.
+  ///   - options: the options to use when generating segments.
+  ///   - block: the block to process each segment. The block is called with the
+  ///       segment range, frame rectangle, and baseline offset. To break out of
+  ///       enumeration, return **false** from the block.
+  /// - Returns: false if enumeration is stopped by `block` or error, otherwise true.
   func enumerateTextSegments(
     _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,

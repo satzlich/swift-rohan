@@ -110,6 +110,7 @@ final class MathReflowLayoutContext: LayoutContext {
     // query for downstream edge with affinity=upstream.
     guard var frame = textLayoutContext.getSegmentFrame(nextOffset, .upstream)
     else { return nil }
+    // subtracting the width to obtain the upstream edge.
     frame.frame.origin.x -= mathLayoutContext.reflowSegments[index].width
     return frame
   }
@@ -138,9 +139,124 @@ final class MathReflowLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(!isEditing && textOffset >= 0)
 
-    let preferUpstream = options.contains(.upstreamAffinity)
+    guard layoutRange.lowerBound >= 0,
+      layoutRange.upperBound <= mathLayoutContext.layoutFragment.contentLayoutLength
+    else { return false }
 
-    preconditionFailure()
+    let affinity: SelectionAffinity =
+      options.contains(.upstreamAffinity) ? .upstream : .downstream
+
+    enum State { case initial, next, final, exit }
+    var state: State = .initial
+    var offset = layoutRange.lowerBound
+    let endOffset = layoutRange.upperBound
+    var i = getAccessibleIndex(offset, affinity)
+    var shouldContinue = true
+
+    while state != .exit {
+      switch state {
+      case .initial:
+        let segment = mathLayoutContext.reflowSegments[i]
+        assert(offset >= segment.offsetRange.lowerBound)
+        // the upstream edge of the segment meets the offset.
+        if offset == segment.offsetRange.lowerBound {
+          // process in the next state.
+          state = .next
+        }
+        else {
+          guard var frame = getReflowSegmentFrame(i) else { return false }
+          let i0 = segment.fragmentIndex(offset)
+          let d0 = segment.cursorDistanceThroughSegment(i0)
+          frame.frame.origin.x += d0
+          // the range is empty.
+          if offset == endOffset {
+            shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+            // no more segments, end the loop.
+            state = .exit
+          }
+          // the range is nonempty, and ends in this segment.
+          else if endOffset <= segment.offsetRange.upperBound {
+            let i1 = segment.fragmentIndex(endOffset)
+            let d1 = segment.cursorDistanceThroughSegment(i1)
+            frame.frame.size.width = d1 - d0
+            shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+            // no more segments, end the loop.
+            state = .exit
+          }
+          // the range is nonempty, and spans to the next segment.
+          else {
+            let i1 = segment.fragmentIndex(segment.offsetRange.upperBound)
+            let d1 = segment.cursorDistanceThroughSegment(i1)
+            frame.frame.size.width = d1 - d0
+            shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+            // prepare state for next round.
+            if shouldContinue,
+              i + 1 < mathLayoutContext.reflowSegmentCount
+            {
+              i += 1
+              state = .next
+              offset = segment.offsetRange.upperBound
+            }
+            else {
+              // no more segments, end the loop.
+              state = .exit
+            }
+          }
+        }
+
+      case .next:
+        var j = i
+        var segment = mathLayoutContext.reflowSegments[j]
+        assert(offset == segment.offsetRange.lowerBound)
+        // determine the entire segments
+        while segment.offsetRange.upperBound <= endOffset {
+          j += 1
+          if j >= mathLayoutContext.reflowSegmentCount { break }
+          segment = mathLayoutContext.reflowSegments[j]
+        }
+        // if there are entire segments to process,
+        if j > i {
+          let range = textOffset + i..<textOffset + j
+          shouldContinue = textLayoutContext.enumerateTextSegments(
+            range, type: type, options: options, using: block)
+          // prepare state for next round.
+          if shouldContinue,
+            j < mathLayoutContext.reflowSegmentCount
+          {
+            i = j
+            offset = segment.offsetRange.upperBound
+            state = .next
+          }
+          else {
+            // no more segments, end the loop.
+            state = .exit
+          }
+        }
+        // if there is no entire segment to process,
+        else {
+          // transition to final state.
+          state = .final
+        }
+
+      case .final:
+        let segment = mathLayoutContext.reflowSegments[i]
+        assert(offset == segment.offsetRange.lowerBound)
+        assert(endOffset <= segment.offsetRange.upperBound)
+        guard var frame = getReflowSegmentFrame(i) else { return false }
+        let i1 = segment.fragmentIndex(endOffset)
+        let d1 = segment.cursorDistanceThroughSegment(i1)
+        frame.frame.size.width = d1
+
+        shouldContinue = block(nil, frame.frame, frame.baselinePosition)
+        // no more segments, end the loop.
+        state = .exit
+
+      case .exit:
+        break  // no-op
+      }
+    }
+
+    return shouldContinue
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
@@ -197,8 +313,4 @@ final class MathReflowLayoutContext: LayoutContext {
     return mathLayoutContext.neighbourLineFrame(
       from: textOffset + i, affinity: .downstream, direction: direction)
   }
-}
-
-extension MathReflowLayoutContext {
-
 }
