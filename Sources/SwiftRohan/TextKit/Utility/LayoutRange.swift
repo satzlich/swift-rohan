@@ -22,7 +22,8 @@ struct LayoutRange {
     self.fraction = fraction
   }
 
-  func deducted(with consumed: Int) -> LayoutRange {
+  /// Subtract consumed units from the range.
+  func safeSubtracting(_ consumed: Int) -> LayoutRange {
     if consumed <= localRange.lowerBound {
       let range = localRange.subtracting(consumed)
       return LayoutRange(range, contextRange, fraction)

@@ -5,6 +5,9 @@ import Foundation
 enum NodePolicy {
   // MARK: - Properties
 
+  /// True if reflow for inline math is enabled.
+  static let isInlineMathReflowEnabled: Bool = false
+
   /// Returns true if the node is transparent.
   /// - Note: A characterising property of **transparent node** is: insertion any
   ///     content into the interior of a transparent node can split the node into

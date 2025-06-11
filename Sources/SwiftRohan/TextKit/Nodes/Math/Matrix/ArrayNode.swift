@@ -401,7 +401,8 @@ class ArrayNode: Node {
     let context = context as! MathListLayoutContext
 
     // resolve grid index for point
-    guard let index: GridIndex = getGridIndex(interactingAt: point),
+    guard let point = convertToLocal(point, context, layoutOffset),
+      let index: GridIndex = getGridIndex(interactingAt: point),
       let component = getCell(index),
       let fragment = getFragment(index)
     else { return false }

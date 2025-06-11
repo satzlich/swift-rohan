@@ -30,4 +30,25 @@ extension GenMathNode {
       return context.getSegmentFrame(layoutOffset, affinity)
     }
   }
+
+  /// Convert the point which is relative to the **top-left corner** of given context
+  /// to the coordinate system of the fragment of this node.
+  /// - Parameters:
+  ///     - point: The point relative to the **top-left corner** of the context.
+  ///     - context: The layout context that the point is in.
+  ///     - layoutOffset: The layout offset of the node in the given context.
+  /// - Returns: The point in the coordinate system of the fragment of this node,
+  ///     or nil if the conversion fails.
+  func convertToLocal(
+    _ point: CGPoint, _ context: LayoutContext, _ layoutOffset: Int
+  ) -> CGPoint? {
+    guard let segmentFrame = getSegmentFrame(context, layoutOffset, .downstream)
+    else { return nil }
+    let newPoint = point.relative(to: segmentFrame.frame.origin)
+      // We compute the coordinate relative to **glyph origin** by subtracting
+      // the baseline position from the frame origin, which works for both
+      // TextKit and MathListLayoutContext.
+      .with(yDelta: -segmentFrame.baselinePosition)
+    return newPoint
+  }
 }

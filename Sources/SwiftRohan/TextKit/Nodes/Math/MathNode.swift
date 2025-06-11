@@ -41,7 +41,7 @@ class MathNode: Node {
 
   internal override func contentDidChange() { parent?.contentDidChange() }
 
-  final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
+  internal override func layoutLength() -> Int { 1 }  // "1" except for reflowed math.
 
   // MARK: - MathNode(Component)
 
@@ -134,7 +134,7 @@ class MathNode: Node {
       for: component, fragment, parent: context)
   }
 
-  final override func enumerateTextSegments(
+  internal override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -171,38 +171,39 @@ class MathNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation(
+  internal override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
     // resolve math index for point
-    guard let index: MathIndex = self.getMathIndex(interactingAt: point),
+    guard let point = convertToLocal(point, context, layoutOffset),
+      let index: MathIndex = self.getMathIndex(interactingAt: point),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return false }
     // append to trace
     trace.emplaceBack(self, .mathIndex(index))
 
-    let relPoint: CGPoint
+    let newPoint: CGPoint
     do {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
       let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
       // convert to relative position to top-left corner of component fragment
-      relPoint = point.relative(to: frameOrigin)
+      newPoint = point.relative(to: frameOrigin)
     }
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
       component.resolveTextLocation(
-        with: relPoint, context: newContext, layoutOffset: 0,
+        with: newPoint, context: newContext, layoutOffset: 0,
         trace: &trace, affinity: &affinity)
     // fix accordingly
     if !modified { trace.emplaceBack(component, .index(0)) }
     return true
   }
 
-  final override func rayshoot(
+  internal override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
