@@ -7,7 +7,7 @@ import Testing
 
 final class TextSelectionNavigationTests: TextKitTestsBase {
   init() throws {
-    try super.init(createFolder: false)
+    try super.init(createFolder: true)
   }
 
   @Test
@@ -17,7 +17,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("c"),
         EquationNode(
-          .block, [
+          .block,
+          [
             TextNode("d+"),
             FractionNode(num: [TextNode("e")], denom: [TextNode("f")]),
           ]),
@@ -30,7 +31,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
             [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("h")]])!]
           ])!,
         EquationNode(
-          .block, [
+          .block,
+          [
             TextNode("i"),
             ApplyNode(
               MathTemplateSamples.bifun,
@@ -173,7 +175,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .inline, [
+          .inline,
+          [
             TextNode("a+"),
             FractionNode(num: [TextNode("b-c")], denom: [TextNode("d+e")]),
             TextNode("+f+g+h"),
@@ -188,7 +191,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     ])
 
     let documentManager = createDocumentManager(rootNode)
-    // outputPDF(#function, documentManager)
+    outputPDF(#function, documentManager)
 
     func move(from location: TextLocation) -> [RhTextSelection] {
       let selection = RhTextSelection(location)
@@ -224,11 +227,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓0]:0, affinity: downstream), \
+          [(location: [↓1,↓0]:0, affinity: upstream), \
           (location: [↓0,↓0]:24, affinity: downstream), \
           (location: [↓1,↓0]:40, affinity: upstream), \
           (location: [↓0,↓0]:25, affinity: downstream), \
-          (anchor: [↓0,↓0]:25, focus: [↓1,↓0]:0, reversed: false, affinity: downstream), \
+          (anchor: [↓0,↓0]:25, focus: [↓1,↓0]:0, reversed: false, affinity: upstream), \
           (anchor: [↓0,↓0]:25, focus: [↓0,↓0]:24, reversed: true, affinity: downstream), \
           (anchor: [↓0,↓0]:25, focus: [↓1,↓0]:40, reversed: false, affinity: upstream), \
           (anchor: [↓0,↓0]:25, focus: []:0, reversed: true, affinity: downstream)]
@@ -245,11 +248,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓0]:63, affinity: downstream), \
+          [(location: [↓1,↓0]:63, affinity: upstream), \
           (location: [↓1,↓0]:61, affinity: downstream), \
           (location: [↓1,↓0]:89, affinity: upstream), \
           (location: [↓1,↓0]:22, affinity: downstream), \
-          (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:63, reversed: false, affinity: downstream), \
+          (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:63, reversed: false, affinity: upstream), \
           (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:61, reversed: true, affinity: downstream), \
           (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:89, reversed: false, affinity: upstream), \
           (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:22, reversed: true, affinity: downstream)]
@@ -265,13 +268,13 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓0]:87, affinity: downstream), \
+          [(location: [↓1,↓0]:87, affinity: upstream), \
           (location: [↓1,↓0]:85, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓1,num,↓0]:2, affinity: downstream), \
+          (location: [↓2,↓0,nuc,↓1,num,↓0]:2, affinity: upstream), \
           (location: [↓1,↓0]:46, affinity: downstream), \
-          (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:87, reversed: false, affinity: downstream), \
+          (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:87, reversed: false, affinity: upstream), \
           (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:85, reversed: true, affinity: downstream), \
-          (anchor: [↓1,↓0]:86, focus: [↓2,↓0,nuc,↓1,num,↓0]:2, reversed: false, affinity: downstream), \
+          (anchor: [↓1,↓0]:86, focus: [↓2,↓0,nuc,↓1,num,↓0]:2, reversed: false, affinity: upstream), \
           (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:46, reversed: true, affinity: downstream)]
           """)
     }
