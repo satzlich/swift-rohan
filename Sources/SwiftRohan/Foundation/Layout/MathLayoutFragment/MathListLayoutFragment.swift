@@ -317,32 +317,31 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard let range = indexRange(layoutRange) else { return false }
     let (minAscent, minDescent) = minAscentDescent
 
+    let (cursorAscent, cursorDescent) = cursorHeight(range, minAscent, minDescent)
+
+    let segmentFrame: SegmentFrame
     if self.isEmpty {
       guard range.isEmpty && range.lowerBound == 0 else { return false }
-      let segmentFrame = composeSegmentFrame(
-        .zero, width: 0, ascent: minAscent, descent: minDescent)
-      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+      segmentFrame = composeSegmentFrame(
+        .zero, width: 0, ascent: cursorAscent, descent: cursorDescent)
     }
     else if range.isEmpty {
       guard range.lowerBound <= _fragments.count else { return false }
       let x = cursorDistanceThroughUpstream(range.lowerBound)
-      let segmentFrame = composeSegmentFrame(
-        CGPoint(x: x, y: 0), width: 0, ascent: minAscent, descent: minDescent)
-      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+      segmentFrame = composeSegmentFrame(
+        CGPoint(x: x, y: 0), width: 0, ascent: cursorAscent, descent: cursorDescent)
     }
     // ASSERT: fragments not empty
     // ASSERT: range not empty
     else {
-      let ascent = Swift.max(_fragments[range].lazy.map(\.ascent).max()!, minAscent)
-      let descent = Swift.max(_fragments[range].lazy.map(\.descent).max()!, minDescent)
-
       let x0 = cursorDistanceThroughUpstream(range.lowerBound)
       let x1 = cursorDistanceThroughUpstream(range.upperBound)
-
-      let segmentFrame = composeSegmentFrame(
-        CGPoint(x: x0, y: 0), width: x1 - x0, ascent: ascent, descent: descent)
-      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+      segmentFrame = composeSegmentFrame(
+        CGPoint(x: x0, y: 0), width: x1 - x0,
+        ascent: cursorAscent, descent: cursorDescent)
     }
+
+    return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
   }
 
   /// Returns the layout range for the glyph selected by point. If no fragment is
@@ -424,6 +423,21 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
     else {
       return _width  // it's an invariant of math list.
+    }
+  }
+
+  /// Compute cursor height (ascent, descent) for the index range.
+  internal func cursorHeight(
+    _ range: Range<Int>, _ minAscent: CGFloat, _ minDescent: CGFloat
+  ) -> (ascent: CGFloat, descent: CGFloat) {
+    if range.isEmpty {
+      return (minAscent, minDescent)
+    }
+    else {
+      let range = range.clamped(to: 0..<_fragments.count)
+      let ascent = _fragments[range].lazy.map(\.ascent).max() ?? 0
+      let descent = _fragments[range].lazy.map(\.descent).max() ?? 0
+      return (max(ascent, minAscent), max(descent, minDescent))
     }
   }
 
