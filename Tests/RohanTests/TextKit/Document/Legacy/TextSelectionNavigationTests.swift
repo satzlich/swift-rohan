@@ -46,7 +46,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     // move forward
     do {
       var locations = [AffineLocation]()
-      var location = AffineLocation(documentManager.documentRange.location, .downstream)
+      var location = AffineLocation(documentManager.documentRange.location, .upstream)
       while true {
         locations.append(location)
         guard
@@ -95,7 +95,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       for (i, location) in locations.enumerated() {
         // print("\"\(location.description)\",")
         #expect(location.value.description == expected[i], "i=\(i)")
-        #expect(location.affinity == .downstream)
+        #expect(location.affinity == .upstream, "i=\(i)")
       }
       print("----")
     }

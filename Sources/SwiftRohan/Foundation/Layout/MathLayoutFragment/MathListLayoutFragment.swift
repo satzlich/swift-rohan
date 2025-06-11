@@ -161,10 +161,15 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var isTextLike: Bool { _fragments.getOnlyElement()?.isTextLike ?? false }
 
   func draw(at point: CGPoint, in context: CGContext) {
+    drawSubrange(0..<_fragments.count, at: point, in: context)
+  }
+
+  func drawSubrange(_ range: Range<Int>, at point: CGPoint, in context: CGContext) {
+    precondition(0 <= range.lowerBound && range.upperBound <= _fragments.count)
     context.saveGState()
     context.setFillColor(_textColor.cgColor)
     context.translateBy(x: point.x, y: point.y)
-    for fragment in _fragments {
+    for fragment in _fragments[range] {
       fragment.draw(at: fragment.glyphOrigin, in: context)
     }
     context.restoreGState()

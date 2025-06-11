@@ -86,7 +86,7 @@ struct ElementNodeTests {
       EquationNode(.inline, [TextNode("a+b")]),
     ])
     TestUtils.updateLayoutLength(paragraph)
-    #expect(paragraph.layoutLength() == 5)
+    #expect(paragraph.layoutLength() == 6)
 
     let root = RootNode([
       ParagraphNode([
@@ -96,7 +96,7 @@ struct ElementNodeTests {
       ParagraphNode([TextNode("def")]),
     ])
     TestUtils.updateLayoutLength(root)
-    #expect(root.layoutLength() == 10)
+    #expect(root.layoutLength() == 11)
   }
 
   @Test

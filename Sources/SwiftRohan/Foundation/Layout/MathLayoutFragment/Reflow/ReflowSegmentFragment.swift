@@ -31,14 +31,7 @@ final class ReflowSegmentFragment: MathLayoutFragment {
   func draw(at point: CGPoint, in context: CGContext) {
     var point = point
     point.x += upstream - source.get(range.lowerBound).glyphOrigin.x
-
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y)
-    for index in range {
-      let fragment = source.get(index)
-      fragment.draw(at: fragment.glyphOrigin, in: context)
-    }
-    context.restoreGState()
+    source.drawSubrange(range, at: point, in: context)
   }
 
   func fixLayout(_ mathContext: MathContext) { /* no-op */  }
