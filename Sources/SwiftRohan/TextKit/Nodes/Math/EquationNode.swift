@@ -216,7 +216,9 @@ final class EquationNode: MathNode {
   private var _nodeFragment: MathListLayoutFragment? = nil
 
   /// True if the layout of the equation should be reflowed.
-  final var isReflowActive: Bool { NodePolicy.isReflowEnabled && subtype == .inline }
+  final var isReflowActive: Bool {
+    NodePolicy.isInlineMathReflowEnabled && subtype == .inline
+  }
 
   init(_ subtype: Subtype, _ nucleus: ElementStore = []) {
     self.subtype = subtype
