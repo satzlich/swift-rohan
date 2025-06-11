@@ -306,30 +306,24 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// hit, return an empty range.
   /// - Note: `point` is relative to __the glyph origin__ of the container.
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double) {
-    if point.x < 0 {
+    precondition(!isEditing && !isLayoutDirty)
+
+    if point.x <= 0 {
       return (0..<0, 0)
     }
-    else if point.x > self.width {
-      let n = _fragments.lazy.map(\.layoutLength).reduce(0, +)
+    else if point.x >= self.width {
+      let n = self.contentLayoutLength
       return (n..<n, 0)
     }
 
     guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
-    let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
-    let fraction = fractionOfDistanceThroughGlyph(for: point, i)
-    let last = first + _fragments[i].layoutLength
-    return (first..<last, fraction)
-  }
+    assert(0..<_fragments.count ~= i)
 
-  /// The fraction of distance from the upstream edge.
-  /// - Parameters:
-  ///   - point: the point to compute for.
-  ///   - i: the index of the fragment picked by given point.
-  /// - Note: point is relative to __the glyph origin__.
-  private func fractionOfDistanceThroughGlyph(for point: CGPoint, _ i: Int) -> Double {
-    precondition(i >= 0 && i < _fragments.count)
     let fragment = _fragments[i]
-    return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
+    let offset = _fragments[i].layoutOffset
+    let end = offset + fragment.layoutLength
+    let fraction = (point.x - fragment.glyphOrigin.x) / fragment.width
+    return (offset..<end, fraction.clamped(0, 1))
   }
 
   // MARK: - Debug
@@ -348,8 +342,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the index of the fragment hit by point (inexactly). If the fragment
   /// list is empty, return nil.
+  /// - Postcondition: if the return value is not nil, the index is in [0, count).
   /// - Note: point is relative to __the glyph origin__ of the container.
   private func getFragment(interactingAt point: CGPoint) -> Int? {
+    precondition(!isEditing && !isLayoutDirty)
     guard !self.isEmpty else { return nil }
     // j ← arg max { f[i].minX < point.x | i ∈ [0, count) }
     // jj = j+1 ← arg min { ¬(f[i].minX < point.x) | i ∈ [0, count) }
@@ -400,42 +396,37 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(isEditing || isLayoutDirty)
     precondition(i >= 0 && i <= count)
-    if n >= 0 {
-      return searchIndexForward(i, distance: n)
-    }
-    else {
-      return searchIndexBackward(i, distance: -n)
-    }
-  }
+    return n >= 0
+      ? searchIndexForward(i, distance: n)
+      : searchIndexBackward(i, distance: -n)
 
-  /// Search for the index after i by n units of layout length
-  private func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
-    precondition(isEditing || isLayoutDirty)
-    precondition(n >= 0)
-    var j = i
-    var s = 0
-    // let s(j) = sum { fragments[k].layoutLength | k in [i, j) }
-    // result = argmin { s(j) >= n } st. s(j) == n
-    while s < n && j < _fragments.count {
-      s += _fragments[j].layoutLength
-      j += 1
+    /// Search for the index after i by n units of layout length
+    func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
+      precondition(n >= 0)
+      var j = i
+      var s = 0
+      // let s(j) = sum { fragments[k].layoutLength | k in [i, j) }
+      // result = argmin { s(j) >= n } st. s(j) == n
+      while s < n && j < _fragments.count {
+        s += _fragments[j].layoutLength
+        j += 1
+      }
+      return n == s ? j : nil
     }
-    return n == s ? j : nil
-  }
 
-  /// Search for the index before i by n units of layout length
-  private func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
-    precondition(isEditing || isLayoutDirty)
-    precondition(n >= 0)
-    var j = i
-    var s = 0
-    // let s(j) = sum { fragments[k].layoutLength | k in [j, i) }
-    // result = argmax { s(j) >= |n| } st. s(j) == |n|
-    while s < n && j > 0 {
-      s += _fragments[j - 1].layoutLength
-      j -= 1
+    /// Search for the index before i by n units of layout length
+    func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
+      precondition(n >= 0)
+      var j = i
+      var s = 0
+      // let s(j) = sum { fragments[k].layoutLength | k in [j, i) }
+      // result = argmax { s(j) >= |n| } st. s(j) == |n|
+      while s < n && j > 0 {
+        s += _fragments[j - 1].layoutLength
+        j -= 1
+      }
+      return n == s ? j : nil
     }
-    return n == s ? j : nil
   }
 
   // MARK: - Cursor Facility
