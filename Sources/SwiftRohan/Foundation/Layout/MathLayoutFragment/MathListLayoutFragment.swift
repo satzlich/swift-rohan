@@ -312,9 +312,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
   ///   - minAscentDescent: The minimum ascent and descent of the segment frame.
   /// - Returns: The segment frame for the fragment at index whose origin is relative
   ///       to __the top-left corner__ of the container.
-  private func getNiceFrame(
-    for index: Int,
-    _ minAscentDescent: (CGFloat, CGFloat)
+  internal func cursorFrame(
+    for index: Int, _ minAscentDescent: (CGFloat, CGFloat)
   ) -> SegmentFrame? {
     guard index <= self.count else { return nil }
 
@@ -328,7 +327,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /// Returns cursor distance for the given position from the upstream of math list.
-  func cursorDistanceThroughUpstream(_ index: Int) -> Double {
+  internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
     precondition(0 <= index && index <= _fragments.count)
     if _fragments.isEmpty {
       return 0
@@ -354,38 +353,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
-  /// Get a visually pleasing (inexact) origin for the fragment at index.
-  /// - Parameter index: The index of the fragment.
-  /// - Returns: The origin for the fragment at index whose origin is relative to
-  ///     __the glyph origin__ of the container.
-  private func getNiceOrigin(_ index: Int) -> CGPoint {
-    precondition(0...count ~= index)
-    if self.isEmpty {  // empty
-      return .zero
-    }
-    else if index == 0 {  // first
-      return _fragments[index].glyphOrigin
-    }
-    else if index < _fragments.count {  // middle
-      let previous = _fragments[index - 1]
-      switch previous.cursorPosition {
-      case .upstream:
-        let lhs = previous.fragment
-        return lhs.glyphOrigin.with(xDelta: lhs.width)
-      case .middle:
-        let lhs = previous.fragment
-        let rhs = _fragments[index].fragment
-        return CGPoint(x: (lhs.maxX + rhs.minX) / 2, y: rhs.glyphOrigin.y)
-      case .downstream:
-        return _fragments[index].glyphOrigin
-      }
-    }
-    else {  // last
-      let fragment = _fragments[count - 1]
-      return fragment.glyphOrigin.with(xDelta: fragment.width)
-    }
-  }
-
   /// - Note: Origins of the segment frame is relative to __the top-left corner__
   /// of the container.
   func enumerateTextSegments(
@@ -398,7 +365,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard let range = indexRange(layoutRange) else { return false }
 
     if self.isEmpty || range.isEmpty {
-      guard let segmentFrame = self.getNiceFrame(for: range.lowerBound, minAscentDescent)
+      guard let segmentFrame = self.cursorFrame(for: range.lowerBound, minAscentDescent)
       else { return false }
       return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
