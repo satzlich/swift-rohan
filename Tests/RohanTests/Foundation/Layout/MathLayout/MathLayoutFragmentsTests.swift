@@ -8,203 +8,242 @@ import Testing
 @testable import SwiftRohan
 
 struct MathLayoutFragmentsTests {
+
+  private let font: Font
+  private let table: MathTable
+  private let context: MathContext
+
+  init() {
+    self.font = Font.createWithName("STIX Two Math", 12)
+    self.table = font.copyMathTable()!
+    self.context = MathContext(font, .display, false, .blue)!
+  }
+
   @Test
-  func coverage() {
-    let font = Font.createWithName("STIX Two Math", 12)
-    guard let table = font.copyMathTable(),
-      let context = MathContext(font, .display, false, .blue)
+  func accent() {
+    var fragments: [MathLayoutFragment] = []
+
+    guard let accent = createAccentFragment("x", .acute, font, table, context),
+      let accent2 = createAccentFragment("x", .underleftarrow, font, table, context)
     else {
-      Issue.record("Failed to create math table or MathContext")
+      Issue.record("Failed to create nucleus fragment")
       return
     }
 
+    fragments.append(accent)
+    fragments.append(accent2)
+
+    // more methods
+    do {
+      let point = CGPoint(x: 1, y: 2)
+      _ = accent.getMathIndex(interactingAt: point)
+      _ = accent.rayshoot(from: point, .nuc, in: .up)
+      _ = accent.rayshoot(from: point, .nuc, in: .down)
+    }
+
+    for fragment in fragments {
+      callStandardMethods(fragment, context)
+    }
+  }
+
+  @Test
+  func attachments() {
+    guard let nucleus = createMathListFragment("x", font, table, context),
+      let sub = createMathListFragment("3", font, table, context),
+      let sup = createMathListFragment("2", font, table, context),
+      let lsub = createMathListFragment("4", font, table, context),
+      let lsup = createMathListFragment("5", font, table, context)
+    else {
+      Issue.record("Failed to create nucleus/sub/sup fragment")
+      return
+    }
+    let attach = MathAttachLayoutFragment(
+      nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    attach.fixLayout(context)
+
+    //
+    callStandardMethods(attach, context)
+  }
+
+  @Test
+  func mathAttributes() {
+    guard let nucleus = createMathListFragment("x", font, table, context)
+    else {
+      Issue.record("Failed to create nucleus fragment")
+      return
+    }
+    let attributes = MathAttributesLayoutFragment(nucleus, attributes: .mathop)
+    attributes.fixLayout(context)
+
+    //
+    callStandardMethods(attributes, context)
+  }
+
+  @Test
+  func fractions() {
     var fragments: [MathLayoutFragment] = []
 
-    // accent
-    do {
-      guard let accent = createAccentFragment("x", .acute, font, table, context),
-        let accent2 = createAccentFragment("x", .underleftarrow, font, table, context)
-      else {
-        Issue.record("Failed to create nucleus fragment")
-        return
-      }
+    guard
+      let fraction1 = createFractionFragment("x", "y", .frac, font, table, context),
+      let fraction2 = createFractionFragment("x", "y", .binom, font, table, context),
+      // pass intentionally empty denominator
+      let fraction3 = createFractionFragment("x", "", .atop, font, table, context)
+    else {
+      Issue.record("Failed to create fraction fragment")
+      return
+    }
+    fragments.append(fraction1)
+    fragments.append(fraction2)
+    fragments.append(fraction3)
 
-      fragments.append(accent)
-      fragments.append(accent2)
-
-      // more methods
-      do {
-        let point = CGPoint(x: 1, y: 2)
-        _ = accent.getMathIndex(interactingAt: point)
-        _ = accent.rayshoot(from: point, .nuc, in: .up)
-        _ = accent.rayshoot(from: point, .nuc, in: .down)
-      }
+    // more methods
+    for fraction in [fraction1, fraction2, fraction3] {
+      let point = CGPoint(x: 1, y: 2)
+      _ = fraction.getMathIndex(interactingAt: point)
+      _ = fraction.rayshoot(from: point, .num, in: .up)
+      _ = fraction.rayshoot(from: point, .num, in: .down)
+      _ = fraction.rayshoot(from: point, .denom, in: .up)
+      _ = fraction.rayshoot(from: point, .denom, in: .down)
     }
 
-    // attach
+    for fragment in fragments {
+      callStandardMethods(fragment, context)
+    }
+  }
+
+  @Test
+  func glyphsAndVariants() {
+    var fragments: [MathLayoutFragment] = []
+
+    guard let glyph = createGlyphFragment("(", font, table)
+    else {
+      Issue.record("Failed to create glyph fragment")
+      return
+    }
+    fragments.append(glyph)
+
+    //
+    let stretched = glyph.glyph.stretch(
+      orientation: .vertical, target: 60, shortfall: 2, context)
+    let variant = MathGlyphVariantLayoutFragment(stretched, glyph.layoutLength)
+    fragments.append(variant)
+
+    //
+    for fragment in fragments {
+      callStandardMethods(fragment, context)
+    }
+  }
+
+  @Test
+  func leftRight() {
+    guard let nucleus = createMathListFragment("x", font, table, context)
+    else {
+      Issue.record("Failed to create nucleus fragment")
+      return
+    }
+    let leftRight = MathLeftRightLayoutFragment(DelimiterPair.BRACE, nucleus)
+    leftRight.fixLayout(context)
+
+    // more methods
     do {
-      guard let nucleus = createMathListFragment("x", font, table, context),
-        let sub = createMathListFragment("3", font, table, context),
-        let sup = createMathListFragment("2", font, table, context),
-        let lsub = createMathListFragment("4", font, table, context),
-        let lsup = createMathListFragment("5", font, table, context)
-      else {
-        Issue.record("Failed to create nucleus/sub/sup fragment")
-        return
+      let point1 = CGPoint(x: leftRight.nucleus.minX - 0.5, y: 0)
+      let point2 = CGPoint(x: leftRight.nucleus.maxX + 0.5, y: 0)
+      let point3 = CGPoint(x: leftRight.nucleus.midX, y: 0)
+      for point in [point1, point2, point3] {
+        _ = leftRight.getMathIndex(interactingAt: point)
       }
-      let attach = MathAttachLayoutFragment(
-        nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
-      attach.fixLayout(context)
-      fragments.append(attach)
+      _ = leftRight.rayshoot(from: point1, .nuc, in: .up)
+      _ = leftRight.rayshoot(from: point1, .nuc, in: .down)
     }
 
-    do {
-      guard let nucleus = createMathListFragment("x", font, table, context)
-      else {
-        Issue.record("Failed to create nucleus fragment")
-        return
-      }
-      let attributes = MathAttributesLayoutFragment(nucleus, attributes: .mathop)
-      attributes.fixLayout(context)
-      fragments.append(attributes)
+    // standard methods
+    callStandardMethods(leftRight, context)
+  }
+
+  @Test
+  func mathList() {
+    guard let list = createMathListFragment("x", font, table, context)
+    else {
+      Issue.record("Failed to create math list fragment")
+      return
     }
 
-    // fraction
-    do {
-      guard
-        let fraction1 = createFractionFragment("x", "y", .frac, font, table, context),
-        let fraction2 = createFractionFragment("x", "y", .binom, font, table, context),
-        // pass intentionally empty denominator
-        let fraction3 = createFractionFragment("x", "", .atop, font, table, context)
-      else {
-        Issue.record("Failed to create fraction fragment")
-        return
-      }
-      fragments.append(fraction1)
-      fragments.append(fraction2)
-      fragments.append(fraction3)
+    // standard methods
+    callStandardMethods(list, context)
+  }
 
-      // more methods
-      for fraction in [fraction1, fraction2, fraction3] {
-        let point = CGPoint(x: 1, y: 2)
-        _ = fraction.getMathIndex(interactingAt: point)
-        _ = fraction.rayshoot(from: point, .num, in: .up)
-        _ = fraction.rayshoot(from: point, .num, in: .down)
-        _ = fraction.rayshoot(from: point, .denom, in: .up)
-        _ = fraction.rayshoot(from: point, .denom, in: .down)
-      }
+  @Test
+  func matrix() {
+    guard let a = createMathListFragment("x", font, table, context),
+      let b = createMathListFragment("y", font, table, context),
+      let c = createMathListFragment("z", font, table, context),
+      let d = createMathListFragment("w", font, table, context)
+    else {
+      Issue.record("Failed to create matrix elements")
+      return
     }
+    let matrix = MathArrayLayoutFragment(
+      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context)
+    matrix.setElement(0, 0, a)
+    matrix.setElement(0, 1, b)
+    matrix.setElement(1, 0, c)
+    matrix.setElement(1, 1, d)
+    matrix.fixLayout(context)
 
-    // glyph, glyph variant
-    do {
-      guard let glyph = createGlyphFragment("(", font, table)
-      else {
-        Issue.record("Failed to create glyph fragment")
-        return
-      }
-      fragments.append(glyph)
+    //
+    callStandardMethods(matrix, context)
+  }
 
-      //
-      let stretched = glyph.glyph.stretch(
-        orientation: .vertical, target: 60, shortfall: 2, context)
-      let variant = MathGlyphVariantLayoutFragment(stretched, glyph.layoutLength)
-      fragments.append(variant)
+  @Test
+  func mathOperator() {
+    let node = MathOperatorNode(MathOperator.min)
+    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let mathContext = MathUtils.resolveMathContext(for: node, styleSheet)
+    let mathOp = MathOperatorLayoutFragment(node, styleSheet, mathContext)
+    mathOp.fixLayout(context)
+
+    //
+    callStandardMethods(mathOp, context)
+  }
+
+  @Test
+  func radicals() {
+    var fragments: [MathLayoutFragment] = []
+
+    guard let radicand = createMathListFragment("x", font, table, context),
+      let index = createMathListFragment("2", font, table, context)
+    else {
+      Issue.record("Failed to create radicand/index fragment")
+      return
     }
+    let radical1 = MathRadicalLayoutFragment(radicand, index)
+    radical1.fixLayout(context)
+    fragments.append(radical1)
 
-    // left-right
-    do {
-      guard let nucleus = createMathListFragment("x", font, table, context)
-      else {
-        Issue.record("Failed to create nucleus fragment")
-        return
-      }
-      let leftRight = MathLeftRightLayoutFragment(DelimiterPair.BRACE, nucleus)
-      leftRight.fixLayout(context)
-      fragments.append(leftRight)
+    let radical2 = MathRadicalLayoutFragment(radicand, nil)
+    radical2.fixLayout(context)
+    fragments.append(radical2)
 
-      // more methods
-      do {
-        let point1 = CGPoint(x: leftRight.nucleus.minX - 0.5, y: 0)
-        let point2 = CGPoint(x: leftRight.nucleus.maxX + 0.5, y: 0)
-        let point3 = CGPoint(x: leftRight.nucleus.midX, y: 0)
-        for point in [point1, point2, point3] {
-          _ = leftRight.getMathIndex(interactingAt: point)
-        }
-        _ = leftRight.rayshoot(from: point1, .nuc, in: .up)
-        _ = leftRight.rayshoot(from: point1, .nuc, in: .down)
-      }
+    // more methods
+    for radical in [radical1, radical2] {
+      let point1 = CGPoint(x: radical.radicand.minX - 0.5, y: 0)
+      let point2 = CGPoint(x: radical.radicand.midX, y: 0)
+
+      _ = radical.getMathIndex(interactingAt: point1)
+      _ = radical.getMathIndex(interactingAt: point2)
+      _ = radical.rayshoot(from: point1, .radicand, in: .up)
+      _ = radical.rayshoot(from: point1, .radicand, in: .down)
     }
-
-    // math list
-    do {
-      guard let list = createMathListFragment("x", font, table, context)
-      else {
-        Issue.record("Failed to create math list fragment")
-        return
-      }
-      fragments.append(list)
+    //
+    for fragment in fragments {
+      callStandardMethods(fragment, context)
     }
+  }
 
-    // matrix
-    do {
-      guard let a = createMathListFragment("x", font, table, context),
-        let b = createMathListFragment("y", font, table, context),
-        let c = createMathListFragment("z", font, table, context),
-        let d = createMathListFragment("w", font, table, context)
-      else {
-        Issue.record("Failed to create matrix elements")
-        return
-      }
-      let matrix = MathArrayLayoutFragment(
-        rowCount: 2, columnCount: 2, subtype: MathArray.cases, context)
-      matrix.setElement(0, 0, a)
-      matrix.setElement(0, 1, b)
-      matrix.setElement(1, 0, c)
-      matrix.setElement(1, 1, d)
-      matrix.fixLayout(context)
+  @Test
+  func underOver() {
+    var fragments: [MathLayoutFragment] = []
 
-      fragments.append(matrix)
-    }
-
-    // operator
-    do {
-      let node = MathOperatorNode(MathOperator.min)
-      let styleSheet = StyleSheetTests.sampleStyleSheet()
-      let mathContext = MathUtils.resolveMathContext(for: node, styleSheet)
-      let mathOp = MathOperatorLayoutFragment(node, styleSheet, mathContext)
-      mathOp.fixLayout(context)
-      fragments.append(mathOp)
-    }
-
-    // radical
-    do {
-      guard let radicand = createMathListFragment("x", font, table, context),
-        let index = createMathListFragment("2", font, table, context)
-      else {
-        Issue.record("Failed to create radicand/index fragment")
-        return
-      }
-      let radical1 = MathRadicalLayoutFragment(radicand, index)
-      radical1.fixLayout(context)
-      fragments.append(radical1)
-
-      let radical2 = MathRadicalLayoutFragment(radicand, nil)
-      radical2.fixLayout(context)
-      fragments.append(radical2)
-
-      // more methods
-      for radical in [radical1, radical2] {
-        let point1 = CGPoint(x: radical.radicand.minX - 0.5, y: 0)
-        let point2 = CGPoint(x: radical.radicand.midX, y: 0)
-
-        _ = radical.getMathIndex(interactingAt: point1)
-        _ = radical.getMathIndex(interactingAt: point2)
-        _ = radical.rayshoot(from: point1, .radicand, in: .up)
-        _ = radical.rayshoot(from: point1, .radicand, in: .down)
-      }
-    }
-
-    // under/over-spreader
     for spreader in [MathSpreader.underline, .overline, .underbrace, .overbrace] {
       let nucleus = createMathListFragment("x", font, table, context)!
       let overspreader = MathUnderOverLayoutFragment(spreader, nucleus)
@@ -212,36 +251,27 @@ struct MathLayoutFragmentsTests {
       fragments.append(overspreader)
     }
 
-    // text mode
-    do {
-      let attrString = NSMutableAttributedString(string: "x")
-      let ctLine = CTLineCreateWithAttributedString(attrString)
-      let textLine = CTLineLayoutFragment(
-        attrString, ctLine, .textMode, .typographicBounds)
-      let textMode = TextModeNode._NodeFragment(textLine)
-      textMode.fixLayout(context)
-      fragments.append(textMode)
-    }
-
+    //
     for fragment in fragments {
-      fragment.setGlyphOrigin(CGPoint(x: 10, y: 0))
-      fragment.fixLayout(context)
-      _ = fragment.width
-      _ = fragment.height
-      _ = fragment.ascent
-      _ = fragment.descent
-      _ = fragment.italicsCorrection
-      _ = fragment.accentAttachment
-      _ = fragment.clazz
-      _ = fragment.limits
-      _ = fragment.isSpaced
-      _ = fragment.isTextLike
-      _ = fragment.debugPrint("test")
+      callStandardMethods(fragment, context)
     }
   }
 
   @Test
-  func coverage_Attach() {
+  func textMode() {
+    let attrString = NSMutableAttributedString(string: "x")
+    let ctLine = CTLineCreateWithAttributedString(attrString)
+    let textLine = CTLineLayoutFragment(
+      attrString, ctLine, .textMode, .typographicBounds)
+    let textMode = TextModeNode._NodeFragment(textLine)
+    textMode.fixLayout(context)
+
+    //
+    callStandardMethods(textMode, context)
+  }
+
+  @Test
+  func moreAttachments() {
     let font = Font.createWithName("STIX Two Math", 12)
     guard let table = font.copyMathTable(),
       let context = MathContext(font, .display, false, .blue)
@@ -312,7 +342,7 @@ struct MathLayoutFragmentsTests {
   }
 
   @Test
-  func coverage_Matrix() {
+  func moreMatrix() {
     let font = Font.createWithName("STIX Two Math", 12)
     guard let table = font.copyMathTable(),
       let context = MathContext(font, .display, false, .blue)
@@ -369,6 +399,40 @@ struct MathLayoutFragmentsTests {
       }
     }
   }
+
+  /// Call standard methods on the fragment.
+  private func callStandardMethods(_ fragment: MathLayoutFragment, _ context: MathContext)
+  {
+    // protocol methods
+    fragment.setGlyphOrigin(CGPoint(x: 10, y: 0))
+    fragment.fixLayout(context)
+    _ = fragment.width
+    _ = fragment.height
+    _ = fragment.ascent
+    _ = fragment.descent
+    _ = fragment.italicsCorrection
+    _ = fragment.accentAttachment
+    _ = fragment.clazz
+    _ = fragment.limits
+    _ = fragment.isSpaced
+    _ = fragment.isTextLike
+    _ = fragment.debugPrint("test")
+
+    // extension
+    _ = fragment.minX
+    _ = fragment.midX
+    _ = fragment.maxX
+    _ = fragment.minY
+    _ = fragment.midY
+    _ = fragment.maxY
+    _ = fragment.boxDescription
+
+    for corner in Corner.allCases {
+      _ = fragment.kernAtHeight(context, corner, 10)
+    }
+  }
+
+  // MARK: - Create Fragments
 
   private func createGlyphFragment(
     _ char: Character, _ font: Font, _ table: MathTable
