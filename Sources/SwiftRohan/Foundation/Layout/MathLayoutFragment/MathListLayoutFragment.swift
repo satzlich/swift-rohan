@@ -319,12 +319,39 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard index <= self.count else { return nil }
 
     let (ascent, descent) = minAscentDescent
-    let origin: CGPoint = getNiceOrigin(index)
+    let cursorX = cursorDistanceThroughUpstream(index)
     // origin moved to top-left corner
     let frame = CGRect(
-      x: origin.x, y: origin.y - ascent + self.ascent,
+      x: cursorX, y: -ascent + self.ascent,
       width: 0, height: ascent + descent)
     return SegmentFrame(frame, ascent)
+  }
+
+  /// Returns cursor distance for the given position from the upstream of math list.
+  func cursorDistanceThroughUpstream(_ index: Int) -> Double {
+    precondition(0 <= index && index <= _fragments.count)
+    if _fragments.isEmpty {
+      return 0
+    }
+    else if index == 0 {
+      return 0  // it's an invariant of math list
+    }
+    else if index < _fragments.count {
+      let fragment = _fragments[index - 1]
+      var distance = fragment.fragment.maxX
+      switch fragment.cursorPosition {
+      case .upstream:
+        break
+      case .middle:
+        distance += fragment.spacing / 2
+      case .downstream:
+        distance += fragment.spacing
+      }
+      return distance
+    }
+    else {
+      return _width  // it's an invariant of math list.
+    }
   }
 
   /// Get a visually pleasing (inexact) origin for the fragment at index.
@@ -382,11 +409,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let ascent = Swift.max(_fragments[range].lazy.map(\.ascent).max()!, minAscent)
       let descent = Swift.max(_fragments[range].lazy.map(\.descent).max()!, minDescent)
 
-      let origin = getNiceOrigin(range.lowerBound)
-      let endOrigin = getNiceOrigin(range.upperBound)
-      let frame = CGRect(
-        origin: CGPoint(x: origin.x, y: origin.y - ascent + self.ascent),
-        size: CGSize(width: endOrigin.x - origin.x, height: ascent + descent))
+      let x0 = cursorDistanceThroughUpstream(range.lowerBound)
+      let x1 = cursorDistanceThroughUpstream(range.upperBound)
+      let frame =
+        CGRect(x: x0, y: -ascent + self.ascent, width: x1 - x0, height: ascent + descent)
       return block(layoutRange, frame, ascent)
     }
   }
