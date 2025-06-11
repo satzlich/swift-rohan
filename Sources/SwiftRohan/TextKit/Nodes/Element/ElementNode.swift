@@ -525,7 +525,7 @@ internal class ElementNode: Node {
     let range = 0..<index
 
     if _children.isEmpty {
-      return isPlaceholderActive.intValue
+      return 0
     }
     else {
       assert(isPlaceholderActive == false)
@@ -565,10 +565,7 @@ internal class ElementNode: Node {
     if self.isPlaceholderActive {
       assert(path.count == 1 && endPath.count == 1)
       assert(index == endIndex && index == 0)
-      guard let endOffset = TreeUtils.computeLayoutOffset(for: path, self)
-      else { assertionFailure("Invalid path"); return false }
-      let offset = endOffset - 1
-      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
+      let layoutRange = layoutOffset..<layoutOffset + 1
       return context.enumerateTextSegments(
         layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
     }
