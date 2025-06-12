@@ -390,7 +390,12 @@ final class MathReflowLayoutContext: LayoutContext {
   }
 }
 
-/// Cached segment array for reflow segments.
+/// Array of quantised baseline positions of reflow segments.
+///
+/// Quantisation is used to place segments that have the same baseline position
+/// into the same group, so that we can find the **split point** of segments.
+/// Grouping may fail in the rare case where baselines of the same group lies around
+/// quantisation boundary.
 struct ReflowSegmentArray {
   private let textLayoutContext: TextLayoutContext
   /// layout offset of the first segment in the array.
@@ -437,7 +442,6 @@ struct ReflowSegmentArray {
   }
 
   static func quantise(_ y: Double) -> Int {
-    // quantise to multiple of 5.
-    Int(Foundation.floor(y / 5.0))
+    Int(Foundation.floor(y / 4))
   }
 }

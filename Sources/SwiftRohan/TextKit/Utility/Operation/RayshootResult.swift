@@ -3,7 +3,7 @@
 import CoreGraphics
 
 struct RayshootResult {
-  let position: CGPoint
+  var position: CGPoint
   let isResolved: Bool
 
   init(_ position: CGPoint, _ resolved: Bool) {

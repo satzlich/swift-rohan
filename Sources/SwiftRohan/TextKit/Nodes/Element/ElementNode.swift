@@ -776,15 +776,24 @@ internal class ElementNode: Node {
 
     if path.count == 1 {
       assert(index <= self.childCount)
-      let newLayoutOffset = layoutOffset + localOffset
+      let newOffset = layoutOffset + localOffset
       guard
-        let result = context.rayshoot(
-          from: newLayoutOffset, affinity: affinity, direction: direction)
+        var result = context.rayshoot(
+          from: newOffset, affinity: affinity, direction: direction)
       else {
         return nil
       }
+
+      // apply horizontal shift for placeholder.
+      if isPlaceholderActive {
+        assert(localOffset == 0)
+        if let segmentFrame = context.getSegmentFrame(layoutOffset + 1, .upstream) {
+          result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
+        }
+      }
+
       return LayoutUtils.relayRayshoot(
-        newLayoutOffset, affinity, direction, result, context)
+        newOffset, affinity, direction, result, context)
     }
     else {
       guard index < self.childCount else { return nil }
