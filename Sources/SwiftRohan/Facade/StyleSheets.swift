@@ -15,16 +15,19 @@ public enum StyleSheets {
       self.provider = provider
     }
 
-    public static var defaultValue: Record { concrete }
+    public static var defaultValue: Record { libertinus }
 
     static var concrete: Record { .init("Concrete", StyleSheets.concrete) }
     static var latinModern: Record { .init("Latin Modern", StyleSheets.latinModern) }
     static var libertinus: Record { .init("Libertinus", StyleSheets.libertinus) }
+    static var newComputerModern: Record {
+      .init("New Computer Modern", StyleSheets.newComputerModern)
+    }
     static var noto: Record { .init("Noto", StyleSheets.noto) }
     static var stixTwo: Record { .init("STIX Two", StyleSheets.stixTwo) }
 
     static var allCases: Array<Record> {
-      [concrete, latinModern, libertinus, noto, stixTwo]
+      [concrete, latinModern, libertinus, newComputerModern, noto, stixTwo]
     }
   }
 
@@ -37,6 +40,15 @@ public enum StyleSheets {
     .init(13),
     .init(14),
   ]
+
+  /// Concrete Math (Knuth)
+  private static func concrete(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "CMU Concrete",
+      mathFont: "Concrete Math",
+      headerFont: "Latin Modern Roman")
+  }
 
   /// The Art of Computer Programming (Knuth)
   internal static func latinModern(_ textSize: FontSize) -> StyleSheet {
@@ -55,6 +67,14 @@ public enum StyleSheets {
       headerFont: "Libertinus Sans")
   }
 
+  internal static func newComputerModern(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "NewComputerModern10",
+      mathFont: "NewComputerModernMath",
+      headerFont: "NewComputerModernSans10")
+  }
+
   internal static func noto(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
@@ -69,15 +89,6 @@ public enum StyleSheets {
       textFont: "STIX Two Text",
       mathFont: "STIX Two Math",
       headerFont: "Arial")
-  }
-
-  /// Concrete Math (Knuth)
-  private static func concrete(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "CMU Concrete",
-      mathFont: "Concrete Math",
-      headerFont: "Latin Modern Roman")
   }
 
   private static func styleSheet(

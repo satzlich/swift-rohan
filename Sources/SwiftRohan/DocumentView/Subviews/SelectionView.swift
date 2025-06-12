@@ -36,7 +36,7 @@ final class SelectionView: RohanView {
       return NSColor.selectedTextBackgroundColor
     case .delimiter(let level):
       if level % 2 == 0 {
-        return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.4)
+        return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.3)
       }
       else {
         return NSColor.unemphasizedSelectedTextBackgroundColor.withAlphaComponent(0.5)

@@ -40,7 +40,7 @@ public enum FontLoader {
 
   static let allFonts: Array<String> =
     ConcreteMath + CMUConcrete + LatinModern + LatinModernMath + Libertinus
-    + NotoSans + NotoSansMath + NotoSerif + STIX
+    + Noto + newComputerModern + STIX
 
   private static let ConcreteMath: Array<String> = [
     "Concrete-Math.otf",
@@ -147,20 +147,32 @@ public enum FontLoader {
     "LibertinusSerifInitials-Regular.otf",
   ]
 
-  private static let NotoSans: Array<String> = [
+  private static let Noto: Array<String> = [
     "NotoSans-Italic-VariableFont_wdth,wght.ttf",
     "NotoSans-VariableFont_wdth,wght.ttf",
-  ]
-
-  private static let NotoSansMath: Array<String> = [
-    "NotoSansMath-Regular.ttf"
-  ]
-
-  private static let NotoSerif: Array<String> = [
     "NotoSerif-Bold.ttf",
     "NotoSerif-BoldItalic.ttf",
     "NotoSerif-Italic.ttf",
     "NotoSerif-Regular.ttf",
+    "NotoSansMath-Regular.ttf",
+  ]
+
+  private static let newComputerModern: Array<String> = [
+    "NewCM10-Bold.otf",
+    "NewCM10-BoldItalic.otf",
+    "NewCM10-Italic.otf",
+    "NewCM10-Regular.otf",
+    "NewCMMath-Bold.otf",
+    "NewCMMath-Regular.otf",
+    "NewCMMono10-Bold.otf",
+    "NewCMMono10-BoldOblique.otf",
+    "NewCMMono10-Italic.otf",
+    "NewCMMono10-Regular.otf",
+    "NewCMSans10-Bold.otf",
+    "NewCMSans10-BoldOblique.otf",
+    "NewCMSans10-Oblique.otf",
+    "NewCMSans10-Regular.otf",
+    "NewCMSansMath-Regular.otf",
   ]
 
   private static let STIX: Array<String> = [

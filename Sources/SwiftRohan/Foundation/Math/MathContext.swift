@@ -57,6 +57,7 @@ struct MathContext {
 }
 
 extension MathUtils {
+  internal static let previewMathFont: String = "NewComputerModernMath"
   internal static let fallbackMathFont: String = "STIX Two Math"
 
   static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
