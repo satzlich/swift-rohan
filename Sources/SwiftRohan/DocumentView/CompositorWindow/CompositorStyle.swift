@@ -30,10 +30,10 @@ enum CompositorStyle {
   private static func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {
     if let font = NSFont(name: "Latin Modern Math", size: fontSize) {
       return FontUtils.fontWithCascade(
-        baseFont: font, cascadeList: [MathUtils.cascadeMathFont])
+        baseFont: font, cascadeList: [MathUtils.fallbackMathFont])
     }
     else {
-      return NSFont(name: MathUtils.cascadeMathFont, size: fontSize)
+      return NSFont(name: MathUtils.fallbackMathFont, size: fontSize)
         ?? NSFont.systemFont(ofSize: fontSize)
     }
   }
