@@ -141,6 +141,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   var layoutLength: Int { 1 }
 
+  /// Fixes layout of the math list.
+  /// - Complexity: O(n-k) where k is the number of fragments before the dirty index.
   func fixLayout(_ mathContext: MathContext) {
     precondition(!isEditing)
 
@@ -238,6 +240,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
   /// of the container.
+  /// - Complexity: O(log n) where n is the number of fragments.
   func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(matching: layoutOffset) else { return nil }
     if self.isEmpty {
@@ -263,6 +266,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
+  /// Enumerates text segments in the layout range.
+  /// - Complexity: O(log n) where n is the number of fragments.
   /// - Note: Origins of the segment frame is relative to __the top-left corner__
   /// of the container.
   func enumerateTextSegments(
@@ -302,6 +307,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the layout range for the glyph selected by point. If no fragment is
   /// hit, return an empty range.
+  /// - Complexity: O(log n).
   /// - Note: `point` is relative to __the glyph origin__ of the container.
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double) {
     precondition(!isEditing && !isLayoutDirty)
@@ -340,6 +346,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the index of the fragment hit by point (inexactly). If the fragment
   /// list is empty, return nil.
+  /// - Complexity: O(log n).
   /// - Postcondition: if the return value is not nil, the index is in [0, count).
   /// - Note: point is relative to __the glyph origin__ of the container.
   private func getFragment(interactingAt point: CGPoint) -> Int? {
@@ -352,6 +359,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /// Returns the index of fragment that **matches** the layout offset.
+  /// - Complexity: O(log n).
   /// - Precondition: the math list is not in editing mode and there is no dirty index.
   func index(matching layoutOffset: Int) -> Int? {
     precondition(!isEditing && !isLayoutDirty)
@@ -369,6 +377,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
   /// if no such fragments exist.
+  /// - Complexity: O(log n).
   /// - Precondition: the math list is not in editing mode and there is no dirty index.
   func indexRange(matching layoutRange: Range<Int>) -> Range<Int>? {
     precondition(!isEditing && !isLayoutDirty)
@@ -380,6 +389,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the index of the fragment whose layout offset range contains the given
   /// layout offset. If no such fragment exists, returns fragment count.
+  /// - Complexity: O(log n).
   /// - Precondition: the math list is not in editing mode and there is no dirty index.
   func index(containing layoutOffset: Int) -> Int {
     precondition(!isEditing && !isLayoutDirty)
@@ -389,8 +399,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the index of the first fragment that is __exactly__ n units
   /// of `layoutLength` away from i, or nil if no such fragment
-  /// - Precondition: Use this during editing or when fixLayout.
   /// - Complexity: O(n).
+  /// - Precondition: Use this during editing or when fixLayout.
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(isEditing || isLayoutDirty)
     precondition(i >= 0 && i <= count)
@@ -413,6 +423,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
 
     /// Search for the index before i by n units of layout length
+    /// - Complexity: O(n).
     func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
       precondition(n >= 0)
       var j = i
@@ -430,6 +441,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   // MARK: - Cursor Facility
 
   /// Returns cursor distance for the given position from the upstream of math list.
+  /// - Complexity: O(1).
   internal func cursorDistanceThroughUpstream(_ index: Int) -> Double {
     precondition(!isEditing && !isLayoutDirty)
     precondition(0 <= index && index <= _fragments.count)
@@ -459,6 +471,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /// Compute cursor height (ascent, descent) for the index range.
+  /// - Complexity: O(n), where n is the size of the range.
   internal func cursorHeight(
     _ range: Range<Int>, _ minAsccentDescent: (ascent: Double, descent: Double)
   ) -> (ascent: Double, descent: Double) {
