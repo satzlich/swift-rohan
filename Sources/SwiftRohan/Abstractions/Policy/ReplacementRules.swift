@@ -139,10 +139,19 @@ public enum ReplacementRules {
       let leftDelimiters = delimiterPairs.map { $0.0 }
       let rightDelimiters = delimiterPairs.map { $0.1 }
 
-      let rules: Array<ReplacementRule> = product(leftDelimiters, rightDelimiters)
+      var rules: Array<ReplacementRule> = product(leftDelimiters, rightDelimiters)
         .map { (left, right) in
           spaceTriggered([left, right], Snippets.leftRight(left, right)!)
         }
+      do {
+        let lvert = ExtendedChar.symbol(.lookup("lvert")!)
+        let rvert = ExtendedChar.symbol(.lookup("rvert")!)
+        rules.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))
+
+        let lVert = ExtendedChar.symbol(.lookup("lVert")!)
+        let rVert = ExtendedChar.symbol(.lookup("rVert")!)
+        rules.append(spaceTriggered("||||", Snippets.leftRight(lVert, rVert)!))
+      }
 
       results.append(contentsOf: rules)
     }

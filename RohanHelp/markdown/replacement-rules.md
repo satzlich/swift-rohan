@@ -70,7 +70,7 @@ The following rules are applied when the cursor is in math area:
 |   `-->` | `\longrightarrow` | $\longrightarrow$ |
 |   `==>` | `\Longrightarrow` | $\Longrightarrow$ |
 
-### Left-right delimiters (144)
+### Left-right delimiters (146)
 
 The following table lists the left and right delimiters that can be used in math mode.
 
@@ -98,7 +98,15 @@ Left and right delimiters can be combined to create $12\times 12$ different pair
 |               ⋮ |                            |                            |
 | `\lVert\rVert␣` | `\left\lVert \right\rVert` | $\left\lVert⬚\right\rVert$ |
 
-In addition, code snippets `\norm`, `\floor`, and `\ceil` can be used to create norm $\left\lVert⬚\right\rVert$, floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ delimiters respectively.
+In addition, the following table lists more replacement rules for left and right delimiters that can be used in math mode.
+
+|                                Pattern | Replacement                     | Look                       |
+| -------------------------------------: | :------------------------------ | :------------------------- |
+|             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert` | $\left\lvert⬚\right\rvert$ |
+| <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert` | $\left\lVert⬚\right\rVert$ |
+
+Furthermore, code snippets `\norm`, `\floor`, and `\ceil` can be used to create norm $\left\lVert⬚\right\rVert$, 
+floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ delimiters respectively.
 
 ### Set operations (5)
 

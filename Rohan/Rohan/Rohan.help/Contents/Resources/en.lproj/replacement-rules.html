@@ -268,7 +268,7 @@ MathJax = {
 </tr>
 </tbody>
 </table>
-<h3 id="left-right-delimiters-144">Left-right delimiters (144)</h3>
+<h3 id="left-right-delimiters-146">Left-right delimiters (146)</h3>
 <p>The following table lists the left and right delimiters that can be used in math mode.</p>
 <table>
 <thead>
@@ -360,7 +360,29 @@ MathJax = {
 </tr>
 </tbody>
 </table>
-<p>In addition, code snippets <code>\norm</code>, <code>\floor</code>, and <code>\ceil</code> can be used to create norm <span class="math inline">\(\left\lVert⬚\right\rVert\)</span>, floor <span class="math inline">\(\left\lfloor⬚\right\rfloor\)</span>, and ceiling <span class="math inline">\(\left\lceil⬚\right\rceil\)</span> delimiters respectively.</p>
+<p>In addition, the following table lists more replacement rules for left and right delimiters that can be used in math mode.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>||␣</code></td>
+<td style="text-align: left;"><code>\left\lvert      \right\rvert</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lvert⬚\right\rvert\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>||||␣</code></td>
+<td style="text-align: left;"><code>\left\lVert      \right\rVert</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lVert⬚\right\rVert\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Furthermore, code snippets <code>\norm</code>, <code>\floor</code>, and <code>\ceil</code> can be used to create norm <span class="math inline">\(\left\lVert⬚\right\rVert\)</span>, floor <span class="math inline">\(\left\lfloor⬚\right\rfloor\)</span>, and ceiling <span class="math inline">\(\left\lceil⬚\right\rceil\)</span> delimiters respectively.</p>
 <h3 id="set-operations-5">Set operations (5)</h3>
 <table>
 <thead>
