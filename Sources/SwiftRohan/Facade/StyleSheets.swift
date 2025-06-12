@@ -21,12 +21,19 @@ public enum StyleSheets {
   public static let testingRecord =
     Record(
       "Testing",
+      //      { textSize in
+      //        styleSheet(
+      //          for: textSize,
+      //          textFont: "Latin Modern Roman", mathFont: "Latin Modern Math",
+      //          headerFont: "Latin Modern Sans")
+      //      }
       { textSize in
         styleSheet(
           for: textSize,
-          textFont: "Latin Modern Roman", mathFont: "Latin Modern Math",
-          headerFont: "Latin Modern Sans")
-      })
+          textFont: "NewComputerModern10", mathFont: "NewComputerModernMath",
+          headerFont: "NewComputerModernSans10")
+      }
+    )
 
   public static let allRecords: Array<Record> =
     [

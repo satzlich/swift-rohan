@@ -102,9 +102,9 @@ In addition, the following patterns can also be used to create left and right de
 
 |  \# |                                Pattern | Replacement                      | Look                           |
 | --: | -------------------------------------: | :------------------------------- | :----------------------------- |
-|   1 |                                  `<>␣` | `\left\langle     \right\rangle` | $\left\langle ⬚ \right\rangle$ |
-|   2 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert`  | $\left\lvert ⬚ \right\rvert$   |
-|   3 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert`  | $\left\lVert ⬚ \right\rVert$   |
+| 145 |                                  `<>␣` | `\left\langle     \right\rangle` | $\left\langle ⬚ \right\rangle$ |
+| 146 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert`  | $\left\lvert ⬚ \right\rvert$   |
+| 147 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert`  | $\left\lVert ⬚ \right\rVert$   |
 
 See also [Code Snippets](code-snippets.html) section for code snippets that can be used to create left and right delimiters.
 
@@ -246,3 +246,6 @@ For epsilon, we provide shortcuts for both the standard and variant forms.
 
 The replacement rules are stable in the sense that they are not expected to change frequently.
 However, they can be updated as needed to improve the overall editing experience.
+
+If time permits, we will provide customization options for replacement rules in future releases,
+allowing users to define their own patterns and replacements.
