@@ -12,6 +12,9 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
   func fixLayout(_ mathContext: MathContext)
 
   func debugPrint(_ name: String) -> Array<String>
+
+  /// Get the kern value at a specific height. (Optional)
+  func kernAtHeight(_ context: MathContext, _ corner: Corner, _ height: Double) -> Double
 }
 
 extension MathLayoutFragment {
@@ -26,5 +29,4 @@ extension MathLayoutFragment {
     let origin = self.glyphOrigin.formatted(2)
     return "\(origin) \(boxMetrics)"
   }
-
 }
