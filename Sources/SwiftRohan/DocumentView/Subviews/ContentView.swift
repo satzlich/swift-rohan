@@ -13,10 +13,11 @@ final class ContentView: RohanView {
 
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
-    
+
     // TextKit may produce fragments beyond the bounds of the content view,
     // so we disable clipping to bounds to ensure all fragments are visible.
-    self.clipsToBounds = false
+    assert(clipsToBounds == false)
+
     #if DEBUG && DECORATE_CONTENT_VIEW
     layer?.backgroundColor = NSColor.systemBlue.withAlphaComponent(0.05).cgColor
     #endif
@@ -108,8 +109,8 @@ private final class TextLayoutFragmentView: RohanView {
     self.layoutFragment = layoutFragment
     super.init(frame: layoutFragment.layoutFragmentFrame)
 
-    // disable for layout fragment, otherwise there will be artifacts
-    clipsToBounds = false
+    // disable clipsToBounds for layout fragment, otherwise there will be artifacts
+    assert(clipsToBounds == false)
 
     #if DEBUG && DECORATE_LAYOUT_FRAGMENT
     // draw background and border
