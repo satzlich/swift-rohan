@@ -525,6 +525,7 @@ internal class ElementNode: Node {
     let range = 0..<index
 
     if _children.isEmpty {
+      // "0" whether placeholder is active or not.
       return 0
     }
     else {

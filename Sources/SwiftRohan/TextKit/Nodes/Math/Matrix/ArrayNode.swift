@@ -66,6 +66,9 @@ class ArrayNode: Node {
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
+    // for layout, only MathListLayoutContext is supported.
+    // MathReflowLayoutContext is used in a different way.
+
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
     let mathContext = context.mathContext
@@ -360,8 +363,7 @@ class ArrayNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    //    precondition(context is MathListLayoutContext)
-    //    let context = context as! MathListLayoutContext
+    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
 
     guard path.count >= 2,
       endPath.count >= 2,
@@ -397,8 +399,7 @@ class ArrayNode: Node {
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
-    //    precondition(context is MathListLayoutContext)
-    //    let context = context as! MathListLayoutContext
+    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
 
     // resolve grid index for point
     guard let point = convertToLocal(point, context, layoutOffset),
@@ -434,8 +435,7 @@ class ArrayNode: Node {
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {
-    //    precondition(context is MathListLayoutContext)
-    //    let context = context as! MathListLayoutContext
+    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
 
     guard path.count >= 2,
       let index: GridIndex = path.first?.gridIndex(),
