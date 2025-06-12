@@ -28,11 +28,12 @@ enum CompositorStyle {
     [.font: NSFont.systemFont(ofSize: iconSize)]
 
   private static func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {
-    if let font = NSFont(name: "Latin Modern Math", size: fontSize) {
-      return FontUtils.fontWithCascade(baseFont: font, cascadeList: ["STIX Two Math"])
+    if let font = NSFont(name: MathUtils.previewMathFont, size: fontSize) {
+      return FontUtils.fontWithCascade(
+        baseFont: font, cascadeList: [MathUtils.fallbackMathFont])
     }
     else {
-      return NSFont(name: "STIX Two Math", size: fontSize)
+      return NSFont(name: MathUtils.fallbackMathFont, size: fontSize)
         ?? NSFont.systemFont(ofSize: fontSize)
     }
   }

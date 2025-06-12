@@ -15,28 +15,22 @@ public enum StyleSheets {
       self.provider = provider
     }
 
-    public static var defaultValue: Record { latinModern }
+    public static var defaultValue: Record { newComputerModern }
 
-    internal static var latinModern: Record {
-      return .init("Latin Modern", StyleSheets.latinModern)
+    static var concrete: Record { .init("Concrete", StyleSheets.concrete) }
+    static var libertinus: Record { .init("Libertinus", StyleSheets.libertinus) }
+    static var newComputerModern: Record {
+      .init("New Computer Modern", StyleSheets.newComputerModern)
     }
+    static var noto: Record { .init("Noto", StyleSheets.noto) }
+    static var stixTwo: Record { .init("STIX Two", StyleSheets.stixTwo) }
 
-    internal static var libertinus: Record {
-      return .init("Libertinus", StyleSheets.libertinus)
-    }
-
-    internal static var stixTwo: Record {
-      return .init("STIX Two", StyleSheets.stixTwo)
+    static var allCases: Array<Record> {
+      [concrete, libertinus, newComputerModern, noto, stixTwo]
     }
   }
 
-  public static let allCases: Array<Record> = [
-    .init("Concrete", concrete),
-    .latinModern,
-    .libertinus,
-    .init("Noto", noto),
-    .stixTwo,
-  ]
+  public static let allCases: Array<Record> = Record.allCases
 
   public static let textSizes: Array<FontSize> = [
     .init(10),
@@ -46,13 +40,13 @@ public enum StyleSheets {
     .init(14),
   ]
 
-  /// The Art of Computer Programming (Knuth)
-  internal static func latinModern(_ textSize: FontSize) -> StyleSheet {
+  /// Concrete Math (Knuth)
+  private static func concrete(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
-      textFont: "Latin Modern Roman",
-      mathFont: "Latin Modern Math",
-      headerFont: "Latin Modern Sans")
+      textFont: "CMU Concrete",
+      mathFont: "Concrete Math",
+      headerFont: "NewComputerModern10")
   }
 
   internal static func libertinus(_ textSize: FontSize) -> StyleSheet {
@@ -61,6 +55,14 @@ public enum StyleSheets {
       textFont: "Libertinus Serif",
       mathFont: "Libertinus Math",
       headerFont: "Libertinus Sans")
+  }
+
+  internal static func newComputerModern(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "NewComputerModern10",
+      mathFont: "NewComputerModernMath",
+      headerFont: "NewComputerModernSans10")
   }
 
   internal static func noto(_ textSize: FontSize) -> StyleSheet {
@@ -77,15 +79,6 @@ public enum StyleSheets {
       textFont: "STIX Two Text",
       mathFont: "STIX Two Math",
       headerFont: "Arial")
-  }
-
-  /// Concrete Math (Knuth)
-  private static func concrete(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "CMU Concrete",
-      mathFont: "Concrete Math",
-      headerFont: "Latin Modern Roman")
   }
 
   private static func styleSheet(

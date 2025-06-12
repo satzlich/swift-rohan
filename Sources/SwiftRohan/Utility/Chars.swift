@@ -12,6 +12,7 @@ enum Chars {
   // others
   static let space: Character = "\u{0020}"
   static let NBSP: Character = "\u{00A0}"
+  static let invertedQuestion: Character = "\u{00BF}"
   static let ZWSP: Character = "\u{200B}"
   static let wordJoiner: Character = "\u{2060}"
   static let dottedSquare: Character = "⬚"  // U+2B1A
