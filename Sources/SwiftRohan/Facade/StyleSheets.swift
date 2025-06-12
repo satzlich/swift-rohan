@@ -15,10 +15,9 @@ public enum StyleSheets {
       self.provider = provider
     }
 
-    public static var defaultValue: Record { libertinus }
+    public static var defaultValue: Record { newComputerModern }
 
     static var concrete: Record { .init("Concrete", StyleSheets.concrete) }
-    static var latinModern: Record { .init("Latin Modern", StyleSheets.latinModern) }
     static var libertinus: Record { .init("Libertinus", StyleSheets.libertinus) }
     static var newComputerModern: Record {
       .init("New Computer Modern", StyleSheets.newComputerModern)
@@ -27,7 +26,7 @@ public enum StyleSheets {
     static var stixTwo: Record { .init("STIX Two", StyleSheets.stixTwo) }
 
     static var allCases: Array<Record> {
-      [concrete, latinModern, libertinus, newComputerModern, noto, stixTwo]
+      [concrete, libertinus, newComputerModern, noto, stixTwo]
     }
   }
 
@@ -47,16 +46,7 @@ public enum StyleSheets {
       for: textSize,
       textFont: "CMU Concrete",
       mathFont: "Concrete Math",
-      headerFont: "Latin Modern Roman")
-  }
-
-  /// The Art of Computer Programming (Knuth)
-  internal static func latinModern(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "Latin Modern Roman",
-      mathFont: "Latin Modern Math",
-      headerFont: "Latin Modern Sans")
+      headerFont: "NewComputerModern10")
   }
 
   internal static func libertinus(_ textSize: FontSize) -> StyleSheet {
