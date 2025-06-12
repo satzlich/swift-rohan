@@ -49,7 +49,7 @@ public final class DocumentView: NSView {
 
   // NOTE: set a large default font size so that when something goes wrong,
   // the mistake is conspicuous.
-  internal var documentManager = DocumentManager(StyleSheets.newComputerModern(20))
+  internal var documentManager = DocumentManager(StyleSheets.defaultRecord.provider(20))
 
   // MARK: - Subviews
 
@@ -155,9 +155,9 @@ public final class DocumentView: NSView {
   private func _setPageConstraints(_ page: PageProperty) {
 
     // margin
-    [contentView, selectionView, insertionIndicatorView].forEach {
-      setMarginConstraints($0)
-    }
+    setMarginConstraints(contentView)
+    setMarginConstraints(selectionView)
+    setMarginConstraints(insertionIndicatorView)
 
     // width
     self.frame.size.width = page.width.ptValue

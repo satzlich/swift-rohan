@@ -39,11 +39,12 @@ MathJax = {
 </header>
 <p>Replacement rules are used to convert the text entered by the user into another entity.</p>
 <p>Rules are either triggered immediately or when the user presses the space key (<code>␣</code>).</p>
-<h2 id="text-mode-rules-12">Text Mode Rules (12)</h2>
+<h2 id="text-mode-rules">Text Mode Rules</h2>
 <p>The following rules are applied when the cursor is in text area:</p>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -51,61 +52,73 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>`</code></td>
 <td style="text-align: left;">‘</td>
 <td style="text-align: left;"><span class="math inline">\(\text{‘}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>``</code></td>
 <td style="text-align: left;">“</td>
 <td style="text-align: left;"><span class="math inline">\(\text{“}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>'</code></td>
 <td style="text-align: left;">’</td>
 <td style="text-align: left;"><span class="math inline">\(\text{’}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>''</code></td>
 <td style="text-align: left;">”</td>
 <td style="text-align: left;"><span class="math inline">\(\text{“}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>--</code></td>
 <td style="text-align: left;">– (en dash)</td>
 <td style="text-align: left;">–</td>
 </tr>
 <tr>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;"><code>---</code></td>
 <td style="text-align: left;">— (em dash)</td>
 <td style="text-align: left;">—</td>
 </tr>
 <tr>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;"><code>...</code></td>
 <td style="text-align: left;">…</td>
 <td style="text-align: left;">…</td>
 </tr>
 <tr>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;"><code>#␣</code></td>
 <td style="text-align: left;"><code>&lt;h1&gt;</code></td>
 <td style="text-align: left;"><img src="images/h1.svg" /></td>
 </tr>
 <tr>
+<td style="text-align: right;">9</td>
 <td style="text-align: right;"><code>##␣</code></td>
 <td style="text-align: left;"><code>&lt;h2&gt;</code></td>
 <td style="text-align: left;"><img src="images/h2.svg" /></td>
 </tr>
 <tr>
+<td style="text-align: right;">10</td>
 <td style="text-align: right;"><code>###␣</code></td>
 <td style="text-align: left;"><code>&lt;h3&gt;</code></td>
 <td style="text-align: left;"><img src="images/h3.svg" /></td>
 </tr>
 <tr>
+<td style="text-align: right;">11</td>
 <td style="text-align: right;"><code>*␣</code></td>
 <td style="text-align: left;"><em>emph</em></td>
 <td style="text-align: left;"><img src="images/emph.svg" /></td>
 </tr>
 <tr>
+<td style="text-align: right;">12</td>
 <td style="text-align: right;"><code>**␣</code></td>
 <td style="text-align: left;"><strong>strong</strong></td>
 <td style="text-align: left;"><img src="images/strong.svg" /></td>
@@ -114,10 +127,11 @@ MathJax = {
 </table>
 <h2 id="math-mode-rules">Math Mode Rules</h2>
 <p>The following rules are applied when the cursor is in math area:</p>
-<h3 id="basic-7">Basic (7)</h3>
+<h3 id="basic">Basic</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th>Look</th>
@@ -125,46 +139,54 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>$</code></td>
 <td style="text-align: left;">inline math</td>
 <td></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>^</code></td>
 <td style="text-align: left;">attach superscript</td>
 <td><span class="math inline">\(x^{⬚}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>_</code></td>
 <td style="text-align: left;">attach subscript</td>
 <td><span class="math inline">\(x_{⬚}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>'</code></td>
 <td style="text-align: left;">′ (prime)</td>
 <td><span class="math inline">\(\prime\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>''</code></td>
 <td style="text-align: left;">″ (double prime)</td>
 <td><span class="math inline">\(″\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;"><code>'''</code></td>
 <td style="text-align: left;">‴ (triple prime)</td>
 <td><span class="math inline">\(‴\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;"><code>''''</code></td>
 <td style="text-align: left;">⁗ (quadruple prime)</td>
 <td><span class="math inline">\(⁗\)</span></td>
 </tr>
 </tbody>
 </table>
-<h3 id="miscellaneous-5">Miscellaneous (5)</h3>
+<h3 id="miscellaneous">Miscellaneous</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -173,30 +195,42 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>...</code></td>
 <td style="text-align: left;"><code>\ldots</code></td>
 <td style="text-align: left;"><span class="math inline">\(\ldots\)</span></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;"><code>cdots␣</code></td>
+<td style="text-align: left;"><code>\cdots</code></td>
+<td style="text-align: left;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>frac␣</code></td>
 <td style="text-align: left;"><code>\frac{⬚}{⬚}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\frac{⬚}{⬚}\)</span></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>oo␣</code></td>
 <td style="text-align: left;"><code>\infty</code></td>
 <td style="text-align: left;"><span class="math inline">\(\infty\)</span></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>xx␣</code></td>
 <td style="text-align: left;"><code>\times</code></td>
 <td style="text-align: left;"><span class="math inline">\(\times\)</span></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;"><code>mod␣</code></td>
 <td style="text-align: left;"><code>\bmod</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{mod}\)</span></td>
@@ -204,10 +238,11 @@ MathJax = {
 </tr>
 </tbody>
 </table>
-<h3 id="inequalities-3">Inequalities (3)</h3>
+<h3 id="inequalities">Inequalities</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -215,26 +250,30 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>/=</code></td>
 <td style="text-align: left;"><code>\neq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\neq\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>&lt;=</code></td>
 <td style="text-align: left;"><code>\leq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\leq\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>&gt;=</code></td>
 <td style="text-align: left;"><code>\geq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\geq\)</span></td>
 </tr>
 </tbody>
 </table>
-<h3 id="arrows-5">Arrows (5)</h3>
+<h3 id="arrows">Arrows</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -242,87 +281,105 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>&lt;-</code></td>
 <td style="text-align: left;"><code>\leftarrow</code></td>
 <td style="text-align: left;"><span class="math inline">\(\leftarrow\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>-&gt;</code></td>
 <td style="text-align: left;"><code>\rightarrow</code></td>
 <td style="text-align: left;"><span class="math inline">\(\rightarrow\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>=&gt;</code></td>
 <td style="text-align: left;"><code>\Rightarrow</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Rightarrow\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>--&gt;</code></td>
 <td style="text-align: left;"><code>\longrightarrow</code></td>
 <td style="text-align: left;"><span class="math inline">\(\longrightarrow\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>==&gt;</code></td>
 <td style="text-align: left;"><code>\Longrightarrow</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Longrightarrow\)</span></td>
 </tr>
 </tbody>
 </table>
-<h3 id="left-right-delimiters-146">Left-right delimiters (146)</h3>
+<h3 id="left-right-delimiters">Left-right delimiters</h3>
 <p>The following table lists the left and right delimiters that can be used in math mode.</p>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th>Left Delimiter</th>
 <th>Right Delimiter</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td><code>(</code></td>
 <td><code>)</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td><code>[</code></td>
 <td><code>]</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td><code>{</code></td>
 <td><code>}</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td><code>\langle</code></td>
 <td><code>\rangle</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td><code>\lbrace</code></td>
 <td><code>\rbrace</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">6</td>
 <td><code>\lbrack</code></td>
 <td><code>\rbrack</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">7</td>
 <td><code>\lceil</code></td>
 <td><code>\rceil</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">8</td>
 <td><code>\lfloor</code></td>
 <td><code>\rfloor</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">9</td>
 <td><code>\lgroup</code></td>
 <td><code>\rgroup</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">10</td>
 <td><code>\lmoustache</code></td>
 <td><code>\rmoustache</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">11</td>
 <td><code>\lvert</code></td>
 <td><code>\rvert</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">12</td>
 <td><code>\lVert</code></td>
 <td><code>\rVert</code></td>
 </tr>
@@ -332,6 +389,7 @@ MathJax = {
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -339,31 +397,36 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>()␣</code></td>
 <td style="text-align: left;"><code>\left(      \right)</code></td>
 <td style="text-align: left;"><span class="math inline">\(\left(⬚\right)\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>(]␣</code></td>
 <td style="text-align: left;"><code>\left(      \right]</code></td>
 <td style="text-align: left;"><span class="math inline">\(\left(⬚\right]\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">144</td>
 <td style="text-align: right;"><code>\lVert\rVert␣</code></td>
 <td style="text-align: left;"><code>\left\lVert \right\rVert</code></td>
 <td style="text-align: left;"><span class="math inline">\(\left\lVert⬚\right\rVert\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>In addition, the following table lists more replacement rules for left and right delimiters that can be used in math mode.</p>
+<p>In addition, the following patterns can also be used to create left and right delimiters:</p>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -371,22 +434,31 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
-<td style="text-align: right;"><code>||␣</code></td>
-<td style="text-align: left;"><code>\left\lvert      \right\rvert</code></td>
-<td style="text-align: left;"><span class="math inline">\(\left\lvert⬚\right\rvert\)</span></td>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;"><code>&lt;&gt;␣</code></td>
+<td style="text-align: left;"><code>\left\langle     \right\rangle</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\langle ⬚ \right\rangle\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">146</td>
+<td style="text-align: right;"><code>||␣</code></td>
+<td style="text-align: left;"><code>\left\lvert      \right\rvert</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lvert ⬚ \right\rvert\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">147</td>
 <td style="text-align: right;"><code>||||␣</code></td>
 <td style="text-align: left;"><code>\left\lVert      \right\rVert</code></td>
-<td style="text-align: left;"><span class="math inline">\(\left\lVert⬚\right\rVert\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lVert ⬚ \right\rVert\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>Furthermore, code snippets <code>\norm</code>, <code>\floor</code>, and <code>\ceil</code> can be used to create norm <span class="math inline">\(\left\lVert⬚\right\rVert\)</span>, floor <span class="math inline">\(\left\lfloor⬚\right\rfloor\)</span>, and ceiling <span class="math inline">\(\left\lceil⬚\right\rceil\)</span> delimiters respectively.</p>
-<h3 id="set-operations-5">Set operations (5)</h3>
+<p>See also <a href="code-snippets.html">Code Snippets</a> section for code snippets that can be used to create left and right delimiters.</p>
+<h3 id="set-operations">Set operations</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -395,30 +467,35 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>cap␣</code></td>
 <td style="text-align: left;"><code>\cap</code></td>
 <td style="text-align: left;"><span class="math inline">\(\cap\)</span></td>
 <td></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>cup␣</code></td>
 <td style="text-align: left;"><code>\cup</code></td>
 <td style="text-align: left;"><span class="math inline">\(\cup\)</span></td>
 <td></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>in␣</code></td>
 <td style="text-align: left;"><code>\in</code></td>
 <td style="text-align: left;"><span class="math inline">\(\in\)</span></td>
 <td></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>sub␣</code></td>
 <td style="text-align: left;"><code>\subset</code></td>
 <td style="text-align: left;"><span class="math inline">\(\subset\)</span></td>
 <td><code>sup␣</code> is for <code>\sup</code></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>sube␣</code></td>
 <td style="text-align: left;"><code>\subseteq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\subseteq\)</span></td>
@@ -426,10 +503,11 @@ MathJax = {
 </tr>
 </tbody>
 </table>
-<h3 id="sum-like-operators-4">Sum-like operators (4)</h3>
+<h3 id="sum-like-operators">Sum-like operators</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -437,32 +515,37 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>sum␣</code></td>
 <td style="text-align: left;"><code>\sum</code></td>
 <td style="text-align: left;"><span class="math inline">\(\sum\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>prod␣</code></td>
 <td style="text-align: left;"><code>\prod</code></td>
 <td style="text-align: left;"><span class="math inline">\(\prod\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>int␣</code></td>
 <td style="text-align: left;"><code>\int</code></td>
 <td style="text-align: left;"><span class="math inline">\(\int\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>oint␣</code></td>
 <td style="text-align: left;"><code>\oint</code></td>
 <td style="text-align: left;"><span class="math inline">\(\oint\)</span></td>
 </tr>
 </tbody>
 </table>
-<h3 id="greek-letters-29">Greek letters (29)</h3>
-<p>Greek letters each with name of length 5 or less.</p>
+<h3 id="greek-letters">Greek letters</h3>
+<p>Greek letters with names of five or fewer characters can be entered directly.</p>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -470,156 +553,192 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>alpha␣</code></td>
 <td style="text-align: left;"><code>\alpha</code></td>
 <td style="text-align: left;"><span class="math inline">\(\alpha\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>beta␣</code></td>
 <td style="text-align: left;"><code>\beta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\beta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>chi␣</code></td>
 <td style="text-align: left;"><code>\chi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\chi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>delta␣</code></td>
 <td style="text-align: left;"><code>\delta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\delta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>eta␣</code></td>
 <td style="text-align: left;"><code>\eta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\eta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;"><code>gamma␣</code></td>
 <td style="text-align: left;"><code>\gamma</code></td>
 <td style="text-align: left;"><span class="math inline">\(\gamma\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;"><code>iota␣</code></td>
 <td style="text-align: left;"><code>\iota</code></td>
 <td style="text-align: left;"><span class="math inline">\(\iota\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;"><code>kappa␣</code></td>
 <td style="text-align: left;"><code>\kappa</code></td>
 <td style="text-align: left;"><span class="math inline">\(\kappa\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">9</td>
 <td style="text-align: right;"><code>mu␣</code></td>
 <td style="text-align: left;"><code>\mu</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mu\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">10</td>
 <td style="text-align: right;"><code>nu␣</code></td>
 <td style="text-align: left;"><code>\nu</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nu\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">11</td>
 <td style="text-align: right;"><code>omega␣</code></td>
 <td style="text-align: left;"><code>\omega</code></td>
 <td style="text-align: left;"><span class="math inline">\(\omega\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">12</td>
 <td style="text-align: right;"><code>phi␣</code></td>
 <td style="text-align: left;"><code>\phi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\phi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">13</td>
 <td style="text-align: right;"><code>pi␣</code></td>
 <td style="text-align: left;"><code>\pi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\pi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">14</td>
 <td style="text-align: right;"><code>psi␣</code></td>
 <td style="text-align: left;"><code>\psi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\psi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">15</td>
 <td style="text-align: right;"><code>rho␣</code></td>
 <td style="text-align: left;"><code>\rho</code></td>
 <td style="text-align: left;"><span class="math inline">\(\rho\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">16</td>
 <td style="text-align: right;"><code>sigma␣</code></td>
 <td style="text-align: left;"><code>\sigma</code></td>
 <td style="text-align: left;"><span class="math inline">\(\sigma\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">17</td>
 <td style="text-align: right;"><code>tau␣</code></td>
 <td style="text-align: left;"><code>\tau</code></td>
 <td style="text-align: left;"><span class="math inline">\(\tau\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">18</td>
 <td style="text-align: right;"><code>theta␣</code></td>
 <td style="text-align: left;"><code>\theta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\theta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;"><code>varpi␣</code></td>
+<td style="text-align: left;"><code>\varpi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\varpi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;"><code>xi␣</code></td>
 <td style="text-align: left;"><code>\xi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\xi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">21</td>
 <td style="text-align: right;"><code>zeta␣</code></td>
 <td style="text-align: left;"><code>\zeta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\zeta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">22</td>
 <td style="text-align: right;"><code>Delta␣</code></td>
 <td style="text-align: left;"><code>\Delta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Delta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">23</td>
 <td style="text-align: right;"><code>Gamma␣</code></td>
 <td style="text-align: left;"><code>\Gamma</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Gamma\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">24</td>
 <td style="text-align: right;"><code>Omega␣</code></td>
 <td style="text-align: left;"><code>\Omega</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Omega\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">25</td>
 <td style="text-align: right;"><code>Phi␣</code></td>
 <td style="text-align: left;"><code>\Phi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Phi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">26</td>
 <td style="text-align: right;"><code>Pi␣</code></td>
 <td style="text-align: left;"><code>\Pi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Pi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">27</td>
 <td style="text-align: right;"><code>Psi␣</code></td>
 <td style="text-align: left;"><code>\Psi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Psi\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">28</td>
 <td style="text-align: right;"><code>Sigma␣</code></td>
 <td style="text-align: left;"><code>\Sigma</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Sigma\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">29</td>
 <td style="text-align: right;"><code>Theta␣</code></td>
 <td style="text-align: left;"><code>\Theta</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Theta\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">30</td>
 <td style="text-align: right;"><code>Xi␣</code></td>
 <td style="text-align: left;"><code>\Xi</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Xi\)</span></td>
 </tr>
 </tbody>
 </table>
-<h3 id="styled-letters-312">Styled letters (312)</h3>
+<p>For epsilon, we provide shortcuts for both the standard and variant forms.</p>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -627,101 +746,145 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;"><code>eps␣</code></td>
+<td style="text-align: left;"><code>\epsilon</code></td>
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;"><code>veps␣</code></td>
+<td style="text-align: left;"><code>\varepsilon</code></td>
+<td style="text-align: left;"><span class="math inline">\(\varepsilon\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="styled-letters">Styled letters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">#</th>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>bbA␣</code></td>
 <td style="text-align: left;"><code>\mathbf{A}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathbf{A}\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">52</td>
 <td style="text-align: right;"><code>bbz␣</code></td>
 <td style="text-align: left;"><code>\mathbf{z}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathbf{z}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">53</td>
 <td style="text-align: right;"><code>bbbA␣</code></td>
 <td style="text-align: left;"><code>\mathbb{A}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathbb{A}\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">104</td>
 <td style="text-align: right;"><code>bbbz␣</code></td>
 <td style="text-align: left;"><code>\mathbb{Z}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathbb{z}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">105</td>
 <td style="text-align: right;"><code>ccA␣</code></td>
 <td style="text-align: left;"><code>\mathcal{A}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathcal{A}\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">156</td>
 <td style="text-align: right;"><code>ccz␣</code></td>
 <td style="text-align: left;"><code>\mathcal{Z}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathcal{z}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">157</td>
 <td style="text-align: right;"><code>frA␣</code></td>
 <td style="text-align: left;"><code>\mathfrak{A}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathfrak{A}\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">208</td>
 <td style="text-align: right;"><code>frz␣</code></td>
 <td style="text-align: left;"><code>\mathfrak{Z}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathfrak{z}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">209</td>
 <td style="text-align: right;"><code>sfA␣</code></td>
 <td style="text-align: left;"><code>\mathsf{A}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathsf{A}\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">260</td>
 <td style="text-align: right;"><code>sfz␣</code></td>
 <td style="text-align: left;"><code>\mathsf{z}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathsf{z}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">261</td>
 <td style="text-align: right;"><code>ttA␣</code></td>
 <td style="text-align: left;"><code>\mathtt{A}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathtt{A}\)</span></td>
 </tr>
 <tr>
 <td style="text-align: right;">⋮</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: right;">⋮</td>
+<td style="text-align: left;">⋮</td>
+<td style="text-align: left;">⋮</td>
 </tr>
 <tr>
+<td style="text-align: right;">312</td>
 <td style="text-align: right;"><code>ttz␣</code></td>
 <td style="text-align: left;"><code>\mathtt{z}</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathtt{z}\)</span></td>
 </tr>
 </tbody>
 </table>
-<h3 id="math-operators-43">Math Operators (43)</h3>
+<h3 id="math-operators">Math Operators</h3>
 <table>
 <thead>
 <tr>
+<th style="text-align: right;">#</th>
 <th style="text-align: right;">Pattern</th>
 <th style="text-align: left;">Replacement</th>
 <th style="text-align: left;">Look</th>
@@ -729,216 +892,259 @@ MathJax = {
 </thead>
 <tbody>
 <tr>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;"><code>arccos␣</code></td>
 <td style="text-align: left;"><code>\arccos</code></td>
 <td style="text-align: left;"><span class="math inline">\(\arccos\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;"><code>arcsin␣</code></td>
 <td style="text-align: left;"><code>\arcsin</code></td>
 <td style="text-align: left;"><span class="math inline">\(\arcsin\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;"><code>arctan␣</code></td>
 <td style="text-align: left;"><code>\arctan</code></td>
 <td style="text-align: left;"><span class="math inline">\(\arctan\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;"><code>arg␣</code></td>
 <td style="text-align: left;"><code>\arg</code></td>
 <td style="text-align: left;"><span class="math inline">\(\arg\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;"><code>cos␣</code></td>
 <td style="text-align: left;"><code>\cos</code></td>
 <td style="text-align: left;"><span class="math inline">\(\cos\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;"><code>cosh␣</code></td>
 <td style="text-align: left;"><code>\cosh</code></td>
 <td style="text-align: left;"><span class="math inline">\(\cosh\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;"><code>cot␣</code></td>
 <td style="text-align: left;"><code>\cot</code></td>
 <td style="text-align: left;"><span class="math inline">\(\cot\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;"><code>coth␣</code></td>
 <td style="text-align: left;"><code>\coth</code></td>
 <td style="text-align: left;"><span class="math inline">\(\coth\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">9</td>
 <td style="text-align: right;"><code>csc␣</code></td>
 <td style="text-align: left;"><code>\csc</code></td>
 <td style="text-align: left;"><span class="math inline">\(\csc\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">10</td>
 <td style="text-align: right;"><code>csch␣</code></td>
 <td style="text-align: left;"><code>\csch</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{csch}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">11</td>
 <td style="text-align: right;"><code>ctg␣</code></td>
 <td style="text-align: left;"><code>\ctg</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{ctg}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">12</td>
 <td style="text-align: right;"><code>deg␣</code></td>
 <td style="text-align: left;"><code>\deg</code></td>
 <td style="text-align: left;"><span class="math inline">\(\deg\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">13</td>
 <td style="text-align: right;"><code>det␣</code></td>
 <td style="text-align: left;"><code>\det</code></td>
 <td style="text-align: left;"><span class="math inline">\(\det\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">14</td>
 <td style="text-align: right;"><code>dim␣</code></td>
 <td style="text-align: left;"><code>\dim</code></td>
 <td style="text-align: left;"><span class="math inline">\(\dim\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">15</td>
 <td style="text-align: right;"><code>exp␣</code></td>
 <td style="text-align: left;"><code>\exp</code></td>
 <td style="text-align: left;"><span class="math inline">\(\exp\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">16</td>
 <td style="text-align: right;"><code>gcd␣</code></td>
 <td style="text-align: left;"><code>\gcd</code></td>
 <td style="text-align: left;"><span class="math inline">\(\gcd\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">17</td>
 <td style="text-align: right;"><code>hom␣</code></td>
 <td style="text-align: left;"><code>\hom</code></td>
 <td style="text-align: left;"><span class="math inline">\(\hom\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">18</td>
 <td style="text-align: right;"><code>id␣</code></td>
 <td style="text-align: left;"><code>\id</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{id}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">19</td>
 <td style="text-align: right;"><code>im␣</code></td>
 <td style="text-align: left;"><code>\im</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{im}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;"><code>inf␣</code></td>
 <td style="text-align: left;"><code>\inf</code></td>
 <td style="text-align: left;"><span class="math inline">\(\inf\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">21</td>
 <td style="text-align: right;"><code>injlim␣</code></td>
 <td style="text-align: left;"><code>\injlim</code></td>
 <td style="text-align: left;"><span class="math inline">\(\injlim\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">22</td>
 <td style="text-align: right;"><code>lcm␣</code></td>
 <td style="text-align: left;"><code>\lcm</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{lcm}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">23</td>
 <td style="text-align: right;"><code>ker␣</code></td>
 <td style="text-align: left;"><code>\ker</code></td>
 <td style="text-align: left;"><span class="math inline">\(\ker\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">24</td>
 <td style="text-align: right;"><code>lg␣</code></td>
 <td style="text-align: left;"><code>\lg</code></td>
 <td style="text-align: left;"><span class="math inline">\(\lg\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">25</td>
 <td style="text-align: right;"><code>lim␣</code></td>
 <td style="text-align: left;"><code>\lim</code></td>
 <td style="text-align: left;"><span class="math inline">\(\lim\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">26</td>
 <td style="text-align: right;"><code>liminf␣</code></td>
 <td style="text-align: left;"><code>\liminf</code></td>
 <td style="text-align: left;"><span class="math inline">\(\liminf\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">27</td>
 <td style="text-align: right;"><code>limsup␣</code></td>
 <td style="text-align: left;"><code>\limsup</code></td>
 <td style="text-align: left;"><span class="math inline">\(\limsup\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">28</td>
 <td style="text-align: right;"><code>ln␣</code></td>
 <td style="text-align: left;"><code>\ln</code></td>
 <td style="text-align: left;"><span class="math inline">\(\ln\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">29</td>
 <td style="text-align: right;"><code>log␣</code></td>
 <td style="text-align: left;"><code>\log</code></td>
 <td style="text-align: left;"><span class="math inline">\(\log\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">30</td>
 <td style="text-align: right;"><code>max␣</code></td>
 <td style="text-align: left;"><code>\max</code></td>
 <td style="text-align: left;"><span class="math inline">\(\max\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">31</td>
 <td style="text-align: right;"><code>min␣</code></td>
 <td style="text-align: left;"><code>\min</code></td>
 <td style="text-align: left;"><span class="math inline">\(\min\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">32</td>
 <td style="text-align: right;"><code>Pr␣</code></td>
 <td style="text-align: left;"><code>\Pr</code></td>
 <td style="text-align: left;"><span class="math inline">\(\Pr\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">33</td>
 <td style="text-align: right;"><code>projlim␣</code></td>
 <td style="text-align: left;"><code>\projlim</code></td>
 <td style="text-align: left;"><span class="math inline">\(\projlim\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">34</td>
 <td style="text-align: right;"><code>sec␣</code></td>
 <td style="text-align: left;"><code>\sec</code></td>
 <td style="text-align: left;"><span class="math inline">\(\sec\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">35</td>
 <td style="text-align: right;"><code>sech␣</code></td>
 <td style="text-align: left;"><code>\sech</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{sech}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">36</td>
 <td style="text-align: right;"><code>sin␣</code></td>
 <td style="text-align: left;"><code>\sin</code></td>
 <td style="text-align: left;"><span class="math inline">\(\sin\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">37</td>
 <td style="text-align: right;"><code>sinc␣</code></td>
 <td style="text-align: left;"><code>\sinc</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{sinc}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">38</td>
 <td style="text-align: right;"><code>sinh␣</code></td>
 <td style="text-align: left;"><code>\sinh</code></td>
 <td style="text-align: left;"><span class="math inline">\(\sinh\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">39</td>
 <td style="text-align: right;"><code>sup␣</code></td>
 <td style="text-align: left;"><code>\sup</code></td>
 <td style="text-align: left;"><span class="math inline">\(\sup\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">40</td>
 <td style="text-align: right;"><code>tan␣</code></td>
 <td style="text-align: left;"><code>\tan</code></td>
 <td style="text-align: left;"><span class="math inline">\(\tan\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">41</td>
 <td style="text-align: right;"><code>tanh␣</code></td>
 <td style="text-align: left;"><code>\tanh</code></td>
 <td style="text-align: left;"><span class="math inline">\(\tanh\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">42</td>
 <td style="text-align: right;"><code>tg␣</code></td>
 <td style="text-align: left;"><code>\tg</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{tg}\)</span></td>
 </tr>
 <tr>
+<td style="text-align: right;">43</td>
 <td style="text-align: right;"><code>tr␣</code></td>
 <td style="text-align: left;"><code>\tr</code></td>
 <td style="text-align: left;"><span class="math inline">\(\mathrm{tr}\)</span></td>
@@ -947,5 +1153,6 @@ MathJax = {
 </table>
 <h2 id="stability-of-replacement-rules">Stability of Replacement Rules</h2>
 <p>The replacement rules are stable in the sense that they are not expected to change frequently. However, they can be updated as needed to improve the overall editing experience.</p>
+<p>If time permits, we will provide customization options for replacement rules in future releases, allowing users to define their own patterns and replacements.</p>
 </body>
 </html>

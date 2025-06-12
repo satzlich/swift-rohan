@@ -14,7 +14,7 @@ final class MenuManager {
     do {
       let submenu = NSMenu(title: "Style")
 
-      for item in StyleSheets.allCases {
+      for item in StyleSheets.allRecords {
         let menuItem = NSMenuItem(
           title: item.name, action: #selector(setStyle(_:)), keyEquivalent: "")
         menuItem.target = self

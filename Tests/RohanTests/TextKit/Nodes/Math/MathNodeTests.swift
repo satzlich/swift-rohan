@@ -51,7 +51,7 @@ struct MathNodeTests {
 
   @Test
   static func getProperties() {
-    let styleSheet = StyleSheets.newComputerModern(12)
+    let styleSheet = StyleSheets.defaultRecord.provider(12)
 
     // NOTE: isBlock = false
     // check property policy for equation, fraction

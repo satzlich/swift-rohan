@@ -7,234 +7,246 @@ Replacement rules are used to convert the text entered by the user into another 
 
 Rules are either triggered immediately or when the user presses the space key (`␣`).
 
-## Text Mode Rules (12)
+## Text Mode Rules
 
 The following rules are applied when the cursor is in text area:
 
-|                 Pattern | Replacement | Look                   |
-| ----------------------: | :---------- | :--------------------- |
-|      <code>&#96;</code> | ‘           | $\text{‘}$             |
-| <code>&#96;&#96;</code> | “           | $\text{“}$             |
-|                     `'` | ’           | $\text{’}$             |
-|                    `''` | ”           | $\text{“}$             |
-|                    `--` | – (en dash) | –                      |
-|                   `---` | — (em dash) | —                      |
-|                   `...` | …           | …                      |
-|                    `#␣` | `<h1>`      | ![](images/h1.svg)     |
-|                   `##␣` | `<h2>`      | ![](images/h2.svg)     |
-|                  `###␣` | `<h3>`      | ![](images/h3.svg)     |
-|                    `*␣` | _emph_      | ![](images/emph.svg)   |
-|                   `**␣` | **strong**  | ![](images/strong.svg) |
+|  \# |                 Pattern | Replacement | Look                   |
+| --: | ----------------------: | :---------- | :--------------------- |
+|   1 |      <code>&#96;</code> | ‘           | $\text{‘}$             |
+|   2 | <code>&#96;&#96;</code> | “           | $\text{“}$             |
+|   3 |                     `'` | ’           | $\text{’}$             |
+|   4 |                    `''` | ”           | $\text{“}$             |
+|   5 |                    `--` | – (en dash) | –                      |
+|   6 |                   `---` | — (em dash) | —                      |
+|   7 |                   `...` | …           | …                      |
+|   8 |                    `#␣` | `<h1>`      | ![](images/h1.svg)     |
+|   9 |                   `##␣` | `<h2>`      | ![](images/h2.svg)     |
+|  10 |                  `###␣` | `<h3>`      | ![](images/h3.svg)     |
+|  11 |                    `*␣` | _emph_      | ![](images/emph.svg)   |
+|  12 |                   `**␣` | **strong**  | ![](images/strong.svg) |
 
 ## Math Mode Rules
 
 The following rules are applied when the cursor is in math area:
 
-### Basic (7)
+### Basic
 
-| Pattern | Replacement         | Look     |
-| ------: | :------------------ | -------- |
-|     `$` | inline math         |          |
-|     `^` | attach superscript  | $x^{⬚}$  |
-|     `_` | attach subscript    | $x_{⬚}$  |
-|     `'` | ′ (prime)           | $\prime$ |
-|    `''` | ″ (double prime)    | $″$      |
-|   `'''` | ‴ (triple prime)    | $‴$      |
-|  `''''` | ⁗ (quadruple prime) | $⁗$      |
+|  \# | Pattern | Replacement         | Look     |
+| --: | ------: | :------------------ | -------- |
+|   1 |     `$` | inline math         |          |
+|   2 |     `^` | attach superscript  | $x^{⬚}$  |
+|   3 |     `_` | attach subscript    | $x_{⬚}$  |
+|   4 |     `'` | ′ (prime)           | $\prime$ |
+|   5 |    `''` | ″ (double prime)    | $″$      |
+|   6 |   `'''` | ‴ (triple prime)    | $‴$      |
+|   7 |  `''''` | ⁗ (quadruple prime) | $⁗$      |
 
-### Miscellaneous (5)
+### Miscellaneous
 
-| Pattern | Replacement   | Look           | Note                          |
-| ------: | :------------ | :------------- | :---------------------------- |
-|   `...` | `\ldots`      | $\ldots$       |                               |
-| `frac␣` | `\frac{⬚}{⬚}` | $\frac{⬚}{⬚}$  |                               |
-|   `oo␣` | `\infty`      | $\infty$       |                               |
-|   `xx␣` | `\times`      | $\times$       |                               |
-|  `mod␣` | `\bmod`       | $\mathrm{mod}$ | `\bmod` is a binary operator. |
+|  \# |  Pattern | Replacement   | Look           | Note                          |
+| --: | -------: | :------------ | :------------- | :---------------------------- |
+|   1 |    `...` | `\ldots`      | $\ldots$       |                               |
+|   2 | `cdots␣` | `\cdots`      | $\cdots$       |                               |
+|   3 |  `frac␣` | `\frac{⬚}{⬚}` | $\frac{⬚}{⬚}$  |                               |
+|   4 |    `oo␣` | `\infty`      | $\infty$       |                               |
+|   5 |    `xx␣` | `\times`      | $\times$       |                               |
+|   6 |   `mod␣` | `\bmod`       | $\mathrm{mod}$ | `\bmod` is a binary operator. |
 
-### Inequalities (3)
+### Inequalities
 
-| Pattern | Replacement | Look   |
-| ------: | :---------- | :----- |
-|    `/=` | `\neq`      | $\neq$ |
-|    `<=` | `\leq`      | $\leq$ |
-|    `>=` | `\geq`      | $\geq$ |
+|  \# | Pattern | Replacement | Look   |
+| --: | ------: | :---------- | :----- |
+|   1 |    `/=` | `\neq`      | $\neq$ |
+|   2 |    `<=` | `\leq`      | $\leq$ |
+|   3 |    `>=` | `\geq`      | $\geq$ |
 
-### Arrows (5)
+### Arrows
 
-| Pattern | Replacement       | Look              |
-| ------: | :---------------- | :---------------- |
-|    `<-` | `\leftarrow`      | $\leftarrow$      |
-|    `->` | `\rightarrow`     | $\rightarrow$     |
-|    `=>` | `\Rightarrow`     | $\Rightarrow$     |
-|   `-->` | `\longrightarrow` | $\longrightarrow$ |
-|   `==>` | `\Longrightarrow` | $\Longrightarrow$ |
+|  \# | Pattern | Replacement       | Look              |
+| --: | ------: | :---------------- | :---------------- |
+|   1 |    `<-` | `\leftarrow`      | $\leftarrow$      |
+|   2 |    `->` | `\rightarrow`     | $\rightarrow$     |
+|   3 |    `=>` | `\Rightarrow`     | $\Rightarrow$     |
+|   4 |   `-->` | `\longrightarrow` | $\longrightarrow$ |
+|   5 |   `==>` | `\Longrightarrow` | $\Longrightarrow$ |
 
-### Left-right delimiters (146)
+### Left-right delimiters
 
 The following table lists the left and right delimiters that can be used in math mode.
 
-| Left Delimiter | Right Delimiter |
-| -------------- | --------------- |
-| `(`            | `)`             |
-| `[`            | `]`             |
-| `{`            | `}`             |
-| `\langle`      | `\rangle`       |
-| `\lbrace`      | `\rbrace`       |
-| `\lbrack`      | `\rbrack`       |
-| `\lceil`       | `\rceil`        |
-| `\lfloor`      | `\rfloor`       |
-| `\lgroup`      | `\rgroup`       |
-| `\lmoustache`  | `\rmoustache`   |
-| `\lvert`       | `\rvert`        |
-| `\lVert`       | `\rVert`        |
+|  \# | Left Delimiter | Right Delimiter |
+| --: | -------------- | --------------- |
+|   1 | `(`            | `)`             |
+|   2 | `[`            | `]`             |
+|   3 | `{`            | `}`             |
+|   4 | `\langle`      | `\rangle`       |
+|   5 | `\lbrace`      | `\rbrace`       |
+|   6 | `\lbrack`      | `\rbrack`       |
+|   7 | `\lceil`       | `\rceil`        |
+|   8 | `\lfloor`      | `\rfloor`       |
+|   9 | `\lgroup`      | `\rgroup`       |
+|  10 | `\lmoustache`  | `\rmoustache`   |
+|  11 | `\lvert`       | `\rvert`        |
+|  12 | `\lVert`       | `\rVert`        |
 
 Left and right delimiters can be combined to create $12\times 12$ different pairs of delimiters.
 
-|         Pattern | Replacement                | Look                       |
-| --------------: | :------------------------- | :------------------------- |
-|           `()␣` | `\left(      \right)`      | $\left(⬚\right)$           |
-|           `(]␣` | `\left(      \right]`      | $\left(⬚\right]$           |
-|               ⋮ |                            |                            |
-| `\lVert\rVert␣` | `\left\lVert \right\rVert` | $\left\lVert⬚\right\rVert$ |
+|  \# |         Pattern | Replacement                | Look                       |
+| --: | --------------: | :------------------------- | :------------------------- |
+|   1 |           `()␣` | `\left(      \right)`      | $\left(⬚\right)$           |
+|   2 |           `(]␣` | `\left(      \right]`      | $\left(⬚\right]$           |
+|   ⋮ |               ⋮ | ⋮                          | ⋮                          |
+| 144 | `\lVert\rVert␣` | `\left\lVert \right\rVert` | $\left\lVert⬚\right\rVert$ |
 
-In addition, the following table lists more replacement rules for left and right delimiters that can be used in math mode.
+In addition, the following patterns can also be used to create left and right delimiters:
 
-|                                Pattern | Replacement                     | Look                       |
-| -------------------------------------: | :------------------------------ | :------------------------- |
-|             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert` | $\left\lvert⬚\right\rvert$ |
-| <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert` | $\left\lVert⬚\right\rVert$ |
+|  \# |                                Pattern | Replacement                      | Look                           |
+| --: | -------------------------------------: | :------------------------------- | :----------------------------- |
+| 145 |                                  `<>␣` | `\left\langle     \right\rangle` | $\left\langle ⬚ \right\rangle$ |
+| 146 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert`  | $\left\lvert ⬚ \right\rvert$   |
+| 147 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert`  | $\left\lVert ⬚ \right\rVert$   |
 
-Furthermore, code snippets `\norm`, `\floor`, and `\ceil` can be used to create norm $\left\lVert⬚\right\rVert$, 
-floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ delimiters respectively.
+See also [Code Snippets](code-snippets.html) section for code snippets that can be used to create left and right delimiters.
 
-### Set operations (5)
+### Set operations
 
-| Pattern | Replacement | Look        | Note                 |
-| ------: | :---------- | :---------- | -------------------- |
-|  `cap␣` | `\cap`      | $\cap$      |                      |
-|  `cup␣` | `\cup`      | $\cup$      |                      |
-|   `in␣` | `\in`       | $\in$       |                      |
-|  `sub␣` | `\subset`   | $\subset$   | `sup␣` is for `\sup` |
-| `sube␣` | `\subseteq` | $\subseteq$ |                      |
+|  \# | Pattern | Replacement | Look        | Note                 |
+| --: | ------: | :---------- | :---------- | -------------------- |
+|   1 |  `cap␣` | `\cap`      | $\cap$      |                      |
+|   2 |  `cup␣` | `\cup`      | $\cup$      |                      |
+|   3 |   `in␣` | `\in`       | $\in$       |                      |
+|   4 |  `sub␣` | `\subset`   | $\subset$   | `sup␣` is for `\sup` |
+|   5 | `sube␣` | `\subseteq` | $\subseteq$ |                      |
 
-### Sum-like operators (4)
+### Sum-like operators
 
-| Pattern | Replacement | Look    |
-| ------: | :---------- | :------ |
-|  `sum␣` | `\sum`      | $\sum$  |
-| `prod␣` | `\prod`     | $\prod$ |
-|  `int␣` | `\int`      | $\int$  |
-| `oint␣` | `\oint`     | $\oint$ |
+|  \# | Pattern | Replacement | Look    |
+| --: | ------: | :---------- | :------ |
+|   1 |  `sum␣` | `\sum`      | $\sum$  |
+|   2 | `prod␣` | `\prod`     | $\prod$ |
+|   3 |  `int␣` | `\int`      | $\int$  |
+|   4 | `oint␣` | `\oint`     | $\oint$ |
 
-### Greek letters (29)
+### Greek letters
 
-Greek letters each with name of length 5 or less.
+Greek letters with names of five or fewer characters can be entered directly.
 
-|  Pattern | Replacement | Look     |
-| -------: | :---------- | :------- |
-| `alpha␣` | `\alpha`    | $\alpha$ |
-|  `beta␣` | `\beta`     | $\beta$  |
-|   `chi␣` | `\chi`      | $\chi$   |
-| `delta␣` | `\delta`    | $\delta$ |
-|   `eta␣` | `\eta`      | $\eta$   |
-| `gamma␣` | `\gamma`    | $\gamma$ |
-|  `iota␣` | `\iota`     | $\iota$  |
-| `kappa␣` | `\kappa`    | $\kappa$ |
-|    `mu␣` | `\mu`       | $\mu$    |
-|    `nu␣` | `\nu`       | $\nu$    |
-| `omega␣` | `\omega`    | $\omega$ |
-|   `phi␣` | `\phi`      | $\phi$   |
-|    `pi␣` | `\pi`       | $\pi$    |
-|   `psi␣` | `\psi`      | $\psi$   |
-|   `rho␣` | `\rho`      | $\rho$   |
-| `sigma␣` | `\sigma`    | $\sigma$ |
-|   `tau␣` | `\tau`      | $\tau$   |
-| `theta␣` | `\theta`    | $\theta$ |
-|    `xi␣` | `\xi`       | $\xi$    |
-|  `zeta␣` | `\zeta`     | $\zeta$  |
-| `Delta␣` | `\Delta`    | $\Delta$ |
-| `Gamma␣` | `\Gamma`    | $\Gamma$ |
-| `Omega␣` | `\Omega`    | $\Omega$ |
-|   `Phi␣` | `\Phi`      | $\Phi$   |
-|    `Pi␣` | `\Pi`       | $\Pi$    |
-|   `Psi␣` | `\Psi`      | $\Psi$   |
-| `Sigma␣` | `\Sigma`    | $\Sigma$ |
-| `Theta␣` | `\Theta`    | $\Theta$ |
-|    `Xi␣` | `\Xi`       | $\Xi$    |
+|  \# |  Pattern | Replacement | Look     |
+| --: | -------: | :---------- | :------- |
+|   1 | `alpha␣` | `\alpha`    | $\alpha$ |
+|   2 |  `beta␣` | `\beta`     | $\beta$  |
+|   3 |   `chi␣` | `\chi`      | $\chi$   |
+|   4 | `delta␣` | `\delta`    | $\delta$ |
+|   5 |   `eta␣` | `\eta`      | $\eta$   |
+|   6 | `gamma␣` | `\gamma`    | $\gamma$ |
+|   7 |  `iota␣` | `\iota`     | $\iota$  |
+|   8 | `kappa␣` | `\kappa`    | $\kappa$ |
+|   9 |    `mu␣` | `\mu`       | $\mu$    |
+|  10 |    `nu␣` | `\nu`       | $\nu$    |
+|  11 | `omega␣` | `\omega`    | $\omega$ |
+|  12 |   `phi␣` | `\phi`      | $\phi$   |
+|  13 |    `pi␣` | `\pi`       | $\pi$    |
+|  14 |   `psi␣` | `\psi`      | $\psi$   |
+|  15 |   `rho␣` | `\rho`      | $\rho$   |
+|  16 | `sigma␣` | `\sigma`    | $\sigma$ |
+|  17 |   `tau␣` | `\tau`      | $\tau$   |
+|  18 | `theta␣` | `\theta`    | $\theta$ |
+|  19 | `varpi␣` | `\varpi`    | $\varpi$ |
+|  20 |    `xi␣` | `\xi`       | $\xi$    |
+|  21 |  `zeta␣` | `\zeta`     | $\zeta$  |
+|  22 | `Delta␣` | `\Delta`    | $\Delta$ |
+|  23 | `Gamma␣` | `\Gamma`    | $\Gamma$ |
+|  24 | `Omega␣` | `\Omega`    | $\Omega$ |
+|  25 |   `Phi␣` | `\Phi`      | $\Phi$   |
+|  26 |    `Pi␣` | `\Pi`       | $\Pi$    |
+|  27 |   `Psi␣` | `\Psi`      | $\Psi$   |
+|  28 | `Sigma␣` | `\Sigma`    | $\Sigma$ |
+|  29 | `Theta␣` | `\Theta`    | $\Theta$ |
+|  30 |    `Xi␣` | `\Xi`       | $\Xi$    |
 
-### Styled letters (312)
+For epsilon, we provide shortcuts for both the standard and variant forms.
 
-| Pattern | Replacement    | Look           |
-| ------: | :------------- | :------------- |
-|  `bbA␣` | `\mathbf{A}`   | $\mathbf{A}$   |
-|       ⋮ |                |                |
-|  `bbz␣` | `\mathbf{z}`   | $\mathbf{z}$   |
-| `bbbA␣` | `\mathbb{A}`   | $\mathbb{A}$   |
-|       ⋮ |                |                |
-| `bbbz␣` | `\mathbb{Z}`   | $\mathbb{z}$   |
-|  `ccA␣` | `\mathcal{A}`  | $\mathcal{A}$  |
-|       ⋮ |                |                |
-|  `ccz␣` | `\mathcal{Z}`  | $\mathcal{z}$  |
-|  `frA␣` | `\mathfrak{A}` | $\mathfrak{A}$ |
-|       ⋮ |                |                |
-|  `frz␣` | `\mathfrak{Z}` | $\mathfrak{z}$ |
-|  `sfA␣` | `\mathsf{A}`   | $\mathsf{A}$   |
-|       ⋮ |                |                |
-|  `sfz␣` | `\mathsf{z}`   | $\mathsf{z}$   |
-|  `ttA␣` | `\mathtt{A}`   | $\mathtt{A}$   |
-|       ⋮ |                |                |
-|  `ttz␣` | `\mathtt{z}`   | $\mathtt{z}$   |
+|  \# | Pattern | Replacement   | Look          |
+| --: | ------: | :------------ | :------------ |
+|  31 |  `eps␣` | `\epsilon`    | $\epsilon$    |
+|  32 | `veps␣` | `\varepsilon` | $\varepsilon$ |
 
-### Math Operators (43)
+### Styled letters
 
-|    Pattern | Replacement | Look            |
-| ---------: | :---------- | :-------------- |
-|  `arccos␣` | `\arccos`   | $\arccos$       |
-|  `arcsin␣` | `\arcsin`   | $\arcsin$       |
-|  `arctan␣` | `\arctan`   | $\arctan$       |
-|     `arg␣` | `\arg`      | $\arg$          |
-|     `cos␣` | `\cos`      | $\cos$          |
-|    `cosh␣` | `\cosh`     | $\cosh$         |
-|     `cot␣` | `\cot`      | $\cot$          |
-|    `coth␣` | `\coth`     | $\coth$         |
-|     `csc␣` | `\csc`      | $\csc$          |
-|    `csch␣` | `\csch`     | $\mathrm{csch}$ |
-|     `ctg␣` | `\ctg`      | $\mathrm{ctg}$  |
-|     `deg␣` | `\deg`      | $\deg$          |
-|     `det␣` | `\det`      | $\det$          |
-|     `dim␣` | `\dim`      | $\dim$          |
-|     `exp␣` | `\exp`      | $\exp$          |
-|     `gcd␣` | `\gcd`      | $\gcd$          |
-|     `hom␣` | `\hom`      | $\hom$          |
-|      `id␣` | `\id`       | $\mathrm{id}$   |
-|      `im␣` | `\im`       | $\mathrm{im}$   |
-|     `inf␣` | `\inf`      | $\inf$          |
-|  `injlim␣` | `\injlim`   | $\injlim$       |
-|     `lcm␣` | `\lcm`      | $\mathrm{lcm}$  |
-|     `ker␣` | `\ker`      | $\ker$          |
-|      `lg␣` | `\lg`       | $\lg$           |
-|     `lim␣` | `\lim`      | $\lim$          |
-|  `liminf␣` | `\liminf`   | $\liminf$       |
-|  `limsup␣` | `\limsup`   | $\limsup$       |
-|      `ln␣` | `\ln`       | $\ln$           |
-|     `log␣` | `\log`      | $\log$          |
-|     `max␣` | `\max`      | $\max$          |
-|     `min␣` | `\min`      | $\min$          |
-|      `Pr␣` | `\Pr`       | $\Pr$           |
-| `projlim␣` | `\projlim`  | $\projlim$      |
-|     `sec␣` | `\sec`      | $\sec$          |
-|    `sech␣` | `\sech`     | $\mathrm{sech}$ |
-|     `sin␣` | `\sin`      | $\sin$          |
-|    `sinc␣` | `\sinc`     | $\mathrm{sinc}$ |
-|    `sinh␣` | `\sinh`     | $\sinh$         |
-|     `sup␣` | `\sup`      | $\sup$          |
-|     `tan␣` | `\tan`      | $\tan$          |
-|    `tanh␣` | `\tanh`     | $\tanh$         |
-|      `tg␣` | `\tg`       | $\mathrm{tg}$   |
-|      `tr␣` | `\tr`       | $\mathrm{tr}$   |
+|  \# | Pattern | Replacement    | Look           |
+| --: | ------: | :------------- | :------------- |
+|   1 |  `bbA␣` | `\mathbf{A}`   | $\mathbf{A}$   |
+|   ⋮ |       ⋮ | ⋮              | ⋮              |
+|  52 |  `bbz␣` | `\mathbf{z}`   | $\mathbf{z}$   |
+|  53 | `bbbA␣` | `\mathbb{A}`   | $\mathbb{A}$   |
+|   ⋮ |       ⋮ | ⋮              | ⋮              |
+| 104 | `bbbz␣` | `\mathbb{Z}`   | $\mathbb{z}$   |
+| 105 |  `ccA␣` | `\mathcal{A}`  | $\mathcal{A}$  |
+|   ⋮ |       ⋮ | ⋮              | ⋮              |
+| 156 |  `ccz␣` | `\mathcal{Z}`  | $\mathcal{z}$  |
+| 157 |  `frA␣` | `\mathfrak{A}` | $\mathfrak{A}$ |
+|   ⋮ |       ⋮ | ⋮              | ⋮              |
+| 208 |  `frz␣` | `\mathfrak{Z}` | $\mathfrak{z}$ |
+| 209 |  `sfA␣` | `\mathsf{A}`   | $\mathsf{A}$   |
+|   ⋮ |       ⋮ | ⋮              | ⋮              |
+| 260 |  `sfz␣` | `\mathsf{z}`   | $\mathsf{z}$   |
+| 261 |  `ttA␣` | `\mathtt{A}`   | $\mathtt{A}$   |
+|   ⋮ |       ⋮ | ⋮              | ⋮              |
+| 312 |  `ttz␣` | `\mathtt{z}`   | $\mathtt{z}$   |
+
+### Math Operators
+
+|  \# |    Pattern | Replacement | Look            |
+| --: | ---------: | :---------- | :-------------- |
+|   1 |  `arccos␣` | `\arccos`   | $\arccos$       |
+|   2 |  `arcsin␣` | `\arcsin`   | $\arcsin$       |
+|   3 |  `arctan␣` | `\arctan`   | $\arctan$       |
+|   4 |     `arg␣` | `\arg`      | $\arg$          |
+|   5 |     `cos␣` | `\cos`      | $\cos$          |
+|   6 |    `cosh␣` | `\cosh`     | $\cosh$         |
+|   7 |     `cot␣` | `\cot`      | $\cot$          |
+|   8 |    `coth␣` | `\coth`     | $\coth$         |
+|   9 |     `csc␣` | `\csc`      | $\csc$          |
+|  10 |    `csch␣` | `\csch`     | $\mathrm{csch}$ |
+|  11 |     `ctg␣` | `\ctg`      | $\mathrm{ctg}$  |
+|  12 |     `deg␣` | `\deg`      | $\deg$          |
+|  13 |     `det␣` | `\det`      | $\det$          |
+|  14 |     `dim␣` | `\dim`      | $\dim$          |
+|  15 |     `exp␣` | `\exp`      | $\exp$          |
+|  16 |     `gcd␣` | `\gcd`      | $\gcd$          |
+|  17 |     `hom␣` | `\hom`      | $\hom$          |
+|  18 |      `id␣` | `\id`       | $\mathrm{id}$   |
+|  19 |      `im␣` | `\im`       | $\mathrm{im}$   |
+|  20 |     `inf␣` | `\inf`      | $\inf$          |
+|  21 |  `injlim␣` | `\injlim`   | $\injlim$       |
+|  22 |     `lcm␣` | `\lcm`      | $\mathrm{lcm}$  |
+|  23 |     `ker␣` | `\ker`      | $\ker$          |
+|  24 |      `lg␣` | `\lg`       | $\lg$           |
+|  25 |     `lim␣` | `\lim`      | $\lim$          |
+|  26 |  `liminf␣` | `\liminf`   | $\liminf$       |
+|  27 |  `limsup␣` | `\limsup`   | $\limsup$       |
+|  28 |      `ln␣` | `\ln`       | $\ln$           |
+|  29 |     `log␣` | `\log`      | $\log$          |
+|  30 |     `max␣` | `\max`      | $\max$          |
+|  31 |     `min␣` | `\min`      | $\min$          |
+|  32 |      `Pr␣` | `\Pr`       | $\Pr$           |
+|  33 | `projlim␣` | `\projlim`  | $\projlim$      |
+|  34 |     `sec␣` | `\sec`      | $\sec$          |
+|  35 |    `sech␣` | `\sech`     | $\mathrm{sech}$ |
+|  36 |     `sin␣` | `\sin`      | $\sin$          |
+|  37 |    `sinc␣` | `\sinc`     | $\mathrm{sinc}$ |
+|  38 |    `sinh␣` | `\sinh`     | $\sinh$         |
+|  39 |     `sup␣` | `\sup`      | $\sup$          |
+|  40 |     `tan␣` | `\tan`      | $\tan$          |
+|  41 |    `tanh␣` | `\tanh`     | $\tanh$         |
+|  42 |      `tg␣` | `\tg`       | $\mathrm{tg}$   |
+|  43 |      `tr␣` | `\tr`       | $\mathrm{tr}$   |
 
 ## Stability of Replacement Rules
 
 The replacement rules are stable in the sense that they are not expected to change frequently.
 However, they can be updated as needed to improve the overall editing experience.
+
+If time permits, we will provide customization options for replacement rules in future releases,
+allowing users to define their own patterns and replacements.

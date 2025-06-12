@@ -14,23 +14,50 @@ public enum StyleSheets {
       self.name = name
       self.provider = provider
     }
-
-    public static var defaultValue: Record { newComputerModern }
-
-    static var concrete: Record { .init("Concrete", StyleSheets.concrete) }
-    static var libertinus: Record { .init("Libertinus", StyleSheets.libertinus) }
-    static var newComputerModern: Record {
-      .init("New Computer Modern", StyleSheets.newComputerModern)
-    }
-    static var noto: Record { .init("Noto", StyleSheets.noto) }
-    static var stixTwo: Record { .init("STIX Two", StyleSheets.stixTwo) }
-
-    static var allCases: Array<Record> {
-      [concrete, libertinus, newComputerModern, noto, stixTwo]
-    }
   }
 
-  public static let allCases: Array<Record> = Record.allCases
+  public static let defaultRecord = allRecords[2]  // "New Computer Modern"
+  public static let defaultTextSize = textSizes[2]  // 12pt
+  public static let testingRecord =
+    Record(
+      "Testing",
+      //      { textSize in
+      //        styleSheet(
+      //          for: textSize,
+      //          textFont: "Latin Modern Roman", mathFont: "Latin Modern Math",
+      //          headerFont: "Latin Modern Sans")
+      //      }
+      { textSize in
+        styleSheet(
+          for: textSize,
+          textFont: "NewComputerModern10", mathFont: "NewComputerModernMath",
+          headerFont: "NewComputerModernSans10")
+      }
+    )
+
+  public static let allRecords: Array<Record> =
+    [
+      // (name, textFont, mathFont, headerFont)
+      ("Concrete", "CMU Concrete", "Concrete Math", "NewComputerModern10"),
+      ("Libertinus", "Libertinus Serif", "Libertinus Math", "Libertinus Sans"),
+      (
+        "New Computer Modern", "NewComputerModern10", "NewComputerModernMath",
+        "NewComputerModernSans10"
+      ),
+      ("Noto", "Noto Serif", "Noto Sans Math", "Noto Sans"),
+      ("STIX Two", "STIX Two Text", "STIX Two Math", "Arial"),
+    ]
+    .map { name, textFont, mathFont, headerFont in
+      Record(
+        name,
+        { textSize in
+          styleSheet(
+            for: textSize,
+            textFont: textFont,
+            mathFont: mathFont,
+            headerFont: headerFont)
+        })
+    }
 
   public static let textSizes: Array<FontSize> = [
     .init(10),
@@ -40,48 +67,9 @@ public enum StyleSheets {
     .init(14),
   ]
 
-  /// Concrete Math (Knuth)
-  private static func concrete(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "CMU Concrete",
-      mathFont: "Concrete Math",
-      headerFont: "NewComputerModern10")
-  }
+  // MARK: - Create StyleSheet
 
-  internal static func libertinus(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "Libertinus Serif",
-      mathFont: "Libertinus Math",
-      headerFont: "Libertinus Sans")
-  }
-
-  internal static func newComputerModern(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "NewComputerModern10",
-      mathFont: "NewComputerModernMath",
-      headerFont: "NewComputerModernSans10")
-  }
-
-  internal static func noto(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "Noto Serif",
-      mathFont: "Noto Sans Math",
-      headerFont: "Noto Sans")
-  }
-
-  internal static func stixTwo(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "STIX Two Text",
-      mathFont: "STIX Two Math",
-      headerFont: "Arial")
-  }
-
-  private static func styleSheet(
+  internal static func styleSheet(
     for textSize: FontSize,
     textFont: String,
     mathFont: String,

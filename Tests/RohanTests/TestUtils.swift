@@ -137,7 +137,7 @@ enum TestUtils {
   }
 
   static func updateLayoutLength(_ node: Node) {
-    let styleSheet = StyleSheets.newComputerModern(10)
+    let styleSheet = StyleSheets.defaultRecord.provider(12)
     let layoutContext = TextLayoutContext(styleSheet)
     layoutContext.beginEditing()
     _ = node.performLayout(layoutContext, fromScratch: true)

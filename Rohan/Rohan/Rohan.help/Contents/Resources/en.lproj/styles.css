@@ -91,7 +91,6 @@ table tr:hover {
 /* Monospace first column for parameters/keys */
 table td:first-child {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  color: #d63384;
 }
 
 /* Right-align for numeric columns */

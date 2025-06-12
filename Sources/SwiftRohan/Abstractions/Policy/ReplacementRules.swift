@@ -43,9 +43,10 @@ public enum ReplacementRules {
       .init("‴'", CommandBody("⁗", .mathText)),  // U+2034' -> U+2057
     ])
 
-    // miscellaneous (5)
+    // miscellaneous (6)
     results.append(contentsOf: [
       .init("...", CommandBody.fromNamedSymbol("ldots")!),
+      spaceTriggered("cdots", CommandBody.fromNamedSymbol("cdots")!),
       spaceTriggered(
         "mod", CommandBody.from(MathExpression.bmod, preview: .string("mod"))),
       spaceTriggered("frac", Snippets.fraction),
@@ -86,7 +87,7 @@ public enum ReplacementRules {
       spaceTriggered("oint", CommandBody.fromNamedSymbol("oint")!),
     ])
 
-    // greek letters (no more than 4 chars; total: 29)
+    // greek letters (no more than 5 chars; total: 31)
     results.append(contentsOf: [
       spaceTriggered("alpha", CommandBody.fromNamedSymbol("alpha")!),
       spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
@@ -106,6 +107,7 @@ public enum ReplacementRules {
       spaceTriggered("sigma", CommandBody.fromNamedSymbol("sigma")!),
       spaceTriggered("tau", CommandBody.fromNamedSymbol("tau")!),
       spaceTriggered("theta", CommandBody.fromNamedSymbol("theta")!),
+      spaceTriggered("varpi", CommandBody.fromNamedSymbol("varpi")!),
       spaceTriggered("xi", CommandBody.fromNamedSymbol("xi")!),
       spaceTriggered("zeta", CommandBody.fromNamedSymbol("zeta")!),
       spaceTriggered("Delta", CommandBody.fromNamedSymbol("Delta")!),
@@ -117,6 +119,9 @@ public enum ReplacementRules {
       spaceTriggered("Sigma", CommandBody.fromNamedSymbol("Sigma")!),
       spaceTriggered("Theta", CommandBody.fromNamedSymbol("Theta")!),
       spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
+      //
+      spaceTriggered("eps", CommandBody.fromNamedSymbol("epsilon")!),
+      spaceTriggered("veps", CommandBody.fromNamedSymbol("varepsilon")!),
     ])
 
     // left-right delimiters
@@ -144,6 +149,10 @@ public enum ReplacementRules {
           spaceTriggered([left, right], Snippets.leftRight(left, right)!)
         }
       do {
+        let langle = ExtendedChar.symbol(.lookup("langle")!)
+        let rangle = ExtendedChar.symbol(.lookup("rangle")!)
+        rules.append(spaceTriggered("<>", Snippets.leftRight(langle, rangle)!))
+
         let lvert = ExtendedChar.symbol(.lookup("lvert")!)
         let rvert = ExtendedChar.symbol(.lookup("rvert")!)
         rules.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))
