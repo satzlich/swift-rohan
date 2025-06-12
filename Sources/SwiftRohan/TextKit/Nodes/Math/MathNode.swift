@@ -279,7 +279,3 @@ class MathNode: Node {
   }
 }
 
-// True if the rayshoot result should be relayed to the parent context.
-func shouldRelayRayshoot(_ context: LayoutContext) -> Bool {
-  context is MathReflowLayoutContext || context is TextLayoutContext
-}
