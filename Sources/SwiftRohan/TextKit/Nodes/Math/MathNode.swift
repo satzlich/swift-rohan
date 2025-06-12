@@ -274,12 +274,8 @@ class MathNode: Node {
       // is performed below.
       let result = RayshootResult(CGPoint(x: x, y: y), false)
       return LayoutUtils.relayRayshoot(
-        layoutOffset, affinity, direction, result, context)
-    }
-
-    // Helper
-    func shouldRelayRayshoot(_ context: LayoutContext) -> Bool {
-      context is MathReflowLayoutContext || context is TextLayoutContext
+        layoutOffset, .downstream, direction, result, context)
     }
   }
 }
+

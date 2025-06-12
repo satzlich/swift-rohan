@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import SatzAlgorithms
 
 /// Reflow context aligns **layout offset** with the math layout context, while
 /// aligns **coordinates** with the text layout context.
@@ -141,11 +142,115 @@ final class MathReflowLayoutContext: LayoutContext {
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     precondition(!isEditing && textOffset >= 0)
-
-    guard mathList.reflowSegmentCount > 0,
+    // check precondition of `enumerateSubrange()`.
+    let count = mathList.reflowSegmentCount
+    guard count > 0,
       layoutRange.lowerBound >= 0,
-      layoutRange.upperBound <= mathList.contentLayoutLength,
-      let indexRange = mathList.indexRange(matching: layoutRange)
+      layoutRange.upperBound <= mathList.contentLayoutLength
+    else { return false }
+
+    var cachedArray = ReflowSegmentArray(textLayoutContext, textOffset, count: count)
+    let index = cachedArray.splitPoint()
+
+    if index == count {
+      return enumerateSubrange(layoutRange, type: type, options: options, using: block)
+    }
+    let k = mathList.reflowSegments[index].offsetRange.lowerBound
+    if k <= layoutRange.lowerBound || k >= layoutRange.upperBound {
+      return enumerateSubrange(layoutRange, type: type, options: options, using: block)
+    }
+    // split the range into two parts, one before the split point and one after.
+    let beforeRange = layoutRange.lowerBound..<k
+    let afterRange = k..<layoutRange.upperBound
+    var shouldContinue = true
+    shouldContinue = enumerateSubrange(
+      beforeRange, type: type, options: options, using: block)
+    if shouldContinue {
+      shouldContinue = enumerateSubrange(
+        afterRange, type: type, options: options, using: block)
+    }
+    return shouldContinue
+  }
+
+  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
+    precondition(!isEditing && textOffset >= 0)
+    guard mathList.reflowSegmentCount > 0,
+      let result = textLayoutContext.getLayoutRange(interactingAt: point)
+    else { return nil }
+    let i = result.layoutRange.lowerBound - textOffset
+    guard i >= 0 && i < mathList.reflowSegmentCount,
+      let frame = getReflowSegmentFrame(i)
+    else { return nil }
+    let relPoint = point.relative(to: frame.frame.origin)
+    let segment = mathList.reflowSegments[i]
+    if relPoint.x < segment.upstream {
+      let offset = segment.offsetRange.lowerBound
+      return PickingResult(offset..<offset, 0, .downstream)
+    }
+    else if relPoint.x > segment.width {
+      let offset = segment.offsetRange.upperBound
+      return PickingResult(offset..<offset, 0, .upstream)
+    }
+    else {
+      let x = segment.equivalentPosition(relPoint.x)
+      return mathLayoutContext.getLayoutRange(interactingAt: relPoint.with(x: x))
+        .map { $0.with(affinity: result.affinity) }
+    }
+  }
+
+  func rayshoot(
+    from layoutOffset: Int, affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    precondition(!isEditing && textOffset >= 0)
+
+    guard mathList.reflowSegmentCount > 0 else {
+      return textLayoutContext.rayshoot(
+        from: textOffset, affinity: affinity, direction: direction)
+    }
+    let i = getAccessibleIndex(layoutOffset, affinity)
+    guard let segmentFrame = getReflowSegmentFrame(i) else { return nil }
+
+    let segment = mathList.reflowSegments[i]
+    let index = segment.fragmentIndex(layoutOffset)
+    let distance = segment.cursorDistanceThroughSegment(index)
+
+    let frame = segmentFrame.frame
+    let x = frame.origin.x + distance
+    let y = (direction == .up ? frame.minY : frame.maxY)
+    return RayshootResult(CGPoint(x: x, y: y), false)
+  }
+
+  func neighbourLineFrame(
+    from layoutOffset: Int, affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> SegmentFrame? {
+    precondition(!isEditing && textOffset >= 0)
+
+    guard mathList.reflowSegmentCount > 0 else {
+      return textLayoutContext.neighbourLineFrame(
+        from: textOffset, affinity: affinity, direction: direction)
+    }
+
+    let i = getAccessibleIndex(layoutOffset, affinity)
+    // query with affinity=downstream.
+    return textLayoutContext.neighbourLineFrame(
+      from: textOffset + i, affinity: .downstream, direction: direction)
+  }
+
+  // MARK: - Enumerate Segments
+
+  private func enumerateSubrange(
+    _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (Range<Int>?, CGRect, CGFloat) -> Bool
+  ) -> Bool {
+    precondition(!isEditing && textOffset >= 0)
+    precondition(mathList.reflowSegmentCount > 0)
+    precondition(layoutRange.lowerBound >= 0)
+    precondition(layoutRange.upperBound <= mathList.contentLayoutLength)
+
+    guard let indexRange = mathList.indexRange(matching: layoutRange)
     else { return false }
 
     let (cursorAscent, cursorDescent) =
@@ -283,70 +388,60 @@ final class MathReflowLayoutContext: LayoutContext {
 
     return shouldContinue
   }
+}
 
-  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
-    precondition(!isEditing && textOffset >= 0)
-    guard mathList.reflowSegmentCount > 0,
-      let result = textLayoutContext.getLayoutRange(interactingAt: point)
-    else { return nil }
-    let i = result.layoutRange.lowerBound - textOffset
-    guard i >= 0 && i < mathList.reflowSegmentCount,
-      let frame = getReflowSegmentFrame(i)
-    else { return nil }
-    let relPoint = point.relative(to: frame.frame.origin)
-    let segment = mathList.reflowSegments[i]
-    if relPoint.x < segment.upstream {
-      let offset = segment.offsetRange.lowerBound
-      return PickingResult(offset..<offset, 0, .downstream)
-    }
-    else if relPoint.x > segment.width {
-      let offset = segment.offsetRange.upperBound
-      return PickingResult(offset..<offset, 0, .upstream)
-    }
-    else {
-      let x = segment.equivalentPosition(relPoint.x)
-      return mathLayoutContext.getLayoutRange(interactingAt: relPoint.with(x: x))
-        .map { $0.with(affinity: result.affinity) }
-    }
+/// Array of quantised baseline positions of reflow segments.
+///
+/// Quantisation is used to place segments that have the same baseline position
+/// into the same group, so that we can find the **split point** of segments.
+/// Grouping may fail in the rare case where baselines of the same group lies around
+/// quantisation boundary.
+struct ReflowSegmentArray {
+  private let textLayoutContext: TextLayoutContext
+  /// layout offset of the first segment in the array.
+  private let textOffset: Int
+  /// the number of segments in the array.
+  internal let count: Int
+  /// Quantised baseline position of the segments.
+  private var _yQuantised: Array<Optional<Int>>
+
+  internal init(
+    _ textLayoutContext: TextLayoutContext, _ textOffset: Int, count: Int
+  ) {
+    precondition(count > 0)
+    self.textLayoutContext = textLayoutContext
+    self.textOffset = textOffset
+    self.count = count
+    self._yQuantised = Array<Optional<Int>>(repeating: nil, count: count)
   }
 
-  func rayshoot(
-    from layoutOffset: Int, affinity: SelectionAffinity,
-    direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    precondition(!isEditing && textOffset >= 0)
-
-    guard mathList.reflowSegmentCount > 0 else {
-      return textLayoutContext.rayshoot(
-        from: textOffset, affinity: affinity, direction: direction)
+  internal mutating func get(_ index: Int) -> Int {
+    precondition(index >= 0 && index < count)
+    if _yQuantised[index] == nil {
+      _yQuantised[index] = fetch(index)
     }
-    let i = getAccessibleIndex(layoutOffset, affinity)
-    guard let segmentFrame = getReflowSegmentFrame(i) else { return nil }
-
-    let segment = mathList.reflowSegments[i]
-    let index = segment.fragmentIndex(layoutOffset)
-    let distance = segment.cursorDistanceThroughSegment(index)
-
-    let frame = segmentFrame.frame
-    let x = frame.origin.x + distance
-    let y = (direction == .up ? frame.minY : frame.maxY)
-    return RayshootResult(CGPoint(x: x, y: y), false)
+    return _yQuantised[index]!
   }
 
-  func neighbourLineFrame(
-    from layoutOffset: Int, affinity: SelectionAffinity,
-    direction: TextSelectionNavigation.Direction
-  ) -> SegmentFrame? {
-    precondition(!isEditing && textOffset >= 0)
+  private func fetch(_ index: Int) -> Int {
+    precondition(index >= 0 && index < count)
+    let offset = textOffset + index
+    guard let frame = textLayoutContext.getSegmentFrame(offset, .downstream)
+    else { return 0 }
+    // quantise the basseline position.
+    return Self.quantise(frame.frame.origin.y + frame.baselinePosition)
+  }
 
-    guard mathList.reflowSegmentCount > 0 else {
-      return textLayoutContext.neighbourLineFrame(
-        from: textOffset, affinity: affinity, direction: direction)
-    }
+  /// Returns the first index whose quantised baseline position is different
+  /// from the first segment.
+  /// - Returns: the index of the first segment with different baseline position,
+  ///     or `count` if all segments have the same baseline position.
+  internal mutating func splitPoint() -> Int {
+    let first = get(0)
+    return Satz.lowerBound(0..<count, first) { self.get($0) <= $1 }
+  }
 
-    let i = getAccessibleIndex(layoutOffset, affinity)
-    // query with affinity=downstream.
-    return textLayoutContext.neighbourLineFrame(
-      from: textOffset + i, affinity: .downstream, direction: direction)
+  static func quantise(_ y: Double) -> Int {
+    Int(Foundation.floor(y / 4))
   }
 }

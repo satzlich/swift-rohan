@@ -37,7 +37,7 @@ internal class ElementNode: Node {
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    guard 0...layoutLength() ~= layoutOffset else {
+    guard 0..._layoutLength ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
 
@@ -525,7 +525,8 @@ internal class ElementNode: Node {
     let range = 0..<index
 
     if _children.isEmpty {
-      return isPlaceholderActive.intValue
+      // "0" whether placeholder is active or not.
+      return 0
     }
     else {
       assert(isPlaceholderActive == false)
@@ -533,35 +534,6 @@ internal class ElementNode: Node {
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
       return s1 + s2
     }
-  }
-
-  /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
-  /// with the layout offset of the child.
-  /// - Returns: nil if layout offset is out of bounds. Otherwise, returns (k, s)
-  ///     where k is the index of the child containing the layout offset and s is
-  ///     the layout offset of the child.
-  /// - Invariant: `consumed <= layoutOffset`.
-  private final func getChildIndex(_ layoutOffset: Int) -> (Int, consumed: Int)? {
-    let layoutLength = self.layoutLength()
-    guard layoutOffset >= 0,
-      layoutOffset < layoutLength || (isBlock && layoutOffset == layoutLength)
-    else { return nil }
-
-    // Invariant: isPlaceholderActive => _children.isEmpty
-
-    var (k, s) = (0, isPlaceholderActive.intValue)
-    // notations: LO:= layoutOffset
-    //            ell(i):= children[i].layoutLength + _newlines[i].intValue
-    //            b:= isBlock.intValue
-    // invariant: s(k) = b + sum:i∈[0,k):ell(i)
-    //            s(k) ≤ LO
-    //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
-    while k < _children.count {
-      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
-      if ss > layoutOffset { break }
-      (k, s) = (k + 1, ss)
-    }
-    return (k, s)
   }
 
   final override func enumerateTextSegments(
@@ -592,13 +564,13 @@ internal class ElementNode: Node {
     else { assertionFailure("Invalid path"); return false }
 
     if self.isPlaceholderActive {
-      assert(path.count == 1 && endPath.count == 1 && index == endIndex)
-      guard let endOffset = TreeUtils.computeLayoutOffset(for: path, self)
-      else { assertionFailure("Invalid path"); return false }
-      let offset = endOffset - 1
-      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
+      assert(path.count == 1 && endPath.count == 1)
+      assert(index == endIndex && index == 0)
+      let layoutRange = layoutOffset..<layoutOffset + 1
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
+        layoutRange, type: type, options: options,
+        // use placeholderBlock
+        using: placeholderBlock(_:_:_:))
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
@@ -606,7 +578,9 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options, using: basicBlock(_:_:_:))
+        layoutRange, type: type, options: options,
+        // use basicBlock
+        using: basicBlock(_:_:_:))
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
@@ -616,7 +590,9 @@ internal class ElementNode: Node {
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context: context,
         layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
-        type: type, options: options, using: block)
+        type: type, options: options,
+        // use block
+        using: block)
     }
   }
 
@@ -649,7 +625,7 @@ internal class ElementNode: Node {
   ) -> Bool {
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound
-      guard localOffset <= self.layoutLength() else {
+      guard localOffset <= _layoutLength else {
         trace.emplaceBack(self, .index(self.childCount))
         return true
       }
@@ -801,15 +777,24 @@ internal class ElementNode: Node {
 
     if path.count == 1 {
       assert(index <= self.childCount)
-      let newLayoutOffset = layoutOffset + localOffset
+      let newOffset = layoutOffset + localOffset
       guard
-        let result = context.rayshoot(
-          from: newLayoutOffset, affinity: affinity, direction: direction)
+        var result = context.rayshoot(
+          from: newOffset, affinity: affinity, direction: direction)
       else {
         return nil
       }
+
+      // apply horizontal shift for placeholder.
+      if isPlaceholderActive {
+        assert(localOffset == 0)
+        if let segmentFrame = context.getSegmentFrame(layoutOffset + 1, .upstream) {
+          result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
+        }
+      }
+
       return LayoutUtils.relayRayshoot(
-        newLayoutOffset, affinity, direction, result, context)
+        newOffset, affinity, direction, result, context)
     }
     else {
       guard index < self.childCount else { return nil }

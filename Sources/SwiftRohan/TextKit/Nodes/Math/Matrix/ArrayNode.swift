@@ -66,6 +66,9 @@ class ArrayNode: Node {
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
+    // for layout, only MathListLayoutContext is supported.
+    // MathReflowLayoutContext is used in a different way.
+
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
     let mathContext = context.mathContext
@@ -360,8 +363,7 @@ class ArrayNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
+    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
 
     guard path.count >= 2,
       endPath.count >= 2,
@@ -397,8 +399,7 @@ class ArrayNode: Node {
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
+    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
 
     // resolve grid index for point
     guard let point = convertToLocal(point, context, layoutOffset),
@@ -434,27 +435,30 @@ class ArrayNode: Node {
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
+    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
 
     guard path.count >= 2,
       let index: GridIndex = path.first?.gridIndex(),
       let component = getCell(index),
       let fragment = getFragment(index)
     else { return nil }
-    // query with affinity=downstream.
-    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
-    else { return nil }
+
     // create sub-context
     let newContext =
       LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
-    let componentResult = component.rayshoot(
-      from: path.dropFirst(), affinity: affinity, direction: direction,
-      context: newContext, layoutOffset: 0)
-    guard let componentResult else { return nil }
+    guard
+      let componentResult = component.rayshoot(
+        from: path.dropFirst(), affinity: affinity, direction: direction,
+        context: newContext, layoutOffset: 0)
+    else { return nil }
+
+    // query with affinity=downstream.
+    guard let superFrame = self.getSegmentFrame(context, layoutOffset, .downstream)
+    else { return nil }
+
     // if resolved, return origin-corrected result
-    guard componentResult.isResolved == false else {
+    if componentResult.isResolved {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -468,6 +472,7 @@ class ArrayNode: Node {
       return componentResult.with(position: corrected)
     }
     // otherwise, rayshoot in the node
+    assert(componentResult.isResolved == false)
 
     // convert to position relative to glyph origin of the fragment of the node
     let relPosition =
@@ -480,14 +485,28 @@ class ArrayNode: Node {
     guard let nodeResult = self.rayshoot(from: relPosition, index, in: direction)
     else { return nil }
 
-    // compute origin correction
-    let originCorrection: CGPoint =
-      superFrame.frame.origin
-      // relative to glyph origin of super frame
-      .with(yDelta: superFrame.baselinePosition)
-    // return corrected result
-    let corrected = nodeResult.position.translated(by: originCorrection)
-    return nodeResult.with(position: corrected)
+    // if resolved or not equation node, return corrected result.
+    if nodeResult.isResolved || !shouldRelayRayshoot(context) {
+      // compute origin correction
+      let originCorrection: CGPoint =
+        superFrame.frame.origin
+        // relative to glyph origin of super frame
+        .with(yDelta: superFrame.baselinePosition)
+
+      let corrected = nodeResult.position.translated(by: originCorrection)
+      return nodeResult.with(position: corrected)
+    }
+    // otherwise, return top/bottom position of the super frame.
+    else {
+      let x = nodeResult.position.x + superFrame.frame.origin.x
+      let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
+      // The resolved flag is set to false to ensure that rayshot relay
+      // is performed below.
+      let result = RayshootResult(CGPoint(x: x, y: y), false)
+      // query with "downstream" affinity.
+      return LayoutUtils.relayRayshoot(
+        layoutOffset, .downstream, direction, result, context)
+    }
   }
 
   private func getFragment(_ index: GridIndex) -> MathListLayoutFragment? {

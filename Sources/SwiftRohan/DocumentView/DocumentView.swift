@@ -121,7 +121,7 @@ public final class DocumentView: NSView {
 
     // set up view properties
     wantsLayer = true
-    clipsToBounds = true
+    clipsToBounds = false
     layer?.backgroundColor = NSColor.white.cgColor
 
     // add subviews

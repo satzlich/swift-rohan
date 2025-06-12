@@ -85,8 +85,8 @@ private final class LayoutFragmentView: RohanView {
     // expose box metrics
     self.bounds = fragment.bounds
 
-    // disable for layout fragment, otherwise there will be artifacts
-    clipsToBounds = false
+    // disable clipsToBounds for layout fragment, otherwise there will be artifacts
+    assert(clipsToBounds == false)
 
     #if DEBUG && DECORATE_LAYOUT_FRAGMENT
     // draw background and border

@@ -18,7 +18,7 @@ class RohanView: NSView {
 
   private final func setUp() {
     wantsLayer = true
-    clipsToBounds = true
+    clipsToBounds = false
   }
 
   override final var isFlipped: Bool {
