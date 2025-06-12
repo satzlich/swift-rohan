@@ -30,8 +30,10 @@ public enum ReplacementRules {
   nonisolated(unsafe) private static let mathRules: Array<ReplacementRule> = _mathRules()
 
   private static func _mathRules() -> Array<ReplacementRule> {
-    var results: Array<ReplacementRule> =
-      [
+    var results: Array<ReplacementRule> = []
+
+    do {
+      results.append(contentsOf: [
         // basics (6)
         .init("$", Snippets.inlineMath),
         .init("^", Snippets.attachMathComponent(.sup)),
@@ -40,38 +42,53 @@ public enum ReplacementRules {
         .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
         .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
         .init("‴'", CommandBody("⁗", .mathText)),  // U+2034' -> U+2057
+      ])
 
-        // frequent (3)
+      // miscellaneous (5)
+      results.append(contentsOf: [
         .init("...", CommandBody.fromNamedSymbol("ldots")!),
+        spaceTriggered(
+          "mod", CommandBody.from(MathExpression.bmod, preview: .string("mod"))),
+        spaceTriggered("frac", Snippets.fraction),
         spaceTriggered("oo", CommandBody.fromNamedSymbol("infty")!),
         spaceTriggered("xx", CommandBody.fromNamedSymbol("times")!),
+      ])
 
-        // inequalities (3)
+      // inequalities (3)
+      results.append(contentsOf: [
         .init("/=", CommandBody.fromNamedSymbol("neq")!),
         .init("<=", CommandBody.fromNamedSymbol("leq")!),
         .init(">=", CommandBody.fromNamedSymbol("geq")!),
+      ])
 
-        // arrows (5)
+      // arrows (5)
+      results.append(contentsOf: [
         .init("<-", CommandBody.fromNamedSymbol("leftarrow")!),
         .init("->", CommandBody.fromNamedSymbol("rightarrow")!),
         .init("=>", CommandBody.fromNamedSymbol("Rightarrow")!),
         .init("-->", CommandBody.fromNamedSymbol("longrightarrow")!),
         .init("==>", CommandBody.fromNamedSymbol("Longrightarrow")!),
+      ])
 
-        // set operations (5)
+      // set operations (5)
+      results.append(contentsOf: [
         spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
         spaceTriggered("cup", CommandBody.fromNamedSymbol("cup")!),
         spaceTriggered("in", CommandBody.fromNamedSymbol("in")!),
         spaceTriggered("sub", CommandBody.fromNamedSymbol("subset")!),
         spaceTriggered("sube", CommandBody.fromNamedSymbol("subseteq")!),
+      ])
 
-        // sum-like operators (4)
+      // sum-like operators (4)
+      results.append(contentsOf: [
         spaceTriggered("sum", CommandBody.fromNamedSymbol("sum")!),
         spaceTriggered("prod", CommandBody.fromNamedSymbol("prod")!),
         spaceTriggered("int", CommandBody.fromNamedSymbol("int")!),
         spaceTriggered("oint", CommandBody.fromNamedSymbol("oint")!),
+      ])
 
-        // greek letters (no more than 4 chars; total: 29)
+      // greek letters (no more than 4 chars; total: 29)
+      results.append(contentsOf: [
         spaceTriggered("alpha", CommandBody.fromNamedSymbol("alpha")!),
         spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
         spaceTriggered("chi", CommandBody.fromNamedSymbol("chi")!),
@@ -101,7 +118,8 @@ public enum ReplacementRules {
         spaceTriggered("Sigma", CommandBody.fromNamedSymbol("Sigma")!),
         spaceTriggered("Theta", CommandBody.fromNamedSymbol("Theta")!),
         spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
-      ]
+      ])
+    }
 
     // left-right delimiters
     do {
@@ -165,11 +183,6 @@ public enum ReplacementRules {
         spaceTriggered($0.command, CommandBody.from($0))
       }
       results.append(contentsOf: rules)
-    }
-    do {
-      let bmod = spaceTriggered(
-        "mod", CommandBody.from(MathExpression.bmod, preview: .string("mod")))
-      results.append(bmod)
     }
 
     return results

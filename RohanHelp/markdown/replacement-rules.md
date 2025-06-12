@@ -42,14 +42,15 @@ The following rules are applied when the cursor is in math area:
 |   `'''` | ‴ (triple prime)    | $‴$      |
 |  `''''` | ⁗ (quadruple prime) | $⁗$      |
 
-### Miscellaneous (4)
+### Miscellaneous (5)
 
-| Pattern | Replacement | Look           | Note                          |
-| ------: | :---------- | :------------- | :---------------------------- |
-|   `...` | `\ldots`    | $\ldots$       |                               |
-|   `oo␣` | `\infty`    | $\infty$       |                               |
-|   `xx␣` | `\times`    | $\times$       |                               |
-|  `mod␣` | `\bmod`     | $\mathrm{mod}$ | `\bmod` is a binary operator. |
+| Pattern | Replacement   | Look           | Note                          |
+| ------: | :------------ | :------------- | :---------------------------- |
+|   `...` | `\ldots`      | $\ldots$       |                               |
+| `frac␣` | `\frac{⬚}{⬚}` | $\frac{⬚}{⬚}$  |                               |
+|   `oo␣` | `\infty`      | $\infty$       |                               |
+|   `xx␣` | `\times`      | $\times$       |                               |
+|  `mod␣` | `\bmod`       | $\mathrm{mod}$ | `\bmod` is a binary operator. |
 
 ### Inequalities (3)
 
