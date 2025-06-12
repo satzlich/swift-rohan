@@ -43,9 +43,10 @@ public enum ReplacementRules {
       .init("‴'", CommandBody("⁗", .mathText)),  // U+2034' -> U+2057
     ])
 
-    // miscellaneous (5)
+    // miscellaneous (6)
     results.append(contentsOf: [
       .init("...", CommandBody.fromNamedSymbol("ldots")!),
+      spaceTriggered("cdots", CommandBody.fromNamedSymbol("cdots")!),
       spaceTriggered(
         "mod", CommandBody.from(MathExpression.bmod, preview: .string("mod"))),
       spaceTriggered("frac", Snippets.fraction),
@@ -151,7 +152,7 @@ public enum ReplacementRules {
         let langle = ExtendedChar.symbol(.lookup("langle")!)
         let rangle = ExtendedChar.symbol(.lookup("rangle")!)
         rules.append(spaceTriggered("<>", Snippets.leftRight(langle, rangle)!))
-        
+
         let lvert = ExtendedChar.symbol(.lookup("lvert")!)
         let rvert = ExtendedChar.symbol(.lookup("rvert")!)
         rules.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))

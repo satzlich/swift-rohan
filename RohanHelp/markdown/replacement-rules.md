@@ -44,13 +44,14 @@ The following rules are applied when the cursor is in math area:
 
 ### Miscellaneous
 
-|  \# | Pattern | Replacement   | Look           | Note                          |
-| --: | ------: | :------------ | :------------- | :---------------------------- |
-|   1 |   `...` | `\ldots`      | $\ldots$       |                               |
-|   2 | `frac␣` | `\frac{⬚}{⬚}` | $\frac{⬚}{⬚}$  |                               |
-|   3 |   `oo␣` | `\infty`      | $\infty$       |                               |
-|   4 |   `xx␣` | `\times`      | $\times$       |                               |
-|   5 |  `mod␣` | `\bmod`       | $\mathrm{mod}$ | `\bmod` is a binary operator. |
+|  \# |  Pattern | Replacement   | Look           | Note                          |
+| --: | -------: | :------------ | :------------- | :---------------------------- |
+|   1 |    `...` | `\ldots`      | $\ldots$       |                               |
+|   2 | `cdots␣` | `\cdots`      | $\cdots$       |                               |
+|   3 |  `frac␣` | `\frac{⬚}{⬚}` | $\frac{⬚}{⬚}$  |                               |
+|   4 |    `oo␣` | `\infty`      | $\infty$       |                               |
+|   5 |    `xx␣` | `\times`      | $\times$       |                               |
+|   6 |   `mod␣` | `\bmod`       | $\mathrm{mod}$ | `\bmod` is a binary operator. |
 
 ### Inequalities
 
