@@ -131,7 +131,6 @@ public enum FontLoader {
   ]
 
   private static let Libertinus: Array<String> = [
-    "LibertinusKeyboard-Regular.otf",
     "LibertinusMath-Regular.otf",
     "LibertinusMono-Regular.otf",
     "LibertinusSans-Bold.otf",
@@ -141,15 +140,13 @@ public enum FontLoader {
     "LibertinusSerif-BoldItalic.otf",
     "LibertinusSerif-Italic.otf",
     "LibertinusSerif-Regular.otf",
-    "LibertinusSerif-Semibold.otf",
-    "LibertinusSerif-SemiboldItalic.otf",
-    "LibertinusSerifDisplay-Regular.otf",
-    "LibertinusSerifInitials-Regular.otf",
   ]
 
   private static let Noto: Array<String> = [
-    "NotoSans-Italic-VariableFont_wdth,wght.ttf",
-    "NotoSans-VariableFont_wdth,wght.ttf",
+    "NotoSans-Bold.ttf",
+    "NotoSans-BoldItalic.ttf",
+    "NotoSans-Italic.ttf",
+    "NotoSans-Regular.ttf",
     "NotoSerif-Bold.ttf",
     "NotoSerif-BoldItalic.ttf",
     "NotoSerif-Italic.ttf",
