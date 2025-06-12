@@ -100,13 +100,13 @@ Left and right delimiters can be combined to create $12\times 12$ different pair
 
 In addition, the following patterns can also be used to create left and right delimiters:
 
-|  \# |                                Pattern | Replacement                     | Look                       |
-| --: | -------------------------------------: | :------------------------------ | :------------------------- |
-|   1 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert` | $\left\lvert⬚\right\rvert$ |
-|   2 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert` | $\left\lVert⬚\right\rVert$ |
+|  \# |                                Pattern | Replacement                      | Look                           |
+| --: | -------------------------------------: | :------------------------------- | :----------------------------- |
+|   1 |                                  `<>␣` | `\left\langle     \right\rangle` | $\left\langle ⬚ \right\rangle$ |
+|   2 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert`  | $\left\lvert ⬚ \right\rvert$   |
+|   3 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert`  | $\left\lVert ⬚ \right\rVert$   |
 
-Furthermore, code snippets `\norm`, `\floor`, and `\ceil` can be used to create norm $\left\lVert⬚\right\rVert$,
-floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ delimiters respectively.
+See also [Code Snippets](code-snippets.html) section for code snippets that can be used to create left and right delimiters.
 
 ### Set operations
 
@@ -129,7 +129,7 @@ floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ d
 
 ### Greek letters
 
-Greek letters each with name of length 5 or less.
+Greek letters with names of five or fewer characters can be entered directly.
 
 |  \# |  Pattern | Replacement | Look     |
 | --: | -------: | :---------- | :------- |
@@ -164,7 +164,7 @@ Greek letters each with name of length 5 or less.
 |  29 | `Theta␣` | `\Theta`    | $\Theta$ |
 |  30 |    `Xi␣` | `\Xi`       | $\Xi$    |
 
-For epsilon, we give shortcuts for both the normal and variant forms.
+For epsilon, we provide shortcuts for both the standard and variant forms.
 
 |  \# | Pattern | Replacement   | Look          |
 | --: | ------: | :------------ | :------------ |

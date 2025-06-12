@@ -148,6 +148,10 @@ public enum ReplacementRules {
           spaceTriggered([left, right], Snippets.leftRight(left, right)!)
         }
       do {
+        let langle = ExtendedChar.symbol(.lookup("langle")!)
+        let rangle = ExtendedChar.symbol(.lookup("rangle")!)
+        rules.append(spaceTriggered("<>", Snippets.leftRight(langle, rangle)!))
+        
         let lvert = ExtendedChar.symbol(.lookup("lvert")!)
         let rvert = ExtendedChar.symbol(.lookup("rvert")!)
         rules.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))
