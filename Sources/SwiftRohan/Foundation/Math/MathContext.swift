@@ -57,6 +57,8 @@ struct MathContext {
 }
 
 extension MathUtils {
+  internal static let fallbackMathFont: String = "STIX Two Math"
+  internal static let cascadeMathFont: String = "Concrete Math"
 
   static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
   {
@@ -74,10 +76,12 @@ extension MathUtils {
   static func fallbackMathContext(for mathContext: MathContext) -> MathContext {
     let textSize = FontSize(mathContext.getFontSize(for: .text))
     let key = MathContextKey(
-      textSize: textSize, mathFont: "STIX Two Math", mathStyle: mathContext.mathStyle,
+      textSize: textSize, mathFont: fallbackMathFont, mathStyle: mathContext.mathStyle,
       cramped: mathContext.cramped, textColor: mathContext.textColor)
     return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
+
+  // MARK: - Implementation
 
   private static func createMathContext(for key: MathContextKey) -> MathContext {
     let textSize = key.textSize.floatValue
@@ -86,7 +90,7 @@ extension MathUtils {
     guard
       let mathContext = MathContext(mathFont, key.mathStyle, key.cramped, key.textColor)
     else {
-      let fallback = Font.createWithName("STIX Two Math", textSize, isFlipped: true)
+      let fallback = Font.createWithName(fallbackMathFont, textSize, isFlipped: true)
       return MathContext(fallback, key.mathStyle, key.cramped, key.textColor)!
     }
     return mathContext
