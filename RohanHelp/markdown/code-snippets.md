@@ -5,18 +5,17 @@ css: styles.css
 
 Code snippets are expanded in place as you type, allowing you to quickly insert complex elements without needing to remember their exact syntax. Below is a list of available code snippets and their expansions.
 
-| Mnemonic         | Expansion                     | Look                          |
-| :--------------- | :---------------------------- | :---------------------------- |
-| `subscript`      | `{⬚}_{⬚}`                     | $⬚_⬚$                         |
-| `superscript`    | `{⬚}^{⬚}`                     | $⬚^⬚$                         |
-| `subsuperscript` | `{⬚}_{⬚}^{⬚}`                 | $⬚_⬚^⬚$                       |
-| `lrsubscript`    | `{}_{⬚}{⬚}_{⬚}`               | ${}_⬚ ⬚_⬚$                    |
-| `root`           | `\sqrt[⬚]{⬚}`                 | $\sqrt[⬚]{⬚}$                 |
-| `abs`            | `\left\lvert ⬚\right\rvert`   | $\left\lvert ⬚\right\rvert$   |
-| `ceil`           | `\left\lceil ⬚\right\rceil`   | $\left\lceil ⬚\right\rceil$   |
-| `floor`          | `\left\lfloor ⬚\right\rfloor` | $\left\lfloor ⬚\right\rfloor$ |
-| `norm`           | `\left\lVert ⬚\right\rVert`   | $\left\lVert ⬚\right\rVert$   |
-
+|  \# | Mnemonic         | Expansion                     | Look                          |
+| --: | :--------------- | :---------------------------- | :---------------------------- |
+|   1 | `subscript`      | `{⬚}_{⬚}`                     | $⬚_⬚$                         |
+|   2 | `superscript`    | `{⬚}^{⬚}`                     | $⬚^⬚$                         |
+|   3 | `subsuperscript` | `{⬚}_{⬚}^{⬚}`                 | $⬚_⬚^⬚$                       |
+|   4 | `lrsubscript`    | `{}_{⬚}{⬚}_{⬚}`               | ${}_⬚ ⬚_⬚$                    |
+|   5 | `root`           | `\sqrt[⬚]{⬚}`                 | $\sqrt[⬚]{⬚}$                 |
+|   6 | `abs`            | `\left\lvert  ⬚\right\rvert`   | $\left\lvert ⬚\right\rvert$   |
+|   7 | `ceil`           | `\left\lceil  ⬚\right\rceil`   | $\left\lceil ⬚\right\rceil$   |
+|   8 | `floor`          | `\left\lfloor ⬚\right\rfloor` | $\left\lfloor ⬚\right\rfloor$ |
+|   9 | `norm`           | `\left\lVert  ⬚\right\rVert`   | $\left\lVert ⬚\right\rVert$   |
 
 ## Stability of Code Snippets
 
