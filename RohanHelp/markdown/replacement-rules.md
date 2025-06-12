@@ -151,17 +151,25 @@ Greek letters each with name of length 5 or less.
 |  16 | `sigma␣` | `\sigma`    | $\sigma$ |
 |  17 |   `tau␣` | `\tau`      | $\tau$   |
 |  18 | `theta␣` | `\theta`    | $\theta$ |
-|  19 |    `xi␣` | `\xi`       | $\xi$    |
-|  20 |  `zeta␣` | `\zeta`     | $\zeta$  |
-|  21 | `Delta␣` | `\Delta`    | $\Delta$ |
-|  22 | `Gamma␣` | `\Gamma`    | $\Gamma$ |
-|  23 | `Omega␣` | `\Omega`    | $\Omega$ |
-|  24 |   `Phi␣` | `\Phi`      | $\Phi$   |
-|  25 |    `Pi␣` | `\Pi`       | $\Pi$    |
-|  26 |   `Psi␣` | `\Psi`      | $\Psi$   |
-|  27 | `Sigma␣` | `\Sigma`    | $\Sigma$ |
-|  28 | `Theta␣` | `\Theta`    | $\Theta$ |
-|  29 |    `Xi␣` | `\Xi`       | $\Xi$    |
+|  19 | `varpi␣` | `\varpi`    | $\varpi$ |
+|  20 |    `xi␣` | `\xi`       | $\xi$    |
+|  21 |  `zeta␣` | `\zeta`     | $\zeta$  |
+|  22 | `Delta␣` | `\Delta`    | $\Delta$ |
+|  23 | `Gamma␣` | `\Gamma`    | $\Gamma$ |
+|  24 | `Omega␣` | `\Omega`    | $\Omega$ |
+|  25 |   `Phi␣` | `\Phi`      | $\Phi$   |
+|  26 |    `Pi␣` | `\Pi`       | $\Pi$    |
+|  27 |   `Psi␣` | `\Psi`      | $\Psi$   |
+|  28 | `Sigma␣` | `\Sigma`    | $\Sigma$ |
+|  29 | `Theta␣` | `\Theta`    | $\Theta$ |
+|  30 |    `Xi␣` | `\Xi`       | $\Xi$    |
+
+For epsilon, we give shortcuts for both the normal and variant forms.
+
+|  \# | Pattern | Replacement   | Look          |
+| --: | ------: | :------------ | :------------ |
+|  31 |  `eps␣` | `\epsilon`    | $\epsilon$    |
+|  32 | `veps␣` | `\varepsilon` | $\varepsilon$ |
 
 ### Styled letters
 

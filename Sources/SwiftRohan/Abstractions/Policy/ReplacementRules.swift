@@ -86,7 +86,7 @@ public enum ReplacementRules {
       spaceTriggered("oint", CommandBody.fromNamedSymbol("oint")!),
     ])
 
-    // greek letters (no more than 4 chars; total: 29)
+    // greek letters (no more than 5 chars; total: 31)
     results.append(contentsOf: [
       spaceTriggered("alpha", CommandBody.fromNamedSymbol("alpha")!),
       spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
@@ -106,6 +106,7 @@ public enum ReplacementRules {
       spaceTriggered("sigma", CommandBody.fromNamedSymbol("sigma")!),
       spaceTriggered("tau", CommandBody.fromNamedSymbol("tau")!),
       spaceTriggered("theta", CommandBody.fromNamedSymbol("theta")!),
+      spaceTriggered("varpi", CommandBody.fromNamedSymbol("varpi")!),
       spaceTriggered("xi", CommandBody.fromNamedSymbol("xi")!),
       spaceTriggered("zeta", CommandBody.fromNamedSymbol("zeta")!),
       spaceTriggered("Delta", CommandBody.fromNamedSymbol("Delta")!),
@@ -117,6 +118,9 @@ public enum ReplacementRules {
       spaceTriggered("Sigma", CommandBody.fromNamedSymbol("Sigma")!),
       spaceTriggered("Theta", CommandBody.fromNamedSymbol("Theta")!),
       spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
+      //
+      spaceTriggered("eps", CommandBody.fromNamedSymbol("epsilon")!),
+      spaceTriggered("veps", CommandBody.fromNamedSymbol("varepsilon")!),
     ])
 
     // left-right delimiters
