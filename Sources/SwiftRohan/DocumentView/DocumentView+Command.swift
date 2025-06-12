@@ -47,7 +47,8 @@ extension DocumentView {
     case .sub, .sup:
       // obtain the object to apply the command
       guard
-        let (object, location) = documentManager.upstreamObject(from: range.location)
+        let (object, location) =
+          documentManager.objectAt(range.location, direction: .backward)
       else {
         return
       }
