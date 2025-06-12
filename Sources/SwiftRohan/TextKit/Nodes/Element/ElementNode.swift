@@ -291,8 +291,7 @@ internal class ElementNode: Node {
       return 0
     }
 
-    let isLastDirty = _children.last!.isDirty
-
+    var dirtyNodes: Set<Int> = []
     var sum = 0
     var i = _children.count - 1
 
@@ -316,6 +315,7 @@ internal class ElementNode: Node {
 
       // process dirty
       if i >= 0 {
+        dirtyNodes.insert(i)
         if _newlines[i] {
           context.skipBackwards(1)
           sum += 1
@@ -325,12 +325,8 @@ internal class ElementNode: Node {
       }
     }
 
-    // workaround for text alignment issue:
-    //  the last paragraph with no text occasionally use the alignment of the
-    //  previous paragraph.
-    if isLastDirty && isParagraphContainer && _newlines.last == true {
-      let end = context.layoutCursor + sum
-      context.addParagraphStyle(self, end - 1..<end)
+    if self.isParagraphContainer {
+      refreshParagraphStyle(context, { dirtyNodes.contains($0) })
     }
 
     return sum

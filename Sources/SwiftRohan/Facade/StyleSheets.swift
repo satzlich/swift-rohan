@@ -15,28 +15,20 @@ public enum StyleSheets {
       self.provider = provider
     }
 
-    public static var defaultValue: Record { latinModern }
+    public static var defaultValue: Record { concrete }
 
-    internal static var latinModern: Record {
-      return .init("Latin Modern", StyleSheets.latinModern)
-    }
+    static var concrete: Record { .init("Concrete", StyleSheets.concrete) }
+    static var latinModern: Record { .init("Latin Modern", StyleSheets.latinModern) }
+    static var libertinus: Record { .init("Libertinus", StyleSheets.libertinus) }
+    static var noto: Record { .init("Noto", StyleSheets.noto) }
+    static var stixTwo: Record { .init("STIX Two", StyleSheets.stixTwo) }
 
-    internal static var libertinus: Record {
-      return .init("Libertinus", StyleSheets.libertinus)
-    }
-
-    internal static var stixTwo: Record {
-      return .init("STIX Two", StyleSheets.stixTwo)
+    static var allCases: Array<Record> {
+      [concrete, latinModern, libertinus, noto, stixTwo]
     }
   }
 
-  public static let allCases: Array<Record> = [
-    .init("Concrete", concrete),
-    .latinModern,
-    .libertinus,
-    .init("Noto", noto),
-    .stixTwo,
-  ]
+  public static let allCases: Array<Record> = Record.allCases
 
   public static let textSizes: Array<FontSize> = [
     .init(10),
