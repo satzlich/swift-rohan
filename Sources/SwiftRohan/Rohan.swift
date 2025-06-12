@@ -89,9 +89,6 @@ extension Rohan {
   }
 }
 
-typealias RhString = BigString
-typealias RhSubstring = BigSubstring
-
 /// Returns the duplicates in the given sequence of strings.
 internal func findDuplicates<T: Hashable & Equatable, S: Sequence<T>>(
   in sequences: S

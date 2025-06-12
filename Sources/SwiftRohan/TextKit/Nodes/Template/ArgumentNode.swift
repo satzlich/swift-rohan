@@ -204,7 +204,7 @@ final class ArgumentNode: Node {
   /// Insert string at given location.
   /// - Returns: range of the inserted content.
   func insertString(
-    _ string: RhString, at location: TextLocationSlice
+    _ string: BigString, at location: TextLocationSlice
   ) throws -> EditResult<RhTextRange> {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {

@@ -48,7 +48,7 @@ final class TextNode: Node {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    let string = try container.decode(RhString.self, forKey: .string)
+    let string = try container.decode(BigString.self, forKey: .string)
     guard Self.validate(string: string) else {
       throw DecodingError.dataCorruptedError(
         forKey: .string, in: container, debugDescription: "Invalid text string.")
@@ -85,13 +85,13 @@ final class TextNode: Node {
 
   // MARK: - TextNode
 
-  private let _string: RhString
+  private let _string: BigString
 
   public convenience init<S: Sequence<Character>>(_ string: S) {
-    self.init(RhString(string))
+    self.init(BigString(string))
   }
 
-  private init(_ string: RhString) {
+  private init(_ string: BigString) {
     precondition(!string.isEmpty && Self.validate(string: string))
     self._string = string
     super.init()
@@ -214,7 +214,7 @@ final class TextNode: Node {
   // MARK: - TextNode Specific
 
   final var length: Int { _string.length }
-  final var string: RhString { _string }
+  final var string: BigString { _string }
 
   func inserted<S>(_ string: S, at offset: Int) -> TextNode
   where S: Collection, S.Element == Character {
@@ -264,7 +264,7 @@ final class TextNode: Node {
     return String(_string[start..<end])
   }
 
-  func substring(for range: Range<Int>) -> RhSubstring {
+  func substring(for range: Range<Int>) -> BigSubstring {
     let substring = StringUtils.substring(of: _string, for: range)
     return substring
   }
