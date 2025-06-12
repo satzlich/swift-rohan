@@ -8,7 +8,7 @@ final class InsertionIndicatorView: RohanView {
     TextInsertionIndicator  // alternative: NSTextInsertionIndicator
 
   private let primaryIndicator: InsertionIndicator
-  private var secondaryIndicators: [InsertionIndicator]
+  private var secondaryIndicators: Array<InsertionIndicator>
 
   /// The width of the vertical indicator
   var indicatorWidth: CGFloat = 1.0 {

@@ -155,9 +155,9 @@ public final class DocumentView: NSView {
   private func _setPageConstraints(_ page: PageProperty) {
 
     // margin
-    [contentView, selectionView, insertionIndicatorView].forEach {
-      setMarginConstraints($0)
-    }
+    setMarginConstraints(contentView)
+    setMarginConstraints(selectionView)
+    setMarginConstraints(insertionIndicatorView)
 
     // width
     self.frame.size.width = page.width.ptValue
