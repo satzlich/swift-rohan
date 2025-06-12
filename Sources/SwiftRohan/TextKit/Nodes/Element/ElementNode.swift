@@ -567,7 +567,9 @@ internal class ElementNode: Node {
       assert(index == endIndex && index == 0)
       let layoutRange = layoutOffset..<layoutOffset + 1
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
+        layoutRange, type: type, options: options,
+        // use placeholderBlock
+        using: placeholderBlock(_:_:_:))
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
@@ -575,7 +577,9 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options, using: basicBlock(_:_:_:))
+        layoutRange, type: type, options: options,
+        // use basicBlock
+        using: basicBlock(_:_:_:))
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
@@ -585,7 +589,9 @@ internal class ElementNode: Node {
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context: context,
         layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
-        type: type, options: options, using: block)
+        type: type, options: options,
+        // use block
+        using: block)
     }
   }
 
