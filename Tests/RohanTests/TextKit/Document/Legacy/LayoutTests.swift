@@ -217,7 +217,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -239,7 +240,8 @@ final class LayoutTests: TextKitTestsBase {
           ])
       ])
     ]
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -331,7 +333,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -357,7 +360,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -391,7 +395,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.stixTwo(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -415,7 +420,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -439,7 +445,8 @@ final class LayoutTests: TextKitTestsBase {
           ])
       ]),
     ]
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -464,7 +471,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -491,7 +499,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -517,7 +526,8 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.newComputerModern(12))
+    let documentManager = createDocumentManager(
+      RootNode(), StyleSheets.defaultRecord.provider(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)

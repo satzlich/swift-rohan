@@ -9,7 +9,7 @@ import Testing
 struct PropertyAggregatesTests {
 
   private func coverageTest<T: PropertyAggregate>(_ type: T.Type) {
-    let stylesheet = StyleSheets.newComputerModern(12)
+    let stylesheet = StyleSheets.testingRecord.provider(12)
     _ = stylesheet.resolveDefault() as T
   }
 

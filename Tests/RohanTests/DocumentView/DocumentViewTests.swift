@@ -22,7 +22,7 @@ struct DocumentViewTests {
     }
     do {
       _ = documentView.styleSheet
-      documentView.styleSheet = StyleSheets.stixTwo(FontSize(12))
+      documentView.styleSheet = StyleSheets.defaultRecord.provider(12)
     }
     do {
       let rootNode = RootNode([

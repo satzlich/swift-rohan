@@ -8,9 +8,10 @@ import Testing
 struct StyleSheetsTests {
   @Test
   func coverage() {
-    let allCases = StyleSheets.allCases
-    _ = allCases.map { record in record.provider(12) }
+    _ = StyleSheets.allRecords.map { record in record.provider(12) }
+    _ = StyleSheets.textSizes
 
-    _ = StyleSheets.Record.defaultValue
+    _ = StyleSheets.defaultRecord
+    _ = StyleSheets.defaultTextSize
   }
 }

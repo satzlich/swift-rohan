@@ -18,6 +18,15 @@ public enum StyleSheets {
 
   public static let defaultRecord = allRecords[2]  // "New Computer Modern"
   public static let defaultTextSize = textSizes[2]  // 12pt
+  public static let testingRecord =
+    Record(
+      "Testing",
+      { textSize in
+        styleSheet(
+          for: textSize,
+          textFont: "Latin Modern Roman", mathFont: "Latin Modern Math",
+          headerFont: "Latin Modern Sans")
+      })
 
   public static let allRecords: Array<Record> =
     [
