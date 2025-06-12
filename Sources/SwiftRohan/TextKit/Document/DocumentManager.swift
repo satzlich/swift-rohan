@@ -562,13 +562,39 @@ public final class DocumentManager {
     direction: TextSelectionNavigation.Direction,
     extending: Bool
   ) -> AffineLocation? {
+
+    func isWhitespace(_ string: String) -> Bool {
+      string.count == 1 && string.first!.isWhitespace == true
+    }
+
     switch direction {
-    case .forward, .backward:
+    case .forward:
       guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
       else { return nil }
-      return direction == .forward
-        ? AffineLocation(target, .upstream)
-        : AffineLocation(target, .downstream)
+
+      if let (object, _) = self.objectAt(target, direction: .backward),
+        case let .text(string) = object,
+        isWhitespace(string)
+      {
+        return AffineLocation(target, .downstream)
+      }
+      else {
+        return AffineLocation(target, .upstream)
+      }
+
+    case .backward:
+      guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
+      else { return nil }
+
+      if let (object, _) = self.objectAt(target, direction: .forward),
+        case let .text(string) = object,
+        isWhitespace(string)
+      {
+        return AffineLocation(target, .upstream)
+      }
+      else {
+        return AffineLocation(target, .downstream)
+      }
 
     case .up, .down:
       guard
@@ -585,15 +611,18 @@ public final class DocumentManager {
         else if position.y > usageBoundsForTextContainer.height {
           return AffineLocation(documentRange.endLocation, .downstream)
         }
-        // FALL THROUGH
+        else {
+          return resolveTextLocation(with: position)
+        }
       }
       else {
         if position.y < 0 || position.y > usageBoundsForTextContainer.height {
           return location  // unchanged
         }
-        // FALL THROUGH
+        else {
+          return resolveTextLocation(with: position)
+        }
       }
-      return resolveTextLocation(with: position)
 
     default:
       assertionFailure("Invalid direction")
@@ -1021,62 +1050,6 @@ public final class DocumentManager {
       }
     }
   }
-
-//  /// Returns the object (character/non-text node) located to the left of the
-//  /// given location.
-//  /// - Returns: The object and its location if successful; otherwise, nil.
-//  internal func upstreamObject(
-//    from location: TextLocation
-//  ) -> (LocateableObject, TextLocation)? {
-//    guard var trace = Trace.from(location, rootNode)
-//    else {
-//      assertionFailure("Invalid location")
-//      return nil
-//    }
-//
-//    while true {
-//      guard let last = trace.last,
-//        let offset = last.index.index()
-//      else {
-//        assertionFailure("Invalid location")
-//        return nil
-//      }
-//      let node = last.node
-//
-//      switch node {
-//      case let node as TextNode:
-//        if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
-//          let string = node.substring(for: prevOffset..<offset)
-//          trace.moveTo(.index(prevOffset))
-//          return (LocateableObject.text(String(string)), trace.toRawLocation()!)
-//        }
-//        else {
-//          trace.truncate(to: trace.count - 1)
-//          continue
-//        }
-//
-//      case let node as GenElementNode:
-//        assert(isElementNode(node) || isArgumentNode(node))
-//        if offset > 0 {
-//          let node = node.getChild(offset - 1)
-//          if let textNode = node as? TextNode {
-//            trace.emplaceBack(textNode, .index(textNode.length))
-//            continue
-//          }
-//          else {
-//            trace.moveTo(.index(offset - 1))
-//            return (LocateableObject.nonText(node), trace.toRawLocation()!)
-//          }
-//        }
-//        else {
-//          return nil
-//        }
-//
-//      default:
-//        return nil
-//      }
-//    }
-//  }
 
   /// Normalize the given range or return the fallback range.
   private func _normaliseRange(_ range: RhTextRange) -> RhTextRange {
