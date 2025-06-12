@@ -433,7 +433,7 @@ struct ReflowSegmentArray {
   ///     or `count` if all segments have the same baseline position.
   internal mutating func splitPoint() -> Int {
     let first = get(0)
-    return Satz.lowerBound(0..<count, first) { self.get($0) < $1 }
+    return Satz.lowerBound(0..<count, first) { self.get($0) <= $1 }
   }
 
   static func quantise(_ y: Double) -> Int {
