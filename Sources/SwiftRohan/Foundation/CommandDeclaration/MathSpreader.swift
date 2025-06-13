@@ -56,7 +56,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
       xrightleftharpoons,
     ]
 
-  private static let _dictionary: [String: MathSpreader] =
+  private static let _dictionary: Dictionary<String, MathSpreader> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathSpreader? {

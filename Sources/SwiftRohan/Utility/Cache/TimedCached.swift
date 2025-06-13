@@ -3,8 +3,8 @@
 import Foundation
 
 final class TimedCache<Key: Hashable, Value> {
-  private var cacheDictionary: [Key: Value] = [:]
-  private var expirationDates: [Key: Date] = [:]
+  private var cacheDictionary: Dictionary<Key, Value> = [:]
+  private var expirationDates: Dictionary<Key, Date> = [:]
   private let expirationInterval: TimeInterval
   private let cleanupInterval: TimeInterval
   private let queue =

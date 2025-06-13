@@ -129,7 +129,7 @@ enum TestUtils {
 
   static func drawString(_ string: String, at point: CGPoint) {
     let font = NSFont(name: "Latin Modern Math", size: 5.0, isFlipped: true)
-    let attributes: [NSAttributedString.Key: Any] = [
+    let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .font: font!, .foregroundColor: NSColor.red,
     ]
     let attrString = NSAttributedString(string: string, attributes: attributes)

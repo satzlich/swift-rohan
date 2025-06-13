@@ -122,7 +122,8 @@ final class TextLayoutContext: LayoutContext {
   /// Wrap given fragment in text attachment which is further embedded in an
   /// attributed string
   private static func attributedString(
-    for fragment: any LayoutFragment, _ attributes: [NSAttributedString.Key: Any]
+    for fragment: any LayoutFragment,
+    _ attributes: Dictionary<NSAttributedString.Key, Any>
   ) -> NSAttributedString {
     let attachment = LayoutFragmentAttachment(fragment)
     if #available(macOS 15.0, *) {

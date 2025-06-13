@@ -50,7 +50,7 @@ private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewPr
   }
 
   override public func attachmentBounds(
-    for attributes: [NSAttributedString.Key: Any],
+    for attributes: Dictionary<NSAttributedString.Key, Any>,
     location: any NSTextLocation,
     textContainer: NSTextContainer?,
     proposedLineFragment: CGRect,

@@ -35,7 +35,7 @@ extension MathGenFrac {
     atop,
   ]
 
-  private static let _dictionary: [String: MathGenFrac] =
+  private static let _dictionary: Dictionary<String, MathGenFrac> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathGenFrac? {

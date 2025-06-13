@@ -12,19 +12,19 @@ enum CompositorStyle {
 
   // MARK: - Attributes
 
-  static let baseAttrs: [NSAttributedString.Key: Any] = [.font: textFont]
+  static let baseAttrs: Dictionary<NSAttributedString.Key, Any> = [.font: textFont]
 
-  static let emphAttrs: [NSAttributedString.Key: Any] =
+  static let emphAttrs: Dictionary<NSAttributedString.Key, Any> =
     [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)]
 
-  static func previewAttrs(mathMode: Bool) -> [NSAttributedString.Key: Any] {
+  static func previewAttrs(mathMode: Bool) -> Dictionary<NSAttributedString.Key, Any> {
     mathMode ? mathPreviewAttrs : previewAttrs
   }
 
-  private static let mathPreviewAttrs: [NSAttributedString.Key: Any] =
+  private static let mathPreviewAttrs: Dictionary<NSAttributedString.Key, Any> =
     [.font: mathPreviewFont(iconSize)]
 
-  private static let previewAttrs: [NSAttributedString.Key: Any] =
+  private static let previewAttrs: Dictionary<NSAttributedString.Key, Any> =
     [.font: NSFont.systemFont(ofSize: iconSize)]
 
   private static func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {

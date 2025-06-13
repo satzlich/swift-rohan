@@ -3,7 +3,7 @@
 import Foundation
 
 enum ExprSerdeUtils {
-  static let registeredExprs: [ExprType: Expr.Type] = [
+  static let registeredExprs: Dictionary<ExprType, Expr.Type> = [
     .linebreak: LinebreakExpr.self,
     .text: TextExpr.self,
     .unknown: UnknownExpr.self,

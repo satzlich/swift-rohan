@@ -79,7 +79,7 @@ extension CommandDeclaration {
     return cases
   }
 
-  private static let _dictionary: [String: CommandDeclaration] =
+  private static let _dictionary: Dictionary<String, CommandDeclaration> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> CommandDeclaration? {

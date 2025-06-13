@@ -2,7 +2,7 @@
 
 import Foundation
 
-public typealias StyleRules = [TargetSelector: PropertyDictionary]
+public typealias StyleRules = Dictionary<TargetSelector, PropertyDictionary>
 
 public final class StyleSheet: Sendable {
   private let styleRules: StyleRules

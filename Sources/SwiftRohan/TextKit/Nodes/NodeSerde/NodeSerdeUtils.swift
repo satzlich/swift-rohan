@@ -3,7 +3,7 @@
 import Foundation
 
 enum NodeSerdeUtils {
-  static let registeredNodes: [NodeType: Node.Type] = [
+  static let registeredNodes: Dictionary<NodeType, Node.Type> = [
     .linebreak: LinebreakNode.self,
     .text: TextNode.self,
     .unknown: UnknownNode.self,

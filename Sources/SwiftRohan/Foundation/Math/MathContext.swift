@@ -15,8 +15,7 @@ struct MathContext {
   var constants: MathConstantsTable { mathFont.constants }
 
   init?(_ font: Font, _ mathStyle: MathStyle, _ cramped: Bool, _ textColor: Color) {
-    guard let mathFont = _MathFont(font)
-    else { return nil }
+    guard let mathFont = _MathFont(font) else { return nil }
 
     self.mathFont = mathFont
     self.mathStyle = mathStyle

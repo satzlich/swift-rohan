@@ -5,7 +5,7 @@ import UnicodeMathClass
 
 extension MathUtils {
   // overriding table for math classes
-  static let MCLS: [UnicodeScalar: MathClass] = [
+  static let MCLS: Dictionary<UnicodeScalar, MathClass> = [
     "\u{002E}": .Normal,  // FULL STOP used as a decimal point.
     "\u{002F}": .Normal,  // SOLIDUS used as division slash.
     "\u{003A}": .Relation,  // COLON used as ratio mark. (Use \colon instead for punctuation.)
@@ -17,7 +17,7 @@ extension MathUtils {
   ]
 
   // substitution table for characters
-  static let SUBS: [Character: Character] = [
+  static let SUBS: Dictionary<Character, Character> = [
     "-": "\u{2212}",  // MINUS SIGN
     "*": "\u{2217}",  // ASTERISK OPERATOR
   ]

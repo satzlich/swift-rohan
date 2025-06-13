@@ -32,7 +32,7 @@ extension MathLimits {
     nolimits,
   ]
 
-  private static let _dictionary: [String: MathLimits] =
+  private static let _dictionary: Dictionary<String, MathLimits> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathLimits? {

@@ -13,7 +13,7 @@ public struct ReplacementEngine {
   private let charSet: Set<Character>
 
   /// char map for single character replacement
-  private let charMap: [Character: CommandBody]
+  private let charMap: Dictionary<Character, CommandBody>
 
   /// string map for prefix replacement where key is "preifx + character" **reversed**.
   private typealias StringMap = GenericTSTree<ExtendedChar, CommandBody>

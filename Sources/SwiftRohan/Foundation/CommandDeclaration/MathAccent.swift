@@ -102,7 +102,7 @@ extension MathAccent {
     .wideoverbar,
   ]
 
-  private static let _dictionary: [String: MathAccent] =
+  private static let _dictionary: Dictionary<String, MathAccent> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathAccent? {
