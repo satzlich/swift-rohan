@@ -372,7 +372,7 @@ extension DocumentView {
     case let .failure(error):
       if error.code.type == .UserError {
         if error.code == .InsertOperationRejected {
-          notifyOperationRejected()
+          notifyOperationIsRejected()
         }
       }
       else {

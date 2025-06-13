@@ -5,7 +5,7 @@ import Foundation
 
 extension DocumentView {
   /// Notify user that the operation is rejected.
-  func notifyOperationRejected() {
+  func notifyOperationIsRejected() {
     self.window?.shake()
   }
 }

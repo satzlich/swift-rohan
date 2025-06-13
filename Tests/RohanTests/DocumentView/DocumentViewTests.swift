@@ -433,6 +433,6 @@ struct DocumentViewTests {
   @Test
   func notification() {
     let documentView = DocumentView()
-    documentView.notifyOperationRejected()
+    documentView.notifyOperationIsRejected()
   }
 }

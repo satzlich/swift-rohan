@@ -67,8 +67,8 @@ final class MathStylesNode: MathNode {
 
       if isDirty {
         let oldMetrics = fragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          nucleus, fragment.nucleus, parent: context)
+        LayoutUtils
+          .reconcileMathListLayoutFragment(nucleus, fragment.nucleus, parent: context)
         if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
