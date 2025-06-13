@@ -184,7 +184,7 @@ internal class ElementNode: Node {
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point) else { return false }
 
-    let layoutRange = LayoutRange(result.layoutRange, result.fraction)
+    let layoutRange = DualViewRange(result.layoutRange, result.fraction)
     affinity = result.affinity
 
     return resolveTextLocation(
@@ -207,7 +207,7 @@ internal class ElementNode: Node {
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity,
-    layoutRange: LayoutRange
+    layoutRange: DualViewRange
   ) -> Bool {
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound

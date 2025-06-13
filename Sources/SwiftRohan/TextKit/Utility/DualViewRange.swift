@@ -2,11 +2,12 @@
 
 import Foundation
 
-/// The layout range of the fragment picked by a point in the layout context.
+/// The layout range of the fragment picked by cursor point in the layout context,
+/// maintained in two different views.
 ///
-/// The raison d'être of InteractingRange is to accommodate the use of ApplyNode.
-/// The invariant maintained by LayoutRange is involved.
-struct LayoutRange {
+/// The raison d'être of DualViewRange is to accommodate the use of ApplyNode.
+/// The invariant maintained by DualViewRange is involved.
+struct DualViewRange {
   /// layout range with respect to current node
   let localRange: Range<Int>
   /// layout range with respect to current layout context
@@ -33,17 +34,17 @@ struct LayoutRange {
   }
 
   /// Subtract consumed units from the range.
-  internal func safeSubtracting(_ consumed: Int) -> LayoutRange {
+  internal func safeSubtracting(_ consumed: Int) -> DualViewRange {
     if consumed <= localRange.lowerBound {
       let range = localRange.subtracting(consumed)
-      return LayoutRange(range, contextRange, fraction)
+      return DualViewRange(range, contextRange, fraction)
     }
     else if consumed <= localRange.upperBound {
       let delta = consumed - localRange.lowerBound
       let localLower = consumed
       let contextLower = contextRange.lowerBound + delta
       let frac = Self.fractionValue(of: fraction, localRange, localLower)
-      return LayoutRange(
+      return DualViewRange(
         localLower..<localRange.upperBound,
         contextLower..<contextRange.upperBound,
         frac.clamped(0, 1))
@@ -53,7 +54,7 @@ struct LayoutRange {
       let localLower = consumed
       let contextLower = contextRange.lowerBound + delta
       let frac = 0.0
-      return LayoutRange(localLower..<localLower, contextLower..<contextLower, frac)
+      return DualViewRange(localLower..<localLower, contextLower..<contextLower, frac)
     }
   }
 
