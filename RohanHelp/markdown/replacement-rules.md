@@ -99,13 +99,26 @@ Left and right delimiters can be combined to create $12\times 12$ different pair
 |   ⋮ |               ⋮ | ⋮                          | ⋮                          |
 | 144 | `\lVert\rVert␣` | `\left\lVert \right\rVert` | $\left\lVert⬚\right\rVert$ |
 
+Left and right delimiters can each paired with a dot (`.`) to create a one-arm delimiter pair.
+
+|  \# |    Pattern | Replacement           | Look                  |
+| --: | ---------: | :-------------------- | :-------------------- |
+|   1 |      `(.␣` | `\left(      \right.` | $\left(⬚\right.$      |
+|   2 |      `[.␣` | `\left[      \right.` | $\left[⬚\right.$      |
+|   ⋮ |          ⋮ | ⋮                     | ⋮                     |
+|  14 | `\lVert.␣` | `\left\lVert \right.` | $\left\lVert⬚\right.$ |
+|  15 |      `.)␣` | `\left.      \right)` | $\left.⬚\right)$      |
+|  16 |      `.]␣` | `\left.      \right]` | $\left.⬚\right]$      |
+|   ⋮ |          ⋮ | ⋮                     | ⋮                     |
+|  28 | `.\rVert␣` | `\left. \right\rVert` | $\left.⬚\right\rVert$ |
+
 In addition, the following patterns can also be used to create left and right delimiters:
 
 |  \# |                                Pattern | Replacement                      | Look                           |
 | --: | -------------------------------------: | :------------------------------- | :----------------------------- |
-| 145 |                                  `<>␣` | `\left\langle     \right\rangle` | $\left\langle ⬚ \right\rangle$ |
-| 146 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert`  | $\left\lvert ⬚ \right\rvert$   |
-| 147 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert`  | $\left\lVert ⬚ \right\rVert$   |
+|   1 |                                  `<>␣` | `\left\langle     \right\rangle` | $\left\langle ⬚ \right\rangle$ |
+|   2 |             <code>&#124;&#124;␣</code> | `\left\lvert      \right\rvert`  | $\left\lvert ⬚ \right\rvert$   |
+|   3 | <code>&#124;&#124;&#124;&#124;␣</code> | `\left\lVert      \right\rVert`  | $\left\lVert ⬚ \right\rVert$   |
 
 See also [Code Snippets](code-snippets.html) section for code snippets that can be used to create left and right delimiters.
 
