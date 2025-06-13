@@ -85,8 +85,9 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = TextLocation([], 0).normalised(for: rootNode)!
-    let endLocation = TextLocation([], rootNode.childCount).normalised(for: rootNode)!
+    let location = TextLocation([], 0).userSpaceNormalised(for: rootNode)!
+    let childCount = rootNode.childCount
+    let endLocation = TextLocation([], childCount).userSpaceNormalised(for: rootNode)!
     return RhTextRange(location, endLocation)!
   }
 
@@ -144,7 +145,7 @@ public final class DocumentManager {
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normaliseRange(result))
+        return .success(result.normalised(for: rootNode) ?? result)
       case .failure(let error):
         return .failure(error)
       }
@@ -193,7 +194,10 @@ public final class DocumentManager {
       }
     }
 
-    return result.map { _normaliseRange($0) }
+    return result.map { result in
+      result.normalised(for: self.rootNode)
+        ?? result  // fallback to original range if normalisation fails
+    }
   }
 
   /// Replace characters in range with string.
@@ -209,7 +213,7 @@ public final class DocumentManager {
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normaliseRange(result))
+        return .success(result.normalised(for: rootNode) ?? result)
       case let .failure(error):
         return .failure(error)
       }
@@ -227,7 +231,10 @@ public final class DocumentManager {
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { _normaliseRange($0) }
+      .map { result in
+        result.normalised(for: self.rootNode)
+          ?? result  // fallback to original range if normalisation fails
+      }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -1076,18 +1083,9 @@ public final class DocumentManager {
     }
   }
 
-  /// Normalize the given range or return the fallback range.
-  private func _normaliseRange(_ range: RhTextRange) -> RhTextRange {
-    if let normalized = range.normalised(for: rootNode) {
-      return normalized
-    }
-    else {
-      // It is a programming error if the range cannot be normalised.
-      assertionFailure("Failed to normalize range")
-      return range
-    }
-  }
-
+  /// Normalize the given location or return nil if the location is invalid.
+  /// - Postcondition: When successful, the returned location is **always equivalent**
+  ///     to the given location.
   internal func normaliseLocation(_ location: TextLocation) -> TextLocation? {
     location.normalised(for: rootNode)
   }

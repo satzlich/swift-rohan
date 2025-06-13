@@ -91,6 +91,12 @@ extension TextLocation {
     Trace.from(self, tree)?.toNormalLocation()
   }
 
+  /// Convert to user-space text location for a given tree.
+  func userSpaceNormalised(for tree: RootNode) -> TextLocation? {
+    guard var trace = Trace.from(self, tree) else { return nil }
+    return trace.toUserSpaceLocation()
+  }
+
   /// Returns the text location with the given offset.
   func with(offsetDelta: Int) -> TextLocation {
     precondition(offset + offsetDelta >= 0)

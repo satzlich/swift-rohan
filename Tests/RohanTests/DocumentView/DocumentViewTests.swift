@@ -313,6 +313,26 @@ struct DocumentViewTests {
       documentManager.textSelection = RhTextSelection(location)
     }
 
+    // select all
+    do {
+      documentView.selectAll(nil)
+      let expected =
+        "(anchor: []:0, focus: [↓1,↓0]:24, reversed: false, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+
+      documentView.moveForward(nil)
+      let expected2 = "(location: [↓1,↓0]:24, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected2)
+
+      documentView.selectAll(nil)
+      let expected3 = expected
+      #expect("\(documentManager.textSelection!)" == expected3)
+      
+      documentView.moveBackward(nil)
+      let expected4 = "(location: []:0, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected4)
+    }
+
     // linear move
     do {
       gotoLocation1()
@@ -380,7 +400,7 @@ struct DocumentViewTests {
         "(anchor: [↓1,↓0]:8, focus: [↓0,↓0]:5, reversed: true, affinity: downstream)"
       #expect("\(documentManager.textSelection!)" == expected)
     }
-    
+
     // move word-wise
     do {
       gotoLocation1()
