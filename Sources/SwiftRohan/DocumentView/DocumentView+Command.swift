@@ -89,8 +89,7 @@ extension DocumentView {
       string.count == 1
     else { return }
 
-    guard let container = documentManager.containerCategory(for: range.location)
-    else {
+    guard let container = documentManager.containerCategory(for: range.location) else {
       assertionFailure("Invalid range: \(range)")
       return
     }

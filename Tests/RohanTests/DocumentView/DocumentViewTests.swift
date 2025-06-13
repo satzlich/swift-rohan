@@ -8,6 +8,19 @@ import Testing
 
 @MainActor
 struct DocumentViewTests {
+  private static func bakedDocumentView() -> DocumentView {
+    let documentView = DocumentView()
+
+    // set up completion provider
+    let completionProvider = CompletionProvider()
+    completionProvider.addItems(CommandRecords.allCases)
+    documentView.completionProvider = completionProvider
+    // set up replacement engine
+    let replacementProvider = ReplacementProvider(ReplacementRules.allCases)
+    documentView.replacementProvider = replacementProvider
+
+    return documentView
+  }
 
   @Test
   func main() {
@@ -431,6 +444,63 @@ struct DocumentViewTests {
       let expected =
         "(anchor: [↓0,↓0]:7, focus: [↓0,↓0]:4, reversed: true, affinity: downstream)"
       #expect("\(documentManager.textSelection!)" == expected)
+    }
+  }
+
+  @Test
+  func replacementRule() {
+    // for this test case, we need the "baked" DocumentView.
+    let documentView = Self.bakedDocumentView()
+    do {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("text ..")]),
+        EquationNode(
+          .block,
+          [
+            TextNode("frac")
+          ]),
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+
+    let documentManager = documentView.documentManager
+    // trigger "..." -> "…"
+    do {
+      let location = TextLocation.parse("[↓0,↓0]:7")!
+      documentManager.textSelection = RhTextSelection(location)
+      documentView.insertText(".", replacementRange: .notFound)
+
+      let expected = """
+        root
+        ├ heading
+        │ └ text "text …"
+        └ equation
+          └ nuc
+            └ text "frac"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+    // trigger "frac " -> FractionNode
+    do {
+      let location = TextLocation.parse("[↓1,nuc,↓0]:4")!
+      documentManager.textSelection = RhTextSelection(location)
+      documentView.insertText(" ", replacementRange: .notFound)
+
+      let expected = """
+        root
+        ├ heading
+        │ └ text "text …"
+        └ equation
+          └ nuc
+            └ fraction
+              ├ num
+              └ denom
+        """
+      #expect(documentManager.prettyPrint() == expected)
+      #expect(documentManager.textSelection != nil)
+      #expect(
+        "\(documentManager.textSelection!)"
+          == "(location: [↓1,nuc,↓0,num]:0, affinity: downstream)")
     }
   }
 }
