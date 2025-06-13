@@ -199,6 +199,10 @@ internal class ElementNode: Node {
   ///       the **top-left corner** of the container. For MathListLayoutContext,
   ///       it's relative to the **top-left corner** of the math list, which is
   ///       usually different from the glyph origin.
+  ///   - context: the layout context
+  ///   - layoutOffset: the layout offset of this node in the layout context.
+  ///   - trace: the trace to append the resolved location to.
+  ///   - affinity: the selection affinity to resolve.
   /// - Returns: true if trace is modified.
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,

@@ -2,8 +2,10 @@
 
 import Foundation
 
-/// The raison d'être of LayoutRange is to accommodate the use of ApplyNode.
-/// The invariant maintained by LayoutRange is involved. Use it with discretion.
+/// The layout range of the fragment picked by a point in the layout context.
+///
+/// The raison d'être of InteractingRange is to accommodate the use of ApplyNode.
+/// The invariant maintained by LayoutRange is involved.
 struct LayoutRange {
   /// layout range with respect to current node
   let localRange: Range<Int>
