@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
-enum OneOrPair<L, R> {
+/// One or two values, with the possibility of both.
+enum MonoDuo<L, R> {
   case left(L)
   case right(R)
   case pair(L, R)
