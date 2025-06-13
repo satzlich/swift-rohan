@@ -18,12 +18,12 @@ public struct RhTextSelection: CustomStringConvertible {
   /// extent of the anchor and focus.
   let textRange: RhTextRange
 
-  init(_ location: TextLocation) {
+  init(_ location: TextLocation, affinity: SelectionAffinity) {
     anchor = location
     focus = location
     isReversed = false
     textRange = RhTextRange(location)
-    self.affinity = .downstream
+    self.affinity = affinity
   }
 
   init(_ location: AffineLocation) {
