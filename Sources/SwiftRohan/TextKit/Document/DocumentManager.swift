@@ -145,7 +145,13 @@ public final class DocumentManager {
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(result.normalised(for: rootNode) ?? result)
+        if let normalised = result.normalised(for: rootNode) {
+          return .success(normalised)
+        }
+        // if normalisation fails, return the original result
+        assertionFailure("Normalisation failed")
+        return .success(result)
+
       case .failure(let error):
         return .failure(error)
       }
@@ -169,9 +175,12 @@ public final class DocumentManager {
     }
     else {
       let result = _deleteContents(in: range)
-      guard let location_ = result.success()?.location
-      else { return .failure(result.failure()!) }
-      location = location_
+      switch result {
+      case .failure(let error):
+        return .failure(error)
+      case .success(let result):
+        location = result.location
+      }
     }
 
     // insert nodes
@@ -194,9 +203,23 @@ public final class DocumentManager {
       }
     }
 
-    return result.map { result in
-      result.normalised(for: self.rootNode)
-        ?? result  // fallback to original range if normalisation fails
+    switch result {
+    case .success(let range):
+      if let normalised = range.normalised(for: rootNode) {
+        return .success(normalised)
+      }
+      assertionFailure("Normalisation failed")
+      return .success(range)
+
+    case .paragraphInserted(let range):
+      if let normalised = range.normalised(for: rootNode) {
+        return .paragraphInserted(normalised)
+      }
+      assertionFailure("Normalisation failed")
+      return .paragraphInserted(range)
+
+    case .failure(let satzError):
+      return .failure(satzError)
     }
   }
 
@@ -213,28 +236,49 @@ public final class DocumentManager {
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(result.normalised(for: rootNode) ?? result)
+        if let normalised = result.normalised(for: rootNode) {
+          return .success(normalised)
+        }
+        assertionFailure("Normalisation failed")
+        return .success(result)
+
       case let .failure(error):
         return .failure(error)
       }
     }
     // remove range
     let location: TextLocation
-    if range.isEmpty {
-      location = range.location
+    if !range.isEmpty {
+      switch _deleteContents(in: range) {
+      case .success(let result):
+        location = result.location
+      case .failure(let error):
+        return .failure(error)
+      }
     }
     else {
-      let result = _deleteContents(in: range)
-      guard let location_ = result.success()?.location
-      else { return .failure(result.failure()!) }
-      location = location_
+      location = range.location
     }
     // perform insertion
-    return TreeUtils.insertString(string, at: location, rootNode)
-      .map { result in
-        result.normalised(for: self.rootNode)
-          ?? result  // fallback to original range if normalisation fails
+    let result = TreeUtils.insertString(string, at: location, rootNode)
+    switch result {
+    case let .success(range):
+      if let normalised = range.normalised(for: rootNode) {
+        return .success(normalised)
       }
+      assertionFailure("Normalisation failed")
+      return .success(range)
+
+    case let .paragraphInserted(range):
+      if let normalised = range.normalised(for: rootNode) {
+        return .paragraphInserted(normalised)
+      }
+      assertionFailure("Normalisation failed")
+      return .paragraphInserted(range)
+
+    case let .failure(error):
+      return .failure(error)
+    }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.

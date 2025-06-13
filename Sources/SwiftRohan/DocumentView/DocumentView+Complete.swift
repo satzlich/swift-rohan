@@ -31,14 +31,15 @@ extension DocumentView {
     // scroll to insertion point
     self.forceUpdate(scroll: true)
 
-    guard let positions = _getCompositorPositions(selection, window)
+    let location = selection.anchor
+    guard let positions = _getCompositorPositions(location, selection.affinity, window)
     else {
       // fail to get positions is not operation rejected
       return true
     }
 
     // compute completions
-    let completions = _getCompletions(for: "", location: selection.textRange.location)
+    let completions = _getCompletions(for: "", location: location)
 
     // create view controller
     let viewController = CompositorViewController()
@@ -50,7 +51,7 @@ extension DocumentView {
 
     let screen = NSScreen.main?.frame ?? .zero
 
-    if positions.normal.y - screen.height / 3 > 0 {
+    if positions.normal.y > screen.height / 3 {
       let compositorMode = CompositorMode.normal
       viewController.compositorMode = compositorMode
       windowController.showModal(at: positions.normal, mode: compositorMode)
@@ -64,14 +65,19 @@ extension DocumentView {
   }
 
   /// Compute the compositor positions for the given range.
+  /// - Returns: nil if the positions cannot be computed. The normal position is
+  ///     for display prompt window below the insertion point, and the inverted
+  ///     position is for display prompt window above the insertion point.
   private func _getCompositorPositions(
-    _ selection: RhTextSelection, _ window: NSWindow
+    _ location: TextLocation, _ affinity: SelectionAffinity, _ window: NSWindow
   ) -> (normal: CGPoint, inverted: CGPoint)? {
     let options: DocumentManager.SegmentOptions =
-      selection.affinity == .upstream ? .upstreamAffinity : []
+      affinity == .upstream ? .upstreamAffinity : []
+    let range = RhTextRange(location)
     guard
-      let segmentFrame = documentManager.insertionIndicatorFrame(
-        in: selection.textRange, type: .standard, options: options)
+      let segmentFrame =
+        documentManager.insertionIndicatorFrame(
+          in: range, type: .standard, options: options)
     else { return nil }
 
     let screen = NSScreen.main?.frame ?? .zero
@@ -94,7 +100,7 @@ extension DocumentView {
   /// Returns the completions for the given query at the given location.
   private func _getCompletions(
     for query: String, location: TextLocation
-  ) -> [CompletionItem] {
+  ) -> Array<CompletionItem> {
     guard let provider = self.completionProvider,
       let container = documentManager.containerCategory(for: location)
     else {
