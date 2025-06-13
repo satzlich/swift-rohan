@@ -32,6 +32,9 @@ struct DocumentViewTests {
       ])
       documentView.setContent(DocumentContent(rootNode))
     }
+    do {
+      documentView.forceUpdate(selection: true, scroll: true)
+    }
   }
 
   @Test

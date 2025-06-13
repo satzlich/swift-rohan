@@ -55,6 +55,8 @@ extension DocumentView {
   func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {
     precondition(selection || scroll)
 
+    guard selection || scroll else { /* no-op */ return }
+
     if selection { _pendingSelectionUpdate = true }
     if scroll { _pendingScrollUpdate = true }
 
