@@ -75,6 +75,79 @@ struct DocumentViewTests {
   }
 
   @Test
+  func deletePlus() {
+    let documentView = DocumentView()
+    do {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("HelloW")])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+    do {
+      let documentManager = documentView.documentManager
+      let location = TextLocation.parse("[↓0,↓0]:5")!
+      documentManager.textSelection = RhTextSelection(location)
+    }
+
+    do {
+      documentView.deleteBackward(nil)
+      let expected =
+        """
+        root
+        └ heading
+          └ text "HellW"
+        """
+      #expect(documentView.documentManager.prettyPrint() == expected)
+    }
+    do {
+      documentView.deleteForward(nil)
+      let expected =
+        """
+        root
+        └ heading
+          └ text "Hell"
+        """
+      #expect(documentView.documentManager.prettyPrint() == expected)
+    }
+    do {
+      documentView.deleteWordBackward(nil)
+      let expected =
+        """
+        root
+        └ heading
+        """
+      #expect(documentView.documentManager.prettyPrint() == expected)
+    }
+    do {
+      documentView.deleteBackward(nil)
+      let expected =
+        """
+        root
+        └ heading
+        """
+      #expect(documentView.documentManager.prettyPrint() == expected)
+    }
+    do {
+      documentView.deleteBackward(nil)
+      let expected =
+        """
+        root
+        └ paragraph
+        """
+      #expect(documentView.documentManager.prettyPrint() == expected)
+    }
+    do {
+      documentView.deleteForward(nil)
+      let expected =
+        """
+        root
+        └ paragraph
+        """
+      #expect(documentView.documentManager.prettyPrint() == expected)
+    }
+  }
+
+  @Test
   func notification() {
     let documentView = DocumentView()
     documentView.notifyOperationRejected()
