@@ -25,6 +25,15 @@ enum ExtendedChar: Equatable, Hashable, Comparable {
   }
 }
 
+extension ExtendedChar {
+  func toDelimiter() -> Optional<Delimiter> {
+    switch self {
+    case let .char(c): return Delimiter(c)
+    case let .symbol(symbol): return Delimiter(symbol)
+    }
+  }
+}
+
 typealias ExtendedString = Array<ExtendedChar>
 typealias ExtendedSubstring = ArraySlice<ExtendedChar>
 
