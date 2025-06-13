@@ -83,8 +83,8 @@ struct DocumentViewTests {
       ])
       documentView.setContent(DocumentContent(rootNode))
     }
+    let documentManager = documentView.documentManager
     do {
-      let documentManager = documentView.documentManager
       let location = TextLocation.parse("[↓0,↓0]:5")!
       documentManager.textSelection = RhTextSelection(location)
     }
@@ -97,7 +97,7 @@ struct DocumentViewTests {
         └ heading
           └ text "HellW"
         """
-      #expect(documentView.documentManager.prettyPrint() == expected)
+      #expect(documentManager.prettyPrint() == expected)
     }
     do {
       documentView.deleteForward(nil)
@@ -107,7 +107,7 @@ struct DocumentViewTests {
         └ heading
           └ text "Hell"
         """
-      #expect(documentView.documentManager.prettyPrint() == expected)
+      #expect(documentManager.prettyPrint() == expected)
     }
     do {
       documentView.deleteWordBackward(nil)
@@ -116,7 +116,7 @@ struct DocumentViewTests {
         root
         └ heading
         """
-      #expect(documentView.documentManager.prettyPrint() == expected)
+      #expect(documentManager.prettyPrint() == expected)
     }
     do {
       documentView.deleteBackward(nil)
@@ -125,7 +125,7 @@ struct DocumentViewTests {
         root
         └ heading
         """
-      #expect(documentView.documentManager.prettyPrint() == expected)
+      #expect(documentManager.prettyPrint() == expected)
     }
     do {
       documentView.deleteBackward(nil)
@@ -134,7 +134,7 @@ struct DocumentViewTests {
         root
         └ paragraph
         """
-      #expect(documentView.documentManager.prettyPrint() == expected)
+      #expect(documentManager.prettyPrint() == expected)
     }
     do {
       documentView.deleteForward(nil)
@@ -143,7 +143,81 @@ struct DocumentViewTests {
         root
         └ paragraph
         """
-      #expect(documentView.documentManager.prettyPrint() == expected)
+      #expect(documentManager.prettyPrint() == expected)
+    }
+  }
+
+  /// copy(), paste(), cut(), delete()
+  @Test
+  func copyPaste() {
+    let documentView = DocumentView()
+    do {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("HelloW")]),
+        ParagraphNode([TextNode("Hellorld")]),
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+    let documentManager = documentView.documentManager
+    do {
+      let range = RhTextRange.parse("[↓1,↓0]:4..<[↓1,↓0]:8")!
+      documentManager.textSelection = RhTextSelection(range)
+    }
+    do {
+      documentView.copy(nil)
+      let location = TextLocation.parse("[↓0,↓0]:6")!
+      documentManager.textSelection = RhTextSelection(location)
+      documentView.paste(nil)
+
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        └ paragraph
+          └ text "Hellorld"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+    do {
+      let range = RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!
+      documentManager.textSelection = RhTextSelection(range)
+      documentView.cut(nil)
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        └ paragraph
+          └ text "Hello"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+    do {
+      documentView.paste(nil)
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        └ paragraph
+          └ text "Hellorld"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+    do {
+      let range = RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!
+      documentManager.textSelection = RhTextSelection(range)
+      documentView.delete(nil)
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        └ paragraph
+          └ text "Hello"
+        """
+      #expect(documentManager.prettyPrint() == expected)
     }
   }
 
