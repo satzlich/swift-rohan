@@ -24,7 +24,7 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
       foregroundColor: resolved(foregroundColor).color()!)
   }
 
-  public static let allKeys: [PropertyKey] = [
+  public static let allKeys: Array<PropertyKey> = [
     font,
     size,
     stretch,

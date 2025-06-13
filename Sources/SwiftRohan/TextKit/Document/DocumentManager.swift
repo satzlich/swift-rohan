@@ -129,7 +129,7 @@ public final class DocumentManager {
     TreeUtils.containerCategory(for: location, rootNode)
   }
 
-  internal func contentCategory(of nodes: [Node]) -> ContentCategory? {
+  internal func contentCategory(of nodes: Array<Node>) -> ContentCategory? {
     TreeUtils.contentCategory(of: nodes)
   }
 
@@ -138,7 +138,7 @@ public final class DocumentManager {
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   internal func replaceContents(
-    in range: RhTextRange, with nodes: [Node]?
+    in range: RhTextRange, with nodes: Array<Node>?
   ) -> EditResult<RhTextRange> {
     guard let nodes, nodes.isEmpty == false else {
       // if node is nil or empty, just delete contents in range

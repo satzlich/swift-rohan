@@ -9,7 +9,7 @@ import Testing
 struct MutabeTextLocationTests {
   @Test
   func coverage() {
-    let indices: [RohanIndex] = [
+    let indices: Array<RohanIndex> = [
       .index(0),
       .mathIndex(.nuc),
       .index(3),

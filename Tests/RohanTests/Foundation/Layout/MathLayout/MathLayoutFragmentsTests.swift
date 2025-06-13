@@ -25,7 +25,7 @@ struct MathLayoutFragmentsTests {
 
   @Test
   func accent() {
-    var fragments: [MathLayoutFragment] = []
+    var fragments: Array<MathLayoutFragment> = []
 
     guard let accent = createAccentFragment("x", .acute, font, table, context),
       let accent2 = createAccentFragment("x", .underleftarrow, font, table, context)
@@ -86,7 +86,7 @@ struct MathLayoutFragmentsTests {
 
   @Test
   func fractions() {
-    var fragments: [MathLayoutFragment] = []
+    var fragments: Array<MathLayoutFragment> = []
 
     guard
       let fraction1 = createFractionFragment("x", "y", .frac, font, table, context),
@@ -118,7 +118,7 @@ struct MathLayoutFragmentsTests {
 
   @Test
   func glyphsAndVariants() {
-    var fragments: [MathLayoutFragment] = []
+    var fragments: Array<MathLayoutFragment> = []
 
     guard let glyph = createGlyphFragment("(", font, table)
     else {
@@ -213,7 +213,7 @@ struct MathLayoutFragmentsTests {
 
   @Test
   func radicals() {
-    var fragments: [MathLayoutFragment] = []
+    var fragments: Array<MathLayoutFragment> = []
 
     guard let radicand = createMathListFragment("x", context),
       let index = createMathListFragment("2", context)
@@ -247,7 +247,7 @@ struct MathLayoutFragmentsTests {
 
   @Test
   func underOver() {
-    var fragments: [MathLayoutFragment] = []
+    var fragments: Array<MathLayoutFragment> = []
 
     for spreader in [MathSpreader.underline, .overline, .underbrace, .overbrace] {
       let nucleus = createMathListFragment("x", context)!
@@ -300,7 +300,7 @@ struct MathLayoutFragmentsTests {
     }
 
     func create(
-      _ nucleus: String, _ attachments: [MathIndex]
+      _ nucleus: String, _ attachments: Array<MathIndex>
     ) -> MathAttachLayoutFragment? {
       guard let nucleus = createMathListFragment(nucleus, context)
       else {
@@ -335,7 +335,7 @@ struct MathLayoutFragmentsTests {
       return attach
     }
 
-    let attachments: [MathIndex] = [.lsub, .lsup, .sub, .sup]
+    let attachments: Array<MathIndex> = [.lsub, .lsup, .sub, .sup]
     let attachNodes = attachments.combinations(ofCount: 1...4).flatMap { combination in
       let attach1 = create("x", combination)
       let attach2 = create("\u{220F}", combination)
@@ -394,8 +394,8 @@ struct MathLayoutFragmentsTests {
       matrix.removeColumn(at: 1)
     }
 
-    var xs: [CGFloat] = []
-    var ys: [CGFloat] = []
+    var xs: Array<CGFloat> = []
+    var ys: Array<CGFloat> = []
 
     xs.append(contentsOf: [matrix.minX - 0.5, matrix.midX, matrix.maxX + 0.5])
     ys.append(contentsOf: [matrix.minY - 0.5, matrix.midY, matrix.maxY + 0.5])

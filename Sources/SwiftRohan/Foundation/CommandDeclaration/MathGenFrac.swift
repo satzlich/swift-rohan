@@ -24,7 +24,7 @@ struct MathGenFrac: Codable, CommandDeclarationProtocol {
 }
 
 extension MathGenFrac {
-  static let allCommands: [MathGenFrac] = [
+  static let allCommands: Array<MathGenFrac> = [
     frac,
     cfrac,
     dfrac,

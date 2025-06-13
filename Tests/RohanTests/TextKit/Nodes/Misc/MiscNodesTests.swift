@@ -7,7 +7,7 @@ import Testing
 
 struct MiscNodesTests {
 
-  static func allSamples() -> [Node] {
+  static func allSamples() -> Array<Node> {
     [
       LinebreakNode(),
       TextNode("abc"),

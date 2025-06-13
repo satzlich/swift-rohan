@@ -27,7 +27,7 @@ struct MathLimits: CommandDeclarationProtocol {
 }
 
 extension MathLimits {
-  static let allCommands: [MathLimits] = [
+  static let allCommands: Array<MathLimits> = [
     limits,
     nolimits,
   ]

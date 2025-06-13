@@ -59,14 +59,14 @@ public final class SearchEngine<Value> {
 
   public func search(
     _ query: String, _ maxResults: Int, _ enableFuzzy: Bool = true
-  ) -> [Result] {
+  ) -> Array<Result> {
     precondition(query.isEmpty == false)
 
     var quota = maxResults
     var keySet = Set<String>()
-    var results = [Result]()
+    var results = Array<Result>()
 
-    func addResults(_ phaseResults: [Element], type: MatchSpec) {
+    func addResults(_ phaseResults: Array<Element>, type: MatchSpec) {
       phaseResults.forEach { keySet.insert($0.key) }
       quota -= phaseResults.count
 
@@ -118,14 +118,14 @@ public final class SearchEngine<Value> {
   }
 
   /// Prefix match
-  private func prefixSearch(_ query: String, maxResults: Int) -> [Element] {
+  private func prefixSearch(_ query: String, maxResults: Int) -> Array<Element> {
     guard query.count >= 1 else { return [] }
     return tree.search(withPrefix: query, maxResults: maxResults)
       .compactMap { key in tree.get(key).map { (key, $0) } }
   }
 
   /// N-Gram match
-  private func nGramSearch(_ query: String, maxResults: Int) -> [Element] {
+  private func nGramSearch(_ query: String, maxResults: Int) -> Array<Element> {
     invertedFile.search(query).lazy
       .compactMap { key in self.tree.get(key).map { (key, $0) } }
       .prefix(maxResults)
@@ -133,8 +133,8 @@ public final class SearchEngine<Value> {
   }
 
   /// Subsequence match
-  private func fuzzySearch(_ query: String, maxResults: Int) -> [Element] {
-    var matches: [Element] = []
+  private func fuzzySearch(_ query: String, maxResults: Int) -> Array<Element> {
+    var matches: Array<Element> = []
     tree.enumerateKeysAndValues { key, value in
       guard query.lowercased().isSubsequence(of: key.lowercased())
       else { return true }

@@ -3,21 +3,21 @@
 public final class CompiledTemplate: Codable {
   let name: TemplateName
   var parameterCount: Int { lookup.count }
-  let body: [Expr]
-  let lookup: [VariablePaths]
+  let body: Array<Expr>
+  let lookup: Array<VariablePaths>
 
-  convenience init(_ name: String, _ body: [Expr], _ lookup: [VariablePaths] = []) {
+  convenience init(_ name: String, _ body: Array<Expr>, _ lookup: Array<VariablePaths> = []) {
     self.init(TemplateName(name), body, lookup)
   }
 
-  init(_ name: TemplateName, _ body: [Expr], _ lookup: [VariablePaths]) {
+  init(_ name: TemplateName, _ body: Array<Expr>, _ lookup: Array<VariablePaths>) {
     precondition(CompiledTemplate.validate(body: body, lookup.count))
     self.name = name
     self.body = body
     self.lookup = lookup
   }
 
-  static func validate(body: [Expr], _ parameterCount: Int) -> Bool {
+  static func validate(body: Array<Expr>, _ parameterCount: Int) -> Bool {
     /*
      Conditions to check:
      - contains no apply;
@@ -53,7 +53,7 @@ public final class CompiledTemplate: Codable {
   public required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     name = try container.decode(TemplateName.self, forKey: .name)
-    lookup = try container.decode([VariablePaths].self, forKey: .lookup)
+    lookup = try container.decode(Array<VariablePaths>.self, forKey: .lookup)
 
     var bodyContainer = try container.nestedUnkeyedContainer(forKey: .body)
     body = try ExprSerdeUtils.decodeListOfExprs(from: &bodyContainer)

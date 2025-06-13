@@ -116,6 +116,7 @@ public enum Either<L, R> {
   }
 
   /// Returns the left value
+  /// - Precondition: this is a left value.
   @inlinable
   public func unwrap_left() -> L {
     switch self {
@@ -127,6 +128,7 @@ public enum Either<L, R> {
   }
 
   /// Returns the right value
+  /// - Precondition: this is a right value.
   @inlinable
   public func unwrap_right() -> R {
     switch self {

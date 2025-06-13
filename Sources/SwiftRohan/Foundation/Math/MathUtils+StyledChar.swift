@@ -232,7 +232,7 @@ extension MathUtils {
       return "𝟋"
     }
 
-    let list: [UnicodeScalar]
+    let list: Array<UnicodeScalar>
     switch c {
     case "ϴ": list = ["𝚹", "𝛳", "𝜭", "𝝧", "𝞡", "ϴ"]
     case "∇": list = ["𝛁", "𝛻", "𝜵", "𝝯", "𝞩", "∇"]

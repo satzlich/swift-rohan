@@ -42,7 +42,7 @@ enum MathStyles: CommandDeclarationProtocol {
     }
   }
 
-  static let allCommands: [MathStyles] =
+  static let allCommands: Array<MathStyles> =
     MathStyle.allCommands.map { .mathStyle($0) }
     + MathTextStyle.allCommands.map { .mathTextStyle($0) }  // + [.inlineStyle]
 }

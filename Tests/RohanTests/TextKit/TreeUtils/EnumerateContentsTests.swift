@@ -120,7 +120,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
 
     do {  // Text vs Element
-      let locations: [TextLocation] = [
+      let locations: Array<TextLocation> = [
         // heading -> text -> 0
         TextLocation.compose("[↓0,↓0]", 0)!,
         // heading -> text -> "Hel".length
@@ -134,7 +134,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
         // heading -> text
         TextLocation.compose("[↓0]", 3)!,
       ]
-      let expectedContents: [[String]] = [
+      let expectedContents: [Array<String>] = [
         [
           """
           content
@@ -183,13 +183,13 @@ final class EnumerateContentsTests: TextKitTestsBase {
         // heading -> emphasis
         TextLocation.compose("[↓0]", 1)!,
       ]
-      let endLocations: [TextLocation] = [
+      let endLocations: Array<TextLocation> = [
         // heading -> text -> 0
         TextLocation.compose("[↓0,↓2]", 0)!,
         // heading -> text -> "!".length
         TextLocation.compose("[↓0,↓2]", "!".length)!,
       ]
-      let expectedContents: [[String]] = [
+      let expectedContents: [Array<String>] = [
         [
           """
           content
@@ -226,8 +226,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // Helper
     func testPairs(
-      _ locations: [TextLocation], _ endLocations: [TextLocation],
-      _ expectedContents: [[String]],
+      _ locations: Array<TextLocation>, _ endLocations: Array<TextLocation>,
+      _ expectedContents: [Array<String>],
       _ message: String? = nil
     ) throws {
       try self.testPairs(
@@ -283,9 +283,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // MARK: - Text vs Text
     do {
-      let locations: [TextLocation] = textLocations
-      let endLocations: [TextLocation] = endTextLocations
-      let expectedContents: [[String]] = [
+      let locations: Array<TextLocation> = textLocations
+      let endLocations: Array<TextLocation> = endTextLocations
+      let expectedContents: [Array<String>] = [
         [
           """
           content
@@ -400,9 +400,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // MARK: - Text vs Element
     do {
-      let locations: [TextLocation] = textLocations
-      let endLocations: [TextLocation] = endElemLocations
-      let expectedContents: [[String]] = [
+      let locations: Array<TextLocation> = textLocations
+      let endLocations: Array<TextLocation> = endElemLocations
+      let expectedContents: [Array<String>] = [
         [
           """
           content
@@ -508,9 +508,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // MARK: - Element vs Text
     do {
-      let locations: [TextLocation] = elemLocations
-      let endLocations: [TextLocation] = endTextLocations
-      let expectedContents: [[String]] = [
+      let locations: Array<TextLocation> = elemLocations
+      let endLocations: Array<TextLocation> = endTextLocations
+      let expectedContents: [Array<String>] = [
         [
           """
           content
@@ -613,9 +613,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // MARK: - Element vs Element
     do {
-      let locations: [TextLocation] = elemLocations
-      let endLocations: [TextLocation] = endElemLocations
-      let expectedContents: [[String]] = [
+      let locations: Array<TextLocation> = elemLocations
+      let endLocations: Array<TextLocation> = endElemLocations
+      let expectedContents: [Array<String>] = [
         [
           """
           content
@@ -709,8 +709,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // Helper
     func testPairs(
-      _ locations: [TextLocation], _ endLocations: [TextLocation],
-      _ expectedContents: [[String]],
+      _ locations: Array<TextLocation>, _ endLocations: Array<TextLocation>,
+      _ expectedContents: [Array<String>],
       _ message: String? = nil
     ) throws {
       try self.testPairs(
@@ -804,8 +804,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
   // Helper
 
   private func testPairs(
-    _ locations: [TextLocation], _ endLocations: [TextLocation],
-    _ expectedContents: [[String]],
+    _ locations: Array<TextLocation>, _ endLocations: Array<TextLocation>,
+    _ expectedContents: [Array<String>],
     _ documentManager: DocumentManager,
     _ message: String? = nil
   ) throws {

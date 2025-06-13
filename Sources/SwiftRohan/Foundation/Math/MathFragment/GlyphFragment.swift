@@ -209,7 +209,7 @@ private extension MathUtils {
     let minOverlap: Int = numericCast(minOverlap)
 
     // compute total (natural) advance and total stretch
-    func computeTotal(_ parts: [GlyphPartRecord]) -> (advance: Double, stretch: Double) {
+    func computeTotal(_ parts: Array<GlyphPartRecord>) -> (advance: Double, stretch: Double) {
       // total advance MINUS connector lengths
       var totalAdvance = 0
       // total stretchability between parts
@@ -252,8 +252,8 @@ private extension MathUtils {
     /* Determine the number of times the extenders need to be repeated as well
        as a ratio specifying how much to spread the parts apart
        (0 for maximal overlap, 1 for minimal overlap). */
-    func search(_ n: Int) -> ([GlyphPartRecord], ratio: Double, advance: Double) {
-      var parts: [GlyphPartRecord] = []
+    func search(_ n: Int) -> (Array<GlyphPartRecord>, ratio: Double, advance: Double) {
+      var parts: Array<GlyphPartRecord> = []
       var ratio = 0.0
       var totalAdvance = 0.0
       for k in 0..<n {
@@ -301,7 +301,7 @@ private extension MathUtils {
   /// of times.
   private static func generateParts(
     of assembly: GlyphAssemblyTable, repeats: Int
-  ) -> [GlyphPartRecord] {
+  ) -> Array<GlyphPartRecord> {
     assembly.parts.flatMap { part in
       let count = part.isExtender() ? repeats : 1
       return repeatElement(part, count: count)

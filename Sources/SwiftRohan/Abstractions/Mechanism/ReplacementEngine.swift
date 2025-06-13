@@ -4,7 +4,7 @@ import Algorithms
 import SatzAlgorithms
 
 public struct ReplacementEngine {
-  private let rules: [ReplacementRule]
+  private let rules: Array<ReplacementRule>
 
   /// maximum character count of all prefixes
   private let maxPrefixSize: Int

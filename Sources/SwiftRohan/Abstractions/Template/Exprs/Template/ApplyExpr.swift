@@ -5,9 +5,9 @@ final class ApplyExpr: Expr {
   override class var type: ExprType { .apply }
 
   let templateName: TemplateName
-  let arguments: [ContentExpr]
+  let arguments: Array<ContentExpr>
 
-  init(_ templateName: TemplateName, arguments: [ContentExpr]) {
+  init(_ templateName: TemplateName, arguments: Array<ContentExpr>) {
     self.templateName = templateName
     self.arguments = arguments
     super.init()
@@ -23,7 +23,7 @@ final class ApplyExpr: Expr {
     super.init()
   }
 
-  func with(arguments: [ContentExpr]) -> ApplyExpr {
+  func with(arguments: Array<ContentExpr>) -> ApplyExpr {
     ApplyExpr(templateName, arguments: arguments)
   }
 
@@ -39,7 +39,7 @@ final class ApplyExpr: Expr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     templateName = try container.decode(TemplateName.self, forKey: .templateName)
-    arguments = try container.decode([ContentExpr].self, forKey: .arguments)
+    arguments = try container.decode(Array<ContentExpr>.self, forKey: .arguments)
     try super.init(from: decoder)
   }
 

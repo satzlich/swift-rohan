@@ -97,7 +97,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 }
 
 extension MathArray {
-  static let allCommands: [MathArray] = [
+  static let allCommands: Array<MathArray> = [
     aligned,
     cases,
     gathered,

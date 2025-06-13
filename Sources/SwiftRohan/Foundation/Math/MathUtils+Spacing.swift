@@ -6,11 +6,11 @@ import UnicodeMathClass
 
 extension MathUtils {
   /// Resolve __running__ math class for fragments
-  static func resolveMathClass<S>(_ classes: S) -> [MathClass]
+  static func resolveMathClass<S>(_ classes: S) -> Array<MathClass>
   where S: BidirectionalCollection<MathClass> {
     guard !classes.isEmpty else { return [] }
 
-    var resolved = [MathClass]()
+    var resolved = Array<MathClass>()
     resolved.reserveCapacity(classes.count)
 
     var previous: MathClass?

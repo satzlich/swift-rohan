@@ -16,7 +16,7 @@ struct NodeSerdeUtilsTests {
 
   @Test
   func unknownNodes() throws {
-    let testCases: [String] = [
+    let testCases: Array<String> = [
       "null",
       "true",
       "false",
@@ -52,7 +52,7 @@ struct NodeSerdeUtilsTests {
     let json = """
       [[{"string":"a","type":"text"}],[{"string":"b","type":"text"}]]
       """
-    let decoded: [[Node]] =
+    let decoded: [Array<Node>] =
       try NodeSerdeUtils.decodeListOfListsOfNodes(from: Data(json.utf8))
 
     let encoder = JSONEncoder()

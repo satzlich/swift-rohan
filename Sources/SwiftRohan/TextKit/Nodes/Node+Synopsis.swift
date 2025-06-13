@@ -40,10 +40,10 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   private func description(of node: Node, _ name: String? = nil) -> Array<String> {
-    var result = [String]()
+    var result = Array<String>()
 
     let first: String = {
-      var fields = [String]()
+      var fields = Array<String>()
       // add node id
       if showId && !isRootNode(node) { fields.append("(\(node.id))") }
       // add node name

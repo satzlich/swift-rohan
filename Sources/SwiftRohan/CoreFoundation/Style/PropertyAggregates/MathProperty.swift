@@ -23,7 +23,7 @@ public struct MathProperty: PropertyAggregate {
     )
   }
 
-  public static let allKeys: [PropertyKey] = [
+  public static let allKeys: Array<PropertyKey> = [
     font,
     bold,
     italic,

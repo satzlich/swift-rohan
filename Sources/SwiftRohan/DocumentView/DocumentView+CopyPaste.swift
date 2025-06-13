@@ -6,7 +6,7 @@ import Foundation
 import UniformTypeIdentifiers
 
 extension DocumentView: @preconcurrency NSServicesMenuRequestor {
-  private var pasteboardManagers: [PasteboardManager] { _pasteboardManagers }
+  private var pasteboardManagers: Array<PasteboardManager> { _pasteboardManagers }
 
   @objc public func copy(_ sender: Any?) {
     let types = pasteboardManagers.map(\.type)

@@ -249,7 +249,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testMatrix() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -342,7 +342,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testLeftRight() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -369,7 +369,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testUnderOverspreader() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -404,7 +404,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testRoot() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -429,7 +429,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testMathKind() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -454,7 +454,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testMathOperator() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -480,7 +480,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testMathVariant() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -508,7 +508,7 @@ final class LayoutTests: TextKitTestsBase {
 
   @Test
   func testTextMode() {
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -567,7 +567,7 @@ final class LayoutTests: TextKitTestsBase {
   @Test
   func regress_PlaceholderBug() throws {
     // set up content
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("Newton's second law of motion: "),
         EquationNode(
@@ -595,7 +595,7 @@ final class LayoutTests: TextKitTestsBase {
   @Test
   func testApply() throws {
     // set up content
-    let content: [Node] = [
+    let content: Array<Node> = [
       ParagraphNode([
         TextNode("Newton's second law of motion: "),
         EquationNode(

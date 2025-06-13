@@ -13,5 +13,5 @@ public protocol PropertyAggregate: Sendable {
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> Self
 
-  static var allKeys: [PropertyKey] { get }
+  static var allKeys: Array<PropertyKey> { get }
 }

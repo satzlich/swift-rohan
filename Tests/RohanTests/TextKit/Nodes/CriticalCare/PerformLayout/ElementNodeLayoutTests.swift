@@ -12,7 +12,7 @@ struct ElementNodeLayoutTests {
 
   @Test
   func elementNodes_fromScratch() {
-    let elements: [ElementNode] = ElementNodeTests.allSamples()
+    let elements: Array<ElementNode> = ElementNodeTests.allSamples()
     let styleSheet = StyleSheetTests.sampleStyleSheet()
 
     for element in elements {

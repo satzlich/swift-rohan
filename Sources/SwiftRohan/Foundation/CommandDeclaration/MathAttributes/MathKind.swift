@@ -17,7 +17,7 @@ enum MathKind: String, Codable, CaseIterable, CommandDeclarationProtocol {
   var command: String { rawValue }
   var tag: CommandTag { self == .mathop ? .mathOperator : .null }
   var source: CommandSource { .preBuilt }
-  static var allCommands: [MathKind] { allCases }
+  static var allCommands: Array<MathKind> { allCases }
 }
 
 extension MathKind {

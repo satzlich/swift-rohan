@@ -5,7 +5,7 @@ import Foundation
 
 extension NSTextContentStorage {
   /// Convert text elements to attributed string
-  public func attributedString(for textElements: [NSTextElement]) -> NSAttributedString {
+  public func attributedString(for textElements: Array<NSTextElement>) -> NSAttributedString {
     let attrString = NSMutableAttributedString()
     attrString.beginEditing()
     textElements.lazy
@@ -16,7 +16,7 @@ extension NSTextContentStorage {
   }
 
   /// Convert text ranges to attributed string
-  public func attributedString(for textRanges: [NSTextRange]) -> NSAttributedString {
+  public func attributedString(for textRanges: Array<NSTextRange>) -> NSAttributedString {
     // form character ranges
     let characterRanges = textRanges.map(characterRange(for:))
     assert(textStorage != nil)

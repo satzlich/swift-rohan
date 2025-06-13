@@ -62,10 +62,10 @@ enum CommandDeclaration: CommandDeclarationProtocol {
 }
 
 extension CommandDeclaration {
-  static let allCommands: [CommandDeclaration] = _predefinedCases()
+  static let allCommands: Array<CommandDeclaration> = _predefinedCases()
 
-  private static func _predefinedCases() -> [CommandDeclaration] {
-    var cases: [CommandDeclaration] = []
+  private static func _predefinedCases() -> Array<CommandDeclaration> {
+    var cases: Array<CommandDeclaration> = []
     cases.append(contentsOf: MathAccent.allCommands.map { .mathAccent($0) })
     cases.append(contentsOf: MathArray.allCommands.map { .mathArray($0) })
     cases.append(contentsOf: MathAttributes.allCommands.map { .mathAttributes($0) })

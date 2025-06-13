@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 internal struct GridRow<Element: Codable>: Codable, Sequence {
-  private var elements: [Element]
+  private var elements: Array<Element>
 
   var isEmpty: Bool { elements.isEmpty }
   var count: Int { elements.count }
@@ -15,7 +15,7 @@ internal struct GridRow<Element: Codable>: Codable, Sequence {
     self.elements = elements
   }
 
-  func makeIterator() -> IndexingIterator<[Element]> {
+  func makeIterator() -> IndexingIterator<Array<Element>> {
     elements.makeIterator()
   }
 

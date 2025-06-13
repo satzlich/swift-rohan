@@ -6,7 +6,7 @@ enum TreeUtils {}
 
 extension TreeUtils {
   /// Obtain node at the given location specified by path from subtree.
-  static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
+  static func getNode(at path: Array<RohanIndex>, _ subtree: ElementNode) -> Node? {
     guard !path.isEmpty else { return subtree }
 
     var node: Node = subtree

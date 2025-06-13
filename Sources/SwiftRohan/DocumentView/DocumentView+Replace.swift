@@ -12,7 +12,7 @@ extension DocumentView {
   /// - Note: For internal error, assertion failure is triggered.
   @discardableResult
   internal func replaceContentsForEdit(
-    in range: RhTextRange, with nodes: [Node]?
+    in range: RhTextRange, with nodes: Array<Node>?
   ) -> EditResult<RhTextRange> {
     precondition(_isEditing)
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
@@ -44,7 +44,7 @@ extension DocumentView {
   }
 
   private func replaceContents(
-    in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
+    in range: RhTextRange, with nodes: Array<Node>?, registerUndo: Bool
   ) -> EditResult<RhTextRange> {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceContents(in: range, with: nodes)
@@ -66,7 +66,7 @@ extension DocumentView {
     // register undo action is required below
 
     // copy contents to be replaced
-    let contentsCopy: [Node]? = documentManager.mapContents(in: range, { $0.deepCopy() })
+    let contentsCopy: Array<Node>? = documentManager.mapContents(in: range, { $0.deepCopy() })
     guard let contentsCopy
     else {
       assertionFailure("contentsCopy should not be nil")
@@ -90,7 +90,7 @@ extension DocumentView {
   }
 
   private func registerUndoReplaceContents(
-    for range: RhTextRange, with nodes: [Node]?, _ undoManager: UndoManager
+    for range: RhTextRange, with nodes: Array<Node>?, _ undoManager: UndoManager
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
 

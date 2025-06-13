@@ -17,7 +17,7 @@ struct MathFragmentsTests {
 
   @Test
   func coverage() {
-    var fragments: [MathFragment] = []
+    var fragments: Array<MathFragment> = []
 
     do {
       let font = Font.createWithName("STIX Two Math", 12, isFlipped: true)
@@ -95,7 +95,7 @@ struct MathFragmentsTests {
     let font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
     let mathTable = font.copyMathTable()!
 
-    let chars: [UnicodeScalar] = ["+", "<", "f", "p", "∫", "∑"]
+    let chars: Array<UnicodeScalar> = ["+", "<", "f", "p", "∫", "∑"]
     let expected = [
       "(12, 9.34×(7.00+1.00), ic: 0.00, ac: 4.67, Vary, never)",
       "(29, 9.34×(6.67+0.67), ic: 0.00, ac: 4.67, Relation, never)",

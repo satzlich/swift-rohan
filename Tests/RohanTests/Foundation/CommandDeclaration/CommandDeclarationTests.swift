@@ -85,7 +85,7 @@ struct CommandDeclarationTests {
 
   @Test
   func mathStyles() {
-    let styles: [MathStyles] = [
+    let styles: Array<MathStyles> = [
       .mathStyle(.display),
       .mathTextStyle(.mathbb),
       .inlineStyle,

@@ -54,7 +54,7 @@ final class RohanPasteboardManager: PasteboardManager {
     guard let data = pboard.data(forType: type) else { return .failure }
     do {
       // decode nodes
-      let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
+      let nodes: Array<Node> = try NodeSerdeUtils.decodeListOfNodes(from: data)
 
       // obtain selection range
       guard let selection = textView.documentManager.textSelection?.textRange

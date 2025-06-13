@@ -9,8 +9,8 @@ extension Nano {
     let annotation: A
 
     var name: TemplateName { template.name }
-    var parameters: [Identifier] { template.parameters }
-    var body: [Expr] { template.body }
+    var parameters: Array<Identifier> { template.parameters }
+    var body: Array<Expr> { template.body }
 
     init(_ template: Template, annotation: A) {
       self.template = template

@@ -4,10 +4,10 @@ import Foundation
 import LatexParser
 
 public enum CommandRecords {
-  nonisolated(unsafe) public static let allCases: [CommandRecord] = _defaultCommands()
+  nonisolated(unsafe) public static let allCases: Array<CommandRecord> = _defaultCommands()
 
-  private static func _defaultCommands() -> [CommandRecord] {
-    var commands = [CommandRecord]()
+  private static func _defaultCommands() -> Array<CommandRecord> {
+    var commands = Array<CommandRecord>()
 
     // nodes
     commands.append(contentsOf: TextCommands.allCases)

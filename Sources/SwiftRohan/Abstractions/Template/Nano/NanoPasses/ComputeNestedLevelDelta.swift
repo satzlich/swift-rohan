@@ -3,8 +3,8 @@
 extension Nano {
   /// Compute nested level delta for each variable in the template.
   struct ComputeNestedLevelDelta: NanoPass {
-    typealias Input = [Template]
-    typealias Output = [Template]
+    typealias Input = Array<Template>
+    typealias Output = Array<Template>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(computeNestedLevelDelta(_:))

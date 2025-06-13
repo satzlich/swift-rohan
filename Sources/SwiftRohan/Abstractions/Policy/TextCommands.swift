@@ -4,7 +4,7 @@ import Foundation
 
 /// Non-symbol text commands.
 enum TextCommands {
-  static let allCases: [CommandRecord] = [
+  static let allCases: Array<CommandRecord> = [
     // sections
     .init("h1", Snippets.header(level: 1)),
     .init("h2", Snippets.header(level: 2)),

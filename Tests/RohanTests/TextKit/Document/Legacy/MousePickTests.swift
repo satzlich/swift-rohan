@@ -223,14 +223,14 @@ final class MousePickTests: TextKitTestsBase {
     let documentManager = createDocumentManager()
 
     let location0 = {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(0),  // paragraph
         .index(0),  // text
       ]
       return TextLocation(path, "The ".length)
     }()
     let location1 = {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(0),  // text
       ]

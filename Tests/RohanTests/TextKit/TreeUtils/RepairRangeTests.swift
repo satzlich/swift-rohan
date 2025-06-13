@@ -31,14 +31,14 @@ struct RepairRangeTests {
 
     do {
       // heading -> emphasis -> text
-      let path: [RohanIndex] = TextLocation.parseIndices("[↓0,↓0,↓0]")!
+      let path: Array<RohanIndex> = TextLocation.parseIndices("[↓0,↓0,↓0]")!
       #expect(validate(TextLocation(path, 1)))
       #expect(validate(TextLocation(path, "Fibonacci".count)))
       #expect(validate(TextLocation(path, "Fibonacci".count + 1)) == false)
     }
     do {
       // paragraph -> equation -> nucleus
-      let path: [RohanIndex] = TextLocation.parseIndices("[↓1,↓1,nuc]")!
+      let path: Array<RohanIndex> = TextLocation.parseIndices("[↓1,↓1,nuc]")!
       #expect(validate(TextLocation(path, 0)))
       #expect(validate(TextLocation(path, 1)))
       #expect(validate(TextLocation(path, 2)) == false)
@@ -47,7 +47,7 @@ struct RepairRangeTests {
       // invalid path
 
       // paragraph -> equation
-      let path: [RohanIndex] = TextLocation.parseIndices("[↓1,↓1]")!
+      let path: Array<RohanIndex> = TextLocation.parseIndices("[↓1,↓1]")!
       #expect(validate(TextLocation(path, 0)) == false)
       #expect(validate(TextLocation(path, 1)) == false)
     }
@@ -93,7 +93,7 @@ struct RepairRangeTests {
       // text
 
       // heading -> emphasis -> text
-      let path: [RohanIndex] = TextLocation.parseIndices("[↓0,↓0,↓0]")!
+      let path: Array<RohanIndex> = TextLocation.parseIndices("[↓0,↓0,↓0]")!
 
       // validate
       #expect(validate(TextLocation(path, 1), TextLocation(path, 3)))

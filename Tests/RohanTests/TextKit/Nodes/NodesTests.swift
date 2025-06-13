@@ -11,7 +11,7 @@ struct NodesTests {
 
   @Test
   func coverage() {
-    let nodes: [Node] = NodesTests.allSamples()
+    let nodes: Array<Node> = NodesTests.allSamples()
     let stylesheet = StyleSheetTests.sampleStyleSheet()
 
     let visitor1 = NaiveNodeVisitor()

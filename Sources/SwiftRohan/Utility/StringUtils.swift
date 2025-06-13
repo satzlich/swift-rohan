@@ -57,7 +57,7 @@ enum StringUtils {
 
   /// Convert raw string to an array of nodes with each newline (except line separator)
   /// replaced by a `LinebreakNode`. If there is only one piece, return nil.
-  static func getNodes(fromRaw string: String) -> Optional<[Node]> {
+  static func getNodes(fromRaw string: String) -> Optional<Array<Node>> {
     precondition(!string.isEmpty)
 
     let parts = string.split(omittingEmptySubsequences: false) { char in
@@ -67,7 +67,7 @@ enum StringUtils {
       return nil
     }
     else {
-      var nodes: [Node] = parts.dropLast()
+      var nodes: Array<Node> = parts.dropLast()
         .flatMap { part in
           part.isEmpty ? [LinebreakNode()] : [TextNode(part), LinebreakNode()]
         }

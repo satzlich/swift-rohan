@@ -5,7 +5,7 @@ import Foundation
 
 public final class NSTextContentStoragePatched: NSTextContentStorage {
   override public func replaceContents(
-    in range: NSTextRange, with textElements: [NSTextElement]?
+    in range: NSTextRange, with textElements: Array<NSTextElement>?
   ) {
     precondition(hasEditingTransaction)
 
@@ -38,7 +38,7 @@ public final class NSTextContentStoragePatched: NSTextContentStorage {
     // Remove duplicated selections that are result of _fixSelectionAfterChangeInCharacterRange
     for textLayoutManager in textLayoutManagers {
       let origSelections = textLayoutManager.textSelections
-      var uniqueSelections: [NSTextSelection] = []
+      var uniqueSelections: Array<NSTextSelection> = []
       uniqueSelections.reserveCapacity(origSelections.count)
 
       // Remove duplicated selections
@@ -49,10 +49,10 @@ public final class NSTextContentStoragePatched: NSTextContentStorage {
       }
 
       // Remove duplicated textRanges in selections
-      var finalSelections: [NSTextSelection] = []
+      var finalSelections: Array<NSTextSelection> = []
       finalSelections.reserveCapacity(uniqueSelections.count)
       for selection in uniqueSelections {
-        var uniqueRanges: [NSTextRange] = []
+        var uniqueRanges: Array<NSTextRange> = []
         uniqueRanges.reserveCapacity(selection.textRanges.count)
         for textRange in selection.textRanges {
           if !uniqueRanges.contains(where: { $0 == textRange }) {

@@ -5,8 +5,8 @@ import Foundation
 extension Nano {
   /// Check if the template is well-formed
   struct CheckWellFormedness: NanoPass {
-    typealias Input = [Template]
-    typealias Output = [Template]
+    typealias Input = Array<Template>
+    typealias Output = Array<Template>
 
     static func process(_ input: Input) -> PassResult<Output> {
       input.allSatisfy(isWellFormed(_:)) ? .success(input) : .failure(PassError())

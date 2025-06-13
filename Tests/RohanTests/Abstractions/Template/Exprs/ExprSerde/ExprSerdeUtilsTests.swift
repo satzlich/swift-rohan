@@ -16,7 +16,7 @@ struct ExprSerdeUtilsTests {
 
   @Test
   func unknownExprs() throws {
-    let testCases: [String] = [
+    let testCases: Array<String> = [
       "null",
       "true",
       "false",

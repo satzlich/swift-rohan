@@ -6,7 +6,7 @@ import OrderedCollections
 extension NodeUtils {
   static func applyTemplate(
     _ template: CompiledTemplate, _ arguments: Array<ElementStore>
-  ) -> (ContentNode, [ArgumentNode])? {
+  ) -> (ContentNode, Array<ArgumentNode>)? {
     precondition(template.parameterCount == arguments.count)
 
     // expand template body
@@ -16,7 +16,7 @@ extension NodeUtils {
     func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode?
     {
       precondition(!paths.isEmpty)
-      var variables: [VariableNode] = []
+      var variables: Array<VariableNode> = []
       variables.reserveCapacity(paths.count)
 
       for path in paths {
@@ -29,7 +29,7 @@ extension NodeUtils {
     }
 
     // gather argument nodes
-    var argumentNodes: [ArgumentNode] = []
+    var argumentNodes: Array<ArgumentNode> = []
     argumentNodes.reserveCapacity(template.parameterCount)
     for (i, paths) in template.lookup.enumerated() {
       guard let argumentNode = createArgumentNode(paths, i) else { return nil }
@@ -47,7 +47,7 @@ extension NodeUtils {
 
   /// Convert expressions to nodes.
   static func convertExprs<S: RangeReplaceableCollection<Node>>(
-    _ expressions: [Expr]
+    _ expressions: Array<Expr>
   ) -> S {
     let visitor = ExprToNodeVisitor()
     return S(expressions.lazy.map { $0.accept(visitor, ()) })

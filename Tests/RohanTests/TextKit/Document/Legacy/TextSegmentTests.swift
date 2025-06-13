@@ -59,7 +59,7 @@ final class TextSegmentTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
 
-    var ranges: [RhTextRange] = [
+    var ranges: Array<RhTextRange> = [
       // heading -> text -> <offset>
       RhTextRange.parse("[↓1,↓0]:0..<[↓1,↓0]:2")!,
       // heading -> equation -> nucleus -> text -> <offset>
@@ -91,13 +91,13 @@ final class TextSegmentTests: TextKitTestsBase {
       ranges.append(RhTextRange(location, end)!)
     }
 
-    let pointsAndFrames: [(CGRect, [CGRect])] =
+    let pointsAndFrames: [(CGRect, Array<CGRect>)] =
       ranges.map { Self.getIndicatorAndFrames($0, documentManager) }
 
     let points = pointsAndFrames.map { $0.0 }
     let frames = pointsAndFrames.map { $0.1 }
 
-    let expectedPoints: [String] = [
+    let expectedPoints: Array<String> = [
       "(5.00, 34.00, 0.00, 30.05)",
       "(70.66, 40.88, 0.00, 20.00)",
       "(130.42, 37.84, 0.00, 14.00)",
@@ -106,7 +106,7 @@ final class TextSegmentTests: TextKitTestsBase {
       "(194.65, 37.84, 0.00, 14.00)",
       "(81.57, 141.28, 0.00, 10.00)",
     ]
-    let expectedFrames: [String] = [
+    let expectedFrames: Array<String> = [
       "[(5.00, 34.00, 18.12, 30.05)]",
       "[(70.66, 40.88, 24.45, 20.00), (95.11, 40.88, 8.86, 20.00)]",
       "[(130.42, 37.84, 23.18, 14.00)]",
@@ -194,7 +194,7 @@ final class TextSegmentTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(rootNode)
 
-    let ranges: [RhTextRange] = [
+    let ranges: Array<RhTextRange> = [
       RhTextRange.parse("[↓1,↓3,⇒0,↓0]:1..<[↓1,↓3,⇒0,↓0]:3")!,
       // paragraph -> apply -> #0 -> apply -> #0 -> text -> <offset>
       RhTextRange.parse("[↓2,↓1,⇒0,↓0,⇒0,↓0]:1..<[↓2,↓1,⇒0,↓0,⇒0,↓0]:3")!,
@@ -205,18 +205,18 @@ final class TextSegmentTests: TextKitTestsBase {
       RhTextRange.parse("[↓4,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:1..<[↓4,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:3")!,
     ]
 
-    let pointsAndFrames: [(CGRect, [CGRect])] =
+    let pointsAndFrames: [(CGRect, Array<CGRect>)] =
       ranges.map { Self.getIndicatorAndFrames($0, documentManager) }
 
     let points = pointsAndFrames.map { $0.0 }
     let frames = pointsAndFrames.map { $0.1 }
-    let expectedPoints: [String] = [
+    let expectedPoints: Array<String> = [
       "(112.66, 52.23, 0.00, 17.00)",
       "(183.81, 86.23, 0.00, 17.00)",
       "(61.78, 130.05, 0.00, 10.00)",
       "(35.46, 159.24, 0.00, 12.00)",
     ]
-    let expectedFrames: [String] = [
+    let expectedFrames: Array<String> = [
       "[(112.66, 52.23, 10.01, 17.00), (13.17, 69.23, 10.01, 17.00)]",
       """
       [(183.81, 86.23, 12.00, 17.00),\
@@ -272,7 +272,7 @@ final class TextSegmentTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
 
-    let ranges: [RhTextRange] = [
+    let ranges: Array<RhTextRange> = [
       // heading -> <offset>
       RhTextRange.parse("[↓1]:0")!,
       // heading -> emphasis -> <offset>
@@ -289,12 +289,12 @@ final class TextSegmentTests: TextKitTestsBase {
       RhTextRange.parse("[↓6,↓1,nuc,↓2,denom]:0")!,
     ]
 
-    let pointsAndFrames: [(CGRect, [CGRect])] =
+    let pointsAndFrames: [(CGRect, Array<CGRect>)] =
       ranges.map { Self.getIndicatorAndFrames($0, documentManager) }
 
     let points = pointsAndFrames.map { $0.0 }
     let frames = pointsAndFrames.map { $0.1 }
-    let expectedPoints: [String] = [
+    let expectedPoints: Array<String> = [
       "(14.00, 29.00, 0.00, 27.00)",
       "(28.91, 79.00, 0.00, 20.00)",
       "(102.61, 122.33, 0.00, 12.55)",
@@ -303,7 +303,7 @@ final class TextSegmentTests: TextKitTestsBase {
       "(133.49, 136.49, 0.00, 8.79)",
       "(133.49, 146.37, 0.00, 8.79)",
     ]
-    let expectedFrames: [String] = [
+    let expectedFrames: Array<String> = [
       "[(14.00, 29.00, 0.00, 27.00)]",
       "[(28.91, 79.00, 0.00, 20.00)]",
       "[(102.61, 122.33, 0.00, 12.55)]",
@@ -328,7 +328,7 @@ final class TextSegmentTests: TextKitTestsBase {
   }
 
   private func outputPDF(
-    _ fileName: String, _ point: CGRect, _ frames: [CGRect],
+    _ fileName: String, _ point: CGRect, _ frames: Array<CGRect>,
     _ documentManager: DocumentManager
   ) {
     var point = point
@@ -359,8 +359,8 @@ final class TextSegmentTests: TextKitTestsBase {
 
   private static func getFrames(
     _ range: RhTextRange, _ documentManager: DocumentManager
-  ) -> [CGRect] {
-    var frames: [CGRect] = []
+  ) -> Array<CGRect> {
+    var frames: Array<CGRect> = []
     documentManager.enumerateTextSegments(in: range, type: .standard) {
       (_, segmentFrame, _) in
       frames.append(segmentFrame)
@@ -371,14 +371,14 @@ final class TextSegmentTests: TextKitTestsBase {
 
   private static func getIndicatorAndFrames(
     _ textRange: RhTextRange, _ documentManager: DocumentManager
-  ) -> (CGRect, [CGRect]) {
+  ) -> (CGRect, Array<CGRect>) {
     let location = RhTextRange(textRange.location)
     let indicator = Self.getFrames(location, documentManager).first!
     let frames = Self.getFrames(textRange, documentManager)
     return (indicator, frames)
   }
 
-  private static func formatFrames(_ frames: [CGRect]) -> String {
+  private static func formatFrames(_ frames: Array<CGRect>) -> String {
     "[" + frames.map { $0.formatted(2) }.joined(separator: ", ") + "]"
   }
 }

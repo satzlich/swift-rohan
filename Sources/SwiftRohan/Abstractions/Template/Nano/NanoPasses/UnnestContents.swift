@@ -5,8 +5,8 @@ import HashTreeCollections
 
 extension Nano {
   struct UnnestContents: NanoPass {
-    typealias Input = [Template]
-    typealias Output = [Template]
+    typealias Input = Array<Template>
+    typealias Output = Array<Template>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(UnnestContents.unnestContents(inTemplate:))
@@ -30,7 +30,7 @@ extension Nano {
     }
 
     static func unnestContents(inContent content: ContentExpr) -> ContentExpr {
-      let unnested: [Expr] =
+      let unnested: Array<Expr> =
         content.children.flatMap { expression in
           // for content, recurse and inline
           if let content = expression as? ContentExpr {

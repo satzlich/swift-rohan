@@ -41,7 +41,7 @@ class TextKitTestsBase {
 
   func testRoundTrip(
     _ range: RhTextRange,
-    _ content: [Node]?,
+    _ content: Array<Node>?,
     _ documentManager: DocumentManager,
     range1 expectedRange1: String,
     doc1 expectedDoc1: String,
@@ -86,7 +86,7 @@ class TextKitTestsBase {
   /// Copy and replace characters
   static func copyReplaceCharacters(
     in range: RhTextRange, with string: BigString, _ documentManager: DocumentManager
-  ) -> (RhTextRange, [Node]) {
+  ) -> (RhTextRange, Array<Node>) {
     let deleted = documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
     let result = documentManager.replaceCharacters(in: range, with: string)
     return result.map { range in (range, deleted) }.success()!
@@ -94,8 +94,8 @@ class TextKitTestsBase {
 
   /// Copy and replace contents
   static func copyReplaceContents(
-    in range: RhTextRange, with nodes: [Node]?, _ documentManager: DocumentManager
-  ) -> (RhTextRange, [Node]) {
+    in range: RhTextRange, with nodes: Array<Node>?, _ documentManager: DocumentManager
+  ) -> (RhTextRange, Array<Node>) {
     let deleted = documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
     let result = documentManager.replaceContents(in: range, with: nodes)
     return result.map { range in (range, deleted) }.success()!

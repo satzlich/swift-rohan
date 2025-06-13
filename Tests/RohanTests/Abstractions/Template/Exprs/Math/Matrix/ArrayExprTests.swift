@@ -8,7 +8,7 @@ import Testing
 struct ArrayExprTests {
   @Test
   func coverage() {
-    let exprs: [ArrayExpr] = ArrayExprTests.allSamples()
+    let exprs: Array<ArrayExpr> = ArrayExprTests.allSamples()
 
     let visitor = ExpressionRewriter<Void>()
 
@@ -29,7 +29,7 @@ struct ArrayExprTests {
     }
   }
 
-  static func allSamples() -> [ArrayExpr] {
+  static func allSamples() -> Array<ArrayExpr> {
     [
       // matrix
       MatrixExpr(

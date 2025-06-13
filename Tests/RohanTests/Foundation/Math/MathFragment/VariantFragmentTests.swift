@@ -97,7 +97,7 @@ struct VariantFragmentTests {
     _ refChar: UnicodeScalar,
     _ orientation: TextOrientation,
     _ point: CGPoint,
-    _ lengths: [CGFloat],
+    _ lengths: Array<CGFloat>,
     _ cgContext: CGContext
   ) {
     let font = mathContext.getFont()
@@ -138,9 +138,9 @@ struct VariantFragmentTests {
     }
   }
 
-  var mathFonts: [String] { VariantFragmentTests.mathFonts }
+  var mathFonts: Array<String> { VariantFragmentTests.mathFonts }
 
-  static let mathFonts: [String] = [
+  static let mathFonts: Array<String> = [
     "Asana Math",
     "Euler Math",
     "Fira Math",

@@ -181,7 +181,7 @@ extension ExpressionWalker {
     expression.accept(self, context)
   }
 
-  func traverseExpressions(_ expressions: [Expr], _ context: C) {
+  func traverseExpressions(_ expressions: Array<Expr>, _ context: C) {
     for expression in expressions {
       traverseExpression(expression, context)
     }

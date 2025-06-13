@@ -24,12 +24,12 @@ struct NanoPassTests {
   @Test
   func testNanoPassDriver() {
     do {
-      let input = [circle, ellipse, square, SOS] as [Template]
+      let input = [circle, ellipse, square, SOS] as Array<Template>
       let result = Nano.NanoPassDriver.process(input)
       #expect(result.isFailure)
     }
     do {
-      let input = [circle, ellipse, square, cdots, SOS] as [Template]
+      let input = [circle, ellipse, square, cdots, SOS] as Array<Template>
       let result = Nano.NanoPassDriver.process(input)
       #expect(result.isSuccess)
     }
@@ -48,7 +48,7 @@ struct NanoPassTests {
 
   @Test
   func testExtractCalls() {
-    let input = [circle, ellipse, square, SOS] as [Template]
+    let input = [circle, ellipse, square, SOS] as Array<Template>
     let result = Nano.ExtractCalls.process(input)
     #expect(result.isSuccess)
 

@@ -7,7 +7,7 @@ final class FractionExpr: MathExpr {
   let numerator: ContentExpr
   let denominator: ContentExpr
 
-  convenience init(num: [Expr], denom: [Expr], genfrac: MathGenFrac = .frac) {
+  convenience init(num: Array<Expr>, denom: Array<Expr>, genfrac: MathGenFrac = .frac) {
     self.init(num: ContentExpr(num), denom: ContentExpr(denom), genfrac: genfrac)
   }
 

@@ -7,7 +7,7 @@ extension Nano {
   typealias LookupTable = Dictionary<Int, VariablePaths>
 
   struct ComputeLookupTables: NanoPass {
-    typealias Input = [Template]
+    typealias Input = Array<Template>
     typealias Output = [AnnotatedTemplate<LookupTable>]
 
     static func process(_ input: Input) -> PassResult<Output> {

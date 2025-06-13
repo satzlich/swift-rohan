@@ -206,7 +206,7 @@ extension ExpressionRewriter {
     expression.accept(self, context)
   }
 
-  func rewrite(_ expressions: [Expr], _ context: C) -> [Expr] {
+  func rewrite(_ expressions: Array<Expr>, _ context: C) -> Array<Expr> {
     expressions.map { $0.accept(self, context) }
   }
 }

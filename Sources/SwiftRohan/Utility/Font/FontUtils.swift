@@ -4,15 +4,14 @@ import AppKit
 
 enum FontUtils {
   /// Augment a font with a cascade list.
-  static func fontWithCascade(baseFont: NSFont, cascadeList: [String]) -> NSFont {
-    guard let familyName = baseFont.familyName
-    else { return baseFont }
+  static func fontWithCascade(baseFont: NSFont, cascadeList: Array<String>) -> NSFont {
+    guard let familyName = baseFont.familyName else { return baseFont }
 
     let cascadeList = cascadeList.map { familyName in
       NSFontDescriptor(fontAttributes: [.family: familyName])
     }
 
-    let attributes: [NSFontDescriptor.AttributeName: Any] = [
+    let attributes: Dictionary<NSFontDescriptor.AttributeName, Any> = [
       .family: familyName,
       .cascadeList: cascadeList,
     ]

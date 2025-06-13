@@ -2,14 +2,14 @@
 
 import Foundation
 
-typealias TreePath = [RohanIndex]
+typealias TreePath = Array<RohanIndex>
 typealias VariablePaths = Array<TreePath>
 
 struct TemplateManager {
   let templates: [TemplateName: Template]
   let compiledTemplates: [TemplateName: CompiledTemplate]
 
-  init(_ templates: [Template]) {
+  init(_ templates: Array<Template>) {
     guard let compiled = Nano.NanoPassDriver.process(templates).success()
     else { preconditionFailure() }
 

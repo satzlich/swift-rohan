@@ -9,7 +9,7 @@ import Testing
 struct TextLocationSliceTests {
   @Test
   func coverage() {
-    let indices: [RohanIndex] = [
+    let indices: Array<RohanIndex> = [
       .index(0),
       .index(7),
       .mathIndex(.nuc),

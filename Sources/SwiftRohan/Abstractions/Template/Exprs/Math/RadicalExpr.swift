@@ -14,7 +14,7 @@ final class RadicalExpr: MathExpr {
     super.init()
   }
 
-  convenience init(_ radicand: [Expr], _ index: [Expr]? = nil) {
+  convenience init(_ radicand: Array<Expr>, _ index: Array<Expr>? = nil) {
     let radicand = ContentExpr(radicand)
     let index = index.map { ContentExpr($0) }
     self.init(radicand, index)

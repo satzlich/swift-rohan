@@ -4,7 +4,7 @@ class CompositorViewController: NSViewController {
   weak var delegate: CompositorViewDelegate? = nil
 
   /// Completion items
-  public var items: [CompletionItem] = [] {
+  public var items: Array<CompletionItem> = [] {
     didSet {
       tableView.reloadData()
       tableView.scrollRowToVisible(tableView.selectedRow)

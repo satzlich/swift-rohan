@@ -8,7 +8,7 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
     self.rawValue = rawValue
   }
 
-  public static var allCases: [ContainerCategory] {
+  public static var allCases: Array<ContainerCategory> {
     [
       .textTextContainer, .extendedTextContainer, .inlineContentContainer,
       .paragraphContainer, .topLevelContainer,

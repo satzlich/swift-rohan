@@ -12,7 +12,7 @@ final class TextModeExpr: MathExpr {
     super.init()
   }
 
-  init(_ nucleus: [Expr] = []) {
+  init(_ nucleus: Array<Expr> = []) {
     self.nucleus = ContentExpr(nucleus)
     super.init()
   }
