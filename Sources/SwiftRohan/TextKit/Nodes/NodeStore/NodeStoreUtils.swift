@@ -33,15 +33,15 @@ enum NodeStoreUtils {
     UnderOverNode.self,
   ]
 
-  static let registeredTags: [String: Node.Type] = _registeredTags()
+  static let registeredTags: Dictionary<String, Node.Type> = _registeredTags()
 
   /// Returns the class for a given tag.
   static func lookup(_ tag: String) -> Node.Type? {
     registeredTags[tag]
   }
 
-  private static func _registeredTags() -> [String: Node.Type] {
-    var result: [String: Node.Type] = [:]
+  private static func _registeredTags() -> Dictionary<String, Node.Type> {
+    var result: Dictionary<String, Node.Type> = [:]
     for clazz in registeredClasses {
       for tag in clazz.storageTags {
         if let existing = result[tag] {

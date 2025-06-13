@@ -54,7 +54,7 @@ struct VariantFragmentTests {
 
     // draw font name
     do {
-      let attributes: [NSAttributedString.Key: Any] = [
+      let attributes: Dictionary<NSAttributedString.Key, Any> = [
         .font: NSFont(name: fontName, size: fontSize, isFlipped: true)!
       ]
       let fontName = NSAttributedString(string: fontName, attributes: attributes)

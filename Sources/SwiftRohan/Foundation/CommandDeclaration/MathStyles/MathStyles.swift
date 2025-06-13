@@ -48,7 +48,7 @@ enum MathStyles: CommandDeclarationProtocol {
 }
 
 extension MathStyles {
-  private static let _dictionary: [String: MathStyles] =
+  private static let _dictionary: Dictionary<String, MathStyles> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathStyles? {

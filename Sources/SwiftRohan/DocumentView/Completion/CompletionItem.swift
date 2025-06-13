@@ -94,7 +94,7 @@ struct CompletionItem: Identifiable {
   }
 
   private static func preview(
-    for body: CommandBody, _ attributes: [NSAttributedString.Key: Any]
+    for body: CommandBody, _ attributes: Dictionary<NSAttributedString.Key, Any>
   ) -> ItemPreview {
     switch body.preview {
     case .string(let string):
@@ -120,8 +120,8 @@ struct CompletionItem: Identifiable {
 
 private func generateLabel(
   _ result: CompletionProvider.Result, _ pattern: String,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any]
+  _ baseAttrs: Dictionary<NSAttributedString.Key, Any>,
+  emphAttrs: Dictionary<NSAttributedString.Key, Any>
 ) -> NSAttributedString {
 
   let label = result.key
@@ -182,8 +182,8 @@ private func decorateSuffix(
   _ attrString: NSMutableAttributedString, _ prefixLength: Int,
   _ labelSuffix: String.UTF16View.SubSequence,
   by patternSuffix: String.UTF16View.SubSequence,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any]
+  _ baseAttrs: Dictionary<NSAttributedString.Key, Any>,
+  emphAttrs: Dictionary<NSAttributedString.Key, Any>
 ) -> NSAttributedString {
   var i = labelSuffix.startIndex
   var ii = prefixLength
@@ -219,8 +219,8 @@ private func decorateSuffix(
 
 private func decorateLabel_nGram(
   _ label: String, by pattern: String,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any],
+  _ baseAttrs: Dictionary<NSAttributedString.Key, Any>,
+  emphAttrs: Dictionary<NSAttributedString.Key, Any>,
   _ gramSize: Int
 ) -> NSAttributedString {
   precondition(gramSize > 1)

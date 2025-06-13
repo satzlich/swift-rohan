@@ -56,7 +56,7 @@ extension MathAttributes {
     MathKind.allCommands.map { MathAttributes.mathKind($0) }
     + MathLimits.allCommands.map { MathAttributes.mathLimits($0) }
 
-  private static let _dictionary: [String: MathAttributes] =
+  private static let _dictionary: Dictionary<String, MathAttributes> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathAttributes? {

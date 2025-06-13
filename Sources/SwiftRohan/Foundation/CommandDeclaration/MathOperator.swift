@@ -46,7 +46,7 @@ extension MathOperator {
     .tr,
   ]
 
-  private static let _dictionary: [String: MathOperator] =
+  private static let _dictionary: Dictionary<String, MathOperator> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathOperator? {

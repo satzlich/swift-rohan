@@ -44,7 +44,7 @@ public struct MathProperty: PropertyAggregate {
   /// Resolve NSAttributedString attributes together with text properties and math context.
   internal func getAttributes(
     isFlipped: Bool, _ textProperty: TextProperty, _ mathContext: MathContext
-  ) -> [NSAttributedString.Key: Any] {
+  ) -> Dictionary<NSAttributedString.Key, Any> {
     let italic = italic ?? Rohan.autoItalic
     let style = italic ? FontStyle.italic : FontStyle.normal
     let weight = bold ? FontWeight.bold : FontWeight.regular

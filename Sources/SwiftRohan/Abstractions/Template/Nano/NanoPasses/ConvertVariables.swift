@@ -21,9 +21,9 @@ extension Nano {
     }
 
     final class ConvertVariablesRewriter: ExpressionRewriter<Void> {
-      let variableDict: [Identifier: Int]
+      let variableDict: Dictionary<Identifier, Int>
 
-      init(variableDict: [Identifier: Int]) {
+      init(variableDict: Dictionary<Identifier, Int>) {
         self.variableDict = variableDict
       }
       override func visit(variable: VariableExpr, _ context: Void) -> R {

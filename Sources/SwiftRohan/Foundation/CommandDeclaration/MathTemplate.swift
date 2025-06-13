@@ -57,7 +57,7 @@ extension MathTemplate {
     underset,
   ]
 
-  private static let _dictionary: [String: MathTemplate] =
+  private static let _dictionary: Dictionary<String, MathTemplate> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathTemplate? {

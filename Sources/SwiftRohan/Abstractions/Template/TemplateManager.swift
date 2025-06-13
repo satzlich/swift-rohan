@@ -6,8 +6,8 @@ typealias TreePath = Array<RohanIndex>
 typealias VariablePaths = Array<TreePath>
 
 struct TemplateManager {
-  let templates: [TemplateName: Template]
-  let compiledTemplates: [TemplateName: CompiledTemplate]
+  let templates: Dictionary<TemplateName, Template>
+  let compiledTemplates: Dictionary<TemplateName, CompiledTemplate>
 
   init(_ templates: Array<Template>) {
     guard let compiled = Nano.NanoPassDriver.process(templates).success()

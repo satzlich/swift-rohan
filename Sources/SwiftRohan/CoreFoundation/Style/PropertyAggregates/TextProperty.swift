@@ -4,7 +4,7 @@ import AppKit
 
 public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
 
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
+  public func getAttributes() -> Dictionary<NSAttributedString.Key, Any> {
     self.getAttributes(isFlipped: false)
   }
 
@@ -59,9 +59,9 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     self.foregroundColor = foregroundColor
   }
 
-  internal func getAttributes(isFlipped: Bool) -> [NSAttributedString.Key: Any] {
+  internal func getAttributes(isFlipped: Bool) -> Dictionary<NSAttributedString.Key, Any> {
     let key = _AttributesKey(self, isFlipped)
-    func create() -> [NSAttributedString.Key: Any] {
+    func create() -> Dictionary<NSAttributedString.Key, Any> {
       _createAttributes(isFlipped: isFlipped)
     }
     return TextProperty._attributesCache.getOrCreate(key, create)
@@ -80,11 +80,11 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   }
 
   private typealias _AttributesCache =
-    ConcurrentCache<_AttributesKey, [NSAttributedString.Key: Any]>
+    ConcurrentCache<_AttributesKey, Dictionary<NSAttributedString.Key, Any>>
 
   private static let _attributesCache = _AttributesCache()
 
-  private func _createAttributes(isFlipped: Bool) -> [NSAttributedString.Key: Any] {
+  private func _createAttributes(isFlipped: Bool) -> Dictionary<NSAttributedString.Key, Any> {
     let descriptor = _getFontDescriptor()
     let size = size.floatValue
     let font = NSFont(descriptor: descriptor, size: size, isFlipped: isFlipped)

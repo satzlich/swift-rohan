@@ -5,7 +5,7 @@ import AppKit
 public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   // MARK: - PropertyAggregate
 
-  public func getAttributes() -> [NSAttributedString.Key: Any] {
+  public func getAttributes() -> Dictionary<NSAttributedString.Key, Any> {
     Self._attributesCache.getOrCreate(self, self._createAttributes)
   }
 
@@ -32,11 +32,11 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
   public let paragraphSpacing: CGFloat
 
   private typealias _AttributesCache =
-    ConcurrentCache<ParagraphProperty, [NSAttributedString.Key: Any]>
+    ConcurrentCache<ParagraphProperty, Dictionary<NSAttributedString.Key, Any>>
 
   private static let _attributesCache = _AttributesCache()
 
-  private func _createAttributes() -> [NSAttributedString.Key: Any] {
+  private func _createAttributes() -> Dictionary<NSAttributedString.Key, Any> {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = textAlignment
     paragraphStyle.paragraphSpacing = paragraphSpacing

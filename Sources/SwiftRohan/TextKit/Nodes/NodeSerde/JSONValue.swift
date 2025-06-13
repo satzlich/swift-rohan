@@ -9,7 +9,7 @@ enum JSONValue: Codable, Equatable {
   case number(Float)
   case bool(Bool)
   case string(String)
-  case object([String: JSONValue])
+  case object(Dictionary<String, JSONValue>)
   case array(Array<JSONValue>)
 
   func encode(to encoder: Encoder) throws {
@@ -36,7 +36,7 @@ enum JSONValue: Codable, Equatable {
 
   init(from decoder: Decoder) throws {
     if let container = try? decoder.container(keyedBy: AnyCodingKey.self) {
-      var values = [String: JSONValue]()
+      var values = Dictionary<String, JSONValue>()
 
       for codingKey in container.allKeys {
         // According to the JSON spec, any valid key must be a double-quoted string.
