@@ -5,9 +5,9 @@ import Foundation
 extension Range<Int> {
   /// Shift the range by a given value.
   @inlinable @inline(__always)
-  func shiftedBy(delta: Int) -> Range<Bound> {
-    let lowerBound = self.lowerBound + delta
-    let upperBound = self.upperBound + delta
+  func subtracting(_ units: Int) -> Range<Bound> {
+    let lowerBound = self.lowerBound - units
+    let upperBound = self.upperBound - units
     return lowerBound..<upperBound
   }
 }
