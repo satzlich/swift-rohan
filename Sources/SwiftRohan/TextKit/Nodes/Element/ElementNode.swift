@@ -184,7 +184,7 @@ internal class ElementNode: Node {
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point) else { return false }
 
-    let layoutRange = LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
+    let layoutRange = LayoutRange(result.layoutRange, result.fraction)
     affinity = result.affinity
 
     return resolveTextLocation(

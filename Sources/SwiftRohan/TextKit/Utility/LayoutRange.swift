@@ -15,7 +15,13 @@ struct LayoutRange {
   /// Returns true if the range is empty
   var isEmpty: Bool { localRange.isEmpty }
 
-  init(_ localRange: Range<Int>, _ contextRange: Range<Int>, _ fraction: Double) {
+  internal init(_ contextRange: Range<Int>, _ fraction: Double) {
+    self.localRange = contextRange
+    self.contextRange = contextRange
+    self.fraction = fraction
+  }
+
+  private init(_ localRange: Range<Int>, _ contextRange: Range<Int>, _ fraction: Double) {
     precondition(localRange.count == contextRange.count)
     self.localRange = localRange
     self.contextRange = contextRange
@@ -23,7 +29,7 @@ struct LayoutRange {
   }
 
   /// Subtract consumed units from the range.
-  func safeSubtracting(_ consumed: Int) -> LayoutRange {
+  internal func safeSubtracting(_ consumed: Int) -> LayoutRange {
     if consumed <= localRange.lowerBound {
       let range = localRange.subtracting(consumed)
       return LayoutRange(range, contextRange, fraction)
@@ -46,13 +52,20 @@ struct LayoutRange {
       return LayoutRange(localLower..<localLower, contextLower..<contextLower, frac)
     }
   }
+
   /// Given a fraction for a location in range, return the new fraction for the
   /// location when lower bound of range moves to x.
-  private static func fractionValue(of f: Double, _ range: Range<Int>, _ x: Int) -> Double
-  {
-    let location = Double(range.count) * f + Double(range.lowerBound)
-    let x = Double(x)
-    let newLength = Double(range.upperBound) - x
-    return (location - x) / newLength
+  /// - Parameters:
+  ///   - fraction: The fraction value of the location in the range.
+  ///   - range: The range in which the location resides.
+  ///   - target: The new lower bound of the range.
+  private static func fractionValue(
+    of fraction: Double, _ range: Range<Int>, _ target: Int
+  ) -> Double {
+    precondition(0 <= fraction && fraction <= 1)
+    let location = Double(range.count) * fraction + Double(range.lowerBound)
+    let target = Double(target)
+    let newLength = Double(range.upperBound) - target
+    return (location - target) / newLength
   }
 }
