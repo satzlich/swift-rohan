@@ -189,7 +189,7 @@ internal class ElementNode: Node {
 
     return resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset,
-      trace: &trace, affinity: &affinity, layoutRange: layoutRange)
+      trace: &trace, affinity: &affinity, dualViewRange: layoutRange)
   }
 
   /// Resolve the text location at the given point and layout range.
@@ -207,10 +207,10 @@ internal class ElementNode: Node {
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity,
-    layoutRange: DualViewRange
+    dualViewRange: DualViewRange
   ) -> Bool {
-    if layoutRange.isEmpty {
-      let localOffset = layoutRange.localRange.lowerBound
+    if dualViewRange.isEmpty {
+      let localOffset = dualViewRange.localRange.lowerBound
       guard localOffset <= _layoutLength else {
         trace.emplaceBack(self, .index(self.childCount))
         return true
@@ -236,7 +236,7 @@ internal class ElementNode: Node {
             with: point, context: context,
             layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
-            layoutRange: layoutRange.safeSubtracting(consumed))
+            dualViewRange: dualViewRange.smartSubtracting(consumed))
           return true
         }
         else {
@@ -250,14 +250,14 @@ internal class ElementNode: Node {
       }
     }
     else {
-      let localOffset = layoutRange.localRange.lowerBound
+      let localOffset = dualViewRange.localRange.lowerBound
 
       /// compute fraction from upstream of child.
       /// - Parameter startOffset: the offset of the child relative to the start
       ///     of this node.
       func computeFraction(_ startOffset: Int, _ child: Node) -> Double {
         let lowerBound = Double(localOffset - startOffset)
-        let location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
+        let location = Double(dualViewRange.count) * dualViewRange.fraction + lowerBound
         let fraction = location / Double(child.layoutLength())
         return fraction
       }
@@ -271,8 +271,8 @@ internal class ElementNode: Node {
         switch last.node {
         case _ as TextNode:
           trace.append(contentsOf: value)
-          let fraction = layoutRange.fraction
-          let resolved = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+          let fraction = dualViewRange.fraction
+          let resolved = last.index.index()! + (fraction > 0.5 ? dualViewRange.count : 0)
           trace.moveTo(.index(resolved))
           return true
 
@@ -333,7 +333,7 @@ internal class ElementNode: Node {
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
             // subtract consumed from the layout range
-            layoutRange: layoutRange.safeSubtracting(consumed))
+            dualViewRange: dualViewRange.smartSubtracting(consumed))
           if !modified { fallbackLastIndex() }
           return true
 

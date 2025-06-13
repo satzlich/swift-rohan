@@ -2,17 +2,22 @@
 
 import Foundation
 
-/// The layout range of the fragment picked by cursor point in the layout context,
-/// maintained in two different views.
+/// The layout range of a sement in the layout context, maintained in
+/// two different views.
 ///
-/// The raison d'être of DualViewRange is to accommodate the use of ApplyNode.
-/// The invariant maintained by DualViewRange is involved.
+/// The raison d'être of `DualViewRange` is to accommodate the use of `ApplyNode`.
+/// The invariant maintained by `DualViewRange` is involved. Use and modify this
+/// struct with care.
+///
+/// - Invariant: The local range and the context range correspond to the
+///     same segment in the layout context.
 struct DualViewRange {
   /// layout range with respect to current node
   let localRange: Range<Int>
   /// layout range with respect to current layout context
   let contextRange: Range<Int>
-  /// fraction of distance from the upstream edge of the segment
+  /// fraction of distance from the upstream edge of the segment, which denotes
+  /// a cursor point within the segment.
   let fraction: Double
 
   /// layout length in the range
@@ -34,9 +39,9 @@ struct DualViewRange {
   }
 
   /// Subtract consumed units from the range.
-  internal func safeSubtracting(_ consumed: Int) -> DualViewRange {
+  internal func smartSubtracting(_ consumed: Int) -> DualViewRange {
     if consumed <= localRange.lowerBound {
-      let range = localRange.subtracting(consumed)
+      let range = localRange.shiftedBy(delta: -consumed)
       return DualViewRange(range, contextRange, fraction)
     }
     else if consumed <= localRange.upperBound {

@@ -198,12 +198,12 @@ final class ApplyNode: Node {
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity,
-    layoutRange: DualViewRange
+    dualViewRange: DualViewRange
   ) -> Bool {
     var localTrace = Trace()
     let modified = _content.resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset, trace: &localTrace,
-      affinity: &affinity, layoutRange: layoutRange)
+      affinity: &affinity, dualViewRange: dualViewRange)
     guard modified else { return false }
 
     /// Returns true if the given node is a variable node associated to this
