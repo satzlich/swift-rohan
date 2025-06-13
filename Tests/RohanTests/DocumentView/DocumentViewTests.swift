@@ -219,6 +219,75 @@ struct DocumentViewTests {
         """
       #expect(documentManager.prettyPrint() == expected)
     }
+
+    // paste without success but no error
+    do {
+      let range = RhTextRange.parse("[]:0..<[]:1")!
+      documentManager.textSelection = RhTextSelection(range)
+      documentView.copy(nil)
+
+      let location = RhTextRange.parse("[↓0,↓0]:6")!
+      documentManager.textSelection = RhTextSelection(location)
+      documentView.paste(nil)
+
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        └ paragraph
+          └ text "Hello"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+  }
+
+  @Test
+  func undoRedo() {
+    let documentView = DocumentView()
+    do {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("The quick brown fox")])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+    let documentManager = documentView.documentManager
+    let expected0 =
+      """
+      root
+      └ heading
+        └ text "The quick brown fox"
+      """
+    let expected1 =
+      """
+      root
+      └ heading
+        └ text "The  brown fox"
+      """
+
+    do {
+      let range = RhTextRange.parse("[↓0,↓0]:4..<[↓0,↓0]:9")!
+      documentManager.textSelection = RhTextSelection(range)
+      documentView.deleteBackward(nil)
+      #expect(documentManager.prettyPrint() == expected1)
+    }
+    documentView.undo(nil)
+    #expect(documentManager.prettyPrint() == expected0)
+    documentView.undo(nil)
+    #expect(documentManager.prettyPrint() == expected0)
+    documentView.redo(nil)
+    #expect(documentManager.prettyPrint() == expected1)
+    documentView.redo(nil)
+    #expect(documentManager.prettyPrint() == expected1)
+  }
+
+  @Test
+  func magnify() {
+    let scrollView = NSScrollView()
+    let documentView = DocumentView()
+    scrollView.documentView = documentView
+    scrollView.magnification = 2.0
+    documentView.scrollView(scrollView, didChangeMagnification: ())
   }
 
   @Test

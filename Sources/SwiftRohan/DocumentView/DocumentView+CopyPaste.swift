@@ -32,10 +32,10 @@ extension DocumentView: @preconcurrency NSServicesMenuRequestor {
   /// - Returns: true if the selection is successfully read from the pasteboard.
   public func readSelection(from pboard: NSPasteboard) -> Bool {
     var success = false
-    var shouldNotify = false
+    var isChanged = false
 
     beginEditing()
-    defer { endEditing(postNotification: shouldNotify) }
+    defer { endEditing(notifyChange: isChanged) }
 
     for pasteboardManager in pasteboardManagers {
       guard pboard.types?.contains(pasteboardManager.type) == true,
@@ -46,10 +46,10 @@ extension DocumentView: @preconcurrency NSServicesMenuRequestor {
       switch result {
       case .success:
         success = true
-        shouldNotify = true
+        isChanged = true
       case .successWithoutChange:
         success = true
-        shouldNotify = false
+        isChanged = false
       case .failure:
         break
       }
