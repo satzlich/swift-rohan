@@ -430,10 +430,4 @@ struct DocumentViewTests {
       #expect("\(documentManager.textSelection!)" == expected)
     }
   }
-
-  @Test
-  func notification() {
-    let documentView = DocumentView()
-    documentView.notifyOperationIsRejected()
-  }
 }
