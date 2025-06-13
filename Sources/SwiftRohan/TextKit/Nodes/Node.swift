@@ -115,6 +115,8 @@ internal class Node: Codable {
   /// - Invariant: If return value is non-nil, then the index must be valid for the node.
   ///     For example, for an `ElementNode`, the index must be a valid child index which
   ///     is in the range `[0, childCount]` (inclusive).
+  /// - Invariant: If the returned value is not `null` or `failure`, then the
+  ///     consumed value satisfies `consumed <= layoutOffset`.
   internal func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     preconditionFailure("overriding required")
   }

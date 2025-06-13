@@ -184,12 +184,12 @@ internal class ElementNode: Node {
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point) else { return false }
 
-    let layoutRange = DualViewRange(result.layoutRange, result.fraction)
+    let pickedRange = PickedRange(result.layoutRange, result.fraction)
     affinity = result.affinity
 
     return resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset,
-      trace: &trace, affinity: &affinity, dualViewRange: layoutRange)
+      trace: &trace, affinity: &affinity, pickedRange: pickedRange)
   }
 
   /// Resolve the text location at the given point and layout range.
@@ -207,10 +207,10 @@ internal class ElementNode: Node {
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity,
-    dualViewRange: DualViewRange
+    pickedRange: PickedRange
   ) -> Bool {
-    if dualViewRange.isEmpty {
-      let localOffset = dualViewRange.localRange.lowerBound
+    if pickedRange.isEmpty {
+      let localOffset = pickedRange.lowerBound
       guard localOffset <= _layoutLength else {
         trace.emplaceBack(self, .index(self.childCount))
         return true
@@ -236,7 +236,7 @@ internal class ElementNode: Node {
             with: point, context: context,
             layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
-            dualViewRange: dualViewRange.smartSubtracting(consumed))
+            pickedRange: pickedRange.smartSubtracting(consumed))
           return true
         }
         else {
@@ -250,14 +250,14 @@ internal class ElementNode: Node {
       }
     }
     else {
-      let localOffset = dualViewRange.localRange.lowerBound
+      let localOffset = pickedRange.lowerBound
 
       /// compute fraction from upstream of child.
       /// - Parameter startOffset: the offset of the child relative to the start
       ///     of this node.
       func computeFraction(_ startOffset: Int, _ child: Node) -> Double {
         let lowerBound = Double(localOffset - startOffset)
-        let location = Double(dualViewRange.count) * dualViewRange.fraction + lowerBound
+        let location = Double(pickedRange.count) * pickedRange.fraction + lowerBound
         let fraction = location / Double(child.layoutLength())
         return fraction
       }
@@ -271,8 +271,8 @@ internal class ElementNode: Node {
         switch last.node {
         case _ as TextNode:
           trace.append(contentsOf: value)
-          let fraction = dualViewRange.fraction
-          let resolved = last.index.index()! + (fraction > 0.5 ? dualViewRange.count : 0)
+          let fraction = pickedRange.fraction
+          let resolved = last.index.index()! + (fraction > 0.5 ? pickedRange.count : 0)
           trace.moveTo(.index(resolved))
           return true
 
@@ -333,7 +333,7 @@ internal class ElementNode: Node {
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
             // subtract consumed from the layout range
-            dualViewRange: dualViewRange.smartSubtracting(consumed))
+            pickedRange: pickedRange.smartSubtracting(consumed))
           if !modified { fallbackLastIndex() }
           return true
 
