@@ -8,6 +8,20 @@ import Testing
 
 @MainActor
 struct DocumentViewTests {
+  private static func bakedDocumentView() -> DocumentView {
+    let documentView = DocumentView()
+
+    // set up completion provider
+    let completionProvider = CompletionProvider()
+    completionProvider.addItems(CommandRecords.allCases)
+    documentView.completionProvider = completionProvider
+    // set up replacement engine
+    let replacementProvider = ReplacementProvider(ReplacementRules.allCases)
+    documentView.replacementProvider = replacementProvider
+
+    return documentView
+  }
+
   @Test
   func main() {
     let scrollView = NSScrollView()
@@ -30,6 +44,9 @@ struct DocumentViewTests {
         ParagraphNode([TextNode("This is a paragraph.")]),
       ])
       documentView.setContent(DocumentContent(rootNode))
+    }
+    do {
+      documentView.forceUpdate(selection: true, scroll: true)
     }
   }
 
@@ -327,7 +344,7 @@ struct DocumentViewTests {
       documentView.selectAll(nil)
       let expected3 = expected
       #expect("\(documentManager.textSelection!)" == expected3)
-      
+
       documentView.moveBackward(nil)
       let expected4 = "(location: []:0, affinity: downstream)"
       #expect("\(documentManager.textSelection!)" == expected4)
@@ -431,8 +448,59 @@ struct DocumentViewTests {
   }
 
   @Test
-  func notification() {
-    let documentView = DocumentView()
-    documentView.notifyOperationRejected()
+  func replacementRule() {
+    // for this test case, we need the "baked" DocumentView.
+    let documentView = Self.bakedDocumentView()
+    do {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("text ..")]),
+        EquationNode(
+          .block,
+          [
+            TextNode("frac")
+          ]),
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+
+    let documentManager = documentView.documentManager
+    // trigger "..." -> "…"
+    do {
+      let location = TextLocation.parse("[↓0,↓0]:7")!
+      documentManager.textSelection = RhTextSelection(location)
+      documentView.insertText(".", replacementRange: .notFound)
+
+      let expected = """
+        root
+        ├ heading
+        │ └ text "text …"
+        └ equation
+          └ nuc
+            └ text "frac"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+    // trigger "frac " -> FractionNode
+    do {
+      let location = TextLocation.parse("[↓1,nuc,↓0]:4")!
+      documentManager.textSelection = RhTextSelection(location)
+      documentView.insertText(" ", replacementRange: .notFound)
+
+      let expected = """
+        root
+        ├ heading
+        │ └ text "text …"
+        └ equation
+          └ nuc
+            └ fraction
+              ├ num
+              └ denom
+        """
+      #expect(documentManager.prettyPrint() == expected)
+      #expect(documentManager.textSelection != nil)
+      #expect(
+        "\(documentManager.textSelection!)"
+          == "(location: [↓1,nuc,↓0,num]:0, affinity: downstream)")
+    }
   }
 }

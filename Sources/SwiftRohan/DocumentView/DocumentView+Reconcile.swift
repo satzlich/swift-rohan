@@ -55,6 +55,8 @@ extension DocumentView {
   func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {
     precondition(selection || scroll)
 
+    guard selection || scroll else { /* no-op */ return }
+
     if selection { _pendingSelectionUpdate = true }
     if scroll { _pendingScrollUpdate = true }
 
@@ -90,17 +92,17 @@ extension DocumentView {
       break
 
     case (true, false):
-      _ = reconcileSelection(for: documentManager.textSelection)
+      _ = _reconcileSelection(for: documentManager.textSelection)
 
     case (false, true):
       documentManager.textSelection
-        .flatMap(self.insertionIndicatorFrames(for:))
+        .flatMap(self._insertionIndicatorFrames(for:))
         .and_then { primary, _ in
           self.scrollToVisible(convertToViewRect(primary))
         }
 
     case (true, true):
-      reconcileSelection(for: documentManager.textSelection)
+      _reconcileSelection(for: documentManager.textSelection)
         .and_then { primary, _ in
           self.scrollToVisible(convertToViewRect(primary))
         }
@@ -114,7 +116,7 @@ extension DocumentView {
 
   /// Reconcile selection highlight and insertion indicators.
   /// - Returns: The frames of insertion indicators.
-  private func reconcileSelection(
+  private func _reconcileSelection(
     for selection: RhTextSelection?
   ) -> (primary: CGRect, secondary: [CGRect])? {
     guard let selection else {
@@ -135,25 +137,25 @@ extension DocumentView {
         let (delimiterRange, level) =
           documentManager.visualDelimiterRange(for: selection.focus)
       {
-        addHighlightFrames(for: delimiterRange, type: .delimiter(level: level))
+        _addHighlightFrames(for: delimiterRange, type: .delimiter(level: level))
       }
     }
     else {
       // add selection highlight
-      addHighlightFrames(for: textRange, type: .selection)
+      _addHighlightFrames(for: textRange, type: .selection)
     }
 
     // set insertion indicators
-    let indicatorFrames = insertionIndicatorFrames(for: selection)
+    let indicatorFrames = _insertionIndicatorFrames(for: selection)
     assert(indicatorFrames != nil)
-    setInserionIndicators(indicatorFrames)
+    _setInserionIndicators(indicatorFrames)
 
     return indicatorFrames
   }
 
   /// Get the insertion indicator frames for the given location
   /// - Returns: The primary and secondary indicator frames.
-  private func insertionIndicatorFrames(
+  private func _insertionIndicatorFrames(
     for selection: RhTextSelection
   ) -> (primary: CGRect, secondary: [CGRect])? {
 
@@ -179,7 +181,7 @@ extension DocumentView {
   }
 
   /// Set insertion indicators for the given frames.
-  private func setInserionIndicators(_ frames: (primary: CGRect, secondary: [CGRect])?) {
+  private func _setInserionIndicators(_ frames: (primary: CGRect, secondary: [CGRect])?) {
     guard let (primary, secondaries) = frames else {
       insertionIndicatorView.hidePrimaryIndicator()
       insertionIndicatorView.clearSecondaryIndicators()
@@ -193,7 +195,7 @@ extension DocumentView {
   }
 
   /// Add highlight frames for the given text range
-  private func addHighlightFrames(for textRange: RhTextRange, type: HighlightType) {
+  private func _addHighlightFrames(for textRange: RhTextRange, type: HighlightType) {
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame, type: type)

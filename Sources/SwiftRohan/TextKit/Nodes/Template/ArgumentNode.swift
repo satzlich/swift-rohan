@@ -60,16 +60,16 @@ final class ArgumentNode: Node {
 
   // MARK: - Node(Storage)
 
-  final override class var storageTags: Array<String> { /* intentionally empty */ [] }
+  final override class var storageTags: Array<String> { /* empty */ [] }
 
   final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     preconditionFailure("Work is done in ApplyNode.")
   }
 
   final override func store() -> JSONValue {
-    precondition(!variableNodes.isEmpty)
+    precondition(variableNodes.isEmpty == false)
     let first = variableNodes[0]
-    let children: [JSONValue] = first.childrenReadonly().map { $0.store() }
+    let children: Array<JSONValue> = first.childrenReadonly().map { $0.store() }
     return JSONValue.array(children)
   }
 
@@ -81,11 +81,7 @@ final class ArgumentNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). \
-      The work is done by ApplyNode.
-      """)
+    assertionFailure("Work is done by ApplyNode.")
     return false
   }
 
@@ -103,11 +99,7 @@ final class ArgumentNode: Node {
     direction: TextSelectionNavigation.Direction,
     context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). \
-      The work is done by ApplyNode.
-      """)
+    assertionFailure("Work is done by ApplyNode.")
     return nil
   }
 

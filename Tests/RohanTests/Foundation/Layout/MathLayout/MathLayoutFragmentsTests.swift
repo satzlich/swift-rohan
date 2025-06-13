@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Algorithms
+import AppKit
 import CoreText
 import Foundation
 import Testing
@@ -9,14 +10,17 @@ import Testing
 
 struct MathLayoutFragmentsTests {
 
+  private var folderName: String { "\(Swift.type(of: self))" }
+
   private let font: Font
   private let table: MathTable
   private let context: MathContext
 
-  init() {
-    self.font = Font.createWithName("STIX Two Math", 12)
+  init() throws {
+    self.font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
     self.table = font.copyMathTable()!
-    self.context = MathContext(font, .display, false, .blue)!
+    self.context = MathContext(font, .display, false, .black)!
+    try TestUtils.touchDirectory(folderName)
   }
 
   @Test
@@ -42,17 +46,18 @@ struct MathLayoutFragmentsTests {
     }
 
     for fragment in fragments {
-      callStandardMethods(fragment)
+      callStandardMethods(fragment, fileName: #function)
     }
   }
 
   @Test
   func attachments() {
-    guard let nucleus = createMathListFragment("x", font, table, context),
-      let sub = createMathListFragment("3", font, table, context),
-      let sup = createMathListFragment("2", font, table, context),
-      let lsub = createMathListFragment("4", font, table, context),
-      let lsup = createMathListFragment("5", font, table, context)
+    let scriptContext = context.with(mathStyle: .script)
+    guard let nucleus = createMathListFragment("x", context),
+      let sub = createMathListFragment("3", scriptContext),
+      let sup = createMathListFragment("2", scriptContext),
+      let lsub = createMathListFragment("4", scriptContext),
+      let lsup = createMathListFragment("5", scriptContext)
     else {
       Issue.record("Failed to create nucleus/sub/sup fragment")
       return
@@ -62,12 +67,12 @@ struct MathLayoutFragmentsTests {
     attach.fixLayout(context)
 
     //
-    callStandardMethods(attach)
+    callStandardMethods(attach, fileName: #function)
   }
 
   @Test
   func mathAttributes() {
-    guard let nucleus = createMathListFragment("x", font, table, context)
+    guard let nucleus = createMathListFragment("x", context)
     else {
       Issue.record("Failed to create nucleus fragment")
       return
@@ -76,7 +81,7 @@ struct MathLayoutFragmentsTests {
     attributes.fixLayout(context)
 
     //
-    callStandardMethods(attributes)
+    callStandardMethods(attributes, fileName: #function)
   }
 
   @Test
@@ -107,7 +112,7 @@ struct MathLayoutFragmentsTests {
     }
 
     for fragment in fragments {
-      callStandardMethods(fragment)
+      callStandardMethods(fragment, fileName: #function)
     }
   }
 
@@ -130,13 +135,13 @@ struct MathLayoutFragmentsTests {
 
     //
     for fragment in fragments {
-      callStandardMethods(fragment)
+      callStandardMethods(fragment, fileName: #function)
     }
   }
 
   @Test
   func leftRight() {
-    guard let nucleus = createMathListFragment("x", font, table, context)
+    guard let nucleus = createMathListFragment("x", context)
     else {
       Issue.record("Failed to create nucleus fragment")
       return
@@ -157,27 +162,27 @@ struct MathLayoutFragmentsTests {
     }
 
     // standard methods
-    callStandardMethods(leftRight)
+    callStandardMethods(leftRight, fileName: #function)
   }
 
   @Test
   func mathList() {
-    guard let list = createMathListFragment("x", font, table, context)
+    guard let list = createMathListFragment("x", context)
     else {
       Issue.record("Failed to create math list fragment")
       return
     }
 
     // standard methods
-    callStandardMethods(list)
+    callStandardMethods(list, fileName: #function)
   }
 
   @Test
   func matrix() {
-    guard let a = createMathListFragment("x", font, table, context),
-      let b = createMathListFragment("y", font, table, context),
-      let c = createMathListFragment("z", font, table, context),
-      let d = createMathListFragment("w", font, table, context)
+    guard let a = createMathListFragment("x", context),
+      let b = createMathListFragment("y", context),
+      let c = createMathListFragment("z", context),
+      let d = createMathListFragment("w", context)
     else {
       Issue.record("Failed to create matrix elements")
       return
@@ -191,7 +196,7 @@ struct MathLayoutFragmentsTests {
     matrix.fixLayout(context)
 
     //
-    callStandardMethods(matrix)
+    callStandardMethods(matrix, fileName: #function)
   }
 
   @Test
@@ -203,15 +208,15 @@ struct MathLayoutFragmentsTests {
     mathOp.fixLayout(context)
 
     //
-    callStandardMethods(mathOp)
+    callStandardMethods(mathOp, fileName: #function)
   }
 
   @Test
   func radicals() {
     var fragments: [MathLayoutFragment] = []
 
-    guard let radicand = createMathListFragment("x", font, table, context),
-      let index = createMathListFragment("2", font, table, context)
+    guard let radicand = createMathListFragment("x", context),
+      let index = createMathListFragment("2", context)
     else {
       Issue.record("Failed to create radicand/index fragment")
       return
@@ -236,7 +241,7 @@ struct MathLayoutFragmentsTests {
     }
     //
     for fragment in fragments {
-      callStandardMethods(fragment)
+      callStandardMethods(fragment, fileName: #function)
     }
   }
 
@@ -245,7 +250,7 @@ struct MathLayoutFragmentsTests {
     var fragments: [MathLayoutFragment] = []
 
     for spreader in [MathSpreader.underline, .overline, .underbrace, .overbrace] {
-      let nucleus = createMathListFragment("x", font, table, context)!
+      let nucleus = createMathListFragment("x", context)!
       let overspreader = MathUnderOverLayoutFragment(spreader, nucleus)
       overspreader.fixLayout(context)
       fragments.append(overspreader)
@@ -253,7 +258,7 @@ struct MathLayoutFragmentsTests {
 
     //
     for fragment in fragments {
-      callStandardMethods(fragment)
+      callStandardMethods(fragment, fileName: #function)
     }
   }
 
@@ -267,8 +272,22 @@ struct MathLayoutFragmentsTests {
     textMode.fixLayout(context)
 
     //
-    callStandardMethods(textMode)
+    callStandardMethods(textMode, fileName: #function)
   }
+
+  @Test
+  func mathFragmentWrapper() {
+    let glyphFragment: GlyphFragment = GlyphFragment(char: "x", font, table)!
+    let wrapper = MathFragmentWrapper(glyphFragment, 1)
+
+    // the use of wrapper here is for test only. GlyphFragment should be used together
+    // with MathGlyphLayoutFragment.
+
+    //
+    callStandardMethods(wrapper, fileName: #function)
+  }
+
+  // MARK: - More Tests
 
   @Test
   func moreAttachments() {
@@ -283,7 +302,7 @@ struct MathLayoutFragmentsTests {
     func create(
       _ nucleus: String, _ attachments: [MathIndex]
     ) -> MathAttachLayoutFragment? {
-      guard let nucleus = createMathListFragment(nucleus, font, table, context)
+      guard let nucleus = createMathListFragment(nucleus, context)
       else {
         Issue.record("Failed to create nucleus fragment")
         return nil
@@ -297,13 +316,13 @@ struct MathLayoutFragmentsTests {
       for index in attachments {
         switch index {
         case .lsub:
-          lsub = createMathListFragment("4", font, table, context)
+          lsub = createMathListFragment("4", context)
         case .lsup:
-          lsup = createMathListFragment("5", font, table, context)
+          lsup = createMathListFragment("5", context)
         case .sub:
-          sub = createMathListFragment("3", font, table, context)
+          sub = createMathListFragment("3", context)
         case .sup:
-          sup = createMathListFragment("2", font, table, context)
+          sup = createMathListFragment("2", context)
         default:
           Issue.record("Invalid attachment index")
           return nil
@@ -351,10 +370,10 @@ struct MathLayoutFragmentsTests {
       return
     }
 
-    guard let x = createMathListFragment("x", font, table, context),
-      let y = createMathListFragment("y", font, table, context),
-      let z = createMathListFragment("z", font, table, context),
-      let w = createMathListFragment("w", font, table, context)
+    guard let x = createMathListFragment("x", context),
+      let y = createMathListFragment("y", context),
+      let z = createMathListFragment("z", context),
+      let w = createMathListFragment("w", context)
     else {
       Issue.record("Failed to create matrix elements")
       return
@@ -400,8 +419,17 @@ struct MathLayoutFragmentsTests {
     }
   }
 
-  private func callStandardMethods(_ fragment: MathLayoutFragment) {
+  // MARK: - Helper
+
+  private func callStandardMethods(_ fragment: MathLayoutFragment, fileName: String) {
     Self.callStandardMethods(fragment, context)
+
+    let size = CGSize(width: 180, height: 240)
+    TestUtils.outputPDF(folderName: folderName, fileName, size) { rect in
+      guard let context = NSGraphicsContext.current?.cgContext else { return }
+      let point = CGPoint(x: rect.width / 2, y: rect.height / 2)
+      fragment.draw(at: point, in: context)
+    }
   }
 
   /// Call standard methods on the fragment.
@@ -438,12 +466,13 @@ struct MathLayoutFragmentsTests {
     }
   }
 
-  // MARK: - Create Fragments
-
   private func createGlyphFragment(
     _ char: Character, _ font: Font, _ table: MathTable
   ) -> MathGlyphLayoutFragment? {
-    guard let glyph = MathGlyphLayoutFragment(char: char, font, table, char.length)
+    let styled =
+      MathUtils.styledChar(
+        for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
+    guard let glyph = MathGlyphLayoutFragment(char: styled, font, table, char.length)
     else {
       Issue.record("Failed to create MathGlyphLayoutFragment")
       return nil
@@ -452,8 +481,10 @@ struct MathLayoutFragmentsTests {
   }
 
   private func createMathListFragment(
-    _ string: String, _ font: Font, _ table: MathTable, _ context: MathContext
+    _ string: String, _ context: MathContext
   ) -> MathListLayoutFragment? {
+    let font = context.getFont()
+    let table = context.table
     let fragments = string.map { char in createGlyphFragment(char, font, table) }
       .compactMap { $0 }
     guard fragments.count == string.count
@@ -473,8 +504,8 @@ struct MathLayoutFragmentsTests {
     _ num: String, _ denom: String, _ subtype: MathGenFrac,
     _ font: Font, _ table: MathTable, _ context: MathContext
   ) -> MathFractionLayoutFragment? {
-    guard let num = createMathListFragment(num, font, table, context),
-      let denom = createMathListFragment(denom, font, table, context)
+    guard let num = createMathListFragment(num, context),
+      let denom = createMathListFragment(denom, context)
     else {
       Issue.record("Failed to create MathFractionLayoutFragment")
       return nil
@@ -488,7 +519,7 @@ struct MathLayoutFragmentsTests {
     _ nucleus: String, _ accent: MathAccent, _ font: Font, _ table: MathTable,
     _ context: MathContext
   ) -> MathAccentLayoutFragment? {
-    guard let nucleus = createMathListFragment("x", font, table, context)
+    guard let nucleus = createMathListFragment("x", context)
     else {
       Issue.record("Failed to create nucleus fragment")
       return nil

@@ -11,6 +11,14 @@ extension MathNode: GenMathNode {}
 extension ArrayNode: GenMathNode {}
 
 extension GenMathNode {
+  /// Returns the segment frame for the layout offset with given affinity in
+  /// the given context.
+  /// - Parameters:
+  ///   - context: The layout context to query.
+  ///   - layoutOffset: The layout offset in the given context.
+  ///   - affinity: The selection affinity to use when querying the segment frame.
+  /// - Note: The raison d'être of this method is that TextLayoutContext demands
+  ///     special handling for the segment frame of GenMathNode.
   func getSegmentFrame(
     _ context: LayoutContext, _ layoutOffset: Int, _ affinity: SelectionAffinity
   ) -> SegmentFrame? {

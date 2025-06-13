@@ -146,7 +146,7 @@ public enum ReplacementRules {
 
       // pairs
       let pairs = product(leftDelimiters, rightDelimiters).map { (left, right) in
-        spaceTriggered([left, right], Snippets.leftRight(left, right)!)
+        spaceTriggered([left, right], Snippets.leftRight(.pair(left, right))!)
       }
       results.append(contentsOf: pairs)
       // left + dot
@@ -162,15 +162,15 @@ public enum ReplacementRules {
       // <>
       let langle = ExtendedChar.symbol(.lookup("langle")!)
       let rangle = ExtendedChar.symbol(.lookup("rangle")!)
-      results.append(spaceTriggered("<>", Snippets.leftRight(langle, rangle)!))
+      results.append(spaceTriggered("<>", Snippets.leftRight(.pair(langle, rangle))!))
       // ||
       let lvert = ExtendedChar.symbol(.lookup("lvert")!)
       let rvert = ExtendedChar.symbol(.lookup("rvert")!)
-      results.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))
+      results.append(spaceTriggered("||", Snippets.leftRight(.pair(lvert, rvert))!))
       // ||||
       let lVert = ExtendedChar.symbol(.lookup("lVert")!)
       let rVert = ExtendedChar.symbol(.lookup("rVert")!)
-      results.append(spaceTriggered("||||", Snippets.leftRight(lVert, rVert)!))
+      results.append(spaceTriggered("||||", Snippets.leftRight(.pair(lVert, rVert))!))
     }
 
     // math variants

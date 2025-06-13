@@ -9,36 +9,35 @@ extension DocumentView {
 
   /// Action triggered by the Control+Space shortcut.
   public override func complete(_ sender: Any?) {
-    let okay = _triggerCompositorWindow()
-    if !okay { notifyOperationRejected() }
+    _triggerCompositorWindow() { notifyOperationIsRejected() }
   }
 
   /// Action triggered by Escape key.
   public override func cancelOperation(_ sender: Any?) {
-    complete(sender)
+    self.complete(sender)
   }
 
   /// Trigger the compositor window.
-  /// - Returns: false if the operation is rejected.
-  private func _triggerCompositorWindow() -> Bool {
+  private func _triggerCompositorWindow(_ notifyRejection: () -> Void) {
     // check preconditions for using the compositor
     guard completionProvider != nil,
       let selection = documentManager.textSelection,
       selection.textRange.isEmpty,
       let window = self.window
-    else { return false }
+    else {
+      notifyRejection()
+      return
+    }
 
     // scroll to insertion point
     self.forceUpdate(scroll: true)
 
-    guard let positions = _getCompositorPositions(selection, window)
-    else {
-      // fail to get positions is not operation rejected
-      return true
-    }
+    let location = selection.anchor
+    guard let positions = _getCompositorPositions(location, selection.affinity, window)
+    else { return }  // no need to notify rejection
 
     // compute completions
-    let completions = _getCompletions(for: "", location: selection.textRange.location)
+    let completions = _getCompletions(for: "", location: location)
 
     // create view controller
     let viewController = CompositorViewController()
@@ -48,9 +47,9 @@ extension DocumentView {
     let windowController = CompositorWindowController(viewController, window)
     windowController.delegate = self
 
+    // show the compositor window
     let screen = NSScreen.main?.frame ?? .zero
-
-    if positions.normal.y - screen.height / 3 > 0 {
+    if positions.normal.y > screen.height / 3 {
       let compositorMode = CompositorMode.normal
       viewController.compositorMode = compositorMode
       windowController.showModal(at: positions.normal, mode: compositorMode)
@@ -60,18 +59,18 @@ extension DocumentView {
       viewController.compositorMode = compositorMode
       windowController.showModal(at: positions.inverted, mode: compositorMode)
     }
-    return true
   }
 
   /// Compute the compositor positions for the given range.
+  /// - Returns: nil if the positions cannot be computed. The normal position is
+  ///     for display prompt window below the insertion point, and the inverted
+  ///     position is for display prompt window above the insertion point.
   private func _getCompositorPositions(
-    _ selection: RhTextSelection, _ window: NSWindow
+    _ location: TextLocation, _ affinity: SelectionAffinity, _ window: NSWindow
   ) -> (normal: CGPoint, inverted: CGPoint)? {
-    let options: DocumentManager.SegmentOptions =
-      selection.affinity == .upstream ? .upstreamAffinity : []
     guard
-      let segmentFrame = documentManager.insertionIndicatorFrame(
-        in: selection.textRange, type: .standard, options: options)
+      let segmentFrame =
+        documentManager.primaryInsertionIndicatorFrame(at: location, affinity)
     else { return nil }
 
     let screen = NSScreen.main?.frame ?? .zero
@@ -94,7 +93,7 @@ extension DocumentView {
   /// Returns the completions for the given query at the given location.
   private func _getCompletions(
     for query: String, location: TextLocation
-  ) -> [CompletionItem] {
+  ) -> Array<CompletionItem> {
     guard let provider = self.completionProvider,
       let container = documentManager.containerCategory(for: location)
     else {

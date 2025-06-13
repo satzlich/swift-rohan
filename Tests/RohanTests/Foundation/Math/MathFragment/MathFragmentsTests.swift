@@ -8,6 +8,13 @@ import Testing
 @testable import SwiftRohan
 
 struct MathFragmentsTests {
+
+  private var folderName: String { "\(Swift.type(of: self))" }
+
+  init() throws {
+    try TestUtils.touchDirectory(folderName)
+  }
+
   @Test
   func coverage() {
     var fragments: [MathFragment] = []
@@ -67,7 +74,8 @@ struct MathFragmentsTests {
     }
 
     let pageSize = CGSize(width: 160, height: 200)
-    TestUtils.outputPDF("MathFragmentsTests", pageSize) { rect in
+
+    TestUtils.outputPDF(folderName: folderName, #function, pageSize) { rect in
       guard let context = NSGraphicsContext.current?.cgContext else { return }
       for (i, fragment) in fragments.enumerated() {
         let point = CGPoint(x: Double(i + 1) * 10, y: pageSize.height / 2)

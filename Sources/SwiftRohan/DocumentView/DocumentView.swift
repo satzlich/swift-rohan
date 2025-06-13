@@ -104,6 +104,7 @@ public final class DocumentView: NSView {
     _setUp()
   }
 
+  @available(*, unavailable)
   public required init?(coder: NSCoder) {
     self.selectionView = SelectionView()
     self.contentView = ContentView()

@@ -106,11 +106,11 @@ Left and right delimiters can each paired with a dot (`.`) to create a one-arm d
 |   1 |      `(.␣` | `\left(      \right.` | $\left(⬚\right.$      |
 |   2 |      `[.␣` | `\left[      \right.` | $\left[⬚\right.$      |
 |   ⋮ |          ⋮ | ⋮                     | ⋮                     |
-|  14 | `\lVert.␣` | `\left\lVert \right.` | $\left\lVert⬚\right.$ |
-|  15 |      `.)␣` | `\left.      \right)` | $\left.⬚\right)$      |
-|  16 |      `.]␣` | `\left.      \right]` | $\left.⬚\right]$      |
+|  12 | `\lVert.␣` | `\left\lVert \right.` | $\left\lVert⬚\right.$ |
+|  13 |      `.)␣` | `\left.      \right)` | $\left.⬚\right)$      |
+|  14 |      `.]␣` | `\left.      \right]` | $\left.⬚\right]$      |
 |   ⋮ |          ⋮ | ⋮                     | ⋮                     |
-|  28 | `.\rVert␣` | `\left. \right\rVert` | $\left.⬚\right\rVert$ |
+|  24 | `.\rVert␣` | `\left. \right\rVert` | $\left.⬚\right\rVert$ |
 
 In addition, the following patterns can also be used to create left and right delimiters:
 

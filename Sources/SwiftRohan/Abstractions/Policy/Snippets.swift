@@ -39,11 +39,6 @@ enum Snippets {
     return CommandBody(expr, 0)
   }
 
-  /// Create a command body for left-right delimiters.
-  static func leftRight(_ left: ExtendedChar, _ right: ExtendedChar) -> CommandBody? {
-    leftRight(.pair(left, right))
-  }
-
   static func leftRight(_ delimiters: MonoDuo<String, String>) -> CommandBody? {
     switch delimiters {
     case let .left(left):
