@@ -14,7 +14,7 @@ extension DocumentView {
   internal func replaceContentsForEdit(
     in range: RhTextRange, with nodes: [Node]?
   ) -> EditResult<RhTextRange> {
-    precondition(_isEditing == true)
+    precondition(_isEditing)
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
     return performPostEditProcessing(result)
   }
@@ -94,7 +94,7 @@ extension DocumentView {
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
 
-    if let textNode = nodes?.getOnlyTextNode() {
+    if let textNode = nodes?.getOnlyElement() as? TextNode {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
         let string = textNode.string
         let result = target.replaceCharacters(in: range, with: string, registerUndo: true)

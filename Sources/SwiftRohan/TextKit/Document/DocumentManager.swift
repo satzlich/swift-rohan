@@ -140,15 +140,13 @@ public final class DocumentManager {
   internal func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> EditResult<RhTextRange> {
-    // remove contents if nodes is nil or empty
-    guard let nodes, !nodes.isEmpty
-    else {
+    guard let nodes, nodes.isEmpty == false else {
+      // if node is nil or empty, just delete contents in range
       switch _deleteContents(in: range) {
       case let .success(result):
         if let normalised = result.normalised(for: rootNode) {
           return .success(normalised)
         }
-        // if normalisation fails, return the original result
         assertionFailure("Normalisation failed")
         return .success(result)
 
@@ -157,8 +155,8 @@ public final class DocumentManager {
       }
     }
 
-    // forward to replaceCharacters() if nodes is a single text node
-    if let textNode = nodes.getOnlyTextNode() {
+    // forward request if nodes is a single text node
+    if let textNode = nodes.getOnlyElement() as? TextNode {
       return replaceCharacters(in: range, with: textNode.string)
     }
 

@@ -279,7 +279,7 @@ extension TreeUtils {
     precondition(parent.getChild(index) === textNode)
 
     // for single text node
-    if let node = nodes.getOnlyTextNode() {
+    if let node = nodes.getOnlyElement() as? TextNode {
       return insertString(node.string, textNode: textNode, offset: offset, parent, index)
     }
 
