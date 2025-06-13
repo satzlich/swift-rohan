@@ -157,74 +157,9 @@ final class ApplyNode: Node {
     }
   }
 
-  // MARK: - ApplyNode
+  // MARK: - Node(Tree API)
 
-  let template: MathTemplate
-  private let _arguments: Array<ArgumentNode>
-  private let _content: ContentNode
-
-  internal init?(_ template: MathTemplate, _ argumentValues: Array<ElementStore>) {
-    guard template.parameterCount == argumentValues.count,
-      let (content, arguments) =
-        NodeUtils.applyTemplate(template.template, argumentValues)
-    else { return nil }
-
-    self.template = template
-    self._arguments = arguments
-    self._content = content
-
-    super.init()
-    self._setUp()
-  }
-
-  private init(deepCopyOf applyNode: ApplyNode) {
-    // deep copy of argument's value
-    func deepCopy(from argument: ArgumentNode) -> ElementStore {
-      let variableNode = argument.variableNodes.first!
-
-      var copy: ElementStore = []
-      copy.reserveCapacity(variableNode.childCount)
-      for index in 0..<variableNode.childCount {
-        let child = variableNode.getChild(index)
-        // deep copy of each child
-        copy.append(child.deepCopy())
-      }
-      return copy
-    }
-
-    self.template = applyNode.template
-    let argumentCopies = applyNode._arguments.map({ deepCopy(from: $0) })
-    let (content, arguments) = NodeUtils.applyTemplate(template.template, argumentCopies)!
-
-    self._content = content
-    self._arguments = arguments
-
-    super.init()
-    self._setUp()
-  }
-
-  private final func _setUp() {
-    // set parent for content
-    self._content.setParent(self)
-    // set apply node for arguments
-    // NOTE: parent should not be set for arguments
-    self._arguments.forEach({ $0.setApplyNode(self) })
-  }
-
-  // MARK: - Content
-
-  final var argumentCount: Int { _arguments.count }
-
-  final func getArgument(_ index: Int) -> ArgumentNode {
-    precondition(index < _arguments.count)
-    return _arguments[index]
-  }
-
-  final func getContent() -> ContentNode { _content }
-
-  // MARK: - Layout
-
-  override func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -293,7 +228,7 @@ final class ApplyNode: Node {
     return true
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction,
@@ -310,10 +245,72 @@ final class ApplyNode: Node {
       context: context, layoutOffset: layoutOffset)
   }
 
+  // MARK: - ApplyNode
+
+  let template: MathTemplate
+  private let _arguments: Array<ArgumentNode>
+  private let _content: ContentNode
+
+  internal init?(_ template: MathTemplate, _ argumentValues: Array<ElementStore>) {
+    guard template.parameterCount == argumentValues.count,
+      let (content, arguments) =
+        NodeUtils.applyTemplate(template.template, argumentValues)
+    else { return nil }
+
+    self.template = template
+    self._arguments = arguments
+    self._content = content
+
+    super.init()
+    self._setUp()
+  }
+
+  private init(deepCopyOf applyNode: ApplyNode) {
+    // deep copy of argument's value
+    func deepCopy(from argument: ArgumentNode) -> ElementStore {
+      let variableNode = argument.variableNodes.first!
+
+      var copy: ElementStore = []
+      copy.reserveCapacity(variableNode.childCount)
+      for index in 0..<variableNode.childCount {
+        let child = variableNode.getChild(index)
+        // deep copy of each child
+        copy.append(child.deepCopy())
+      }
+      return copy
+    }
+
+    self.template = applyNode.template
+    let argumentCopies = applyNode._arguments.map({ deepCopy(from: $0) })
+    let (content, arguments) = NodeUtils.applyTemplate(template.template, argumentCopies)!
+
+    self._content = content
+    self._arguments = arguments
+
+    super.init()
+    self._setUp()
+  }
+
+  private final func _setUp() {
+    // set parent for content
+    self._content.setParent(self)
+    // set apply node for arguments
+    // NOTE: parent should not be set for arguments
+    self._arguments.forEach({ $0.setApplyNode(self) })
+  }
+
+  final var argumentCount: Int { _arguments.count }
+
+  final func getArgument(_ index: Int) -> ArgumentNode {
+    precondition(index < _arguments.count)
+    return _arguments[index]
+  }
+
+  final func getContent() -> ContentNode { _content }
+
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
   ) -> [RohanIndex] {
     template.template.lookup[argumentIndex][variableIndex] + path
   }
-
 }
