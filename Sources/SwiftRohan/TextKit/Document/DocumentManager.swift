@@ -551,6 +551,49 @@ public final class DocumentManager {
     }
   }
 
+  /// Resolve the selection affinity for the given move.
+  /// - Parameters:
+  ///   - direction: The navigation direction.
+  ///   - location: The target location.
+  private func resolveAffinityForMove(
+    in direction: TextSelectionNavigation.Direction,
+    target location: TextLocation
+  ) -> SelectionAffinity {
+    precondition(direction == .forward || direction == .backward)
+
+    func isWhitespace(_ string: String) -> Bool {
+      string.count == 1 && string.first!.isWhitespace == true
+    }
+
+    switch direction {
+    case .forward:
+      if let (object, _) = self.objectAt(location, direction: .backward),
+        case let .text(string) = object,
+        isWhitespace(string)
+      {
+        return .downstream
+      }
+      else {
+        return .upstream
+      }
+
+    case .backward:
+      if let (object, _) = self.objectAt(location, direction: .forward),
+        case let .text(string) = object,
+        isWhitespace(string)
+      {
+        return .upstream
+      }
+      else {
+        return .downstream
+      }
+
+    default:
+      assertionFailure("Invalid direction")
+      return .downstream
+    }
+  }
+
   /// Return the destination location for the given location and direction.
   ///
   /// - Parameters:
@@ -568,33 +611,11 @@ public final class DocumentManager {
     }
 
     switch direction {
-    case .forward:
+    case .forward, .backward:
       guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
       else { return nil }
-
-      if let (object, _) = self.objectAt(target, direction: .backward),
-        case let .text(string) = object,
-        isWhitespace(string)
-      {
-        return AffineLocation(target, .downstream)
-      }
-      else {
-        return AffineLocation(target, .upstream)
-      }
-
-    case .backward:
-      guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
-      else { return nil }
-
-      if let (object, _) = self.objectAt(target, direction: .forward),
-        case let .text(string) = object,
-        isWhitespace(string)
-      {
-        return AffineLocation(target, .upstream)
-      }
-      else {
-        return AffineLocation(target, .downstream)
-      }
+      let affinity = resolveAffinityForMove(in: direction, target: target)
+      return AffineLocation(target, affinity)
 
     case .up, .down:
       guard
@@ -654,8 +675,10 @@ public final class DocumentManager {
         assert(range.lowerBound == offset)
         assert(range.upperBound <= textNode.string.length)
         trace.moveTo(.index(range.upperBound))
-        return trace.toRawLocation()
-          .map { AffineLocation($0, .downstream) }  // always downstream
+
+        guard let target = trace.toRawLocation() else { return nil }
+        let affinity = resolveAffinityForMove(in: direction, target: target)
+        return AffineLocation(target, affinity)
       }
     }
     else {
@@ -668,8 +691,10 @@ public final class DocumentManager {
         assert(range.upperBound == offset)
         assert(range.lowerBound >= 0)
         trace.moveTo(.index(range.lowerBound))
-        return trace.toRawLocation()
-          .map { AffineLocation($0, .downstream) }  // always downstream
+
+        guard let target = trace.toRawLocation() else { return nil }
+        let affinity = resolveAffinityForMove(in: direction, target: target)
+        return AffineLocation(target, affinity)
       }
     }
   }

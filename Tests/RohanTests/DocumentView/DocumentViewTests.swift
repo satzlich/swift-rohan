@@ -291,6 +291,126 @@ struct DocumentViewTests {
   }
 
   @Test
+  func navigate() {
+    let documentView = DocumentView()
+    do {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("The quick brown fox")]),
+        ParagraphNode([TextNode("jumps over the lazy dog.")]),
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+
+    let documentManager = documentView.documentManager
+
+    // set selection
+    func gotoLocation1() {
+      let location = TextLocation.parse("[↓0,↓0]:7")!
+      documentManager.textSelection = RhTextSelection(location)
+    }
+    func gotoLocation2() {
+      let location = TextLocation.parse("[↓1,↓0]:8")!
+      documentManager.textSelection = RhTextSelection(location)
+    }
+
+    // linear move
+    do {
+      gotoLocation1()
+      documentView.moveForward(nil)
+      let expected = "(location: [↓0,↓0]:8, affinity: upstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveBackward(nil)
+      let expected = "(location: [↓0,↓0]:6, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveRight(nil)
+      let expected = "(location: [↓0,↓0]:8, affinity: upstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveLeft(nil)
+      let expected = "(location: [↓0,↓0]:6, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveRightAndModifySelection(nil)
+      let expected =
+        "(anchor: [↓0,↓0]:7, focus: [↓0,↓0]:8, reversed: false, affinity: upstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveLeftAndModifySelection(nil)
+      let expected =
+        "(anchor: [↓0,↓0]:7, focus: [↓0,↓0]:6, reversed: true, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+
+    // move up/down
+    do {
+      gotoLocation1()
+      documentView.moveDown(nil)
+      let expected = "(location: [↓1,↓0]:10, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveDownAndModifySelection(nil)
+      let expected =
+        "(anchor: [↓0,↓0]:7, focus: [↓1,↓0]:10, reversed: false, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation2()
+      documentView.moveUp(nil)
+      let expected = "(location: [↓0,↓0]:5, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation2()
+      documentView.moveUpAndModifySelection(nil)
+      let expected =
+        "(anchor: [↓1,↓0]:8, focus: [↓0,↓0]:5, reversed: true, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    
+    // move word-wise
+    do {
+      gotoLocation1()
+      documentView.moveWordRight(nil)
+      let expected = "(location: [↓0,↓0]:10, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveWordLeft(nil)
+      let expected = "(location: [↓0,↓0]:4, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveWordRightAndModifySelection(nil)
+      let expected =
+        "(anchor: [↓0,↓0]:7, focus: [↓0,↓0]:10, reversed: false, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+    do {
+      gotoLocation1()
+      documentView.moveWordLeftAndModifySelection(nil)
+      let expected =
+        "(anchor: [↓0,↓0]:7, focus: [↓0,↓0]:4, reversed: true, affinity: downstream)"
+      #expect("\(documentManager.textSelection!)" == expected)
+    }
+  }
+
+  @Test
   func notification() {
     let documentView = DocumentView()
     documentView.notifyOperationRejected()

@@ -1,7 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
 extension DocumentView {
-  // MARK: - Horizontal Move
+  public override func selectAll(_ sender: Any?) {
+    documentManager.textSelection = RhTextSelection(documentManager.documentRange)
+    documentSelectionDidChange()
+  }
+
+  // MARK: - Linear Move
 
   public override func moveForward(_ sender: Any?) {
     updateTextSelections(
@@ -51,11 +56,6 @@ extension DocumentView {
   public override func moveDownAndModifySelection(_ sender: Any?) {
     updateTextSelections(
       direction: .down, destination: .character, extending: true)
-  }
-
-  public override func selectAll(_ sender: Any?) {
-    documentManager.textSelection = RhTextSelection(documentManager.documentRange)
-    documentSelectionDidChange()
   }
 
   // MARK: - Word Move

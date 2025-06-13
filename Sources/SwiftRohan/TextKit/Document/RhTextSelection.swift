@@ -8,10 +8,15 @@ import Foundation
 public struct RhTextSelection: CustomStringConvertible {
   let anchor: TextLocation
   let focus: TextLocation
+
+  /// Whether the selection is reversed, i.e., anchor is after focus.
   let isReversed: Bool
-  /// textRange may not equal to `[anchor, focus)` or `[focus, anchor)`
-  let textRange: RhTextRange
+  /// affinity of the anchor.
   let affinity: SelectionAffinity
+
+  /// The effective text range of the selection, which may be wider than the
+  /// extent of the anchor and focus.
+  let textRange: RhTextRange
 
   init(_ location: TextLocation) {
     anchor = location
