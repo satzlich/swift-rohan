@@ -73,6 +73,44 @@ final class ArgumentNode: Node {
     return JSONValue.array(children)
   }
 
+  // MARK: - Node(Tree API)
+
+  final override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: DocumentManager.EnumerateTextSegmentsBlock
+  ) -> Bool {
+    assertionFailure(
+      """
+      \(#function) should not be called for \(Swift.type(of: self)). \
+      The work is done by ApplyNode.
+      """)
+    return false
+  }
+
+  final override func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity
+  ) -> Bool {
+    assertionFailure("Work is done in ApplyNode.")
+    return false
+  }
+
+  final override func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction,
+    context: any LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    assertionFailure(
+      """
+      \(#function) should not be called for \(Swift.type(of: self)). \
+      The work is done by ApplyNode.
+      """)
+    return nil
+  }
+
   // MARK: - ElementNode
 
   final func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -81,7 +119,7 @@ final class ArgumentNode: Node {
     visitor.visit(argument: self, context, withChildren: children)
   }
 
-  // MARK: - ApplyNode
+  // MARK: - ArgumentNode
 
   /// associated apply node
   private weak var applyNode: ApplyNode? = nil
@@ -97,9 +135,9 @@ final class ArgumentNode: Node {
 
   let argumentIndex: Int
   /// associated variable nodes
-  let variableNodes: [VariableNode]
+  let variableNodes: Array<VariableNode>
 
-  init(_ variableNodes: [VariableNode], _ argumentIndex: Int) {
+  init(_ variableNodes: Array<VariableNode>, _ argumentIndex: Int) {
     precondition(!variableNodes.isEmpty)
 
     self.variableNodes = variableNodes
@@ -148,44 +186,6 @@ final class ArgumentNode: Node {
     }
   }
 
-  // MARK: - Layout
-
-  override func enumerateTextSegments(
-    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
-    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: DocumentManager.EnumerateTextSegmentsBlock
-  ) -> Bool {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). \
-      The work is done by ApplyNode.
-      """)
-    return false
-  }
-
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout SelectionAffinity
-  ) -> Bool {
-    assertionFailure("Work is done in ApplyNode.")
-    return false
-  }
-
-  override func rayshoot(
-    from path: ArraySlice<RohanIndex>,
-    affinity: SelectionAffinity,
-    direction: TextSelectionNavigation.Direction,
-    context: any LayoutContext, layoutOffset: Int
-  ) -> RayshootResult? {
-    assertionFailure(
-      """
-      \(#function) should not be called for \(Swift.type(of: self)). \
-      The work is done by ApplyNode.
-      """)
-    return nil
-  }
-
   // MARK: - Children
 
   func insertChildren<S: Collection<Node>>(
@@ -204,7 +204,7 @@ final class ArgumentNode: Node {
   /// Insert string at given location.
   /// - Returns: range of the inserted content.
   func insertString(
-    _ string: RhString, at location: TextLocationSlice
+    _ string: BigString, at location: TextLocationSlice
   ) throws -> EditResult<RhTextRange> {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {

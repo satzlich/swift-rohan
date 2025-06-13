@@ -21,10 +21,10 @@ enum MathCommands {
       result.append(contentsOf: records)
 
       // left-right
-      let abs = CommandRecord("abs", Snippets.leftRight("lvert", "rvert")!)
-      let ceil = CommandRecord("ceil", Snippets.leftRight("lceil", "rceil")!)
-      let floor = CommandRecord("floor", Snippets.leftRight("lfloor", "rfloor")!)
-      let norm = CommandRecord("norm", Snippets.leftRight("lVert", "rVert")!)
+      let abs = CommandRecord("abs", Snippets.leftRight(.pair("lvert", "rvert"))!)
+      let ceil = CommandRecord("ceil", Snippets.leftRight(.pair("lceil", "rceil"))!)
+      let floor = CommandRecord("floor", Snippets.leftRight(.pair("lfloor", "rfloor"))!)
+      let norm = CommandRecord("norm", Snippets.leftRight(.pair("lVert", "rVert"))!)
       result.append(contentsOf: [abs, ceil, floor, norm])
     }
 

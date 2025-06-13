@@ -10,7 +10,7 @@ extension TreeUtils {
   /// - Returns: The range of inserted content.
   /// - Throws: `SatzError(.InvalidTextLocation)`, `SatzError(.InsertStringFailure)`.
   static func insertString(
-    _ string: RhString, at location: TextLocation, _ tree: RootNode
+    _ string: BigString, at location: TextLocation, _ tree: RootNode
   ) -> EditResult<RhTextRange> {
     precondition(string.isEmpty == false)
     do {
@@ -31,7 +31,7 @@ extension TreeUtils {
   /// - Throws: `SatzError(.InvalidTextLocation)`, `SatzError(.InsertStringFailure)`.
   /// - Precondition: `string` is not empty.
   internal static func insertString(
-    _ string: RhString, at location: TextLocationSlice, _ subtree: ElementNode
+    _ string: BigString, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> EditResult<RhTextRange> {
     precondition(!string.isEmpty)
 
@@ -101,7 +101,7 @@ extension TreeUtils {
   ///     not offset).
   /// - Precondition: `textNode` is a child of parent at index.
   private static func insertString(
-    _ string: RhString, textNode: TextNode, offset: Int,
+    _ string: BigString, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) -> ([Int], [Int]) {
     precondition(offset <= textNode.length)
@@ -115,7 +115,7 @@ extension TreeUtils {
   /// - Returns: the range of inserted content (starting from the depth of given
   ///     index, not offset).
   private static func insertString(
-    _ string: RhString, paragraphContainer container: ElementNode, index: Int
+    _ string: BigString, paragraphContainer container: ElementNode, index: Int
   ) -> EditResult<([Int], [Int])> {
     precondition(container.isParagraphContainer)
     precondition(index <= container.childCount)
@@ -140,7 +140,7 @@ extension TreeUtils {
   /// - Returns: the range of inserted content (starting from the depth of given index,
   ///     not offset).
   private static func insertString(
-    _ string: RhString, elementNode: ElementNode, index: Int
+    _ string: BigString, elementNode: ElementNode, index: Int
   ) -> ([Int], [Int]) {
     precondition(elementNode.isParagraphContainer == false)
     precondition(index <= elementNode.childCount)

@@ -22,7 +22,7 @@ struct DocumentViewTests {
     }
     do {
       _ = documentView.styleSheet
-      documentView.styleSheet = StyleSheets.defaultRecord.provider(12)
+      documentView.styleSheet = StyleSheets.testingRecord.provider(12)
     }
     do {
       let rootNode = RootNode([

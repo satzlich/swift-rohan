@@ -21,12 +21,6 @@ public enum StyleSheets {
   public static let testingRecord =
     Record(
       "Testing",
-      //      { textSize in
-      //        styleSheet(
-      //          for: textSize,
-      //          textFont: "Latin Modern Roman", mathFont: "Latin Modern Math",
-      //          headerFont: "Latin Modern Sans")
-      //      }
       { textSize in
         styleSheet(
           for: textSize,
@@ -60,11 +54,11 @@ public enum StyleSheets {
     }
 
   public static let textSizes: Array<FontSize> = [
-    .init(10),
-    .init(11),
-    .init(12),
-    .init(13),
-    .init(14),
+    FontSize(10),
+    FontSize(11),
+    FontSize(12),
+    FontSize(13),
+    FontSize(14),
   ]
 
   // MARK: - Create StyleSheet

@@ -5,9 +5,9 @@ import _RopeModule
 final class TextExpr: Expr {
   override class var type: ExprType { .text }
 
-  let string: RhString
+  let string: BigString
 
-  init(_ string: RhString) {
+  init(_ string: BigString) {
     precondition(TextExpr.validate(string: string))
     self.string = string
     super.init()
@@ -15,7 +15,7 @@ final class TextExpr: Expr {
   
   init<S: Sequence<Character>>(_ string: S) {
     precondition(TextExpr.validate(string: string))
-    self.string = RhString(string)
+    self.string = BigString(string)
     super.init()
   }
 
@@ -39,7 +39,7 @@ final class TextExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    string = try container.decode(RhString.self, forKey: .string)
+    string = try container.decode(BigString.self, forKey: .string)
     try super.init(from: decoder)
   }
 

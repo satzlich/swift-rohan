@@ -49,7 +49,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
     try super.encode(to: encoder)
   }
 
-  // MARK: - Implementation
+  // MARK: - Node(Tree API)
 
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
