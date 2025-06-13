@@ -58,12 +58,9 @@ extension DocumentView {
       let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
       guard
         let selection = navigation.textSelection(
-          interactingAt: point,
-          anchors: documentManager.textSelection,
-          modifiers: [],
-          selecting: false,
-          bounds: .infinite),
-        let destination = navigation.textSelection(for: .word, enclosing: selection)
+          interactingAt: point, anchors: documentManager.textSelection,
+          modifiers: [], selecting: false, bounds: .infinite),
+        let destination = navigation.enclosingTextRange(for: .word, selection)
       else { return }
 
       // update selection

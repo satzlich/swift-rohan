@@ -562,7 +562,7 @@ public final class DocumentManager {
   /// - Parameters:
   ///   - direction: The navigation direction.
   ///   - location: The target location.
-  private func resolveAffinityForMove(
+  private func _resolveAffinityForMove(
     in direction: TextSelectionNavigation.Direction,
     target location: TextLocation
   ) -> SelectionAffinity {
@@ -621,7 +621,7 @@ public final class DocumentManager {
     case .forward, .backward:
       guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
       else { return nil }
-      let affinity = resolveAffinityForMove(in: direction, target: target)
+      let affinity = _resolveAffinityForMove(in: direction, target: target)
       return AffineLocation(target, affinity)
 
     case .up, .down:
@@ -684,7 +684,7 @@ public final class DocumentManager {
         trace.moveTo(.index(range.upperBound))
 
         guard let target = trace.toRawLocation() else { return nil }
-        let affinity = resolveAffinityForMove(in: direction, target: target)
+        let affinity = _resolveAffinityForMove(in: direction, target: target)
         return AffineLocation(target, affinity)
       }
     }
@@ -700,14 +700,16 @@ public final class DocumentManager {
         trace.moveTo(.index(range.lowerBound))
 
         guard let target = trace.toRawLocation() else { return nil }
-        let affinity = resolveAffinityForMove(in: direction, target: target)
+        let affinity = _resolveAffinityForMove(in: direction, target: target)
         return AffineLocation(target, affinity)
       }
     }
   }
 
-  func textRange(
-    for granularity: TextSelectionNavigation.Destination, enclosing location: TextLocation
+  /// Return the text range enclosing the given location for the given granularity.
+  /// - Warning: Currently only `.word` granularity is supported.
+  internal func enclosingTextRange(
+    for granularity: TextSelectionNavigation.Destination, _ location: TextLocation
   ) -> RhTextRange? {
     precondition(granularity == .word)
 
@@ -1111,7 +1113,7 @@ public final class DocumentManager {
 
   func getLatexContent(for range: RhTextRange) -> String? {
     guard let nodes: Array<PartialNode> = mapContents(in: range, { $0 }),
-      let parent = lowestAncestor(for: range),
+      let parent = _lowestGenElementAncestor(for: range),
       let layoutMode = containerCategory(for: range.location)?.layoutMode()
     else { return nil }
 
@@ -1127,9 +1129,10 @@ public final class DocumentManager {
     }
   }
 
-  /// Returns the lowest ancestor node for the given range which is element node
-  /// or argument node.
-  private func lowestAncestor(
+  /// Returns the lowest ancestor node for the given range that is either an
+  /// `ElementNode` or an `ArgumentNode`, which conforms to the `GenElementNode`
+  /// protocol.
+  private func _lowestGenElementAncestor(
     for range: RhTextRange
   ) -> Either<ElementNode, ArgumentNode>? {
     guard let trace = Trace.from(range.location, rootNode),
