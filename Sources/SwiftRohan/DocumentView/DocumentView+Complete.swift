@@ -68,13 +68,9 @@ extension DocumentView {
   private func _getCompositorPositions(
     _ location: TextLocation, _ affinity: SelectionAffinity, _ window: NSWindow
   ) -> (normal: CGPoint, inverted: CGPoint)? {
-    let options: DocumentManager.SegmentOptions =
-      affinity == .upstream ? .upstreamAffinity : []
-    let range = RhTextRange(location)
     guard
       let segmentFrame =
-        documentManager
-        .insertionIndicatorFrame(in: range, type: .standard, options: options)
+        documentManager.primaryInsertionIndicatorFrame(at: location, affinity)
     else { return nil }
 
     let screen = NSScreen.main?.frame ?? .zero

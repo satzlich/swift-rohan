@@ -3,13 +3,16 @@
 import Foundation
 
 extension DocumentManager {
-  /// Returns insertion indicator frame for the specified text range.
-  func insertionIndicatorFrame(
-    in textRange: RhTextRange, type: SegmentType,
-    options: SegmentOptions = []
+  /// Returns the primary insertion indicator frame for the given text location.
+  func primaryInsertionIndicatorFrame(
+    at location: TextLocation, _ affinity: SelectionAffinity
   ) -> CGRect? {
+    let range = RhTextRange(location)
+    let options: DocumentManager.SegmentOptions =
+      affinity == .upstream ? .upstreamAffinity : []
+
     var result: CGRect? = nil
-    enumerateTextSegments(in: textRange, type: type, options: options) {
+    enumerateTextSegments(in: range, type: .standard, options: options) {
       _, segmentFrame, _ in
       result = segmentFrame
       return false  // discontinue
