@@ -8,6 +8,7 @@ import Testing
 
 @MainActor
 struct DocumentViewTests {
+
   @Test
   func main() {
     let scrollView = NSScrollView()
@@ -327,7 +328,7 @@ struct DocumentViewTests {
       documentView.selectAll(nil)
       let expected3 = expected
       #expect("\(documentManager.textSelection!)" == expected3)
-      
+
       documentView.moveBackward(nil)
       let expected4 = "(location: []:0, affinity: downstream)"
       #expect("\(documentManager.textSelection!)" == expected4)
