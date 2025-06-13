@@ -56,7 +56,7 @@ struct RohanIndexTests {
 
   @Test
   func parse() {
-    let examples: [String] = [
+    let examples: Array<String> = [
       "↓10",
       "nuc",
       "(3,4)",

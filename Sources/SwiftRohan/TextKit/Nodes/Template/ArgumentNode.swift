@@ -162,7 +162,7 @@ final class ArgumentNode: Node {
 
   /// Returns the content container category of the argument.
   func getContainerCategory() -> ContainerCategory? {
-    let categories: [ContainerCategory] =
+    let categories: Array<ContainerCategory> =
       variableNodes.compactMap { variable in
         guard let parent = variable.parent else { return nil }
         return TreeUtils.containerCategory(of: parent)
@@ -208,7 +208,7 @@ final class ArgumentNode: Node {
   /// Insert inline content at given location.
   /// - Returns: range of the inserted content.
   func insertInlineContent(
-    _ nodes: [Node], at location: TextLocationSlice
+    _ nodes: Array<Node>, at location: TextLocationSlice
   ) throws -> EditResult<RhTextRange> {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {
@@ -221,7 +221,7 @@ final class ArgumentNode: Node {
   /// Insert paragraph nodes at given location.
   /// - Returns: range of the inserted content.
   func insertParagraphNodes(
-    _ nodes: [Node], at location: TextLocationSlice
+    _ nodes: Array<Node>, at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {

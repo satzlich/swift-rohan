@@ -21,7 +21,7 @@ public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
   }
 }
 
-private let ALL_KEYS: [PropertyKey] =
+private let ALL_KEYS: Array<PropertyKey> =
   [
     TextProperty.allKeys,
     MathProperty.allKeys,

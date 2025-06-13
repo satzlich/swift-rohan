@@ -5,7 +5,7 @@ import Foundation
 extension Nano {
   struct EmitCompiledTemplates: NanoPass {
     typealias Input = [AnnotatedTemplate<LookupTable>]
-    typealias Output = [CompiledTemplate]
+    typealias Output = Array<CompiledTemplate>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(emitCompiledTemplate(_:))
@@ -19,9 +19,9 @@ extension Nano {
 
     private static func convert(
       _ lookupTable: LookupTable, _ parameterCount: Int
-    ) -> [VariablePaths] {
+    ) -> Array<VariablePaths> {
       precondition(lookupTable.keys.allSatisfy { $0 < parameterCount })
-      var output = [VariablePaths](repeating: .init(), count: parameterCount)
+      var output = Array<VariablePaths>(repeating: .init(), count: parameterCount)
       for (index, locations) in lookupTable {
         output[index] = locations
       }

@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
-/// One or two values, with the possibility of both.
-enum MonoDuo<L, R> {
+/// Either or both.
+enum EitherBoth<L, R> {
   case left(L)
   case right(R)
   case pair(L, R)

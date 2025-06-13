@@ -118,7 +118,7 @@ extension DocumentView {
   /// - Returns: The frames of insertion indicators.
   private func _reconcileSelection(
     for selection: RhTextSelection?
-  ) -> (primary: CGRect, secondary: [CGRect])? {
+  ) -> (primary: CGRect, secondary: Array<CGRect>)? {
     guard let selection else {
       // clear all
       selectionView.clearHighlightFrames()
@@ -157,11 +157,11 @@ extension DocumentView {
   /// - Returns: The primary and secondary indicator frames.
   private func _insertionIndicatorFrames(
     for selection: RhTextSelection
-  ) -> (primary: CGRect, secondary: [CGRect])? {
+  ) -> (primary: CGRect, secondary: Array<CGRect>)? {
 
     let textRange = RhTextRange(selection.focus)
     var primaryIndicatorFrame: CGRect?
-    var secondaryIndicatorFrames: [CGRect] = []
+    var secondaryIndicatorFrames: Array<CGRect> = []
 
     let options: DocumentManager.SegmentOptions =
       (selection.affinity == .upstream) ? .upstreamAffinity : []
@@ -181,7 +181,7 @@ extension DocumentView {
   }
 
   /// Set insertion indicators for the given frames.
-  private func _setInserionIndicators(_ frames: (primary: CGRect, secondary: [CGRect])?) {
+  private func _setInserionIndicators(_ frames: (primary: CGRect, secondary: Array<CGRect>)?) {
     guard let (primary, secondaries) = frames else {
       insertionIndicatorView.hidePrimaryIndicator()
       insertionIndicatorView.clearSecondaryIndicators()

@@ -10,7 +10,7 @@ struct ExprsTests {
 
   @Test
   func coverage() {
-    let exprs: [Expr] = ExprsTests.allSamples()
+    let exprs: Array<Expr> = ExprsTests.allSamples()
 
     let visitor1 = NaiveExprVisitor()
     let visitor2 = SimpleExprVisitor<Void>()
@@ -32,7 +32,7 @@ struct ExprsTests {
 
   @Test
   func countTypes() {
-    let exprs: [Expr] = ExprsTests.allSamples()
+    let exprs: Array<Expr> = ExprsTests.allSamples()
     let walker = CountingExpressionWalker()
     for expr in exprs {
       expr.accept(walker, ())
@@ -41,8 +41,8 @@ struct ExprsTests {
     #expect(uncoveredTypes == ExprsTests.uncoveredExprTypes)
   }
 
-  static func allSamples() -> [Expr] {
-    var expressions: [Expr] = []
+  static func allSamples() -> Array<Expr> {
+    var expressions: Array<Expr> = []
     expressions.append(contentsOf: ElementExprTests.allSamples())
     expressions.append(contentsOf: ArrayExprTests.allSamples())
     expressions.append(contentsOf: UnderOverExprTests.allSamples())

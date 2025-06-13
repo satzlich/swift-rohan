@@ -7,7 +7,7 @@ import OrderedCollections
 extension Nano {
   struct InlineCalls: NanoPass {
     typealias Input = [AnnotatedTemplate<TemplateNames>]
-    typealias Output = [Template]
+    typealias Output = Array<Template>
 
     /// template name -> template; with order
     private typealias TemplateTable = OrderedDictionary<TemplateName, Template>
@@ -20,7 +20,7 @@ extension Nano {
       var templateTable = TemplateTable(
         uniqueKeysWithValues: okay.map { ($0.name, $0.template) })
 
-      func isFreeOfApply(_ body: [Expr]) -> Bool {
+      func isFreeOfApply(_ body: Array<Expr>) -> Bool {
         NanoUtils.countExpr(from: body, where: { $0 is ApplyExpr }) == 0
       }
 
@@ -69,7 +69,7 @@ extension Nano {
       private typealias Environment = Dictionary<Identifier, ContentExpr>
       private let environment: Environment
 
-      init(_ parameters: [Identifier], _ values: [ContentExpr]) {
+      init(_ parameters: Array<Identifier>, _ values: Array<ContentExpr>) {
         precondition(parameters.count == values.count)
         self.environment = Environment(uniqueKeysWithValues: zip(parameters, values))
       }

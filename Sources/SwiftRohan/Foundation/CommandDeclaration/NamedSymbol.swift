@@ -99,7 +99,7 @@ extension NamedSymbol: Comparable {
 }
 
 extension NamedSymbol {
-  static let allCommands: [NamedSymbol] = mathSymbols + universalSymbols
+  static let allCommands: Array<NamedSymbol> = mathSymbols + universalSymbols
 
   private static let _dictionary: Dictionary<String, NamedSymbol> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
@@ -108,9 +108,9 @@ extension NamedSymbol {
     _dictionary[command]
   }
 
-  static let universalSymbols: [NamedSymbol] = LatexCommands.universalSymbols
+  static let universalSymbols: Array<NamedSymbol> = LatexCommands.universalSymbols
 
-  static let mathSymbols: [NamedSymbol] =
+  static let mathSymbols: Array<NamedSymbol> =
     LatexCommands.mathSymbols + AMSCommands.mathSymbols + OtherCommands.mathSymbols
 }
 
@@ -799,7 +799,7 @@ private enum OtherCommands {
     .init("QED", "\u{220E}", subtype: .universal)  // ∎
   ]
 
-  static let mathSymbols: [NamedSymbol] = [
+  static let mathSymbols: Array<NamedSymbol> = [
     // primes
     .init("dprime", "\u{2033}"),  // ″
     .init("trprime", "\u{2034}"),  // ‴

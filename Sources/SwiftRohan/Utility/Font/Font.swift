@@ -66,25 +66,29 @@ public struct Font {  // Cannot be sendable due to CTFont
   // MARK: - Character/Glyph
 
   public func getGlyph(forChar character: Character) -> GlyphId? {
-    var glyphs: [GlyphId] = [0, 0]  // we need two slots
+    var glyphs: Array<GlyphId> = [0, 0]  // we need two slots
     let okay = getGlyphs(for: character.utf16.map { $0 }, &glyphs)
     return okay ? glyphs[0] : nil
   }
 
   public func getGlyph(for unicodeScalar: UnicodeScalar) -> GlyphId? {
-    var glyphs: [GlyphId] = [0, 0]  // we need two slots
+    var glyphs: Array<GlyphId> = [0, 0]  // we need two slots
     let okay = getGlyphs(for: unicodeScalar.utf16.map { $0 }, &glyphs)
     return okay ? glyphs[0] : nil
   }
 
-  public func getGlyphs(for characters: [UniChar], _ glyphs: inout [GlyphId]) -> Bool {
+  public func getGlyphs(
+    for characters: Array<UniChar>, _ glyphs: inout Array<GlyphId>
+  ) -> Bool {
     precondition(characters.count <= glyphs.count)
     return CTFontGetGlyphsForCharacters(ctFont, characters, &glyphs, characters.count)
   }
 
   // MARK: - Metric
 
-  func getAscentDescent(for glyph: GlyphId) -> (ascent: CGFloat, descent: CGFloat) {
+  internal func getAscentDescent(
+    for glyph: GlyphId
+  ) -> (ascent: CGFloat, descent: CGFloat) {
     let rect = getBoundingRect(for: glyph)
 
     if !isFlipped {
@@ -105,7 +109,7 @@ public struct Font {  // Cannot be sendable due to CTFont
   }
 
   public func getAdvances(
-    for glyphs: [GlyphId], _ orientation: CTFontOrientation, _ advances: inout [CGSize]
+    for glyphs: Array<GlyphId>, _ orientation: CTFontOrientation, _ advances: inout Array<CGSize>
   ) -> CGFloat {
     precondition(glyphs.count <= advances.count)
     return CTFontGetAdvancesForGlyphs(
@@ -118,7 +122,7 @@ public struct Font {  // Cannot be sendable due to CTFont
     }
   }
 
-  public func getBoundingRects(for glyphs: [GlyphId], _ rects: inout [CGRect]) -> CGRect {
+  public func getBoundingRects(for glyphs: Array<GlyphId>, _ rects: inout Array<CGRect>) -> CGRect {
     precondition(glyphs.count <= rects.count)
     return CTFontGetBoundingRectsForGlyphs(
       ctFont, CTFontOrientation.default, glyphs, &rects, glyphs.count)
@@ -135,7 +139,7 @@ public struct Font {  // Cannot be sendable due to CTFont
   }
 
   public func drawGlyphs(
-    _ glyphs: [GlyphId], _ positions: [CGPoint], _ context: CGContext
+    _ glyphs: Array<GlyphId>, _ positions: Array<CGPoint>, _ context: CGContext
   ) {
     precondition(glyphs.count == positions.count)
     CTFontDrawGlyphs(ctFont, glyphs, positions, glyphs.count, context)
@@ -143,7 +147,7 @@ public struct Font {  // Cannot be sendable due to CTFont
 }
 
 extension Font {
-  func convertToPoints(_ mathValue: MathValueRecord) -> CGFloat {
+  internal func convertToPoints(_ mathValue: MathValueRecord) -> CGFloat {
     convertToPoints(mathValue.value)
   }
 }

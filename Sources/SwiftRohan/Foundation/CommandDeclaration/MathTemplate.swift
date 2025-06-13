@@ -49,7 +49,7 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
-  static let allCommands: [MathTemplate] = [
+  static let allCommands: Array<MathTemplate> = [
     operatorname,
     overset,
     pmod,

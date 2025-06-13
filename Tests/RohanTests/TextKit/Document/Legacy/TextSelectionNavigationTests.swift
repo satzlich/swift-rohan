@@ -47,7 +47,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
 
     // move forward
     do {
-      var locations = [AffineLocation]()
+      var locations = Array<AffineLocation>()
       var location = AffineLocation(documentManager.documentRange.location, .upstream)
       while true {
         locations.append(location)
@@ -59,7 +59,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         location = newLocation
       }
 
-      let expected: [String] = [
+      let expected: Array<String> = [
         "[]:0",
         "[↓0,↓0]:0",
         "[↓0,↓0]:1",
@@ -104,7 +104,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
 
     // move backward
     do {
-      var locations = [AffineLocation]()
+      var locations = Array<AffineLocation>()
       var location =
         AffineLocation(documentManager.documentRange.endLocation, .downstream)
       while true {
@@ -118,7 +118,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         location = newLocation
       }
 
-      let expected: [String] = [
+      let expected: Array<String> = [
         "[↓2]:2",
         "[↓2,↓1,nuc]:2",
         "[↓2,↓1,nuc,↓1,⇒0]:1",
@@ -192,7 +192,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
     outputPDF(#function, documentManager)
 
-    func move(from location: TextLocation) -> [RhTextSelection] {
+    func move(from location: TextLocation) -> Array<RhTextSelection> {
       let selection = RhTextSelection(location)
 
       let forward = documentManager.textSelectionNavigation.destinationSelection(
@@ -405,7 +405,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == 8)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(3),  // paragraph
         .index(1),  // text
       ]
@@ -450,7 +450,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     }
 
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(0),  // text
       ]
@@ -488,7 +488,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
     // outputPDF(#function, documentManager)
 
-    func move(from location: TextLocation) -> [RhTextSelection] {
+    func move(from location: TextLocation) -> Array<RhTextSelection> {
       let selection = RhTextSelection(location)
 
       let forward = documentManager.textSelectionNavigation.destinationSelection(
@@ -500,7 +500,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
 
     let movesCount = 2
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(0),  // text
       ]
@@ -514,7 +514,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1)  // paragraph
       ]
       let location = TextLocation(path, 1)
@@ -527,7 +527,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1)  // paragraph
       ]
       let location = TextLocation(path, 2)
@@ -540,7 +540,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(2),  // text
       ]
@@ -554,7 +554,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(2),  // text
       ]
@@ -584,7 +584,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
     // outputPDF(#function, documentManager)
 
-    func deletionRange(from selection: RhTextSelection) -> [DeletionRange] {
+    func deletionRange(from selection: RhTextSelection) -> Array<DeletionRange> {
       let forward = documentManager.textSelectionNavigation.deletionRange(
         for: selection, direction: .forward, destination: .character)
       let backward = documentManager.textSelectionNavigation.deletionRange(
@@ -598,14 +598,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       return [forward, backward, forwardWord, backwardWord].compactMap { $0 }
     }
 
-    func deletionRange(from location: TextLocation) -> [DeletionRange] {
+    func deletionRange(from location: TextLocation) -> Array<DeletionRange> {
       let selection = RhTextSelection(location)
       return deletionRange(from: selection)
     }
 
     let movesCount = 4
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(0),  // text
       ]
@@ -621,7 +621,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1)  // paragraph
       ]
       let location = TextLocation(path, 1)
@@ -636,7 +636,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1)  // paragraph
       ]
       let location = TextLocation(path, 2)
@@ -651,7 +651,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(2),  // text
       ]
@@ -667,7 +667,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(2),  // text
       ]
@@ -684,7 +684,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     }
 
     do {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(1),  // paragraph
         .index(2),  // text
       ]

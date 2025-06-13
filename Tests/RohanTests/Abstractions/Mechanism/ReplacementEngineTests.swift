@@ -8,7 +8,7 @@ import Testing
 struct ReplacementEngineTests {
   @Test
   func coverage() {
-    let rules: [ReplacementRule] = [
+    let rules: Array<ReplacementRule> = [
       .init("", "`", CommandBody("\u{2018}", .textText)),
       .init("\u{2018}", "`", CommandBody("\u{201C}", .textText)),
       .init("", "'", CommandBody("\u{2019}", .textText)),

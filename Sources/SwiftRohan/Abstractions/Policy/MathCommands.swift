@@ -2,10 +2,10 @@
 
 /// Non-symbol math commands.
 enum MathCommands {
-  nonisolated(unsafe) static let allCases: [CommandRecord] = _allCases()
+  nonisolated(unsafe) static let allCases: Array<CommandRecord> = _allCases()
 
-  private static func _allCases() -> [CommandRecord] {
-    var result: [CommandRecord] = []
+  private static func _allCases() -> Array<CommandRecord> {
+    var result: Array<CommandRecord> = []
 
     // code snippets
     do {

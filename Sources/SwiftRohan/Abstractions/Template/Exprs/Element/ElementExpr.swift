@@ -2,14 +2,14 @@
 import Foundation
 
 class ElementExpr: Expr {
-  let children: [Expr]
+  let children: Array<Expr>
 
-  init(_ children: [Expr] = []) {
+  init(_ children: Array<Expr> = []) {
     self.children = children
     super.init()
   }
 
-  func with(children: [Expr]) -> Self {
+  func with(children: Array<Expr>) -> Self {
     preconditionFailure("overriding required")
   }
 

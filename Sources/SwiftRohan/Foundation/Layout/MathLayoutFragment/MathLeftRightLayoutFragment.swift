@@ -73,7 +73,7 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
     let (left, right) = LayoutUtils.layoutDelimiters(
       delimiters, relative_to, shortfall: shortfall, mathContext)
 
-    var items: [MathFragment] = []
+    var items: Array<MathFragment> = []
     var x = 0.0
     if let left = left {
       x += left.width

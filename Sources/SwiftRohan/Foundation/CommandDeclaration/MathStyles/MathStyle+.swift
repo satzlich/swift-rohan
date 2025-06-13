@@ -14,5 +14,5 @@ extension MathStyle: CommandDeclarationProtocol {
 
   var tag: CommandTag { .null }
   var source: CommandSource { .preBuilt }
-  static var allCommands: [MathStyle] { MathStyle.allCases }
+  static var allCommands: Array<MathStyle> { MathStyle.allCases }
 }

@@ -8,7 +8,7 @@ import Testing
 struct MathNodeTests {
   @Test
   func coverage() {
-    let nodes: [MathNode] = MathNodeTests.allSamples()
+    let nodes: Array<MathNode> = MathNodeTests.allSamples()
 
     for node in nodes {
       _ = node.enumerateComponents()

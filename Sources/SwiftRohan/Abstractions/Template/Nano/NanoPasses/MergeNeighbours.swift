@@ -2,8 +2,8 @@
 
 extension Nano {
   struct MergeNeighbours: NanoPass {
-    typealias Input = [Template]
-    typealias Output = [Template]
+    typealias Input = Array<Template>
+    typealias Output = Array<Template>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(MergeNeighbours.mergeNeighbours(in:))
@@ -18,7 +18,7 @@ extension Nano {
 
     private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
       override func visit(content: ContentExpr, _ context: Void) -> R {
-        let merged = content.children.reduce(into: [Expr]()) { acc, next in
+        let merged = content.children.reduce(into: Array<Expr>()) { acc, next in
           // a) recurse
           let next = self.rewrite(next, context)
 
@@ -72,15 +72,15 @@ extension Nano {
 
     /// Merge two lists of expressions.
     private static func mergeLists(
-      _ lhs: [Expr], _ rhs: [Expr]
-    ) -> [Expr] {
+      _ lhs: Array<Expr>, _ rhs: Array<Expr>
+    ) -> Array<Expr> {
       if lhs.isEmpty { return rhs }
       if rhs.isEmpty { return lhs }
 
       let l_last = lhs.last!
       let r_first = rhs.first!
       if isMergeable(l_last, r_first) {
-        var res = [Expr]()
+        var res = Array<Expr>()
         res.reserveCapacity(lhs.count + rhs.count - 1)
         res.append(contentsOf: lhs.dropLast())
         res.append(mergeMergeable(l_last, r_first))

@@ -29,11 +29,11 @@ enum Nano {
   ]
 
   struct NanoPassDriver: NanoPass {  // NanoPassDriver is not a nano pass
-    typealias Input = [Template]
-    typealias Output = [CompiledTemplate]
+    typealias Input = Array<Template>
+    typealias Output = Array<CompiledTemplate>
 
-    static func process(_ input: [Template]) -> PassResult<[CompiledTemplate]> {
-      PassResult<[Template]>.success(input)
+    static func process(_ input: Array<Template>) -> PassResult<Array<CompiledTemplate>> {
+      PassResult<Array<Template>>.success(input)
         .flatMap(CheckWellFormedness.process)
         .flatMap(ExtractCalls.process)
         .flatMap(CheckDanglingCalls.process)

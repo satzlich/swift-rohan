@@ -8,7 +8,7 @@ import Testing
 struct ElementExprTests {
   @Test
   func coverage() {
-    let elements: [ElementExpr] = ElementExprTests.allSamples()
+    let elements: Array<ElementExpr> = ElementExprTests.allSamples()
 
     let visitor = ExpressionRewriter<Void>()
     for element in elements {
@@ -17,7 +17,7 @@ struct ElementExprTests {
     }
   }
 
-  static func allSamples() -> [ElementExpr] {
+  static func allSamples() -> Array<ElementExpr> {
     [
       ContentExpr(),
       EmphasisExpr(),

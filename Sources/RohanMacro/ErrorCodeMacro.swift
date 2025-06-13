@@ -9,7 +9,7 @@ public enum ErrorCodeMacro: DeclarationMacro {
     public static func expansion(
         of node: some FreestandingMacroExpansionSyntax,
         in context: some MacroExpansionContext
-    ) throws -> [DeclSyntax] {
+    ) throws -> Array<DeclSyntax> {
         // verify
         guard node.arguments.count == 3
         else { throw DefaultError.message("Need 3 arguments") }

@@ -67,7 +67,7 @@ struct MathAccent: Codable, CommandDeclarationProtocol {
 }
 
 extension MathAccent {
-  static let allCommands: [MathAccent] = [
+  static let allCommands: Array<MathAccent> = [
     // Table 259 (total 11)
     .acute,
     .bar,

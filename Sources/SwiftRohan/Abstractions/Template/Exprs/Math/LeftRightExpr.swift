@@ -14,7 +14,7 @@ final class LeftRightExpr: MathExpr {
     super.init()
   }
 
-  convenience init(_ delimiters: DelimiterPair, _ nucleus: [Expr]) {
+  convenience init(_ delimiters: DelimiterPair, _ nucleus: Array<Expr>) {
     let nucleus = ContentExpr(nucleus)
     self.init(delimiters, nucleus)
   }

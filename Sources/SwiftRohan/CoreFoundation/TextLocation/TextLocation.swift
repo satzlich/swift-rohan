@@ -5,19 +5,19 @@ import Foundation
 
 public struct TextLocation: Equatable, Hashable, Sendable {
   /// indices except the last
-  let indices: [RohanIndex]
+  let indices: Array<RohanIndex>
 
   /// last index (either character offset in text node, or node index in
   /// element/argument node)
   let offset: Int
 
-  internal init(_ indices: [RohanIndex], _ offset: Int) {
+  internal init(_ indices: Array<RohanIndex>, _ offset: Int) {
     precondition(offset >= 0)
     self.indices = indices
     self.offset = offset
   }
 
-  internal var asArray: [RohanIndex] { indices + [.index(offset)] }
+  internal var asArray: Array<RohanIndex> { indices + [.index(offset)] }
 
   internal var asArraySlice: ArraySlice<RohanIndex> { indices + [.index(offset)] }
 
@@ -65,13 +65,13 @@ extension TextLocation: CustomStringConvertible {
   }
 
   /// Parse a string into a list of indices.
-  static func parseIndices<S: StringProtocol>(_ string: S) -> [RohanIndex]? {
+  static func parseIndices<S: StringProtocol>(_ string: S) -> Array<RohanIndex>? {
     guard string.first == "[",
       string.last == "]"
     else { return nil }
     let pattern = #/,(?!\d)/#  // comma not followed by a digit
     let indices = String(string.dropFirst().dropLast()).split(separator: pattern)
-    var result: [RohanIndex] = []
+    var result: Array<RohanIndex> = []
     result.reserveCapacity(indices.count)
     for index in indices {
       if let rohanIndex = RohanIndex.parse(index) {

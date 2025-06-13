@@ -32,7 +32,7 @@ public final class CompletionProvider {
 
   /// Adds a collection of command records to the completion provider.
   /// Each command record is keyed by its name.
-  public func addItems(_ records: [CommandRecord]) {
+  public func addItems(_ records: Array<CommandRecord>) {
     let records = records.map { record in (record.name, record) }
     searchEngine.insert(contentsOf: records)
   }
@@ -41,9 +41,9 @@ public final class CompletionProvider {
   func getCompletions(
     _ query: String, _ container: ContainerCategory,
     _ maxResults: Int, _ enableFuzzy: Bool = false
-  ) -> [Result] {
+  ) -> Array<Result> {
     var shouldCache = false
-    var results: [Result]
+    var results: Array<Result>
 
     if let (source, cached) = getCachedResults(query, container, enableFuzzy) {
       if source.count == query.count {
@@ -112,7 +112,7 @@ public final class CompletionProvider {
     var string = query
     string.removeLast()
 
-    var results: [Result]?
+    var results: Array<Result>?
     while true {
       let key = CacheKey(string, container, enableFuzzy)
       if let cached = resultCache.value(forKey: key) {
@@ -127,8 +127,8 @@ public final class CompletionProvider {
   }
 
   /// Returns the top K command records that match the given container category.
-  private func getTopK(_ k: Int, _ container: ContainerCategory) -> [CommandRecord] {
-    var results = [CommandRecord]()
+  private func getTopK(_ k: Int, _ container: ContainerCategory) -> Array<CommandRecord> {
+    var results = Array<CommandRecord>()
     results.reserveCapacity(k)
 
     searchEngine.enumerateElements { element in

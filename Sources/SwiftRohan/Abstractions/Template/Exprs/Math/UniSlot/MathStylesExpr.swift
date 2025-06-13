@@ -8,7 +8,7 @@ final class MathStylesExpr: MathExpr {
   let styles: MathStyles
   let nucleus: ContentExpr
 
-  init(_ styles: MathStyles, _ nucleus: [Expr]) {
+  init(_ styles: MathStyles, _ nucleus: Array<Expr>) {
     self.styles = styles
     self.nucleus = ContentExpr(nucleus)
     super.init()

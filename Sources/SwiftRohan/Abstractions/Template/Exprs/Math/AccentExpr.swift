@@ -8,7 +8,7 @@ final class AccentExpr: MathExpr {
   let accent: MathAccent
   let nucleus: ContentExpr
 
-  convenience init(_ accent: MathAccent, _ nucleus: [Expr]) {
+  convenience init(_ accent: MathAccent, _ nucleus: Array<Expr>) {
     let nucleus = ContentExpr(nucleus)
     self.init(accent, nucleus)
   }

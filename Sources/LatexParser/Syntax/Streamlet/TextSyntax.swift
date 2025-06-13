@@ -28,7 +28,7 @@ extension TextSyntax {
   ) -> StreamSyntax {
     let subs = registry.getSubsTable(for: mode)
 
-    var stream: [StreamletSyntax] = []
+    var stream: Array<StreamletSyntax> = []
     var segment: String = ""
 
     //

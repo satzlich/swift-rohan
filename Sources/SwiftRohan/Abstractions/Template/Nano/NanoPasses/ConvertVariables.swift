@@ -3,8 +3,8 @@
 extension Nano {
   /// Convert (named) variables to compiled ones
   struct ConvertVariables: NanoPass {
-    typealias Input = [Template]
-    typealias Output = [Template]
+    typealias Input = Array<Template>
+    typealias Output = Array<Template>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(convertVariables(_:))

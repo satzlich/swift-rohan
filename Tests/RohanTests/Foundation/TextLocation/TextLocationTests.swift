@@ -10,7 +10,7 @@ struct TextLocationTests {
 
   @Test
   func coverage() {
-    let indices: [RohanIndex] = []
+    let indices: Array<RohanIndex> = []
     let location = TextLocation(indices, 7)
     #expect(location.asArray.count == indices.count + 1)
 
@@ -63,7 +63,7 @@ struct TextLocationTests {
   @Test
   func parse() {
     do {
-      let examples: [String] = [
+      let examples: Array<String> = [
         "[]:0",
         "[↓2]:0",
         "[↓2,⇒3]:0",
@@ -78,7 +78,7 @@ struct TextLocationTests {
     }
 
     do {
-      let invalid: [String] = [
+      let invalid: Array<String> = [
         "[]",
         "]:0",
         "[↓1x]:0",

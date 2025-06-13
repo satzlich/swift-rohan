@@ -4,28 +4,28 @@ import Foundation
 
 struct Template: Codable {
   let name: TemplateName
-  let parameters: [Identifier]
-  let body: [Expr]
+  let parameters: Array<Identifier>
+  let body: Array<Expr>
 
-  init(name: TemplateName, parameters: [Identifier], body: [Expr]) {
+  init(name: TemplateName, parameters: Array<Identifier>, body: Array<Expr>) {
     precondition(Template.validate(parameters: parameters))
     self.name = name
     self.parameters = parameters
     self.body = body
   }
 
-  init(name: String, parameters: [String] = [], body: [Expr]) {
+  init(name: String, parameters: Array<String> = [], body: Array<Expr>) {
     let name = TemplateName(name)
     let parameters = parameters.map { Identifier($0) }
 
     self.init(name: name, parameters: parameters, body: body)
   }
 
-  func with(body: [Expr]) -> Template {
+  func with(body: Array<Expr>) -> Template {
     Template(name: name, parameters: parameters, body: body)
   }
 
-  static func validate(parameters: [Identifier]) -> Bool {
+  static func validate(parameters: Array<Identifier>) -> Bool {
     parameters.count == Set(parameters).count
   }
 
@@ -36,7 +36,7 @@ struct Template: Codable {
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.name = try container.decode(TemplateName.self, forKey: .name)
-    self.parameters = try container.decode([Identifier].self, forKey: .parameters)
+    self.parameters = try container.decode(Array<Identifier>.self, forKey: .parameters)
     var bodyContainer = try container.nestedUnkeyedContainer(forKey: .body)
     self.body = try ExprSerdeUtils.decodeListOfExprs(from: &bodyContainer)
   }

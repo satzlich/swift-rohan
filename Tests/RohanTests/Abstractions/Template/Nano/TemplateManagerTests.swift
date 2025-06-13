@@ -14,7 +14,7 @@ struct TemplateManagerTests {
 
   @Test
   static func testTemplateManager() {
-    let templates = [circle, ellipse, square, cdots, SOS] as [Template]
+    let templates = [circle, ellipse, square, cdots, SOS] as Array<Template>
     _ = TemplateManager(templates)
   }
 }

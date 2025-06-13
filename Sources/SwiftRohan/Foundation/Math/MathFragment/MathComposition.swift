@@ -21,7 +21,7 @@ struct MathComposition {
     context.restoreGState()
   }
 
-  init(width: Double, ascent: Double, descent: Double, items: [Item]) {
+  init(width: Double, ascent: Double, descent: Double, items: Array<Item>) {
     self.width = width
     self.ascent = ascent
     self.descent = descent
@@ -36,9 +36,9 @@ struct MathComposition {
   }
 
   /// Create natural horizontal composition
-  static func createHorizontal(_ fragments: [MathFragment]) -> MathComposition {
+  static func createHorizontal(_ fragments: Array<MathFragment>) -> MathComposition {
     var position = CGPoint.zero
-    var items: [Item] = []
+    var items: Array<Item> = []
     items.reserveCapacity(fragments.count)
     for fragment in fragments {
       items.append((fragment, position))

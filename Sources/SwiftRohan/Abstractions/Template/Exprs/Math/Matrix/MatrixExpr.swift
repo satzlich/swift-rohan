@@ -3,11 +3,11 @@
 final class MatrixExpr: ArrayExpr {
   override class var type: ExprType { .matrix }
 
-  override init(_ subtype: MathArray, _ rows: [Row]) {
+  override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
   }
 
-  override func with(rows: [Row]) -> MatrixExpr {
+  override func with(rows: Array<Row>) -> MatrixExpr {
     MatrixExpr(subtype, rows)
   }
 
@@ -28,7 +28,7 @@ final class MatrixExpr: ArrayExpr {
         forKey: .command, in: container,
         debugDescription: "Invalid matrix subtype: \(command)")
     }
-    let rows = try container.decode([Row].self, forKey: .rows)
+    let rows = try container.decode(Array<Row>.self, forKey: .rows)
     super.init(subtype, rows)
   }
 

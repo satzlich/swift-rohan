@@ -23,7 +23,7 @@ extension Nano {
       _ templates: [AnnotatedTemplate<TemplateNames>]
     ) -> [AnnotatedTemplate<TemplateNames>] {
       // obtain sorted names
-      let sorted: [TemplateName]? = {
+      let sorted: Array<TemplateName>? = {
         let vertices = Set(templates.map(\.name))
         let edges = templates.flatMap { template in
           template.annotation.map { callee in

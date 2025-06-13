@@ -445,9 +445,9 @@ final class DeleteRangeTests: TextKitTestsBase {
     }
 
     // paragraph -> text
-    let path: [RohanIndex] = TextLocation.parseIndices("[↓1,↓0]")!
+    let path: Array<RohanIndex> = TextLocation.parseIndices("[↓1,↓0]")!
     // paragraph -> text
-    let endPath: [RohanIndex] = TextLocation.parseIndices("[↓3,↓0]")!
+    let endPath: Array<RohanIndex> = TextLocation.parseIndices("[↓3,↓0]")!
 
     let text = "Mary has a little lamb."
     let endText = "Veni. Vedi. Veci."
@@ -458,7 +458,7 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     typealias ExpectedResult = (range1: String, doc1: String, range2: String)
 
-    let results: [ExpectedResult] = [
+    let results: Array<ExpectedResult> = [
       // i = 0
       (
         "[↓1,↓0]:0",

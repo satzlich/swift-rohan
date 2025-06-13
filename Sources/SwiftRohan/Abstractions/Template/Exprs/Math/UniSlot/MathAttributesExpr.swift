@@ -12,7 +12,7 @@ final class MathAttributesExpr: MathExpr {
     super.init()
   }
 
-  init(_ attributes: MathAttributes, _ nucleus: [Expr] = []) {
+  init(_ attributes: MathAttributes, _ nucleus: Array<Expr> = []) {
     self.attributes = attributes
     self.nucleus = ContentExpr(nucleus)
     super.init()

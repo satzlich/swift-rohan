@@ -10,7 +10,7 @@ enum JSONValue: Codable, Equatable {
   case bool(Bool)
   case string(String)
   case object([String: JSONValue])
-  case array([JSONValue])
+  case array(Array<JSONValue>)
 
   func encode(to encoder: Encoder) throws {
     // Unfortunately in Swift there is no way to "defer" serialization. Since
@@ -48,7 +48,7 @@ enum JSONValue: Codable, Equatable {
       self = .object(values)
     }
     else if var container = try? decoder.unkeyedContainer() {
-      var values = [JSONValue]()
+      var values = Array<JSONValue>()
 
       if let count = container.count {
         values.reserveCapacity(count)

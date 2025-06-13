@@ -21,7 +21,7 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
       paragraphSpacing: resolved(paragraphSpacing).float()!)
   }
 
-  public static let allKeys: [PropertyKey] = [
+  public static let allKeys: Array<PropertyKey> = [
     textAlignment,
     paragraphSpacing,
   ]

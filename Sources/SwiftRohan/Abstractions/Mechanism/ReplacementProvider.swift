@@ -7,7 +7,7 @@ public struct ReplacementProvider {
   private let textEngine: ReplacementEngine
   private let mathEngine: ReplacementEngine
 
-  public init(_ rules: [ReplacementRule]) {
+  public init(_ rules: Array<ReplacementRule>) {
     let (rest, both) = rules.partitioned { $0.command.isUniversal }
     let (text, math) = rest.partitioned { $0.command.isMathOnly }
 

@@ -82,7 +82,7 @@ final class AttachNode: MathNode {
   }
 
   final override func store() -> JSONValue {
-    var array: [JSONValue] = []
+    var array: Array<JSONValue> = []
     array.append(.string(Self.uniqueTag))
     // keep the order: lsub, lsup, nuc, sub, sup
     array.append(_lsub?.store() ?? .null)

@@ -8,7 +8,7 @@ import Testing
 struct MathMiscExprTests {
   @Test
   func coverage() {
-    let exprs: [Expr] = MathMiscExprTests.allSamples()
+    let exprs: Array<Expr> = MathMiscExprTests.allSamples()
 
     let rewriter = ExpressionRewriter<Void>()
 
@@ -17,7 +17,7 @@ struct MathMiscExprTests {
     }
   }
 
-  static func allSamples() -> [Expr] {
+  static func allSamples() -> Array<Expr> {
     [
       MathExpressionExpr(MathExpression.colon),
       MathOperatorExpr(MathOperator.min),

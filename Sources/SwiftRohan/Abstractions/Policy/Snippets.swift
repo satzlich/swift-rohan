@@ -39,7 +39,7 @@ enum Snippets {
     return CommandBody(expr, 0)
   }
 
-  static func leftRight(_ delimiters: MonoDuo<String, String>) -> CommandBody? {
+  static func leftRight(_ delimiters: EitherBoth<String, String>) -> CommandBody? {
     switch delimiters {
     case let .left(left):
       guard let leftDelimiter = NamedSymbol.lookup(left).map({ ExtendedChar.symbol($0) })
@@ -61,7 +61,7 @@ enum Snippets {
   }
 
   static func leftRight(
-    _ delimiters: MonoDuo<ExtendedChar, ExtendedChar>
+    _ delimiters: EitherBoth<ExtendedChar, ExtendedChar>
   ) -> CommandBody? {
     switch delimiters {
     case let .left(left):

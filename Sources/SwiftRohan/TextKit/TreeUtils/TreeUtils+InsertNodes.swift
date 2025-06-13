@@ -103,7 +103,7 @@ extension TreeUtils {
   private static func insertString(
     _ string: BigString, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
-  ) -> ([Int], [Int]) {
+  ) -> (Array<Int>, Array<Int>) {
     precondition(offset <= textNode.length)
     precondition(parent.getChild(index) === textNode)
     let newTextNode = textNode.inserted(string, at: offset)
@@ -116,7 +116,7 @@ extension TreeUtils {
   ///     index, not offset).
   private static func insertString(
     _ string: BigString, paragraphContainer container: ElementNode, index: Int
-  ) -> EditResult<([Int], [Int])> {
+  ) -> EditResult<(Array<Int>, Array<Int>)> {
     precondition(container.isParagraphContainer)
     precondition(index <= container.childCount)
 
@@ -141,7 +141,7 @@ extension TreeUtils {
   ///     not offset).
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
-  ) -> ([Int], [Int]) {
+  ) -> (Array<Int>, Array<Int>) {
     precondition(elementNode.isParagraphContainer == false)
     precondition(index <= elementNode.childCount)
 
@@ -172,7 +172,7 @@ extension TreeUtils {
   /// - Returns: The range of inserted content if insertion is successful;
   ///     otherwise, an error.
   static func insertInlineContent(
-    _ nodes: [Node], at location: TextLocation, _ tree: RootNode
+    _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> EditResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
@@ -194,7 +194,7 @@ extension TreeUtils {
   /// - Returns: The range of inserted content
   /// - Throws: `SatzError`
   internal static func insertInlineContent(
-    _ nodes: [Node], at location: TextLocationSlice, _ subtree: ElementNode
+    _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> EditResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
@@ -269,7 +269,7 @@ extension TreeUtils {
   private static func insertInlineContent<C>(
     _ nodes: C, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
-  ) -> ([Int], [Int])
+  ) -> (Array<Int>, Array<Int>)
   where
     C: BidirectionalCollection & MutableCollection,
     C.Element == Node, C.Index == Int
@@ -354,8 +354,8 @@ extension TreeUtils {
   /// Insert inline content into paragraph container at given index.
   /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertInlineContent(
-    _ nodes: [Node], paragraphContainer container: ElementNode, index: Int
-  ) -> EditResult<([Int], [Int])> {
+    _ nodes: Array<Node>, paragraphContainer container: ElementNode, index: Int
+  ) -> EditResult<(Array<Int>, Array<Int>)> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
     precondition(index <= container.childCount)
@@ -383,7 +383,7 @@ extension TreeUtils {
   ///     Otherwise, the location has count 1.
   static func insertInlineContent<C>(
     _ nodes: C, elementNode: ElementNode, index: Int
-  ) -> ([Int], [Int])
+  ) -> (Array<Int>, Array<Int>)
   where C: BidirectionalCollection, C.Element == Node {
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
     precondition(index <= elementNode.childCount)
@@ -433,7 +433,7 @@ extension TreeUtils {
   /// (The method also applies to `topLevelNodes`.)
   /// - Returns: The range of inserted content.
   static func insertParagraphNodes(
-    _ nodes: [Node], at location: TextLocation, _ tree: RootNode
+    _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
@@ -457,7 +457,7 @@ extension TreeUtils {
   /// Insert paragraph nodes into subtree at given location.
   /// - Returns: The range of inserted content
   internal static func insertParagraphNodes(
-    _ nodes: [Node], at location: TextLocationSlice, _ subtree: ElementNode
+    _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
@@ -540,10 +540,10 @@ extension TreeUtils {
   /// - Returns: The range of the inserted content (starting at the depth of
   ///     given grandIndex, not index or offset).
   private static func insertParagraphNodes(
-    _ nodes: [Node], textNode: TextNode, offset: Int,
+    _ nodes: Array<Node>, textNode: TextNode, offset: Int,
     _ paragraph: ParagraphNode, _ index: Int,
     _ grandParent: ElementNode, _ grandIndex: Int
-  ) throws -> ([Int], [Int]) {
+  ) throws -> (Array<Int>, Array<Int>) {
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
     precondition(grandParent.isParagraphContainer)
     precondition(grandParent.getChild(grandIndex) === paragraph)
@@ -610,8 +610,8 @@ extension TreeUtils {
   /// Insert paragraph nodes into paragraph container at given index.
   /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertParagraphNodes(
-    _ nodes: [Node], paragraphContainer container: ElementNode, index: Int
-  ) -> ([Int], [Int]) {
+    _ nodes: Array<Node>, paragraphContainer container: ElementNode, index: Int
+  ) -> (Array<Int>, Array<Int>) {
     precondition(index <= container.childCount)
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
@@ -638,9 +638,9 @@ extension TreeUtils {
   /// - Returns: The range of inserted content (starting at the depth of given index,
   ///    not offset).
   private static func insertParagraphNodes(
-    _ nodes: [Node], paragraphNode paragraph: ParagraphNode, offset: Int,
+    _ nodes: Array<Node>, paragraphNode paragraph: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int
-  ) throws -> ([Int], [Int]) {
+  ) throws -> (Array<Int>, Array<Int>) {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
     precondition(offset <= paragraph.childCount)
@@ -703,10 +703,10 @@ extension TreeUtils {
    - Precondition: offset is not zero.
    */
   private static func insertParagraphNodes_helper(
-    _ nodes: [Node], paragraphNode paragraph: ParagraphNode, offset: Int,
+    _ nodes: Array<Node>, paragraphNode paragraph: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int,
     takeTailPart: () -> (ElementStore, Array<Int>)
-  ) throws -> ([Int], [Int]) {
+  ) throws -> (Array<Int>, Array<Int>) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
     precondition(offset != 0)
@@ -778,7 +778,7 @@ extension TreeUtils {
 
   /// Compose range from `prefix`, `location`, and `end`.
   private static func composeRange(
-    _ prefix: [RohanIndex], _ location: [Int], _ end: [Int],
+    _ prefix: Array<RohanIndex>, _ location: Array<Int>, _ end: Array<Int>,
     _ error: @autoclosure () -> SatzError
   ) throws -> RhTextRange {
     let location = composeLocation(location)
@@ -786,7 +786,7 @@ extension TreeUtils {
     guard let range = RhTextRange(location, end) else { throw error() }
     return range
 
-    func composeLocation(_ location: [Int]) -> TextLocation {
+    func composeLocation(_ location: Array<Int>) -> TextLocation {
       precondition(!location.isEmpty)
       let indices = prefix + location.dropLast().map(RohanIndex.index)
       let offset = location.last!
@@ -796,7 +796,7 @@ extension TreeUtils {
 
   /// Compose range from `prefix`, and `range`.
   private static func composeRange(
-    _ prefix: [RohanIndex], _ range: RhTextRange
+    _ prefix: Array<RohanIndex>, _ range: RhTextRange
   ) -> RhTextRange {
     let location = composeLocation(range.location)
     let endLocation = composeLocation(range.endLocation)

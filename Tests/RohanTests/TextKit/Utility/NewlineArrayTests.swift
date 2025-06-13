@@ -16,7 +16,7 @@ struct NewlineArrayTests {
   @Test
   static func testNewlineArray() {
     do {
-      let isBlock: [Bool] = []
+      let isBlock: Array<Bool> = []
       let newlines = NewlineArray(isBlock)
       #expect(newlines.newlineCount == 0)
       #expect(newlines.asBitArray == [])
@@ -24,7 +24,7 @@ struct NewlineArrayTests {
     }
 
     do {
-      let isBlock: [Bool] = [true]
+      let isBlock: Array<Bool> = [true]
       let newlines = NewlineArray(isBlock)
       #expect(newlines.newlineCount == 0)
       #expect(newlines.asBitArray == [false])
@@ -34,7 +34,7 @@ struct NewlineArrayTests {
 
   @Test
   static func test_Manipulation() {
-    let isBlock: [Bool] = [false, false, true, false, true, true]
+    let isBlock: Array<Bool> = [false, false, true, false, true, true]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.newlineCount == 4)
@@ -84,7 +84,7 @@ struct NewlineArrayTests {
 
   @Test
   static func testSetValue() {
-    let isBlock: [Bool] = [false, false, true, false, true, true]
+    let isBlock: Array<Bool> = [false, false, true, false, true, true]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.newlineCount == 4)
@@ -116,7 +116,7 @@ struct NewlineArrayTests {
 
   @Test
   static func testReplace() {
-    let isBlock: [Bool] = [false, false, true, false, true, true]
+    let isBlock: Array<Bool> = [false, false, true, false, true, true]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.newlineCount == 4)
@@ -139,19 +139,19 @@ struct NewlineArrayTests {
     let repeats = 10
     let count = 100
     for _ in 0..<repeats {
-      let isBlock: [Bool] = randomBools(count)
+      let isBlock: Array<Bool> = randomBools(count)
       var control = NewlineArray(isBlock)
       var test = NewlineArray(isBlock)
       //
       let range = randomRange(count)
-      let placement: [Bool] = randomBools(10)
+      let placement: Array<Bool> = randomBools(10)
       control.replaceSubrange(range, with: placement)
       test.replaceSubrange(range, with: placement)
       #expect(control == test)
     }
   }
 
-  private static func randomBools(_ count: Int) -> [Bool] {
+  private static func randomBools(_ count: Int) -> Array<Bool> {
     return (0..<count).map { _ in Bool.random() }
   }
   private static func randomRange(_ count: Int) -> Range<Int> {

@@ -42,7 +42,7 @@ struct MathExpression: CommandDeclarationProtocol {
 }
 
 extension MathExpression {
-  static let allCommands: [MathExpression] = [
+  static let allCommands: Array<MathExpression> = [
     bmod,
     bot,
     colon,

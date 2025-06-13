@@ -21,7 +21,7 @@ public struct PageProperty: PropertyAggregate {
       rightMargin: resolved(rightMargin).absLength()!)
   }
 
-  public static let allKeys: [PropertyKey] = [
+  public static let allKeys: Array<PropertyKey> = [
     width,
     height,
     topMargin,

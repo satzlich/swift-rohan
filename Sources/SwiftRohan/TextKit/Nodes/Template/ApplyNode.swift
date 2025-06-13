@@ -310,7 +310,7 @@ final class ApplyNode: Node {
 
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
-  ) -> [RohanIndex] {
+  ) -> Array<RohanIndex> {
     template.template.lookup[argumentIndex][variableIndex] + path
   }
 }

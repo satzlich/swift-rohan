@@ -23,7 +23,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
     self.command = command
   }
 
-  static let allCommands: [MathSpreader] =
+  static let allCommands: Array<MathSpreader> =
     [
       //
       underline,

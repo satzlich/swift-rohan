@@ -17,7 +17,7 @@ final class EquationExpr: MathExpr {
     super.init()
   }
 
-  convenience init(_ subtype: Subtype, _ nucleus: [Expr] = []) {
+  convenience init(_ subtype: Subtype, _ nucleus: Array<Expr> = []) {
     self.init(subtype, ContentExpr(nucleus))
   }
 

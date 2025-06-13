@@ -10,8 +10,8 @@ final class AttachExpr: MathExpr {
   let sup: ContentExpr?
 
   convenience init(
-    nuc: [Expr], lsub: [Expr]? = nil, lsup: [Expr]? = nil,
-    sub: [Expr]? = nil, sup: [Expr]? = nil
+    nuc: Array<Expr>, lsub: Array<Expr>? = nil, lsup: Array<Expr>? = nil,
+    sub: Array<Expr>? = nil, sup: Array<Expr>? = nil
   ) {
     self.init(
       nuc: ContentExpr(nuc),

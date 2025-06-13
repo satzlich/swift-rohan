@@ -8,7 +8,7 @@ import Testing
 struct ElementNodeTests {
   @Test
   func coverage() {
-    let elements: [ElementNode] = ElementNodeTests.allSamples()
+    let elements: Array<ElementNode> = ElementNodeTests.allSamples()
 
     for element in elements {
       _ = element.cloneEmpty()

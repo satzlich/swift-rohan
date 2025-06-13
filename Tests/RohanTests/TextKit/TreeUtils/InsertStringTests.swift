@@ -292,7 +292,7 @@ final class InsertStringTests: TextKitTestsBase {
     }
 
     func range(for index: Int) -> RhTextRange {
-      let path: [RohanIndex] = [
+      let path: Array<RohanIndex> = [
         .index(0)  // paragraph
       ]
       return RhTextRange(TextLocation(path, index))

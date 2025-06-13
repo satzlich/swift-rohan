@@ -4,15 +4,15 @@ import Testing
 
 @testable import SwiftRohan
 
-struct MonoDuoTests {
+struct EitherBothTests {
 
-  private typealias MonoDuo = SwiftRohan.MonoDuo<String, Int>
+  private typealias EitherBoth = SwiftRohan.EitherBoth<String, Int>
 
   @Test
   func coverage() {
-    let string = MonoDuo.left("Hello")
-    let integer = MonoDuo.right(42)
-    let pair = MonoDuo.pair("World", 100)
+    let string = EitherBoth.left("Hello")
+    let integer = EitherBoth.right(42)
+    let pair = EitherBoth.pair("World", 100)
 
     #expect(string.isLeft == true)
     #expect(string.isRight == false)

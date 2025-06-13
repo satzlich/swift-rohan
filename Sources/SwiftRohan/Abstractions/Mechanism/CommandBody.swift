@@ -17,7 +17,7 @@ public enum CommandBody {
 
   // MARK: - Canonical
 
-  private init(_ expressions: [Expr], _ backwardMoves: Int, preview: CommandPreview) {
+  private init(_ expressions: Array<Expr>, _ backwardMoves: Int, preview: CommandPreview) {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Expect non-nil category") }
     assert(category.isPlaintext == false)
@@ -124,13 +124,13 @@ public enum CommandBody {
   }
 
   public struct InsertExprs {
-    let exprs: [Expr]
+    let exprs: Array<Expr>
     let category: ContentCategory
     let backwardMoves: Int
     let preview: CommandPreview
 
     init(
-      _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
+      _ exprs: Array<Expr>, _ category: ContentCategory, _ backwardMoves: Int,
       preview: CommandPreview
     ) {
       precondition(backwardMoves >= 0)

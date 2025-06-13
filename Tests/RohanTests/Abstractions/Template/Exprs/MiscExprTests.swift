@@ -8,7 +8,7 @@ import Testing
 struct MiscExprTests {
   @Test
   func coverage() {
-    let exprs: [Expr] = MiscExprTests.allSamples()
+    let exprs: Array<Expr> = MiscExprTests.allSamples()
 
     let rewriter = ExpressionRewriter<Void>()
 
@@ -17,7 +17,7 @@ struct MiscExprTests {
     }
   }
 
-  static func allSamples() -> [Expr] {
+  static func allSamples() -> Array<Expr> {
     [
       LinebreakExpr(),
       TextExpr("Hello"),

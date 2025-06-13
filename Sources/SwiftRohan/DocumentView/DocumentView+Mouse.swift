@@ -7,18 +7,16 @@ extension DocumentView {
 
   public override func rightMouseDown(with event: NSEvent) {
     // if selection range is empty, resolve selection
-    if documentManager.textSelection?.textRange.isEmpty == true {
+    if let currentSelection = documentManager.textSelection,
+      currentSelection.textRange.isEmpty
+    {
       let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
       guard
-        let selection = documentManager.textSelectionNavigation.textSelection(
-          interactingAt: point,
-          anchors: documentManager.textSelection,
-          modifiers: [],
-          selecting: false,
-          bounds: .infinite)
-      else {
-        return
-      }
+        let selection =
+          documentManager.textSelectionNavigation.textSelection(
+            interactingAt: point, anchors: currentSelection,
+            modifiers: [], selecting: false, bounds: .infinite)
+      else { return }
       // update selection
       documentManager.textSelection = selection
       documentSelectionDidChange()
@@ -41,11 +39,8 @@ extension DocumentView {
 
       guard
         let selection = documentManager.textSelectionNavigation.textSelection(
-          interactingAt: point,
-          anchors: documentManager.textSelection,
-          modifiers: [],
-          selecting: selecting,
-          bounds: .infinite)
+          interactingAt: point, anchors: documentManager.textSelection,
+          modifiers: [], selecting: selecting, bounds: .infinite)
       else { return }
 
       // update selection
@@ -77,8 +72,7 @@ extension DocumentView {
     if inputContext?.handleEvent(event) == true { return }
 
     // ensure there is a movement
-    guard event.deltaX != 0 || event.deltaY != 0
-    else {
+    guard event.deltaX != 0 || event.deltaY != 0 else {
       // otherwise, forward event
       super.mouseDragged(with: event)
       return

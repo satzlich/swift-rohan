@@ -26,7 +26,7 @@ final class MatrixNode: ArrayNode {
         forKey: .command, in: container,
         debugDescription: "Invalid matrix command: \(command)")
     }
-    let rows = try container.decode([Row].self, forKey: .rows)
+    let rows = try container.decode(Array<Row>.self, forKey: .rows)
     super.init(subtype, rows)
   }
 
@@ -48,8 +48,8 @@ final class MatrixNode: ArrayNode {
   }
 
   final override func store() -> JSONValue {
-    let rows: [JSONValue] = _rows.map { row in
-      let children: [JSONValue] = row.map { $0.store() }
+    let rows: Array<JSONValue> = _rows.map { row in
+      let children: Array<JSONValue> = row.map { $0.store() }
       return JSONValue.array(children)
     }
     let json = JSONValue.array([.string(subtype.command), .array(rows)])

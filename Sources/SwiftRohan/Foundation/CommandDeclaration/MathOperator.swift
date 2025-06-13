@@ -26,7 +26,7 @@ struct MathOperator: Codable, CommandDeclarationProtocol {
 }
 
 extension MathOperator {
-  static let allCommands: [MathOperator] = [
+  static let allCommands: Array<MathOperator> = [
     // total: 32 (Table 203: Log-like Symbols)
     .arccos, .arcsin, .arctan, .arg,
     .cos, .cosh, .cot, .coth,
