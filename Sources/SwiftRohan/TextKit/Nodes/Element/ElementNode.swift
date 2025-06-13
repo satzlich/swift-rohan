@@ -232,11 +232,16 @@ internal class ElementNode: Node {
         {
           // The content of ApplyNode is treated as being expanded in-place.
           // So keep the original point.
-          _ = applyNode.resolveTextLocation(
-            with: point, context: context,
-            layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity,
-            pickedRange: pickedRange.subtracting(consumed))
+          if let newPickedRange = pickedRange.subtracting(consumed) {
+            _ = applyNode.resolveTextLocation(
+              with: point, context: context,
+              layoutOffset: layoutOffset + consumed,
+              trace: &trace, affinity: &affinity,
+              pickedRange: newPickedRange)
+          }
+          else {
+            assertionFailure("subtraction of consumed from pickedRange failed")
+          }
           return true
         }
         else {
@@ -329,17 +334,21 @@ internal class ElementNode: Node {
           // content of ApplyNode is effectively expanded in-place. Thus we recurse
           // with the original point and subtract consumed from the layout range.
           trace.append(contentsOf: value)
-          let modified = applyNode.resolveTextLocation(
-            with: point, context: context, layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity,
-            // subtract consumed from the layout range
-            pickedRange: pickedRange.subtracting(consumed))
-          if !modified { fallbackLastIndex() }
+          if let newPickedRange = pickedRange.subtracting(consumed) {
+            let modified = applyNode.resolveTextLocation(
+              with: point, context: context, layoutOffset: layoutOffset + consumed,
+              trace: &trace, affinity: &affinity,
+              pickedRange: newPickedRange)
+            if !modified { fallbackLastIndex() }
+          }
+          else {
+            assertionFailure("subtraction of consumed from pickedRange failed")
+            fallbackLastIndex()
+          }
           return true
 
         default:
           assertionFailure("unexpected node type: \(Swift.type(of: child))")
-          // fallback and return
           fallbackLastIndex()
           return true
         }

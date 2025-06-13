@@ -25,8 +25,13 @@ struct PickedRange {
   }
 
   /// Subtract consumed units from the range.
-  internal func subtracting(_ units: Int) -> PickedRange {
-    precondition(units <= layoutRange.lowerBound)
+  /// - Returns: A new `PickedRange` with the consumed units subtracted, or `nil`
+  ///     if the consumed units exceed the range **lower bound**.
+  internal func subtracting(_ units: Int) -> PickedRange? {
+    guard units <= layoutRange.lowerBound else {
+      // If the consumed units exceed the range, return nil.
+      return nil
+    }
     let range = layoutRange.subtracting(units)
     return PickedRange(range, fraction)
   }
