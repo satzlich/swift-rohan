@@ -11,15 +11,17 @@ extension DocumentView {
     _isEditing = true
   }
 
-  internal func endEditing(postNotification: Bool = true) {
+  /// - Parameter notifyChange: If true, post `documentDidChange` notification.
+  internal func endEditing(notifyChange: Bool = true) {
     precondition(_isEditing == true)
     _isEditing = false
-    documentContentDidChange(postNotification: postNotification)
+    documentContentDidChange(notifyChange: notifyChange)
   }
 
+  /// - Parameter notifyChange: If true, post `documentDidChange` notification.
   internal func documentContentDidChange(
     layoutScope: DocumentManager.LayoutScope = .viewport,
-    postNotification: Bool = true
+    notifyChange: Bool = true
   ) {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
@@ -30,7 +32,7 @@ extension DocumentView {
     setNeedsUpdate(selection: true, scroll: true)
 
     // post notification
-    if postNotification {
+    if notifyChange {
       self.delegate?.documentDidChange(self)
     }
   }

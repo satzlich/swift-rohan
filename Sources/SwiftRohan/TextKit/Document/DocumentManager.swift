@@ -85,8 +85,9 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = TextLocation([], 0).normalised(for: rootNode)!
-    let endLocation = TextLocation([], rootNode.childCount).normalised(for: rootNode)!
+    let location = TextLocation([], 0).toUseSpace(for: rootNode)!
+    let childCount = rootNode.childCount
+    let endLocation = TextLocation([], childCount).toUseSpace(for: rootNode)!
     return RhTextRange(location, endLocation)!
   }
 
@@ -144,7 +145,7 @@ public final class DocumentManager {
     else {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normaliseRange(result))
+        return .success(result.normalised(for: rootNode) ?? result)
       case .failure(let error):
         return .failure(error)
       }
@@ -193,7 +194,10 @@ public final class DocumentManager {
       }
     }
 
-    return result.map { _normaliseRange($0) }
+    return result.map { result in
+      result.normalised(for: self.rootNode)
+        ?? result  // fallback to original range if normalisation fails
+    }
   }
 
   /// Replace characters in range with string.
@@ -209,7 +213,7 @@ public final class DocumentManager {
     if string.isEmpty {
       switch _deleteContents(in: range) {
       case let .success(result):
-        return .success(_normaliseRange(result))
+        return .success(result.normalised(for: rootNode) ?? result)
       case let .failure(error):
         return .failure(error)
       }
@@ -227,7 +231,10 @@ public final class DocumentManager {
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { _normaliseRange($0) }
+      .map { result in
+        result.normalised(for: self.rootNode)
+          ?? result  // fallback to original range if normalisation fails
+      }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -551,6 +558,49 @@ public final class DocumentManager {
     }
   }
 
+  /// Resolve the selection affinity for the given move.
+  /// - Parameters:
+  ///   - direction: The navigation direction.
+  ///   - location: The target location.
+  private func _resolveAffinityForMove(
+    in direction: TextSelectionNavigation.Direction,
+    target location: TextLocation
+  ) -> SelectionAffinity {
+    precondition(direction == .forward || direction == .backward)
+
+    func isWhitespace(_ string: String) -> Bool {
+      string.count == 1 && string.first!.isWhitespace == true
+    }
+
+    switch direction {
+    case .forward:
+      if let (object, _) = self.objectAt(location, direction: .backward),
+        case let .text(string) = object,
+        isWhitespace(string)
+      {
+        return .downstream
+      }
+      else {
+        return .upstream
+      }
+
+    case .backward:
+      if let (object, _) = self.objectAt(location, direction: .forward),
+        case let .text(string) = object,
+        isWhitespace(string)
+      {
+        return .upstream
+      }
+      else {
+        return .downstream
+      }
+
+    default:
+      assertionFailure("Invalid direction")
+      return .downstream
+    }
+  }
+
   /// Return the destination location for the given location and direction.
   ///
   /// - Parameters:
@@ -568,33 +618,11 @@ public final class DocumentManager {
     }
 
     switch direction {
-    case .forward:
+    case .forward, .backward:
       guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
       else { return nil }
-
-      if let (object, _) = self.objectAt(target, direction: .backward),
-        case let .text(string) = object,
-        isWhitespace(string)
-      {
-        return AffineLocation(target, .downstream)
-      }
-      else {
-        return AffineLocation(target, .upstream)
-      }
-
-    case .backward:
-      guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
-      else { return nil }
-
-      if let (object, _) = self.objectAt(target, direction: .forward),
-        case let .text(string) = object,
-        isWhitespace(string)
-      {
-        return AffineLocation(target, .upstream)
-      }
-      else {
-        return AffineLocation(target, .downstream)
-      }
+      let affinity = _resolveAffinityForMove(in: direction, target: target)
+      return AffineLocation(target, affinity)
 
     case .up, .down:
       guard
@@ -654,8 +682,10 @@ public final class DocumentManager {
         assert(range.lowerBound == offset)
         assert(range.upperBound <= textNode.string.length)
         trace.moveTo(.index(range.upperBound))
-        return trace.toRawLocation()
-          .map { AffineLocation($0, .downstream) }  // always downstream
+
+        guard let target = trace.toRawLocation() else { return nil }
+        let affinity = _resolveAffinityForMove(in: direction, target: target)
+        return AffineLocation(target, affinity)
       }
     }
     else {
@@ -668,14 +698,18 @@ public final class DocumentManager {
         assert(range.upperBound == offset)
         assert(range.lowerBound >= 0)
         trace.moveTo(.index(range.lowerBound))
-        return trace.toRawLocation()
-          .map { AffineLocation($0, .downstream) }  // always downstream
+
+        guard let target = trace.toRawLocation() else { return nil }
+        let affinity = _resolveAffinityForMove(in: direction, target: target)
+        return AffineLocation(target, affinity)
       }
     }
   }
 
-  func textRange(
-    for granularity: TextSelectionNavigation.Destination, enclosing location: TextLocation
+  /// Return the text range enclosing the given location for the given granularity.
+  /// - Warning: Currently only `.word` granularity is supported.
+  internal func enclosingTextRange(
+    for granularity: TextSelectionNavigation.Destination, _ location: TextLocation
   ) -> RhTextRange? {
     precondition(granularity == .word)
 
@@ -1051,18 +1085,9 @@ public final class DocumentManager {
     }
   }
 
-  /// Normalize the given range or return the fallback range.
-  private func _normaliseRange(_ range: RhTextRange) -> RhTextRange {
-    if let normalized = range.normalised(for: rootNode) {
-      return normalized
-    }
-    else {
-      // It is a programming error if the range cannot be normalised.
-      assertionFailure("Failed to normalize range")
-      return range
-    }
-  }
-
+  /// Normalize the given location or return nil if the location is invalid.
+  /// - Postcondition: When successful, the returned location is **always equivalent**
+  ///     to the given location.
   internal func normaliseLocation(_ location: TextLocation) -> TextLocation? {
     location.normalised(for: rootNode)
   }
@@ -1088,7 +1113,7 @@ public final class DocumentManager {
 
   func getLatexContent(for range: RhTextRange) -> String? {
     guard let nodes: Array<PartialNode> = mapContents(in: range, { $0 }),
-      let parent = lowestAncestor(for: range),
+      let parent = _lowestGenElementAncestor(for: range),
       let layoutMode = containerCategory(for: range.location)?.layoutMode()
     else { return nil }
 
@@ -1104,9 +1129,10 @@ public final class DocumentManager {
     }
   }
 
-  /// Returns the lowest ancestor node for the given range which is element node
-  /// or argument node.
-  private func lowestAncestor(
+  /// Returns the lowest ancestor node for the given range that is either an
+  /// `ElementNode` or an `ArgumentNode`, which conforms to the `GenElementNode`
+  /// protocol.
+  private func _lowestGenElementAncestor(
     for range: RhTextRange
   ) -> Either<ElementNode, ArgumentNode>? {
     guard let trace = Trace.from(range.location, rootNode),

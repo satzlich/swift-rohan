@@ -119,7 +119,6 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       }
 
       let expected: [String] = [
-        "[]:3",
         "[↓2]:2",
         "[↓2,↓1,nuc]:2",
         "[↓2,↓1,nuc,↓1,⇒0]:1",

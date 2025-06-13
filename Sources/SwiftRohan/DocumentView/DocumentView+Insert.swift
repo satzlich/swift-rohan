@@ -8,9 +8,8 @@ extension DocumentView {
     guard let selection = documentManager.textSelection?.textRange else { return }
 
     beginEditing()
-    defer { endEditing() }
-
     replaceContentsForEdit(in: selection, with: [LinebreakNode()])
+    endEditing()
   }
 
   public override func insertNewline(_ sender: Any?) {
@@ -18,9 +17,8 @@ extension DocumentView {
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
 
     beginEditing()
-    defer { endEditing() }
-    replaceContentsForEdit(
-      in: selection, with: content, message: "Failed to insert newline.")
+    replaceContentsForEdit(in: selection, with: content)
+    endEditing()
   }
 
   public override func insertTab(_ sender: Any?) {

@@ -58,12 +58,9 @@ extension DocumentView {
       let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
       guard
         let selection = navigation.textSelection(
-          interactingAt: point,
-          anchors: documentManager.textSelection,
-          modifiers: [],
-          selecting: false,
-          bounds: .infinite),
-        let destination = navigation.textSelection(for: .word, enclosing: selection)
+          interactingAt: point, anchors: documentManager.textSelection,
+          modifiers: [], selecting: false, bounds: .infinite),
+        let destination = navigation.enclosingTextRange(for: .word, selection)
       else { return }
 
       // update selection
@@ -73,20 +70,6 @@ extension DocumentView {
     else {
       super.mouseDown(with: event)
     }
-  }
-
-  override public func mouseUp(with event: NSEvent) {
-    // if input context has consumed event, return
-    if inputContext?.handleEvent(event) == true { return }
-    // forward event
-    super.mouseUp(with: event)
-  }
-
-  override public func mouseMoved(with event: NSEvent) {
-    // if input context has consumed event, return
-    if inputContext?.handleEvent(event) == true { return }
-    // forward event
-    super.mouseMoved(with: event)
   }
 
   public override func mouseDragged(with event: NSEvent) {

@@ -12,8 +12,7 @@ extension DocumentView {
   /// - Note: For internal error, assertion failure is triggered.
   @discardableResult
   internal func replaceContentsForEdit(
-    in range: RhTextRange, with nodes: [Node]?,
-    message: @autoclosure () -> String? = { nil }()
+    in range: RhTextRange, with nodes: [Node]?
   ) -> EditResult<RhTextRange> {
     precondition(_isEditing == true)
     let result = replaceContents(in: range, with: nodes, registerUndo: true)

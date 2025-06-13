@@ -1,9 +1,10 @@
 // Copyright 2024-2025 Lie Yan
 
-enum OneOrPair<U, V> {
-  case left(U)
-  case right(V)
-  case pair(U, V)
+/// One or two values, with the possibility of both.
+enum MonoDuo<L, R> {
+  case left(L)
+  case right(R)
+  case pair(L, R)
 
   var isLeft: Bool {
     if case .left = self { return true }
@@ -13,22 +14,22 @@ enum OneOrPair<U, V> {
     if case .right = self { return true }
     return false
   }
-  var isBoth: Bool {
+  var isPair: Bool {
     if case .pair = self { return true }
     return false
   }
 
-  func left() -> U? {
+  func left() -> L? {
     if case let .left(value) = self { return value }
     return nil
   }
 
-  func right() -> V? {
+  func right() -> R? {
     if case let .right(value) = self { return value }
     return nil
   }
 
-  func both() -> (U, V)? {
+  func pair() -> (L, R)? {
     if case let .pair(left, right) = self { return (left, right) }
     return nil
   }

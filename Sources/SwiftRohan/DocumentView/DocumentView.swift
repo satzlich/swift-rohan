@@ -35,7 +35,7 @@ public final class DocumentView: NSView {
     _undoManager.removeAllActions()
 
     // request update
-    documentContentDidChange(layoutScope: .document, postNotification: false)
+    documentContentDidChange(layoutScope: .document, notifyChange: false)
   }
 
   /// True if visual delimiters are enabled. Default to true.
