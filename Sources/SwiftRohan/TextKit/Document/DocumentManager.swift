@@ -85,9 +85,9 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = TextLocation([], 0).userSpaceNormalised(for: rootNode)!
+    let location = TextLocation([], 0).toUseSpace(for: rootNode)!
     let childCount = rootNode.childCount
-    let endLocation = TextLocation([], childCount).userSpaceNormalised(for: rootNode)!
+    let endLocation = TextLocation([], childCount).toUseSpace(for: rootNode)!
     return RhTextRange(location, endLocation)!
   }
 

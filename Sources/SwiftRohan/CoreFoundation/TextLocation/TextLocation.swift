@@ -87,12 +87,18 @@ extension TextLocation: CustomStringConvertible {
 
 extension TextLocation {
   /// Normalize the text location for a given tree.
+  /// - Postcondition: The returned location is guaranteed to be equivalent to the
+  ///     original location in the context of the given tree.
   func normalised(for tree: RootNode) -> TextLocation? {
     Trace.from(self, tree)?.toNormalLocation()
   }
 
   /// Convert to user-space text location for a given tree.
-  func userSpaceNormalised(for tree: RootNode) -> TextLocation? {
+  /// - Note: The returned location is **not guaranteed** to be equivalent to the
+  ///     original location in the context of the given tree. If the result is to
+  ///     be used for further internal processing, it is recommended to
+  ///     call `normalised(for:)`.
+  func toUseSpace(for tree: RootNode) -> TextLocation? {
     guard var trace = Trace.from(self, tree) else { return nil }
     return trace.toUserSpaceLocation()
   }
