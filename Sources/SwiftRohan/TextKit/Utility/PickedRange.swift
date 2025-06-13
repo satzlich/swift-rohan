@@ -25,7 +25,7 @@ struct PickedRange {
   }
 
   /// Subtract consumed units from the range.
-  internal func smartSubtracting(_ units: Int) -> PickedRange {
+  internal func subtracting(_ units: Int) -> PickedRange {
     precondition(units <= layoutRange.lowerBound)
     let range = layoutRange.subtracting(units)
     return PickedRange(range, fraction)

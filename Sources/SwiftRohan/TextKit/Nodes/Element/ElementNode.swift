@@ -236,7 +236,7 @@ internal class ElementNode: Node {
             with: point, context: context,
             layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
-            pickedRange: pickedRange.smartSubtracting(consumed))
+            pickedRange: pickedRange.subtracting(consumed))
           return true
         }
         else {
@@ -333,7 +333,7 @@ internal class ElementNode: Node {
             with: point, context: context, layoutOffset: layoutOffset + consumed,
             trace: &trace, affinity: &affinity,
             // subtract consumed from the layout range
-            pickedRange: pickedRange.smartSubtracting(consumed))
+            pickedRange: pickedRange.subtracting(consumed))
           if !modified { fallbackLastIndex() }
           return true
 
