@@ -74,6 +74,61 @@ final class TextNode: Node {
 
   final override func store() -> JSONValue { .string(String(_string)) }
 
+  // MARK: - Node(Tree API)
+
+  final override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: DocumentManager.EnumerateTextSegmentsBlock
+  ) -> Bool {
+    guard path.count == 1,
+      endPath.count == 1,
+      let offset = self.getLayoutOffset(path.first!),
+      let endOffset = self.getLayoutOffset(endPath.first!)
+    else { return false }
+
+    // compute layout range
+    let layouRange = (layoutOffset + offset)..<(layoutOffset + endOffset)
+
+    // create new block
+    func newBlock(
+      _ layoutRange: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      return block(nil, segmentFrame.offsetBy(originCorrection), baselinePosition)
+    }
+
+    // enumerate
+    return context.enumerateTextSegments(
+      layouRange, type: type, options: options, using: newBlock(_:_:_:))
+  }
+
+  final override func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity
+  ) -> Bool {
+    // no-op
+    return false
+  }
+
+  final override func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction,
+    context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard path.count == 1,
+      let localOffset = self.getLayoutOffset(path.first!)
+    else { return nil }
+    // perform rayshooting
+    let newOffset = layoutOffset + localOffset
+    guard
+      let result = context.rayshoot(
+        from: newOffset, affinity: affinity, direction: direction)
+    else { return nil }
+    return LayoutUtils.relayRayshoot(newOffset, affinity, direction, result, context)
+  }
+
   // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> NodeLoaded<TextNode> {
@@ -156,59 +211,6 @@ final class TextNode: Node {
     let index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
     let target = _string.index(roundingDown: index)
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
-  }
-
-  override func enumerateTextSegments(
-    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
-    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: DocumentManager.EnumerateTextSegmentsBlock
-  ) -> Bool {
-    guard path.count == 1,
-      endPath.count == 1,
-      let offset = self.getLayoutOffset(path.first!),
-      let endOffset = self.getLayoutOffset(endPath.first!)
-    else { return false }
-
-    // compute layout range
-    let layouRange = (layoutOffset + offset)..<(layoutOffset + endOffset)
-
-    // create new block
-    func newBlock(
-      _ layoutRange: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      return block(nil, segmentFrame.offsetBy(originCorrection), baselinePosition)
-    }
-
-    // enumerate
-    return context.enumerateTextSegments(
-      layouRange, type: type, options: options, using: newBlock(_:_:_:))
-  }
-
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout SelectionAffinity
-  ) -> Bool {
-    // no-op
-    return false
-  }
-
-  final override func rayshoot(
-    from path: ArraySlice<RohanIndex>,
-    affinity: SelectionAffinity,
-    direction: TextSelectionNavigation.Direction,
-    context: LayoutContext, layoutOffset: Int
-  ) -> RayshootResult? {
-    guard path.count == 1,
-      let localOffset = self.getLayoutOffset(path.first!)
-    else { return nil }
-    // perform rayshooting
-    let newOffset = layoutOffset + localOffset
-    guard
-      let result = context.rayshoot(
-        from: newOffset, affinity: affinity, direction: direction)
-    else { return nil }
-    return LayoutUtils.relayRayshoot(newOffset, affinity, direction, result, context)
   }
 
   // MARK: - TextNode Specific

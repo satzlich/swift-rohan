@@ -269,15 +269,4 @@ class MathNode: Node {
     guard 0..<components.count ~= target else { return nil }
     return components[target].index
   }
-
-  /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
-  static func defaultInitLayoutContext(
-    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
-  ) -> LayoutContext {
-    precondition(fragment is MathListLayoutFragment)
-    let fragment = fragment as! MathListLayoutFragment
-    return
-      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
-  }
-
 }
