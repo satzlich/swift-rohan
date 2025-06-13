@@ -43,98 +43,7 @@ class MathNode: Node {
 
   internal override func layoutLength() -> Int { 1 }  // "1" except for reflowed math.
 
-  // MARK: - MathNode(Component)
-
-  @usableFromInline
-  typealias Component = (index: MathIndex, content: ContentNode)
-
-  /// Returns an __ordered list__ of the node's components.
-  internal func enumerateComponents() -> Array<Component> {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns true if the node allows the component specified by the given index.
-  internal func isComponentAllowed(_ index: MathIndex) -> Bool { false }
-
-  /// Add the component specified by the given index and content to the node.
-  internal func addComponent(_ index: MathIndex, _ content: ElementStore, inStorage: Bool)
-  {
-    assertionFailure("inapplicable unless overridden")
-  }
-
-  /// Remove the component specified by the given index.
-  internal func removeComponent(_ index: MathIndex, inStorage: Bool) {
-    assertionFailure("inapplicable unless overridden")
-  }
-
-  // MARK: - MathNode(Layout)
-
-  /// Layout fragment associated with this node
-  internal var layoutFragment: MathLayoutFragment? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns the component associated with the given index.
-  internal func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Initialize a layout context for the component with the given fragment.
-  internal func initLayoutContext(
-    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
-  ) -> LayoutContext {
-    precondition(fragment is MathListLayoutFragment)
-    let fragment = fragment as! MathListLayoutFragment
-    return
-      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
-  }
-
-  /// Returns the math index for the given point.
-  /// - Parameter point: The point relative to the __glyph origin__ of the
-  ///     fragment of this node.
-  internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Process rayshooting with regard to the structure of the node.
-  /// - Parameters:
-  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
-  internal func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    preconditionFailure("overriding required")
-  }
-
-  // MARK: - Implementation
-
-  /// Returns the component for the index. If not found, return nil.
-  final func getComponent(_ index: MathIndex) -> ContentNode? {
-    enumerateComponents().first { $0.index == index }?.content
-  }
-
-  final func destinationIndex(
-    for index: MathIndex, _ direction: TextSelectionNavigation.Direction
-  ) -> MathIndex? {
-    precondition(direction == .forward || direction == .backward)
-
-    let components = enumerateComponents()
-    guard let componentIndex = components.firstIndex(where: { $0.index == index })
-    else { return nil }
-    let target = direction == .forward ? componentIndex + 1 : componentIndex - 1
-    guard 0..<components.count ~= target else { return nil }
-    return components[target].index
-  }
-
-  /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
-  static func defaultInitLayoutContext(
-    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
-  ) -> LayoutContext {
-    precondition(fragment is MathListLayoutFragment)
-    let fragment = fragment as! MathListLayoutFragment
-    return
-      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
-  }
+  // MARK: - Node(Tree API)
 
   internal override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
@@ -277,5 +186,98 @@ class MathNode: Node {
         layoutOffset, .downstream, direction, result, context)
     }
   }
-}
 
+  // MARK: - MathNode(Component)
+
+  @usableFromInline
+  typealias Component = (index: MathIndex, content: ContentNode)
+
+  /// Returns an __ordered list__ of the node's components.
+  internal func enumerateComponents() -> Array<Component> {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns true if the node allows the component specified by the given index.
+  internal func isComponentAllowed(_ index: MathIndex) -> Bool { false }
+
+  /// Add the component specified by the given index and content to the node.
+  internal func addComponent(_ index: MathIndex, _ content: ElementStore, inStorage: Bool)
+  {
+    assertionFailure("inapplicable unless overridden")
+  }
+
+  /// Remove the component specified by the given index.
+  internal func removeComponent(_ index: MathIndex, inStorage: Bool) {
+    assertionFailure("inapplicable unless overridden")
+  }
+
+  // MARK: - MathNode(Layout)
+
+  /// Layout fragment associated with this node
+  internal var layoutFragment: MathLayoutFragment? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns the component associated with the given index.
+  internal func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Initialize a layout context for the component with the given fragment.
+  internal func initLayoutContext(
+    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
+  ) -> LayoutContext {
+    precondition(fragment is MathListLayoutFragment)
+    let fragment = fragment as! MathListLayoutFragment
+    return
+      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
+  }
+
+  /// Returns the math index for the given point.
+  /// - Parameter point: The point relative to the __glyph origin__ of the
+  ///     fragment of this node.
+  internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Process rayshooting with regard to the structure of the node.
+  /// - Parameters:
+  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
+  internal func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    preconditionFailure("overriding required")
+  }
+
+  // MARK: - Implementation
+
+  /// Returns the component for the index. If not found, return nil.
+  final func getComponent(_ index: MathIndex) -> ContentNode? {
+    enumerateComponents().first { $0.index == index }?.content
+  }
+
+  final func destinationIndex(
+    for index: MathIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> MathIndex? {
+    precondition(direction == .forward || direction == .backward)
+
+    let components = enumerateComponents()
+    guard let componentIndex = components.firstIndex(where: { $0.index == index })
+    else { return nil }
+    let target = direction == .forward ? componentIndex + 1 : componentIndex - 1
+    guard 0..<components.count ~= target else { return nil }
+    return components[target].index
+  }
+
+  /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
+  static func defaultInitLayoutContext(
+    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
+  ) -> LayoutContext {
+    precondition(fragment is MathListLayoutFragment)
+    let fragment = fragment as! MathListLayoutFragment
+    return
+      LayoutUtils.safeInitMathListLayoutContext(for: component, fragment, parent: context)
+  }
+
+}

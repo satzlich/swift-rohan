@@ -116,6 +116,277 @@ internal class ElementNode: Node {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Tree API)
+
+  final override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: DocumentManager.EnumerateTextSegmentsBlock
+  ) -> Bool {
+
+    func basicBlock(
+      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      let correctedFrame = segmentFrame.offsetBy(originCorrection)
+      return block(nil, correctedFrame, baselinePosition)
+    }
+
+    func placeholderBlock(
+      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      var correctedFrame = segmentFrame.offsetBy(originCorrection)
+      correctedFrame.origin.x = correctedFrame.midX
+      correctedFrame.size.width = 0
+      return block(nil, correctedFrame, baselinePosition)
+    }
+
+    guard let index = path.first?.index(),
+      let endIndex = endPath.first?.index()
+    else { assertionFailure("Invalid path"); return false }
+
+    if self.isPlaceholderActive {
+      assert(path.count == 1 && endPath.count == 1)
+      assert(index == endIndex && index == 0)
+      let layoutRange = layoutOffset..<layoutOffset + 1
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options,
+        // use placeholderBlock
+        using: placeholderBlock(_:_:_:))
+    }
+    else if path.count == 1 || endPath.count == 1 || index != endIndex {
+      guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
+        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
+      else { assertionFailure("Invalid path"); return false }
+      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options,
+        // use basicBlock
+        using: basicBlock(_:_:_:))
+    }
+    // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
+    else {  // if paths don't branch, recurse
+      guard index < self.childCount,
+        let offset = getLayoutOffset(index)
+      else { assertionFailure("Invalid path"); return false }
+      return _children[index].enumerateTextSegments(
+        path.dropFirst(), endPath.dropFirst(), context: context,
+        layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
+        type: type, options: options,
+        // use block
+        using: block)
+    }
+  }
+
+  final override func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity
+  ) -> Bool {
+    guard let result = context.getLayoutRange(interactingAt: point) else { return false }
+
+    let layoutRange = LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
+    affinity = result.affinity
+
+    return resolveTextLocation(
+      with: point, context: context, layoutOffset: layoutOffset,
+      trace: &trace, affinity: &affinity, layoutRange: layoutRange)
+  }
+
+  /// Resolve the text location at the given point and layout range.
+  /// - Parameters:
+  ///   - point: the point relative to the layout context, relative to the
+  ///       **top-left corner** of the context. For TextKit, it's relative to
+  ///       the **top-left corner** of the container. For MathListLayoutContext,
+  ///       it's relative to the **top-left corner** of the math list, which is
+  ///       usually different from the glyph origin.
+  /// - Returns: true if trace is modified.
+  final func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity,
+    layoutRange: LayoutRange
+  ) -> Bool {
+    if layoutRange.isEmpty {
+      let localOffset = layoutRange.localRange.lowerBound
+      guard localOffset <= _layoutLength else {
+        trace.emplaceBack(self, .index(self.childCount))
+        return true
+      }
+      let result = Trace.getTraceSegment(localOffset, self)
+
+      switch result {
+      case .terminal(let value, _):
+        trace.append(contentsOf: value)
+        return true
+
+      case .halfway(let value, let consumed):
+        assert(value.isEmpty == false)
+        trace.append(contentsOf: value)
+
+        // if the tip is ApplyNode, recurse into it.
+        if let child = trace.last?.getChild(),
+          let applyNode = child as? ApplyNode
+        {
+          // The content of ApplyNode is treated as being expanded in-place.
+          // So keep the original point.
+          _ = applyNode.resolveTextLocation(
+            with: point, context: context,
+            layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity,
+            layoutRange: layoutRange.safeSubtracting(consumed))
+          return true
+        }
+        else {
+          return true
+        }
+
+      case .null:
+        return false
+      case .failure:
+        return false
+      }
+    }
+    else {
+      let localOffset = layoutRange.localRange.lowerBound
+
+      /// compute fraction from upstream of child.
+      /// - Parameter startOffset: the offset of the child relative to the start
+      ///     of this node.
+      func computeFraction(_ startOffset: Int, _ child: Node) -> Double {
+        let lowerBound = Double(localOffset - startOffset)
+        let location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
+        let fraction = location / Double(child.layoutLength())
+        return fraction
+      }
+
+      let result = Trace.getTraceSegment(localOffset, self)
+      switch result {
+      case .terminal(let value, let target):
+        assert(value.isEmpty == false)
+        guard let last = value.last else { return false }
+
+        switch last.node {
+        case _ as TextNode:
+          trace.append(contentsOf: value)
+          let fraction = layoutRange.fraction
+          let resolved = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+          trace.moveTo(.index(resolved))
+          return true
+
+        case let node as ElementNode:
+          let index = last.index.index()!
+          if index == node.childCount {
+            trace.append(contentsOf: value)
+            return true
+          }
+          else {
+            let child = node.getChild(index)
+            if isSimpleNode(child) {
+              trace.append(contentsOf: value)
+              let fraction = computeFraction(target, child)
+              let resolved = index + (fraction > 0.5 ? 1 : 0)
+              trace.moveTo(.index(resolved))
+              return true
+            }
+            else {
+              assertionFailure("unexpected node type: \(Swift.type(of: child))")
+              return false
+            }
+          }
+
+        default:
+          assertionFailure("unexpected node type: \(Swift.type(of: last.node))")
+          return false
+        }
+
+      case .halfway(let value, let consumed):
+        assert(value.isEmpty == false)
+        guard let last = value.last,
+          let child = last.getChild(),
+          let index = last.index.index()
+        else { return false }
+        assert(child.isPivotal)
+
+        func fallbackLastIndex() {
+          let fraction = computeFraction(consumed, child)
+          let resolved = index + (fraction > 0.5 ? 1 : 0)
+          trace.moveTo(.index(resolved))
+        }
+
+        switch child {
+        case let node as GenMathNode:
+          trace.append(contentsOf: value)
+          let modified = node.resolveTextLocation(
+            with: point, context: context, layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity)
+          if !modified { fallbackLastIndex() }
+          return true
+
+        case let applyNode as ApplyNode:
+          // content of ApplyNode is effectively expanded in-place. Thus we recurse
+          // with the original point and subtract consumed from the layout range.
+          trace.append(contentsOf: value)
+          let modified = applyNode.resolveTextLocation(
+            with: point, context: context, layoutOffset: layoutOffset + consumed,
+            trace: &trace, affinity: &affinity,
+            // subtract consumed from the layout range
+            layoutRange: layoutRange.safeSubtracting(consumed))
+          if !modified { fallbackLastIndex() }
+          return true
+
+        default:
+          assertionFailure("unexpected node type: \(Swift.type(of: child))")
+          // fallback and return
+          fallbackLastIndex()
+          return true
+        }
+      case .null:
+        return false
+      case .failure:
+        return false
+      }
+    }
+  }
+
+  final override func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    affinity: SelectionAffinity,
+    direction: TextSelectionNavigation.Direction,
+    context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard let index = path.first?.index(),
+      let localOffset = getLayoutOffset(index)
+    else { return nil }
+
+    if path.count == 1 {
+      assert(index <= self.childCount)
+      let newOffset = layoutOffset + localOffset
+      guard
+        var result = context.rayshoot(
+          from: newOffset, affinity: affinity, direction: direction)
+      else {
+        return nil
+      }
+
+      // apply horizontal shift for placeholder.
+      if isPlaceholderActive {
+        assert(localOffset == 0)
+        if let segmentFrame = context.getSegmentFrame(layoutOffset + 1, .upstream) {
+          result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
+        }
+      }
+
+      return LayoutUtils.relayRayshoot(
+        newOffset, affinity, direction, result, context)
+    }
+    else {
+      guard index < self.childCount else { return nil }
+      return _children[index].rayshoot(
+        from: path.dropFirst(), affinity: affinity,
+        direction: direction, context: context,
+        layoutOffset: layoutOffset + localOffset)
+    }
+  }
+
   // MARK: - ElementNode
 
   /// Visit the children in the manner of this node.
@@ -529,275 +800,6 @@ internal class ElementNode: Node {
       let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
       return s1 + s2
-    }
-  }
-
-  final override func enumerateTextSegments(
-    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
-    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: DocumentManager.EnumerateTextSegmentsBlock
-  ) -> Bool {
-
-    func basicBlock(
-      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      let correctedFrame = segmentFrame.offsetBy(originCorrection)
-      return block(nil, correctedFrame, baselinePosition)
-    }
-
-    func placeholderBlock(
-      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      var correctedFrame = segmentFrame.offsetBy(originCorrection)
-      correctedFrame.origin.x = correctedFrame.midX
-      correctedFrame.size.width = 0
-      return block(nil, correctedFrame, baselinePosition)
-    }
-
-    guard let index = path.first?.index(),
-      let endIndex = endPath.first?.index()
-    else { assertionFailure("Invalid path"); return false }
-
-    if self.isPlaceholderActive {
-      assert(path.count == 1 && endPath.count == 1)
-      assert(index == endIndex && index == 0)
-      let layoutRange = layoutOffset..<layoutOffset + 1
-      return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use placeholderBlock
-        using: placeholderBlock(_:_:_:))
-    }
-    else if path.count == 1 || endPath.count == 1 || index != endIndex {
-      guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
-        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
-      else { assertionFailure("Invalid path"); return false }
-      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
-      return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use basicBlock
-        using: basicBlock(_:_:_:))
-    }
-    // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
-    else {  // if paths don't branch, recurse
-      guard index < self.childCount,
-        let offset = getLayoutOffset(index)
-      else { assertionFailure("Invalid path"); return false }
-      return _children[index].enumerateTextSegments(
-        path.dropFirst(), endPath.dropFirst(), context: context,
-        layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
-        type: type, options: options,
-        // use block
-        using: block)
-    }
-  }
-
-  final override func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout SelectionAffinity
-  ) -> Bool {
-    guard let result = context.getLayoutRange(interactingAt: point) else { return false }
-
-    let layoutRange = LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
-    affinity = result.affinity
-
-    return resolveTextLocation(
-      with: point, context: context, layoutOffset: layoutOffset,
-      trace: &trace, affinity: &affinity, layoutRange: layoutRange)
-  }
-
-  /// Resolve the text location at the given point and layout range.
-  /// - Parameters:
-  ///   - point: the point relative to the layout context, relative to the
-  ///       **top-left corner** of the context. For TextKit, it's relative to
-  ///       the **top-left corner** of the container. For MathListLayoutContext,
-  ///       it's relative to the **top-left corner** of the math list, which is
-  ///       usually different from the glyph origin.
-  /// - Returns: true if trace is modified.
-  final func resolveTextLocation(
-    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
-    trace: inout Trace, affinity: inout SelectionAffinity,
-    layoutRange: LayoutRange
-  ) -> Bool {
-    if layoutRange.isEmpty {
-      let localOffset = layoutRange.localRange.lowerBound
-      guard localOffset <= _layoutLength else {
-        trace.emplaceBack(self, .index(self.childCount))
-        return true
-      }
-      let result = Trace.getTraceSegment(localOffset, self)
-
-      switch result {
-      case .terminal(let value, _):
-        trace.append(contentsOf: value)
-        return true
-
-      case .halfway(let value, let consumed):
-        assert(value.isEmpty == false)
-        trace.append(contentsOf: value)
-
-        // if the tip is ApplyNode, recurse into it.
-        if let child = trace.last?.getChild(),
-          let applyNode = child as? ApplyNode
-        {
-          // The content of ApplyNode is treated as being expanded in-place.
-          // So keep the original point.
-          _ = applyNode.resolveTextLocation(
-            with: point, context: context,
-            layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity,
-            layoutRange: layoutRange.safeSubtracting(consumed))
-          return true
-        }
-        else {
-          return true
-        }
-
-      case .null:
-        return false
-      case .failure:
-        return false
-      }
-    }
-    else {
-      let localOffset = layoutRange.localRange.lowerBound
-
-      /// compute fraction from upstream of child.
-      /// - Parameter startOffset: the offset of the child relative to the start
-      ///     of this node.
-      func computeFraction(_ startOffset: Int, _ child: Node) -> Double {
-        let lowerBound = Double(localOffset - startOffset)
-        let location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
-        let fraction = location / Double(child.layoutLength())
-        return fraction
-      }
-
-      let result = Trace.getTraceSegment(localOffset, self)
-      switch result {
-      case .terminal(let value, let target):
-        assert(value.isEmpty == false)
-        guard let last = value.last else { return false }
-
-        switch last.node {
-        case _ as TextNode:
-          trace.append(contentsOf: value)
-          let fraction = layoutRange.fraction
-          let resolved = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
-          trace.moveTo(.index(resolved))
-          return true
-
-        case let node as ElementNode:
-          let index = last.index.index()!
-          if index == node.childCount {
-            trace.append(contentsOf: value)
-            return true
-          }
-          else {
-            let child = node.getChild(index)
-            if isSimpleNode(child) {
-              trace.append(contentsOf: value)
-              let fraction = computeFraction(target, child)
-              let resolved = index + (fraction > 0.5 ? 1 : 0)
-              trace.moveTo(.index(resolved))
-              return true
-            }
-            else {
-              assertionFailure("unexpected node type: \(Swift.type(of: child))")
-              return false
-            }
-          }
-
-        default:
-          assertionFailure("unexpected node type: \(Swift.type(of: last.node))")
-          return false
-        }
-
-      case .halfway(let value, let consumed):
-        assert(value.isEmpty == false)
-        guard let last = value.last,
-          let child = last.getChild(),
-          let index = last.index.index()
-        else { return false }
-        assert(child.isPivotal)
-
-        func fallbackLastIndex() {
-          let fraction = computeFraction(consumed, child)
-          let resolved = index + (fraction > 0.5 ? 1 : 0)
-          trace.moveTo(.index(resolved))
-        }
-
-        switch child {
-        case let node as GenMathNode:
-          trace.append(contentsOf: value)
-          let modified = node.resolveTextLocation(
-            with: point, context: context, layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity)
-          if !modified { fallbackLastIndex() }
-          return true
-
-        case let applyNode as ApplyNode:
-          // content of ApplyNode is effectively expanded in-place. Thus we recurse
-          // with the original point and subtract consumed from the layout range.
-          trace.append(contentsOf: value)
-          let modified = applyNode.resolveTextLocation(
-            with: point, context: context, layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity,
-            // subtract consumed from the layout range
-            layoutRange: layoutRange.safeSubtracting(consumed))
-          if !modified { fallbackLastIndex() }
-          return true
-
-        default:
-          assertionFailure("unexpected node type: \(Swift.type(of: child))")
-          // fallback and return
-          fallbackLastIndex()
-          return true
-        }
-      case .null:
-        return false
-      case .failure:
-        return false
-      }
-    }
-  }
-
-  final override func rayshoot(
-    from path: ArraySlice<RohanIndex>,
-    affinity: SelectionAffinity,
-    direction: TextSelectionNavigation.Direction,
-    context: LayoutContext, layoutOffset: Int
-  ) -> RayshootResult? {
-    guard let index = path.first?.index(),
-      let localOffset = getLayoutOffset(index)
-    else { return nil }
-
-    if path.count == 1 {
-      assert(index <= self.childCount)
-      let newOffset = layoutOffset + localOffset
-      guard
-        var result = context.rayshoot(
-          from: newOffset, affinity: affinity, direction: direction)
-      else {
-        return nil
-      }
-
-      // apply horizontal shift for placeholder.
-      if isPlaceholderActive {
-        assert(localOffset == 0)
-        if let segmentFrame = context.getSegmentFrame(layoutOffset + 1, .upstream) {
-          result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
-        }
-      }
-
-      return LayoutUtils.relayRayshoot(
-        newOffset, affinity, direction, result, context)
-    }
-    else {
-      guard index < self.childCount else { return nil }
-      return _children[index].rayshoot(
-        from: path.dropFirst(), affinity: affinity,
-        direction: direction, context: context,
-        layoutOffset: layoutOffset + localOffset)
     }
   }
 
