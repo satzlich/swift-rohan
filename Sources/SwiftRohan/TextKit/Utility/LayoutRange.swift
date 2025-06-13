@@ -2,6 +2,8 @@
 
 import Foundation
 
+/// The raison d'être of LayoutRange is to accommodate the use of ApplyNode.
+/// The invariant maintained by LayoutRange is involved. Use it with discretion.
 struct LayoutRange {
   /// layout range with respect to current node
   let localRange: Range<Int>
