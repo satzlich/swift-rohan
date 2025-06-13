@@ -115,6 +115,8 @@ internal class Node: Codable {
   /// - Invariant: If return value is non-nil, then the index must be valid for the node.
   ///     For example, for an `ElementNode`, the index must be a valid child index which
   ///     is in the range `[0, childCount]` (inclusive).
+  /// - Invariant: If the returned value is not `null` or `failure`, then the
+  ///     consumed value satisfies `consumed <= layoutOffset`.
   internal func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     preconditionFailure("overriding required")
   }
@@ -214,7 +216,9 @@ internal class Node: Codable {
   ///   - point: the point to resolve, given relative to the **top-left corner**
   ///       of layout context.
   ///   - context: the layout context.
-  ///   - layoutOffset: the accumulated layout offset for the layout context.
+  ///   - layoutOffset: the accumulated layout offset for the layout context,
+  ///       which locates the **the beginning** of the fragments produced by
+  ///       this node in the layout context.
   ///   - trace: the trace to maintain.
   ///   - affinity: the selection affinity to maintain.
   /// - Returns: true if trace is modified, false otherwise.

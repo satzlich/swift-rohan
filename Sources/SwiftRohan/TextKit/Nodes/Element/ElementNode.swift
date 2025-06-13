@@ -184,12 +184,12 @@ internal class ElementNode: Node {
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point) else { return false }
 
-    let layoutRange = LayoutRange(result.layoutRange, result.layoutRange, result.fraction)
+    let pickedRange = PickedRange(result.layoutRange, result.fraction)
     affinity = result.affinity
 
     return resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset,
-      trace: &trace, affinity: &affinity, layoutRange: layoutRange)
+      trace: &trace, affinity: &affinity, pickedRange: pickedRange)
   }
 
   /// Resolve the text location at the given point and layout range.
@@ -199,14 +199,18 @@ internal class ElementNode: Node {
   ///       the **top-left corner** of the container. For MathListLayoutContext,
   ///       it's relative to the **top-left corner** of the math list, which is
   ///       usually different from the glyph origin.
+  ///   - context: the layout context
+  ///   - layoutOffset: the layout offset of this node in the layout context.
+  ///   - trace: the trace to append the resolved location to.
+  ///   - affinity: the selection affinity to resolve.
   /// - Returns: true if trace is modified.
   final func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity,
-    layoutRange: LayoutRange
+    pickedRange: PickedRange
   ) -> Bool {
-    if layoutRange.isEmpty {
-      let localOffset = layoutRange.localRange.lowerBound
+    if pickedRange.isEmpty {
+      let localOffset = pickedRange.lowerBound
       guard localOffset <= _layoutLength else {
         trace.emplaceBack(self, .index(self.childCount))
         return true
@@ -228,11 +232,16 @@ internal class ElementNode: Node {
         {
           // The content of ApplyNode is treated as being expanded in-place.
           // So keep the original point.
-          _ = applyNode.resolveTextLocation(
-            with: point, context: context,
-            layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity,
-            layoutRange: layoutRange.safeSubtracting(consumed))
+          if let newPickedRange = pickedRange.subtracting(consumed) {
+            _ = applyNode.resolveTextLocation(
+              with: point, context: context,
+              layoutOffset: layoutOffset + consumed,
+              trace: &trace, affinity: &affinity,
+              pickedRange: newPickedRange)
+          }
+          else {
+            assertionFailure("subtraction of consumed from pickedRange failed")
+          }
           return true
         }
         else {
@@ -246,14 +255,14 @@ internal class ElementNode: Node {
       }
     }
     else {
-      let localOffset = layoutRange.localRange.lowerBound
+      let localOffset = pickedRange.lowerBound
 
       /// compute fraction from upstream of child.
       /// - Parameter startOffset: the offset of the child relative to the start
       ///     of this node.
       func computeFraction(_ startOffset: Int, _ child: Node) -> Double {
         let lowerBound = Double(localOffset - startOffset)
-        let location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
+        let location = Double(pickedRange.count) * pickedRange.fraction + lowerBound
         let fraction = location / Double(child.layoutLength())
         return fraction
       }
@@ -267,8 +276,8 @@ internal class ElementNode: Node {
         switch last.node {
         case _ as TextNode:
           trace.append(contentsOf: value)
-          let fraction = layoutRange.fraction
-          let resolved = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+          let fraction = pickedRange.fraction
+          let resolved = last.index.index()! + (fraction > 0.5 ? pickedRange.count : 0)
           trace.moveTo(.index(resolved))
           return true
 
@@ -325,17 +334,21 @@ internal class ElementNode: Node {
           // content of ApplyNode is effectively expanded in-place. Thus we recurse
           // with the original point and subtract consumed from the layout range.
           trace.append(contentsOf: value)
-          let modified = applyNode.resolveTextLocation(
-            with: point, context: context, layoutOffset: layoutOffset + consumed,
-            trace: &trace, affinity: &affinity,
-            // subtract consumed from the layout range
-            layoutRange: layoutRange.safeSubtracting(consumed))
-          if !modified { fallbackLastIndex() }
+          if let newPickedRange = pickedRange.subtracting(consumed) {
+            let modified = applyNode.resolveTextLocation(
+              with: point, context: context, layoutOffset: layoutOffset + consumed,
+              trace: &trace, affinity: &affinity,
+              pickedRange: newPickedRange)
+            if !modified { fallbackLastIndex() }
+          }
+          else {
+            assertionFailure("subtraction of consumed from pickedRange failed")
+            fallbackLastIndex()
+          }
           return true
 
         default:
           assertionFailure("unexpected node type: \(Swift.type(of: child))")
-          // fallback and return
           fallbackLastIndex()
           return true
         }

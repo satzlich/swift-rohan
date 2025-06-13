@@ -3,11 +3,11 @@
 import Foundation
 
 extension Range<Int> {
-  /// Subtracts a value from the lower and upper bound of the range.
+  /// Shift the range by a given value.
   @inlinable @inline(__always)
-  func subtracting(_ value: Int) -> Range<Bound> {
-    let lowerBound = self.lowerBound - value
-    let upperBound = self.upperBound - value
+  func subtracting(_ units: Int) -> Range<Bound> {
+    let lowerBound = self.lowerBound - units
+    let upperBound = self.upperBound - units
     return lowerBound..<upperBound
   }
 }
