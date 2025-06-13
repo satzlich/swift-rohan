@@ -144,38 +144,33 @@ public enum ReplacementRules {
       let leftDelimiters = delimiterPairs.map { $0.0 }
       let rightDelimiters = delimiterPairs.map { $0.1 }
 
-      var rules: Array<ReplacementRule> = []
-
-      do {
-        let pairs = product(leftDelimiters, rightDelimiters).map { (left, right) in
-          spaceTriggered([left, right], Snippets.leftRight(left, right)!)
-        }
-        rules.append(contentsOf: pairs)
-        let leftOnly = leftDelimiters.map { left in
-          spaceTriggered([left, .char(".")], Snippets.leftRight(.left(left))!)
-        }
-        rules.append(contentsOf: leftOnly)
-        let rightOnly = rightDelimiters.map { right in
-          spaceTriggered([.char("."), right], Snippets.leftRight(.right(right))!)
-        }
-        rules.append(contentsOf: rightOnly)
+      // pairs
+      let pairs = product(leftDelimiters, rightDelimiters).map { (left, right) in
+        spaceTriggered([left, right], Snippets.leftRight(left, right)!)
       }
-
-      do {
-        let langle = ExtendedChar.symbol(.lookup("langle")!)
-        let rangle = ExtendedChar.symbol(.lookup("rangle")!)
-        rules.append(spaceTriggered("<>", Snippets.leftRight(langle, rangle)!))
-
-        let lvert = ExtendedChar.symbol(.lookup("lvert")!)
-        let rvert = ExtendedChar.symbol(.lookup("rvert")!)
-        rules.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))
-
-        let lVert = ExtendedChar.symbol(.lookup("lVert")!)
-        let rVert = ExtendedChar.symbol(.lookup("rVert")!)
-        rules.append(spaceTriggered("||||", Snippets.leftRight(lVert, rVert)!))
+      results.append(contentsOf: pairs)
+      // left + dot
+      let leftOnly = leftDelimiters.map { left in
+        spaceTriggered([left, .char(".")], Snippets.leftRight(.left(left))!)
       }
-
-      results.append(contentsOf: rules)
+      results.append(contentsOf: leftOnly)
+      // dot + right
+      let rightOnly = rightDelimiters.map { right in
+        spaceTriggered([.char("."), right], Snippets.leftRight(.right(right))!)
+      }
+      results.append(contentsOf: rightOnly)
+      // <>
+      let langle = ExtendedChar.symbol(.lookup("langle")!)
+      let rangle = ExtendedChar.symbol(.lookup("rangle")!)
+      results.append(spaceTriggered("<>", Snippets.leftRight(langle, rangle)!))
+      // ||
+      let lvert = ExtendedChar.symbol(.lookup("lvert")!)
+      let rvert = ExtendedChar.symbol(.lookup("rvert")!)
+      results.append(spaceTriggered("||", Snippets.leftRight(lvert, rvert)!))
+      // ||||
+      let lVert = ExtendedChar.symbol(.lookup("lVert")!)
+      let rVert = ExtendedChar.symbol(.lookup("rVert")!)
+      results.append(spaceTriggered("||||", Snippets.leftRight(lVert, rVert)!))
     }
 
     // math variants
