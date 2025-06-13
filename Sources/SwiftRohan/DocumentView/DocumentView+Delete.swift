@@ -19,11 +19,13 @@ extension DocumentView {
     _ direction: TextSelectionNavigation.Direction,
     destination: TextSelectionNavigation.Destination
   ) {
+    precondition(direction == .forward || direction == .backward)
     precondition(destination == .character || destination == .word)
 
     guard let selection = documentManager.textSelection,
-      let deletionRange = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: direction, destination: destination)
+      let deletionRange =
+        documentManager.textSelectionNavigation
+        .deletionRange(for: selection, direction: direction, destination: destination)
     else { return }
 
     let textRange = deletionRange.textRange
@@ -42,7 +44,20 @@ extension DocumentView {
       }
     }
     else {
-      documentManager.textSelection = RhTextSelection(textRange)
+      let selection: RhTextSelection =
+        // for both directions, set the affinity so that the extent of deleted range
+        // is conspicuous, especially for boundary cases where the deletion range
+        // edges are at the beginning or end of a line.
+        switch direction {
+        case .forward:
+          RhTextSelection(textRange, affinity: .downstream)
+        case .backward:
+          RhTextSelection(textRange, affinity: .upstream)
+        default:
+          preconditionFailure("Unsupported direction: \(direction)")
+        }
+
+      documentManager.textSelection = selection
       self.documentSelectionDidChange()
     }
   }
