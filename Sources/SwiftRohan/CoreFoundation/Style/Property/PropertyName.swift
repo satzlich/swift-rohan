@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum PropertyName: Equatable, Hashable, Codable, Sendable {
+internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
   // font
   case fontFamily
   case fontSize

@@ -2,9 +2,9 @@
 
 import Foundation
 
-public typealias PropertyDictionary = Dictionary<PropertyKey, PropertyValue>
+internal typealias PropertyDictionary = Dictionary<PropertyKey, PropertyValue>
 
-public protocol PropertyAggregate: Sendable {
+internal protocol PropertyAggregate: Sendable {
   /// Resolve property aggregate from a dictionary of properties.
   /// - Parameters:
   ///   - properties: the dictionary of properties.

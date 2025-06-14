@@ -2,7 +2,7 @@
 
 import AppKit
 
-public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
+internal struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
 
   public func getAttributes() -> Dictionary<NSAttributedString.Key, Any> {
     self.getAttributes(isFlipped: false)
