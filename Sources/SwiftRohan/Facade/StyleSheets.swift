@@ -82,7 +82,7 @@ public enum StyleSheets {
     let h3Size = FontSize(textSize.floatValue + 2)
 
     let emphasisColor = Color.brown
-    let strongColor = emphasisColor
+    let strongColor = Color.brown
 
     let styleRules: StyleRules = [
       // H1
