@@ -37,7 +37,8 @@ the standard text editing options.
 
 ### 1.4 Navigation
 
-For navigation, the app linearise the components of math expressions, allowing you to use the left/right arrow keys to move through the document. Don't forget to use mouse clicks as well.
+For navigation, the app linearise the components of math expressions, allowing you to use the left/right arrow keys to move through the document. 
+This can be laborious in certain cases, such as when navigating through large matrices or complex expressions. Don't forget to use mouse clicks as well.
 
 ## 2. Other Features
 
