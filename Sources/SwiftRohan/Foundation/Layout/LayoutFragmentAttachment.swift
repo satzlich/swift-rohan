@@ -56,7 +56,7 @@ private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewPr
     position: CGPoint
   ) -> CGRect {
     guard let attachment = textAttachment as? LayoutFragmentAttachment,
-      let view
+      let view = self.view
     else { return .zero }
 
     // ensure bounds are up-to-date
