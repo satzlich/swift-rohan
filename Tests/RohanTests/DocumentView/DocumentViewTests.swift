@@ -504,4 +504,41 @@ struct DocumentViewTests {
           == "(location: [↓1,nuc,↓0,num]:0, affinity: downstream)")
     }
   }
+
+  @Test
+  func moreReplacementRule() {  // match string and named symbols
+    // for this test case, we need the "baked" DocumentView.
+    let documentView = Self.bakedDocumentView()
+    do {
+      let rootNode = RootNode([
+        EquationNode(
+          .block,
+          [
+            NamedSymbolNode(NamedSymbol.lookup("lvert")!),
+            TextNode(".+"),
+          ])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+    let documentManager = documentView.documentManager
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓1]:1")!
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
+      documentView.insertText(" ", replacementRange: .notFound)
+
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            ├ leftRight
+            │ └ nuc
+            └ text "+"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+      #expect(documentManager.textSelection != nil)
+      #expect(
+        "\(documentManager.textSelection!)"
+          == "(location: [↓0,nuc,↓0,nuc]:0, affinity: downstream)")
+    }
+  }
 }
