@@ -130,11 +130,7 @@ final class TextLayoutContext: LayoutContext {
       return NSAttributedString(attachment: attachment, attributes: attributes)
     }
     else {
-      // Fallback on earlier versions
-      let mutableString = NSMutableAttributedString(attachment: attachment)
-      let range = NSRange(location: 0, length: mutableString.length)
-      mutableString.setAttributes(attributes, range: range)
-      return mutableString
+      return NSAttributedString(attachment: attachment)
     }
   }
 
