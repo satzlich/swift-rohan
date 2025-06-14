@@ -317,7 +317,7 @@ public final class DocumentManager {
   /// range is replaced with a new math node with the specified component.
   /// - Returns: (range of resulting math node, isAdded) if successful;
   ///   otherwise, an error.
-  internal func addMathComponent(
+  internal func attachOrGotoMathComponent(
     _ range: RhTextRange, _ mathIndex: MathIndex, _ component: ElementStore
   ) -> SatzResult<(RhTextRange, isAdded: Bool)> {
 
@@ -346,17 +346,33 @@ public final class DocumentManager {
       }
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
-      case let .success(range1),
-        let .paragraphInserted(range1):
-
-        guard let (object, location) = objectAt(range1.endLocation, direction: .backward)
+      case let .success(range1):
+        guard
+          let crossedObject =
+            crossedObjectAt_v2(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
-        assert(object.nonText() === mathNode)
-        let end = location.with(offsetDelta: 1)
-        let range2 = RhTextRange(location, end)!
-        return .success((range2, true))
+
+        switch crossedObject {
+        case .text:
+          assertionFailure("Invalid crossed object")
+          return .failure(SatzError(.InvalidTextRange))
+
+        case .nonTextNode(let node, let location):
+          assert(node === mathNode)
+          let end = location.with(offsetDelta: 1)
+          let range2 = RhTextRange(location, end)!
+          return .success((range2, true))
+
+        case .blockBoundary:
+          assertionFailure("Invalid crossed object")
+          return .failure(SatzError(.InvalidTextRange))
+        }
+
+      case .paragraphInserted:
+        assertionFailure("Invalid paragraph insertion")
+        return .failure(SatzError(.ModifyMathFailure))
 
       case let .failure(error):
         return .failure(error)
@@ -610,15 +626,21 @@ public final class DocumentManager {
   ) -> SelectionAffinity {
     precondition(direction == .forward || direction == .backward)
 
-    func isWhitespace(_ string: String) -> Bool {
-      string.count == 1 && string.first!.isWhitespace == true
+    func isWhitespace(_ object: CrossedObject) -> Bool {
+      switch object {
+      case .text(let string, _):
+        return string.count == 1 && string.first!.isWhitespace == true
+      case .nonTextNode(let node, _):
+        return isLinebreakNode(node)
+      case .blockBoundary:
+        return true
+      }
     }
 
     switch direction {
     case .forward:
-      if let (object, _) = self.objectAt(location, direction: .backward),
-        case let .text(string) = object,
-        isWhitespace(string)
+      if let object = self.crossedObjectAt_v2(location, direction: .backward),
+        isWhitespace(object)
       {
         return .downstream
       }
@@ -627,9 +649,8 @@ public final class DocumentManager {
       }
 
     case .backward:
-      if let (object, _) = self.objectAt(location, direction: .forward),
-        case let .text(string) = object,
-        isWhitespace(string)
+      if let object = self.crossedObjectAt_v2(location, direction: .forward),
+        isWhitespace(object)
       {
         return .upstream
       }
@@ -1019,9 +1040,9 @@ public final class DocumentManager {
   /// given direction.
   /// - Returns: The object and the location of its downstream edge if successful;
   ///     otherwise, nil.
-  internal func objectAt(
+  internal func crossedObjectAt_v2(
     _ location: TextLocation, direction: LinearDirection
-  ) -> (LocateableObject, TextLocation)? {
+  ) -> CrossedObject? {
     guard var trace = Trace.from(location, rootNode) else {
       assertionFailure("Invalid location")
       return nil
@@ -1042,7 +1063,7 @@ public final class DocumentManager {
           if let nextOffset = node.destinationOffset(for: offset, cOffsetBy: 1) {
             let string = node.substring(for: offset..<nextOffset)
             trace.moveTo(.index(nextOffset))
-            return (LocateableObject.text(String(string)), trace.toRawLocation()!)
+            return .text(String(string), trace.toRawLocation()!)
           }
           else {
             trace.truncate(to: trace.count - 1)
@@ -1068,11 +1089,16 @@ public final class DocumentManager {
             }
             else {
               trace.moveTo(.index(offset + 1))
-              return (LocateableObject.nonText(node), trace.toRawLocation()!)
+              return .nonTextNode(node, trace.toRawLocation()!)
             }
           }
           else {
-            return nil
+            if node.isBlock {
+              return .blockBoundary
+            }
+            else {
+              return nil
+            }
           }
 
         default:
@@ -1097,7 +1123,7 @@ public final class DocumentManager {
         if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
           let string = node.substring(for: prevOffset..<offset)
           trace.moveTo(.index(prevOffset))
-          return (LocateableObject.text(String(string)), trace.toRawLocation()!)
+          return .text(String(string), trace.toRawLocation()!)
         }
         else {
           trace.truncate(to: trace.count - 1)
@@ -1114,11 +1140,16 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawLocation()!)
+            return .nonTextNode(node, trace.toRawLocation()!)
           }
         }
         else {
-          return nil
+          if node.isBlock {
+            return .blockBoundary
+          }
+          else {
+            return nil
+          }
         }
 
       default:

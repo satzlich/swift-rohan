@@ -177,14 +177,21 @@ struct DocumentViewTests {
       documentView.setContent(DocumentContent(rootNode))
     }
     let documentManager = documentView.documentManager
-    do {
-      let range = RhTextRange.parse("[↓1,↓0]:4..<[↓1,↓0]:8")!
+
+    func setPasteboard(_ text: String) {
+      let pasteboard = NSPasteboard.general
+      pasteboard.clearContents()
+      let success = pasteboard.setString(text, forType: .string)
+      #expect(success == true, "Failed to set string on pasteboard: \(text)")
+    }
+    func setSelection(_ range: RhTextRange) {
       documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
     }
+
+    setSelection(RhTextRange.parse("[↓1,↓0]:4..<[↓1,↓0]:8")!)
     do {
       documentView.copy(nil)
-      let location = TextLocation.parse("[↓0,↓0]:6")!
-      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
+      setSelection(RhTextRange.parse("[↓0,↓0]:6")!)
       documentView.paste(nil)
 
       let expected =
@@ -198,8 +205,7 @@ struct DocumentViewTests {
       #expect(documentManager.prettyPrint() == expected)
     }
     do {
-      let range = RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!
-      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
+      setSelection(RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!)
       documentView.cut(nil)
       let expected =
         """
@@ -224,8 +230,7 @@ struct DocumentViewTests {
       #expect(documentManager.prettyPrint() == expected)
     }
     do {
-      let range = RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!
-      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
+      setSelection(RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!)
       documentView.delete(nil)
       let expected =
         """
@@ -240,12 +245,9 @@ struct DocumentViewTests {
 
     // paste without success but no error
     do {
-      let range = RhTextRange.parse("[]:0..<[]:1")!
-      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
+      setSelection(RhTextRange.parse("[]:0..<[]:1")!)
       documentView.copy(nil)
-
-      let location = RhTextRange.parse("[↓0,↓0]:6")!
-      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
+      setSelection(RhTextRange.parse("[↓0,↓0]:6")!)
       documentView.paste(nil)
 
       let expected =
@@ -262,16 +264,10 @@ struct DocumentViewTests {
     // paste from external source
     do {
       // prepare the pasteboard
-      let pasteboard = NSPasteboard.general
-      pasteboard.clearContents()
       let textToCopy = "veni. vidi. vici."
-      let success = pasteboard.setString(textToCopy, forType: .string)
-      #expect(success == true, "Failed to set string on pasteboard: \(textToCopy)")
-
+      setPasteboard(textToCopy)
       // set selection
-      let range = RhTextRange.parse("[↓1,↓0]:0..<[↓1,↓0]:5")!
-      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
-
+      setSelection(RhTextRange.parse("[↓1,↓0]:0..<[↓1,↓0]:5")!)
       // paste
       documentView.paste(nil)
       let expected =
@@ -287,16 +283,9 @@ struct DocumentViewTests {
     // paste from external source that contains newline
     do {
       // prepare the pasteboard
-      let pasteboard = NSPasteboard.general
-      pasteboard.clearContents()
-      let textToCopy = "abc\n\nxyz"
-      let success = pasteboard.setString(textToCopy, forType: .string)
-      #expect(success == true, "Failed to set string on pasteboard: \(textToCopy)")
-
+      setPasteboard("abc\n\nxyz")
       // set selection
-      let range = RhTextRange.parse("[↓1,↓0]:6..<[↓1,↓0]:11")!
-      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
-
+      setSelection(RhTextRange.parse("[↓1,↓0]:6..<[↓1,↓0]:11")!)
       // paste
       documentView.paste(nil)
       let expected =
@@ -310,6 +299,12 @@ struct DocumentViewTests {
         └ paragraph
           └ text "xyz vici."
         """
+      #expect(documentManager.prettyPrint() == expected)
+      
+      // paste again in heading 
+      setSelection(RhTextRange.parse("[↓0,↓0]:1..<[↓0,↓0]:3")!)
+      documentView.paste(nil)
+      // no change expected
       #expect(documentManager.prettyPrint() == expected)
     }
   }

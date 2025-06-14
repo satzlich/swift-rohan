@@ -117,7 +117,7 @@ extension DocumentView {
   internal func addMathComponentForEdit(
     _ range: RhTextRange, _ mathIndex: MathIndex, _ component: ElementStore
   ) -> EditResult<RhTextRange> {
-    let result = _addMathComponent(for: range, with: mathIndex, component)
+    let result = _attachOrGotoMathComponent(for: range, with: mathIndex, component)
     return performPostEditProcessing(result)
   }
 
@@ -133,13 +133,13 @@ extension DocumentView {
   /// Add the math component to the node/nodes at the given range. Undo action is
   /// registered.
   /// - Returns: The new range of selection
-  private func _addMathComponent(
+  private func _attachOrGotoMathComponent(
     for range: RhTextRange, with mathIndex: MathIndex, _ component: ElementStore
   ) -> EditResult<RhTextRange> {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
 
-    let result = documentManager.addMathComponent(range, mathIndex, component)
+    let result = documentManager.attachOrGotoMathComponent(range, mathIndex, component)
 
     switch result {
     case .success(let (newRange, isAdded)):
@@ -211,7 +211,8 @@ extension DocumentView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-      let result = target._addMathComponent(for: range, with: mathIndex, component)
+      let result =
+        target._attachOrGotoMathComponent(for: range, with: mathIndex, component)
       _ = target.performPostEditProcessing(result)
     }
   }
