@@ -173,7 +173,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     let b_x = pre_width - b_pre_width
 
     // Create the final frame.
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
 
     // base
     do {

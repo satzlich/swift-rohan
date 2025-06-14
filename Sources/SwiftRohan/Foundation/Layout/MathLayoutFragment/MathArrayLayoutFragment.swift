@@ -145,7 +145,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     let xDelta = left?.width ?? 0
     let yDelta = -(axisHeight + total_height / 2)
 
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
     _columnEdges.removeAll(keepingCapacity: true)
     _columnEdges.reserveCapacity(columnCount + 1)
 

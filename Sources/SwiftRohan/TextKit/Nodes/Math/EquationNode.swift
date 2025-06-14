@@ -236,7 +236,7 @@ final class EquationNode: MathNode {
 
   // MARK: - MathNode(Component)
 
-  final override func enumerateComponents() -> [MathNode.Component] {
+  final override func enumerateComponents() -> Array<MathNode.Component> {
     [(MathIndex.nuc, nucleus)]
   }
 

@@ -6,7 +6,7 @@ import SwiftSyntaxMacros
 
 @main
 struct RohanMacro: CompilerPlugin {
-  var providingMacros: [Macro.Type] = [
+  var providingMacros: Array<Macro.Type> = [
     // Declaration
     ErrorCodeMacro.self
   ]

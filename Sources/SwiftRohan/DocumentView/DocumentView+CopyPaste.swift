@@ -59,7 +59,7 @@ extension DocumentView: @preconcurrency NSServicesMenuRequestor {
   }
 
   public func writeSelection(
-    to pboard: NSPasteboard, types: [NSPasteboard.PasteboardType]
+    to pboard: NSPasteboard, types: Array<NSPasteboard.PasteboardType>
   ) -> Bool {
     let activeManagers = pasteboardManagers.filter { types.contains($0.type) }
     guard activeManagers.isEmpty == false else { return false }

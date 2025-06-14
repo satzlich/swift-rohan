@@ -27,8 +27,11 @@ struct MathLayoutFragmentsTests {
   func accent() {
     var fragments: Array<MathLayoutFragment> = []
 
-    guard let accent = createAccentFragment("x", .acute, font, table, context),
-      let accent2 = createAccentFragment("x", .underleftarrow, font, table, context)
+    guard let accent = createAccentFragment("x", MathAccent.acute, font, table, context),
+      let accent2 =
+        createAccentFragment("x", MathAccent.underleftarrow, font, table, context),
+      let unresolved =
+        createAccentFragment("x", MathAccent("_unresolved", "碐"), font, table, context)
     else {
       Issue.record("Failed to create nucleus fragment")
       return
@@ -36,6 +39,7 @@ struct MathLayoutFragmentsTests {
 
     fragments.append(accent)
     fragments.append(accent2)
+    fragments.append(unresolved)
 
     // more methods
     do {

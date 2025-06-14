@@ -136,7 +136,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     self.ruleWidth = ruleWidth
 
     do {
-      var items: [MathComposition.Item] = []
+      var items: Array<MathComposition.Item> = []
 
       let delimiters = subtype.delimiters
       let (open, close) = (delimiters.open.value, delimiters.close.value)

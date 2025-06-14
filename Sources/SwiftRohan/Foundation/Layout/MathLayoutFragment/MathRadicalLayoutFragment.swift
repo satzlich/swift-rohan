@@ -118,7 +118,7 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
     let radicand_pos = CGPoint(x: radicand_x, y: 0)
 
     // compose
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
 
     if let index = self.index {
       let index_x = -min(sqrt_offset, 0) + kern_before

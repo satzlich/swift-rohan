@@ -66,7 +66,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
       let accent_pos = CGPoint(x: x, y: -gap)
       let total_ascent = max(nucleus.ascent, accent.ascent + gap)
 
-      let items: [MathComposition.Item] = [
+      let items: Array<MathComposition.Item> = [
         (accent, accent_pos),
         (nucleus, .zero),
       ]
@@ -84,7 +84,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
       let accent_pos = CGPoint(x: x, y: gap)
       let total_descent = max(nucleus.descent, accent.descent + gap)
 
-      let items: [MathComposition.Item] = [
+      let items: Array<MathComposition.Item> = [
         (accent, accent_pos),
         (nucleus, .zero),
       ]

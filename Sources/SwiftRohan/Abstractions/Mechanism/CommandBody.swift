@@ -176,7 +176,7 @@ extension CommandBody {
     let columnCount = matrix.isMultiColumnEnabled ? 2 : 1
     let count = rowCount * columnCount
 
-    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
+    let rows: Array<MatrixExpr.Row> = (0..<rowCount).map { _ in
       let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
       return MatrixExpr.Row(elements)
     }

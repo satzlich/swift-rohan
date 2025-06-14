@@ -111,7 +111,7 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
       total_descent = base.descent + gap + attach.height
     }
 
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
     let total_width = max(attach.width, base.width)
     do {
       let position = CGPoint(x: (total_width - attach.width) / 2, y: attach_y)
@@ -178,7 +178,7 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     let width = content.width
     let line_width = width + line_adjust
 
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
     // set rule position
     let rule = RuleFragment(width: line_width, height: bar_height)
     items.append((rule, line_pos))
@@ -211,7 +211,7 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     let total_ascent = t_shift + attach.ascent
     let total_descent = base.descent
 
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
     let total_width = max(attach.width, base.width)
     do {
       let position = CGPoint(x: (total_width - attach.width) / 2, y: attach_y)

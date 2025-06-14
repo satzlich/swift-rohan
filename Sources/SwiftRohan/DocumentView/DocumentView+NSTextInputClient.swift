@@ -199,7 +199,7 @@ extension DocumentView: NSTextInputClient {
     return markedText.attributedSubstring(for: validRange)
   }
 
-  @objc public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
+  @objc public func validAttributesForMarkedText() -> Array<NSAttributedString.Key> {
     [
       .underlineColor,
       .underlineStyle,
