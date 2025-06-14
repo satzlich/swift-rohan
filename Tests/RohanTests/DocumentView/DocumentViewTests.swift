@@ -258,6 +258,60 @@ struct DocumentViewTests {
         """
       #expect(documentManager.prettyPrint() == expected)
     }
+
+    // paste from external source
+    do {
+      // prepare the pasteboard
+      let pasteboard = NSPasteboard.general
+      pasteboard.clearContents()
+      let textToCopy = "veni. vidi. vici."
+      let success = pasteboard.setString(textToCopy, forType: .string)
+      #expect(success == true, "Failed to set string on pasteboard: \(textToCopy)")
+
+      // set selection
+      let range = RhTextRange.parse("[↓1,↓0]:0..<[↓1,↓0]:5")!
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
+
+      // paste
+      documentView.paste(nil)
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        └ paragraph
+          └ text "veni. vidi. vici."
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+    // paste from external source that contains newline
+    do {
+      // prepare the pasteboard
+      let pasteboard = NSPasteboard.general
+      pasteboard.clearContents()
+      let textToCopy = "abc\n\nxyz"
+      let success = pasteboard.setString(textToCopy, forType: .string)
+      #expect(success == true, "Failed to set string on pasteboard: \(textToCopy)")
+
+      // set selection
+      let range = RhTextRange.parse("[↓1,↓0]:6..<[↓1,↓0]:11")!
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
+
+      // paste
+      documentView.paste(nil)
+      let expected =
+        """
+        root
+        ├ heading
+        │ └ text "HelloWorld"
+        ├ paragraph
+        │ └ text "veni. abc"
+        ├ paragraph
+        └ paragraph
+          └ text "xyz vici."
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
   }
 
   @Test

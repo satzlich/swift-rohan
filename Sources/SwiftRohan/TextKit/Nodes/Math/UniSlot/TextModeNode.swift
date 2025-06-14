@@ -57,8 +57,9 @@ final class TextModeNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        fragment.nucleus = CTLineLayoutFragment.reconcileTextMode(
-          fragment.nucleus, nucleus, context.styleSheet)
+        fragment.nucleus =
+          CTLineLayoutFragment.reconcileTextMode(
+            fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 
         if fragment.isNearlyEqual(to: oldMetrics) == false {
