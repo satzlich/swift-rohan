@@ -78,7 +78,7 @@ extension DocumentView {
         let end = location.with(offsetDelta: 1)
         range2 = RhTextRange(location, end)!
 
-      case .newline:
+      case .blockBoundary:
         return
       }
 
