@@ -147,7 +147,9 @@ extension DocumentView {
         registerUndoAddMathComponent(for: newRange, with: mathIndex, _undoManager)
       }
 
-      if let newLocation = composeLocation(newRange.location, mathIndex) {
+      if let newLocation =
+        documentManager.descendTo(newRange.location, Either.Left(mathIndex))
+      {
         return .success(RhTextRange(newLocation))
       }
       else {
@@ -156,21 +158,6 @@ extension DocumentView {
 
     case .failure(let error):
       return .failure(error)
-    }
-
-    // Helper
-
-    func composeLocation(
-      _ location: TextLocation, _ mathIndex: MathIndex
-    ) -> TextLocation? {
-      var indices = location.indices
-      indices.append(.index(location.offset))
-      indices.append(.mathIndex(mathIndex))
-      guard let node = documentManager.getNode(at: indices),
-        let node = node as? ContentNode
-      else { return nil }
-      let newLocation = TextLocation(indices, node.childCount)
-      return documentManager.normaliseLocation(newLocation)
     }
   }
 
@@ -282,7 +269,9 @@ extension DocumentView {
       switch instruction {
       case .insertRow(_, at: let row):
         let gridIndex = GridIndex(row, 0)
-        guard let location = composeLocation(range.location, gridIndex)
+        guard
+          let location =
+            documentManager.descendTo(range.location, Either.Right(gridIndex))
         else {
           assertionFailure("failed to compose location")
           return .failure(SatzError(.ModifyGridFailure))
@@ -292,7 +281,9 @@ extension DocumentView {
 
       case .insertColumn(_, at: let column):
         let gridIndex = GridIndex(0, column)
-        guard let location = composeLocation(range.location, gridIndex)
+        guard
+          let location =
+            documentManager.descendTo(range.location, Either.Right(gridIndex))
         else {
           assertionFailure("failed to compose location")
           return .failure(SatzError(.ModifyGridFailure))
@@ -333,16 +324,6 @@ extension DocumentView {
       return (0..<nrows).map { row in
         node.getElement(row, column).childrenReadonly().map { $0.deepCopy() }
       }
-    }
-
-    func composeLocation(
-      _ location: TextLocation, _ gridIndex: GridIndex
-    ) -> TextLocation? {
-      var indices = location.indices
-      indices.append(.index(location.offset))
-      indices.append(.gridIndex(gridIndex))
-      let newLocation = TextLocation(indices, 0)
-      return documentManager.normaliseLocation(newLocation)
     }
   }
 

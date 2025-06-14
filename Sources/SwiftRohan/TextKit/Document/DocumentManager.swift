@@ -1127,11 +1127,37 @@ public final class DocumentManager {
     }
   }
 
-  /// Normalize the given location or return nil if the location is invalid.
-  /// - Postcondition: When successful, the returned location is **always equivalent**
-  ///     to the given location.
-  internal func normaliseLocation(_ location: TextLocation) -> TextLocation? {
-    location.normalised(for: rootNode)
+  /// Descend from the given location to the node at the given index which is
+  /// either a `MathIndex` or a `GridIndex`. In both cases, the returned location
+  /// must be at the end of the node at the index.
+  /// - Parameters:
+  ///   - location: The starting location.
+  ///   - index: The index to descend to.
+  /// - Returns: The valid insertion point if successful; otherwise, nil.
+  internal func descendTo(
+    _ location: TextLocation, _ index: Either<MathIndex, GridIndex>
+  ) -> TextLocation? {
+    switch index {
+    case .Left(let mathIndex):
+      var indices = location.indices
+      indices.append(.index(location.offset))
+      indices.append(.mathIndex(mathIndex))
+      guard let node = self.getNode(at: indices),
+        let node = node as? ContentNode
+      else { return nil }
+      let newLocation = TextLocation(indices, node.childCount)
+      return newLocation.normalised(for: rootNode)
+
+    case .Right(let gridIndex):
+      var indices = location.indices
+      indices.append(.index(location.offset))
+      indices.append(.gridIndex(gridIndex))
+      guard let node = self.getNode(at: indices),
+        let node = node as? ContentNode
+      else { return nil }
+      let newLocation = TextLocation(indices, node.childCount)
+      return newLocation.normalised(for: rootNode)
+    }
   }
 
   /// Compute the visual delimiter range for a location in the tree and also
