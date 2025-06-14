@@ -13,7 +13,7 @@ class MathLayoutTestsBase {
   internal let context: MathContext
 
   init() throws {
-    self.font = Font.createWithName("STIX Two Math", 10, isFlipped: false)
+    self.font = Font.createWithName("STIX Two Math", 10, isFlipped: true)
     self.table = font.copyMathTable()!
     self.context = MathContext(font, .text, false, .black)!
     try TestUtils.touchDirectory(folderName)

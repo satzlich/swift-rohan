@@ -7,7 +7,7 @@ import Testing
 
 @testable import SwiftRohan
 
-final class MathListLayoutFragmentTests: MathLayoutTestsBase {
+final class MathListReflowTests: MathLayoutTestsBase {
   private func reflowExample(
     _ fragments: Array<MathLayoutFragment>
   ) -> MathListLayoutFragment {
