@@ -30,8 +30,9 @@ extension DocumentView {
 
     case let .editMath(editMath):
       switch editMath {
-      case let .addComponent(mathIndex):
-        _executeAddComponent(mathIndex, at: range)
+      case let .attachOrGotoComponent(mathIndex):
+        _executeAttachOrGotoComponent(mathIndex, at: range)
+
       case .removeComponent(_):
         preconditionFailure("not implemented")
       }
@@ -41,9 +42,11 @@ extension DocumentView {
     }
   }
 
-  /// Execute "EditMath.addComponent" command at the given range.
+  /// Execute "EditMath.attachOrGotoComponent" command at the given range.
   /// - Precondition: Currently we support only `sub` and `sup` components.
-  private func _executeAddComponent(_ mathIndex: MathIndex, at range: RhTextRange) {
+  private func _executeAttachOrGotoComponent(
+    _ mathIndex: MathIndex, at range: RhTextRange
+  ) {
     switch mathIndex {
     case .sub, .sup:
       // obtain the object to apply the command

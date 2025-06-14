@@ -17,7 +17,8 @@ public enum CommandBody {
 
   // MARK: - Canonical
 
-  private init(_ expressions: Array<Expr>, _ backwardMoves: Int, preview: CommandPreview) {
+  private init(_ expressions: Array<Expr>, _ backwardMoves: Int, preview: CommandPreview)
+  {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Expect non-nil category") }
     assert(category.isPlaintext == false)
@@ -143,7 +144,7 @@ public enum CommandBody {
 
   public enum EditMath {
     /// Attach or goto math component
-    case addComponent(MathIndex)
+    case attachOrGotoComponent(MathIndex)
     /// Delete math component
     case removeComponent(MathIndex)
   }

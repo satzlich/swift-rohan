@@ -10,7 +10,7 @@ extension DocumentView {
   }
 
   @objc func addLeftSuperscript(_ sender: Any?) {
-    _performMathOperation(.addComponent(.lsup))
+    _performMathOperation(.attachOrGotoComponent(.lsup))
   }
 
   @objc func removeLeftSubscript(_ sender: Any?) {
@@ -18,7 +18,7 @@ extension DocumentView {
   }
 
   @objc func addLeftSubscript(_ sender: Any?) {
-    _performMathOperation(.addComponent(.lsub))
+    _performMathOperation(.attachOrGotoComponent(.lsub))
   }
 
   @objc func removeSuperscript(_ sender: Any?) {
@@ -26,7 +26,7 @@ extension DocumentView {
   }
 
   @objc func addSuperscript(_ sender: Any?) {
-    _performMathOperation(.addComponent(.sup))
+    _performMathOperation(.attachOrGotoComponent(.sup))
   }
 
   @objc func removeSubscript(_ sender: Any?) {
@@ -34,11 +34,11 @@ extension DocumentView {
   }
 
   @objc func addSubscript(_ sender: Any?) {
-    _performMathOperation(.addComponent(.sub))
+    _performMathOperation(.attachOrGotoComponent(.sub))
   }
 
   @objc func addDegree(_ sender: Any?) {
-    _performMathOperation(.addComponent(.index))
+    _performMathOperation(.attachOrGotoComponent(.index))
   }
 
   @objc func removeDegree(_ sender: Any?) {
@@ -60,7 +60,7 @@ extension DocumentView {
     defer { endEditing() }
 
     switch instruction {
-    case let .addComponent(mathIndex):
+    case let .attachOrGotoComponent(mathIndex):
       _ = addMathComponentForEdit(target, mathIndex, [])
 
     case let .removeComponent(mathIndex):

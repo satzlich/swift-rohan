@@ -317,7 +317,7 @@ public final class DocumentManager {
   /// range is replaced with a new math node with the specified component.
   /// - Returns: (range of resulting math node, isAdded) if successful;
   ///   otherwise, an error.
-  internal func addMathComponent(
+  internal func attachOrGotoMathComponent(
     _ range: RhTextRange, _ mathIndex: MathIndex, _ component: ElementStore
   ) -> SatzResult<(RhTextRange, isAdded: Bool)> {
 
@@ -350,8 +350,8 @@ public final class DocumentManager {
         let .paragraphInserted(range1):
 
         guard
-          let (object, location) = crossedObjectAt(
-            range1.endLocation, direction: .backward)
+          let (object, location) =
+            crossedObjectAt(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }

@@ -16,7 +16,7 @@ enum Snippets {
   // math
 
   static func attachMathComponent(_ index: MathIndex) -> CommandBody {
-    CommandBody(.addComponent(index))
+    CommandBody(.attachOrGotoComponent(index))
   }
 
   static let fraction =
