@@ -130,11 +130,7 @@ final class TextLayoutContext: LayoutContext {
       return NSAttributedString(attachment: attachment, attributes: attributes)
     }
     else {
-      // Fallback on earlier versions
-      let mutableString = NSMutableAttributedString(attachment: attachment)
-      let range = NSRange(location: 0, length: mutableString.length)
-      mutableString.setAttributes(attributes, range: range)
-      return mutableString
+      return NSAttributedString(attachment: attachment)
     }
   }
 
@@ -239,13 +235,6 @@ final class TextLayoutContext: LayoutContext {
     }
   }
 
-  private func getUnichar(at position: Int) -> unichar? {
-    guard position >= 0 && position < textStorage.length else { return nil }
-    let range = NSRange(location: position, length: 1)
-    let attrString = textStorage.attributedSubstring(from: range)
-    return attrString.string.utf16.first!
-  }
-
   /// The fraction of distance from the upstream edge
   private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double? {
     guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
@@ -270,8 +259,7 @@ final class TextLayoutContext: LayoutContext {
   ) -> RayshootResult? {
     precondition(isEditing == false)
 
-    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
-    else { return nil }
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity) else { return nil }
 
     let usageBounds = textLayoutManager.usageBoundsForTextContainer
     let lineFrame =
@@ -312,8 +300,8 @@ final class TextLayoutContext: LayoutContext {
 
     guard
       let target = textLayoutManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: direction, destination: .character, extending: false,
-        confined: false),
+        for: selection, direction: direction, destination: .character,
+        extending: false, confined: false),
       let targetLocation = target.textRanges.first?.location
     else { return nil }
 

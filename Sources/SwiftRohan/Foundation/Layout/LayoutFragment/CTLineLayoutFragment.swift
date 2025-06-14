@@ -22,7 +22,7 @@ final class CTLineLayoutFragment: LayoutFragment {
   private(set) var originalString: String
   var resolvedString: String { attrString.string }
 
-  enum BoundsOption {
+  enum BoundsOption: CaseIterable {
     case imageBounds
     case typographicBounds
   }
@@ -129,16 +129,6 @@ extension CTLineLayoutFragment {
     return CTLineLayoutFragment(context, boundsOption)
   }
 
-  static func createMathMode(
-    _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
-  ) -> CTLineLayoutFragment {
-    let context = MathLineLayoutContext(styleSheet, mathContext)
-    context.beginEditing()
-    _ = node.performLayout(context, fromScratch: true)
-    context.endEditing()
-    return CTLineLayoutFragment(context)
-  }
-
   static func createTextMode(
     _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ boundsOption: BoundsOption
   ) -> CTLineLayoutFragment {
@@ -147,16 +137,6 @@ extension CTLineLayoutFragment {
     context.insertText(text, node)
     context.endEditing()
     return CTLineLayoutFragment(context, boundsOption)
-  }
-
-  static func createMathMode(
-    _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
-  ) -> CTLineLayoutFragment {
-    let context = MathLineLayoutContext(styleSheet, mathContext)
-    context.beginEditing()
-    context.insertText(text, node)
-    context.endEditing()
-    return CTLineLayoutFragment(context)
   }
 
   /// Reconciles a `TextLineLayoutFragment` with a `Node`.
@@ -169,17 +149,5 @@ extension CTLineLayoutFragment {
     _ = node.performLayout(context, fromScratch: false)
     context.endEditing()
     return CTLineLayoutFragment(context, fragment.boundsOption)
-  }
-
-  static func reconcileMathMode(
-    _ fragment: CTLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet,
-    _ mathContext: MathContext
-  ) -> CTLineLayoutFragment {
-    precondition(fragment.layoutMode == .mathMode)
-    let context = MathLineLayoutContext(styleSheet, fragment, mathContext)
-    context.beginEditing()
-    _ = node.performLayout(context, fromScratch: false)
-    context.endEditing()
-    return CTLineLayoutFragment(context)
   }
 }

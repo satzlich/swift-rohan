@@ -69,11 +69,13 @@ enum StringUtils {
     else {
       var nodes: Array<Node> = parts.dropLast()
         .flatMap { part in
-          part.isEmpty ? [LinebreakNode()] : [TextNode(part), LinebreakNode()]
+          part.isEmpty
+            ? [ParagraphNode()]
+            : [ParagraphNode([TextNode(part)])]
         }
       let last = parts.last!
       if last.isEmpty == false {
-        nodes.append(TextNode(last))
+        nodes.append(ParagraphNode([TextNode(last)]))
       }
       return nodes
     }

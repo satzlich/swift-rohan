@@ -54,6 +54,7 @@ internal class CTLineLayoutContext: LayoutContext {
   // MARK: - Operations
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
+    precondition(isEditing)
     // no-op as we don't have paragraph style
   }
 
@@ -143,8 +144,8 @@ internal class CTLineLayoutContext: LayoutContext {
     //
     let ascent = max(bAscent, minAscent)
     let descent = max(bDescent, minDescent)
-    let frame = CGRect(
-      x: x0, y: -ascent + bAscent, width: x1 - x0, height: ascent + descent)
+    let frame =
+      CGRect(x: x0, y: -ascent + bAscent, width: x1 - x0, height: ascent + descent)
     return block(layoutRange, frame, ascent)
   }
 
@@ -190,8 +191,7 @@ internal class CTLineLayoutContext: LayoutContext {
     from layoutOffset: Int, affinity: SelectionAffinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity)
-    else { return nil }
+    guard let segmentFrame = getSegmentFrame(layoutOffset, affinity) else { return nil }
 
     switch direction {
     case .up:

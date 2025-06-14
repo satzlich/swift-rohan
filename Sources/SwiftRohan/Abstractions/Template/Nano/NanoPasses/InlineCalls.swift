@@ -17,8 +17,8 @@ extension Nano {
       let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
 
       // 2) put okay into dictionary
-      var templateTable = TemplateTable(
-        uniqueKeysWithValues: okay.map { ($0.name, $0.template) })
+      var templateTable =
+        TemplateTable(uniqueKeysWithValues: okay.map { ($0.name, $0.template) })
 
       func isFreeOfApply(_ body: Array<Expr>) -> Bool {
         NanoUtils.countExpr(from: body, where: { $0 is ApplyExpr }) == 0
