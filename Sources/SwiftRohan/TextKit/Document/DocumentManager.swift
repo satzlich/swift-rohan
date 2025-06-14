@@ -346,19 +346,33 @@ public final class DocumentManager {
       }
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
-      case let .success(range1),
-        let .paragraphInserted(range1):
-
+      case let .success(range1):
         guard
-          let (object, location) =
-            crossedObjectAt(range1.endLocation, direction: .backward)
+          let crossedObject =
+            crossedObjectAt_v2(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
-        assert(object.nonText() === mathNode)
-        let end = location.with(offsetDelta: 1)
-        let range2 = RhTextRange(location, end)!
-        return .success((range2, true))
+
+        switch crossedObject {
+        case .text:
+          assertionFailure("Invalid crossed object")
+          return .failure(SatzError(.InvalidTextRange))
+
+        case .nontextNode(let node, let location):
+          assert(node === mathNode)
+          let end = location.with(offsetDelta: 1)
+          let range2 = RhTextRange(location, end)!
+          return .success((range2, true))
+
+        case .newline:
+          assertionFailure("Invalid crossed object")
+          return .failure(SatzError(.InvalidTextRange))
+        }
+
+      case let .paragraphInserted(range1):
+        assertionFailure("Invalid paragraph insertion")
+        return .failure(SatzError(.ModifyMathFailure))
 
       case let .failure(error):
         return .failure(error)
@@ -616,7 +630,7 @@ public final class DocumentManager {
       switch object {
       case .text(let string, _):
         return string.count == 1 && string.first!.isWhitespace == true
-      case .nonText(let node, _):
+      case .nontextNode(let node, _):
         return isLinebreakNode(node)
       case .newline:
         return true
@@ -1188,7 +1202,7 @@ public final class DocumentManager {
             }
             else {
               trace.moveTo(.index(offset + 1))
-              return .nonText(node, trace.toRawLocation()!)
+              return .nontextNode(node, trace.toRawLocation()!)
             }
           }
           else {
@@ -1239,7 +1253,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return .nonText(node, trace.toRawLocation()!)
+            return .nontextNode(node, trace.toRawLocation()!)
           }
         }
         else {

@@ -68,7 +68,7 @@ extension DocumentView {
         let end = location.with(offsetDelta: string.length)
         range2 = RhTextRange(location, end)!
 
-      case .nonText(_, let location):
+      case .nontextNode(_, let location):
         // remove range if non-empty
         if range.isEmpty == false {
           let result = replaceContentsForEdit(in: range, with: nil as Array<Node>?)

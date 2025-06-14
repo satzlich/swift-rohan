@@ -23,14 +23,14 @@ enum CrossedObject {
   /// String is expected to have length "1". And the location on the other side.
   case text(String, TextLocation)
   /// Node is expected to be not "TextNode". And the location on the other side.
-  case nonText(Node, TextLocation)
+  case nontextNode(Node, TextLocation)
   /// Cross a paragraph boundary.
   case newline
 
   /// True if the object corrsponds to an object or a character in TextNode.
   var isMaterial: Bool {
     switch self {
-    case .text, .nonText:
+    case .text, .nontextNode:
       return true
     case .newline:
       return false
