@@ -359,7 +359,7 @@ public final class DocumentManager {
           assertionFailure("Invalid crossed object")
           return .failure(SatzError(.InvalidTextRange))
 
-        case .nontextNode(let node, let location):
+        case .nonTextNode(let node, let location):
           assert(node === mathNode)
           let end = location.with(offsetDelta: 1)
           let range2 = RhTextRange(location, end)!
@@ -630,7 +630,7 @@ public final class DocumentManager {
       switch object {
       case .text(let string, _):
         return string.count == 1 && string.first!.isWhitespace == true
-      case .nontextNode(let node, _):
+      case .nonTextNode(let node, _):
         return isLinebreakNode(node)
       case .blockBoundary:
         return true
@@ -1089,7 +1089,7 @@ public final class DocumentManager {
             }
             else {
               trace.moveTo(.index(offset + 1))
-              return .nontextNode(node, trace.toRawLocation()!)
+              return .nonTextNode(node, trace.toRawLocation()!)
             }
           }
           else {
@@ -1140,7 +1140,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return .nontextNode(node, trace.toRawLocation()!)
+            return .nonTextNode(node, trace.toRawLocation()!)
           }
         }
         else {
