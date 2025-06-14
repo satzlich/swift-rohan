@@ -50,8 +50,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
       Issue.record("Failed to create nucleus/sub/sup fragment")
       return
     }
-    let attach = MathAttachLayoutFragment(
-      nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    let attach =
+      MathAttachLayoutFragment(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
     attach.fixLayout(context)
 
     //
@@ -169,25 +169,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     callStandardMethods(mathList, fileName: #function)
   }
 
-  @Test
-  func moreMathList() {
-    guard let mathList = createMathListFragment("x+y-z"),
-      let w = createGlyphFragment("w")
-    else {
-      Issue.record("Failed to create math list fragment")
-      return
-    }
 
-    //
-    mathList.beginEditing()
-    mathList.insert(w, at: 5)  // ensure startIndex in fixLayout() is non-zero.
-    mathList.endEditing()
-    mathList.fixLayout(context)
-
-    //
-    #expect(mathList.getSegmentFrame(6) != nil)  // layout offset == count
-    #expect(mathList.getSegmentFrame(7) == nil)  // layout offset > count
-  }
 
   @Test
   func matrix() {

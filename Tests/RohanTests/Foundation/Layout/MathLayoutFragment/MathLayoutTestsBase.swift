@@ -69,7 +69,7 @@ class MathLayoutTestsBase {
   func createAccentFragment(
     _ nucleus: String, _ accent: MathAccent
   ) -> MathAccentLayoutFragment? {
-    guard let nucleus = createMathListFragment("x") else {
+    guard let nucleus = createMathListFragment(nucleus) else {
       Issue.record("Failed to create nucleus fragment")
       return nil
     }
