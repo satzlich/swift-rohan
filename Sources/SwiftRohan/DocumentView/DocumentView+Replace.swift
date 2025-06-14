@@ -66,7 +66,8 @@ extension DocumentView {
     // register undo action is required below
 
     // copy contents to be replaced
-    let contentsCopy: Array<Node>? = documentManager.mapContents(in: range, { $0.deepCopy() })
+    let contentsCopy: Array<Node>? = documentManager.mapContents(
+      in: range, { $0.deepCopy() })
     guard let contentsCopy
     else {
       assertionFailure("contentsCopy should not be nil")
@@ -362,11 +363,14 @@ extension DocumentView {
     _ result: EditResult<RhTextRange>
   ) -> EditResult<RhTextRange> {
     switch result {
+    // for editing operation, affinity is always upstream.
     case let .success(range):
-      documentManager.textSelection = RhTextSelection(range.endLocation)
+      documentManager.textSelection =
+        RhTextSelection(range.endLocation, affinity: .upstream)
 
     case let .paragraphInserted(range):
-      documentManager.textSelection = RhTextSelection(range.endLocation)
+      documentManager.textSelection =
+        RhTextSelection(range.endLocation, affinity: .upstream)
       moveBackward(nil)  // move backward to the end of the new paragraph
 
     case let .failure(error):

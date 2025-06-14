@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct PropertyKey: Equatable, Hashable, Codable, Sendable {
+internal struct PropertyKey: Equatable, Hashable, Codable, Sendable {
   let nodeType: NodeType
   let propertyName: PropertyName
 
@@ -11,13 +11,14 @@ public struct PropertyKey: Equatable, Hashable, Codable, Sendable {
     self.propertyName = propertyName
   }
 
-  public func resolveValue(
+  @inlinable @inline(__always)
+  internal func resolveValue(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> PropertyValue {
-    return properties[self] ?? fallback[self]
+    properties[self] ?? fallback[self]
   }
 
-  public func resolveValue(
+  internal func resolveValue(
     _ properties: PropertyDictionary, _ stylesheet: StyleSheet
   ) -> PropertyValue {
     properties[self] ?? stylesheet.defaultProperties[self]

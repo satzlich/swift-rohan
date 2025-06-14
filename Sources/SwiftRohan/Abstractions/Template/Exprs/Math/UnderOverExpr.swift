@@ -28,7 +28,7 @@ final class UnderOverExpr: MathExpr {
     visitor.visit(underOver: self, context)
   }
 
-  override func enumerateComponents() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> Array<MathExpr.MathComponent> {
     [(MathIndex.nuc, nucleus)]
   }
 

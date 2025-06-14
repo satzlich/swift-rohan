@@ -60,11 +60,7 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
     let constants = mathContext.constants
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
-    }
-
-    let axisHeight = metric(from: constants.axisHeight)
+    let axisHeight = font.convertToPoints(constants.axisHeight)
     let max_extent = max(nucleus.ascent - axisHeight, nucleus.descent + axisHeight)
 
     let relative_to = 2 * max_extent

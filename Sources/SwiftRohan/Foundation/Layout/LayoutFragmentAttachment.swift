@@ -44,8 +44,7 @@ final class LayoutFragmentAttachment: NSTextAttachment {
 
 private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewProvider {
   override public func loadView() {
-    guard let attachment = textAttachment as? LayoutFragmentAttachment
-    else { return }
+    guard let attachment = textAttachment as? LayoutFragmentAttachment else { return }
     self.view = LayoutFragmentView(attachment.fragment)
   }
 

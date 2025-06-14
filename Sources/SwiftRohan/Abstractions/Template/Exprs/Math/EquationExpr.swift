@@ -30,7 +30,7 @@ final class EquationExpr: MathExpr {
     visitor.visit(equation: self, context)
   }
 
-  override func enumerateComponents() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> Array<MathExpr.MathComponent> {
     [(MathIndex.nuc, nucleus)]
   }
 

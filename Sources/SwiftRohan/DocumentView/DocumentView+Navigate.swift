@@ -2,7 +2,9 @@
 
 extension DocumentView {
   public override func selectAll(_ sender: Any?) {
-    documentManager.textSelection = RhTextSelection(documentManager.documentRange)
+    let range = documentManager.documentRange
+    let affinity = SelectionAffinity.downstream
+    documentManager.textSelection = RhTextSelection(range, affinity: affinity)
     documentSelectionDidChange()
   }
 

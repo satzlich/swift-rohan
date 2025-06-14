@@ -11,19 +11,21 @@ public struct RhTextSelection: CustomStringConvertible {
 
   /// Whether the selection is reversed, i.e., anchor is after focus.
   let isReversed: Bool
-  /// affinity of the anchor.
+
+  /// Values that describe the visual location of the text cursor, or the
+  /// direction of the **non-anchored** edge of the selection.
   let affinity: SelectionAffinity
 
   /// The effective text range of the selection, which may be wider than the
   /// extent of the anchor and focus.
   let textRange: RhTextRange
 
-  init(_ location: TextLocation) {
+  init(_ location: TextLocation, affinity: SelectionAffinity) {
     anchor = location
     focus = location
     isReversed = false
     textRange = RhTextRange(location)
-    self.affinity = .downstream
+    self.affinity = affinity
   }
 
   init(_ location: AffineLocation) {
@@ -34,7 +36,7 @@ public struct RhTextSelection: CustomStringConvertible {
     affinity = location.affinity
   }
 
-  init(_ textRange: RhTextRange, affinity: SelectionAffinity = .downstream) {
+  init(_ textRange: RhTextRange, affinity: SelectionAffinity) {
     anchor = textRange.location
     focus = textRange.endLocation
     isReversed = false

@@ -8,47 +8,56 @@ import Testing
 
 struct CommandDeclarationTests {
 
-  private func testCodable<T: CommandDeclarationProtocol>(_ obj: T) throws {
-    let data = try JSONEncoder().encode(obj)
-    _ = try JSONDecoder().decode(T.self, from: data)
+  private func standardCalls<T: CommandDeclarationProtocol>(_ command: T) throws {
+    _ = command.command
+    _ = command.source
+    _ = command.tag
+    _ = T.allCommands
+    //
+    do {
+      let data = try JSONEncoder().encode(command)
+      _ = try JSONDecoder().decode(T.self, from: data)
+    }
   }
 
   @Test
   func encoding() throws {
     do {
-      try testCodable(MathAttributes.limits)
-      try testCodable(MathAttributes.mathbin)
+      try standardCalls(MathAttributes.limits)
+      try standardCalls(MathAttributes.mathbin)
+      try standardCalls(MathAttributes.combo(.mathbin, .limits))
     }
     do {
-      try testCodable(MathStyles.mathStyle(.display))
-      try testCodable(MathStyles.mathTextStyle(.mathbb))
-      try testCodable(MathStyles.inlineStyle)
+      try standardCalls(MathStyles.mathStyle(.display))
+      try standardCalls(MathStyles.mathTextStyle(.mathbb))
+      try standardCalls(MathStyles.inlineStyle)
     }
     do {
-      try testCodable(MathAccent.acute)
-      try testCodable(MathArray.Bmatrix)
-      try testCodable(MathExpression.bmod)
-      try testCodable(MathGenFrac.atop)
-      try testCodable(MathOperator.Pr)
-      try testCodable(MathSpreader.overbrace)
-      try testCodable(MathTemplate.operatorname)
-      try testCodable(NamedSymbol.lookup("rightarrow")!)
+      try standardCalls(MathAccent.acute)
+      try standardCalls(MathArray.Bmatrix)
+      try standardCalls(MathExpression.bmod)
+      try standardCalls(MathGenFrac.atop)
+      try standardCalls(MathOperator.Pr)
+      try standardCalls(MathSpreader.overbrace)
+      try standardCalls(MathTemplate.operatorname)
+      try standardCalls(NamedSymbol.lookup("rightarrow")!)
     }
   }
 
   @Test
-  func commandDeclaration() {
-    _ = CommandDeclaration.lookup("rightarrow")
+  func commandDeclaration() throws {
+    let command = CommandDeclaration.lookup("rightarrow")
+    #expect(command != nil)
   }
 
   @Test
-  func mathAccent() {
+  func mathAccent() throws {
     _ = MathAccent.acute.subtype.isTop
     _ = MathAccent.acute.subtype.isBottom
   }
 
   @Test
-  func mathArray() {
+  func mathArray() throws {
     let arrays: Array<MathArray> = [
       MathArray.Bmatrix,
       MathArray.aligned,
@@ -68,13 +77,21 @@ struct CommandDeclarationTests {
       _ = array.getColumnGapCalculator([], mathContext)
     }
   }
-  
+
   @Test
-  func mathKind() {
+  func mathAttributes() throws {
+    let attributes = MathAttributes.combo(.mathbin, .limits)
+
+    _ = attributes.mathClass
+    _ = attributes.limits
+  }
+
+  @Test
+  func mathKind() throws {
     for kind in MathKind.allCases {
       _ = kind.mathClass
     }
-    
+
     _ = MathKind.lookup("mathbin")
   }
 

@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct PropertyMatcher: Equatable, Hashable, Codable, Sendable {
+internal struct PropertyMatcher: Equatable, Hashable, Codable, Sendable {
   public let name: PropertyName
   public let value: PropertyValue
 

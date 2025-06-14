@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
+internal enum PropertyValue: Equatable, Hashable, Codable, Sendable {
   case none
 
   // basic types
@@ -55,6 +55,7 @@ public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
 }
 
 extension PropertyValue {
+  @inlinable @inline(__always)
   public func bool() -> Bool? {
     switch self {
     case let .bool(bool): return bool
@@ -62,6 +63,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func integer() -> Int? {
     switch self {
     case let .integer(integer): return integer
@@ -69,6 +71,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func float() -> Double? {
     switch self {
     case let .float(float): return float
@@ -76,6 +79,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func string() -> String? {
     switch self {
     case let .string(string): return string
@@ -83,6 +87,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func absLength() -> AbsLength? {
     switch self {
     case let .absLength(absLength): return absLength
@@ -90,6 +95,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func color() -> Color? {
     switch self {
     case let .color(color): return color
@@ -97,6 +103,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func fontSize() -> FontSize? {
     switch self {
     case let .fontSize(fontSize): return fontSize
@@ -104,6 +111,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func fontStretch() -> FontStretch? {
     switch self {
     case let .fontStretch(fontStretch): return fontStretch
@@ -111,6 +119,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func fontStyle() -> FontStyle? {
     switch self {
     case let .fontStyle(fontStyle): return fontStyle
@@ -118,6 +127,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func fontWeight() -> FontWeight? {
     switch self {
     case let .fontWeight(fontWeight): return fontWeight
@@ -125,6 +135,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func mathStyle() -> MathStyle? {
     switch self {
     case let .mathStyle(mathStyle): return mathStyle
@@ -132,6 +143,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func mathVariant() -> MathVariant? {
     switch self {
     case let .mathVariant(mathVariant): return mathVariant
@@ -139,6 +151,7 @@ extension PropertyValue {
     }
   }
 
+  @inlinable @inline(__always)
   public func textAlignment() -> NSTextAlignment? {
     switch self {
     case let .textAlignment(textAlignment): return textAlignment

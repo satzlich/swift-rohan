@@ -7,7 +7,7 @@ import Foundation
 ///
 /// The raison d'être of `PickedRange` is to accommodate the use of `ApplyNode`
 /// within `ElementNode`.
-struct PickedRange {
+struct PickedRange: Equatable {
   /// layout range of the segment with respect to **current node**.
   private let layoutRange: Range<Int>
   /// fraction of distance from the upstream edge of the segment, which denotes

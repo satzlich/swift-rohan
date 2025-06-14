@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct PageProperty: PropertyAggregate {
+internal struct PageProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
   public static func resolveAggregate(

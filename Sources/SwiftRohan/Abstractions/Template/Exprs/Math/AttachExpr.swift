@@ -58,8 +58,8 @@ final class AttachExpr: MathExpr {
     visitor.visit(attach: self, context)
   }
 
-  override func enumerateComponents() -> [MathExpr.MathComponent] {
-    var components: [MathExpr.MathComponent] = []
+  override func enumerateComponents() -> Array<MathExpr.MathComponent> {
+    var components: Array<MathExpr.MathComponent> = []
 
     if let lsub = lsub { components.append((.lsub, lsub)) }
     if let lsup = lsup { components.append((.lsup, lsup)) }

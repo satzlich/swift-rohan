@@ -75,6 +75,9 @@ extension DocumentView: NSTextInputClient {
 
     guard let replacement = getString(string) else { return }
 
+    // since text grows downwards, set upstream affinity.
+    let affinity: SelectionAffinity = .upstream
+
     if let markedText = _markedText {
 
       let location: Int  // start location of marked text
@@ -110,15 +113,16 @@ extension DocumentView: NSTextInputClient {
       if markedRange.length == 0 {
         _markedText = nil
         // update selection
-        documentManager.textSelection = RhTextSelection(insertionRange)
+        documentManager.textSelection =
+          RhTextSelection(insertionRange, affinity: affinity)
       }
       else {
         // update marked text
         _markedText = markedText.withRanges(marked: markedRange, selected: selectedRange)
         // update selection
-        guard let selectedTextRange = _markedText!.selectedTextRange()
-        else { return }
-        documentManager.textSelection = RhTextSelection(selectedTextRange)
+        guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
+        documentManager.textSelection =
+          RhTextSelection(selectedTextRange, affinity: affinity)
       }
     }
     else {
@@ -139,9 +143,9 @@ extension DocumentView: NSTextInputClient {
         documentManager, location,
         markedRange: markedRange, selectedRange: selectedRange)
 
-      guard let selectedTextRange = _markedText!.selectedTextRange()
-      else { return }
-      documentManager.textSelection = RhTextSelection(selectedTextRange)
+      guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
+      documentManager.textSelection =
+        RhTextSelection(selectedTextRange, affinity: affinity)
     }
   }
 
@@ -160,7 +164,7 @@ extension DocumentView: NSTextInputClient {
       assertionFailure("failed to unmark text")
       return
     }
-    documentManager.textSelection = RhTextSelection(insertionRange)
+    documentManager.textSelection = RhTextSelection(insertionRange, affinity: .upstream)
   }
 
   @objc public func unmarkText() {
@@ -195,7 +199,7 @@ extension DocumentView: NSTextInputClient {
     return markedText.attributedSubstring(for: validRange)
   }
 
-  @objc public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
+  @objc public func validAttributesForMarkedText() -> Array<NSAttributedString.Key> {
     [
       .underlineColor,
       .underlineStyle,

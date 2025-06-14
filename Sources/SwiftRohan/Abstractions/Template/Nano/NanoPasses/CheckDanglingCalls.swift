@@ -6,8 +6,8 @@ extension Nano {
   /// Check for dangling calls in the template list.
   struct CheckDanglingCalls: NanoPass {
     // annotation is a set of template names that are called by the template
-    typealias Input = [AnnotatedTemplate<TemplateNames>]
-    typealias Output = [AnnotatedTemplate<TemplateNames>]
+    typealias Input = Array<AnnotatedTemplate<TemplateNames>>
+    typealias Output = Array<AnnotatedTemplate<TemplateNames>>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let declarations = Set(input.map(\.name))

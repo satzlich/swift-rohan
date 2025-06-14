@@ -2,7 +2,7 @@
 
 import AppKit
 
-public struct MathProperty: PropertyAggregate {
+internal struct MathProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
   public static func resolveAggregate(

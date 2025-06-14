@@ -17,7 +17,7 @@ struct ArrayExprTests {
       _ = expr.accept(visitor, ())
     }
 
-    func createRows() -> [ArrayExpr.Row] {
+    func createRows() -> Array<ArrayExpr.Row> {
       [
         ArrayExpr.Row([
           ContentExpr([TextExpr("X")])

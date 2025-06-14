@@ -4,7 +4,7 @@ import Foundation
 
 extension Nano {
   struct EmitCompiledTemplates: NanoPass {
-    typealias Input = [AnnotatedTemplate<LookupTable>]
+    typealias Input = Array<AnnotatedTemplate<LookupTable>>
     typealias Output = Array<CompiledTemplate>
 
     static func process(_ input: Input) -> PassResult<Output> {

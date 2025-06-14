@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
+internal enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case none
 
   // basic types

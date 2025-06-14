@@ -18,8 +18,7 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     _ table: MathTable,
     _ layoutLength: Int
   ) {
-    guard let glyph = GlyphFragment(char, font, table)
-    else { return nil }
+    guard let glyph = GlyphFragment(char, font, table) else { return nil }
     self.init(glyph, layoutLength)
   }
 
@@ -29,8 +28,7 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     _ table: MathTable,
     _ layoutLength: Int
   ) {
-    guard let glyph = GlyphFragment(char: char, font, table)
-    else { return nil }
+    guard let glyph = GlyphFragment(char: char, font, table) else { return nil }
     self.init(glyph, layoutLength)
   }
 

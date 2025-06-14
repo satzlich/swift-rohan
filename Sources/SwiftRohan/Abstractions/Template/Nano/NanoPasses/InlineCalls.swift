@@ -6,7 +6,7 @@ import OrderedCollections
 
 extension Nano {
   struct InlineCalls: NanoPass {
-    typealias Input = [AnnotatedTemplate<TemplateNames>]
+    typealias Input = Array<AnnotatedTemplate<TemplateNames>>
     typealias Output = Array<Template>
 
     /// template name -> template; with order

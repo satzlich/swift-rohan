@@ -193,7 +193,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
 
     func move(from location: TextLocation) -> Array<RhTextSelection> {
-      let selection = RhTextSelection(location)
+      let selection = RhTextSelection(location, affinity: .downstream)
 
       let forward = documentManager.textSelectionNavigation.destinationSelection(
         for: selection, direction: .forward, destination: .character, extending: false)
@@ -444,7 +444,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     func move(
       from range: RhTextRange, direction: TextSelectionNavigation.Direction
     ) -> RhTextSelection? {
-      let selection = RhTextSelection(range)
+      let selection = RhTextSelection(range, affinity: .downstream)
       return documentManager.textSelectionNavigation.destinationSelection(
         for: selection, direction: direction, destination: .character, extending: false)
     }
@@ -489,7 +489,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     // outputPDF(#function, documentManager)
 
     func move(from location: TextLocation) -> Array<RhTextSelection> {
-      let selection = RhTextSelection(location)
+      let selection = RhTextSelection(location, affinity: .downstream)
 
       let forward = documentManager.textSelectionNavigation.destinationSelection(
         for: selection, direction: .forward, destination: .word, extending: false)
@@ -599,7 +599,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     }
 
     func deletionRange(from location: TextLocation) -> Array<DeletionRange> {
-      let selection = RhTextSelection(location)
+      let selection = RhTextSelection(location, affinity: .downstream)
       return deletionRange(from: selection)
     }
 
@@ -691,7 +691,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let location = TextLocation(path, "the ".length)
       let end = TextLocation(path, "the quick ".length)
       let range = RhTextRange(location, end)!
-      let destinations = deletionRange(from: RhTextSelection(range))
+      let destinations =
+        deletionRange(from: RhTextSelection(range, affinity: .downstream))
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """

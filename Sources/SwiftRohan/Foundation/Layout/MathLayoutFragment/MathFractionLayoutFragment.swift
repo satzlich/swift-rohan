@@ -77,33 +77,26 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
     let constants = mathContext.constants
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
-    }
-
-    func metric(_ text: MathValueRecord, _ display: MathValueRecord) -> Double {
-      switch mathContext.mathStyle {
-      case .display:
-        return metric(from: display)
-      default:
-        return metric(from: text)
-      }
+    func convertToPoints(_ text: MathValueRecord, _ display: MathValueRecord) -> Double {
+      mathContext.mathStyle == .display
+        ? font.convertToPoints(display)
+        : font.convertToPoints(text)
     }
 
     // obtain parameters
     let shortfall = font.convertToPoints(DELIMITER_SHORTFALL)
-    let axisHeight = metric(from: constants.axisHeight)
-    let thickness = metric(from: constants.fractionRuleThickness)
-    let shiftUp = metric(
+    let axisHeight = font.convertToPoints(constants.axisHeight)
+    let thickness = font.convertToPoints(constants.fractionRuleThickness)
+    let shiftUp = convertToPoints(
       constants.fractionNumeratorShiftUp,
       constants.fractionNumeratorDisplayStyleShiftUp)
-    let shiftDown = metric(
+    let shiftDown = convertToPoints(
       constants.fractionDenominatorShiftDown,
       constants.fractionDenominatorDisplayStyleShiftDown)
-    let numGapMin = metric(
+    let numGapMin = convertToPoints(
       constants.fractionNumeratorGapMin,
       constants.fractionNumDisplayStyleGapMin)
-    let denomGapMin = metric(
+    let denomGapMin = convertToPoints(
       constants.fractionDenominatorGapMin,
       constants.fractionDenomDisplayStyleGapMin)
     let fractionSpace = font.convertToPoints(FRACTION_SPACING)
@@ -136,7 +129,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     self.ruleWidth = ruleWidth
 
     do {
-      var items: [MathComposition.Item] = []
+      var items: Array<MathComposition.Item> = []
 
       let delimiters = subtype.delimiters
       let (open, close) = (delimiters.open.value, delimiters.close.value)

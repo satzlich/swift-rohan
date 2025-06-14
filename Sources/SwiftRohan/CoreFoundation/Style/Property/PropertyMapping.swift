@@ -3,7 +3,7 @@
 import Foundation
 
 /// A full dictionary from key to value
-public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
+internal struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
   public typealias Key = PropertyKey
   public typealias Value = PropertyValue
 

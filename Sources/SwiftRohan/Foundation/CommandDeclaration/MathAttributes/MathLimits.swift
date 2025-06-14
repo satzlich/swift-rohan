@@ -14,7 +14,8 @@ struct MathLimits: CommandDeclarationProtocol {
     case .never:
       return "nolimits"
     case .display:
-      preconditionFailure("Display limits should not be used in a command.")
+      assertionFailure("Display limits should not be used in a command.")
+      return "displaylimits"
     }
   }
 

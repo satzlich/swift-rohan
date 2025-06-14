@@ -2,7 +2,7 @@
 
 import AppKit
 
-public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
+internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   // MARK: - PropertyAggregate
 
   public func getAttributes() -> Dictionary<NSAttributedString.Key, Any> {

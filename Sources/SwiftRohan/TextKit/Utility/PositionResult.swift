@@ -16,10 +16,17 @@ public enum PositionResult<T> {
     if case .terminal = self { return true }
     return false
   }
+
   var isHalfway: Bool {
     if case .halfway = self { return true }
     return false
   }
+
+  var isNull: Bool {
+    if case .null = self { return true }
+    return false
+  }
+
   var isFailure: Bool {
     if case .failure = self { return true }
     return false

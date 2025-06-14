@@ -53,25 +53,18 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
     let constants = mathContext.constants
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
+    func convertToPoints(_ text: MathValueRecord, _ display: MathValueRecord) -> Double {
+      mathContext.mathStyle == .display
+        ? font.convertToPoints(display)
+        : font.convertToPoints(text)
     }
 
-    func metric(_ text: MathValueRecord, _ display: MathValueRecord) -> Double {
-      switch mathContext.mathStyle {
-      case .display:
-        return metric(from: display)
-      default:
-        return metric(from: text)
-      }
-    }
-
-    let gap = metric(
+    let gap = convertToPoints(
       constants.radicalVerticalGap, constants.radicalDisplayStyleVerticalGap)
-    let thickness = metric(from: constants.radicalRuleThickness)
-    let extra_ascender = metric(from: constants.radicalExtraAscender)
-    let kern_before = metric(from: constants.radicalKernBeforeDegree)
-    let kern_after = metric(from: constants.radicalKernAfterDegree)
+    let thickness = font.convertToPoints(constants.radicalRuleThickness)
+    let extra_ascender = font.convertToPoints(constants.radicalExtraAscender)
+    let kern_before = font.convertToPoints(constants.radicalKernBeforeDegree)
+    let kern_after = font.convertToPoints(constants.radicalKernAfterDegree)
     let raise_factor = Double(constants.radicalDegreeBottomRaisePercent) / 100
 
     // layout root symbol
@@ -118,7 +111,7 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
     let radicand_pos = CGPoint(x: radicand_x, y: 0)
 
     // compose
-    var items: [MathComposition.Item] = []
+    var items: Array<MathComposition.Item> = []
 
     if let index = self.index {
       let index_x = -min(sqrt_offset, 0) + kern_before
