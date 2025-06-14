@@ -42,33 +42,43 @@ extension DocumentView {
   }
 
   /// Execute "EditMath.addComponent" command at the given range.
+  /// - Precondition: Currently we support only `sub` and `sup` components.
   private func _executeAddComponent(_ mathIndex: MathIndex, at range: RhTextRange) {
     switch mathIndex {
     case .sub, .sup:
       // obtain the object to apply the command
       guard
-        let (object, location) =
-          documentManager.crossedObjectAt(range.location, direction: .backward)
-      else {
-        return
-      }
-
-      // remove range if non-empty
-      if range.isEmpty == false {
-        let result = replaceContentsForEdit(in: range, with: nil as Array<Node>?)
-        assert(result.isSuccess)
-      }
+        let crossedObject =
+          documentManager.crossedObjectAt_v2(range.location, direction: .backward)
+      else { return }
 
       // obtain the target range
       let range2: RhTextRange
-      switch object {
-      case let .text(string):
+      switch crossedObject {
+      case let .text(string, location):
+        // remove range if non-empty
+        if range.isEmpty == false {
+          let result = replaceContentsForEdit(in: range, with: nil as Array<Node>?)
+          assert(result.isSuccess)
+        }
+
         let end = location.with(offsetDelta: string.length)
         range2 = RhTextRange(location, end)!
-      case .nonText(_):
+
+      case .nonText(_, let location):
+        // remove range if non-empty
+        if range.isEmpty == false {
+          let result = replaceContentsForEdit(in: range, with: nil as Array<Node>?)
+          assert(result.isSuccess)
+        }
+
         let end = location.with(offsetDelta: 1)
         range2 = RhTextRange(location, end)!
+
+      case .newline:
+        return
       }
+
       // add the math component
       _ = addMathComponentForEdit(range2, mathIndex, [])
 

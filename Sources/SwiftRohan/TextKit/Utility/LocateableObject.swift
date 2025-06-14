@@ -18,6 +18,7 @@ enum LocateableObject {
   }
 }
 
+/// An object that is crossed over from certain location in certain direction.
 enum CrossedObject {
   /// String is expected to have length "1". And the location on the other side.
   case text(String, TextLocation)
@@ -25,4 +26,14 @@ enum CrossedObject {
   case nonText(Node, TextLocation)
   /// Cross a paragraph boundary.
   case newline
+
+  /// True if the object corrsponds to an object or a character in TextNode.
+  var isMaterial: Bool {
+    switch self {
+    case .text, .nonText:
+      return true
+    case .newline:
+      return false
+    }
+  }
 }

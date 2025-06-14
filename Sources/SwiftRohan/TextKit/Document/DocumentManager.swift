@@ -349,7 +349,9 @@ public final class DocumentManager {
       case let .success(range1),
         let .paragraphInserted(range1):
 
-        guard let (object, location) = crossedObjectAt(range1.endLocation, direction: .backward)
+        guard
+          let (object, location) = crossedObjectAt(
+            range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
@@ -610,15 +612,21 @@ public final class DocumentManager {
   ) -> SelectionAffinity {
     precondition(direction == .forward || direction == .backward)
 
-    func isWhitespace(_ string: String) -> Bool {
-      string.count == 1 && string.first!.isWhitespace == true
+    func isWhitespace(_ object: CrossedObject) -> Bool {
+      switch object {
+      case .text(let string, _):
+        return string.count == 1 && string.first!.isWhitespace == true
+      case .nonText(let node, _):
+        return isLinebreakNode(node)
+      case .newline:
+        return true
+      }
     }
 
     switch direction {
     case .forward:
-      if let (object, _) = self.crossedObjectAt(location, direction: .backward),
-        case let .text(string) = object,
-        isWhitespace(string)
+      if let object = self.crossedObjectAt_v2(location, direction: .backward),
+        isWhitespace(object)
       {
         return .downstream
       }
@@ -627,9 +635,8 @@ public final class DocumentManager {
       }
 
     case .backward:
-      if let (object, _) = self.crossedObjectAt(location, direction: .forward),
-        case let .text(string) = object,
-        isWhitespace(string)
+      if let object = self.crossedObjectAt_v2(location, direction: .forward),
+        isWhitespace(object)
       {
         return .upstream
       }
@@ -1119,6 +1126,129 @@ public final class DocumentManager {
         }
         else {
           return nil
+        }
+
+      default:
+        return nil
+      }
+    }
+  }
+
+  /// Return the object (character/non-text node) covered by the range formed
+  /// by the given location and the next location obtained by moving in the
+  /// given direction.
+  /// - Returns: The object and the location of its downstream edge if successful;
+  ///     otherwise, nil.
+  internal func crossedObjectAt_v2(
+    _ location: TextLocation, direction: LinearDirection
+  ) -> CrossedObject? {
+    guard var trace = Trace.from(location, rootNode) else {
+      assertionFailure("Invalid location")
+      return nil
+    }
+
+    if direction == .forward {
+      while true {
+        guard let last = trace.last,
+          let offset = last.index.index()
+        else {
+          assertionFailure("Invalid location")
+          return nil
+        }
+        let node = last.node
+
+        switch node {
+        case let node as TextNode:
+          if let nextOffset = node.destinationOffset(for: offset, cOffsetBy: 1) {
+            let string = node.substring(for: offset..<nextOffset)
+            trace.moveTo(.index(nextOffset))
+            return .text(String(string), trace.toRawLocation()!)
+          }
+          else {
+            trace.truncate(to: trace.count - 1)
+            guard let index = trace.last?.index.index()
+            else {
+              assertionFailure("Invalid location")
+              return nil
+            }
+            trace.moveTo(.index(index + 1))
+            continue
+          }
+
+        case let node as GenElementNode:
+          assert(isElementNode(node) || isArgumentNode(node))
+          if node.childCount == 0 {
+            return nil
+          }
+          else if offset < node.childCount {
+            let node = node.getChild(offset)
+            if let textNode = node as? TextNode {
+              trace.emplaceBack(textNode, .index(0))
+              continue
+            }
+            else {
+              trace.moveTo(.index(offset + 1))
+              return .nonText(node, trace.toRawLocation()!)
+            }
+          }
+          else {
+            if node.isBlock {
+              return .newline
+            }
+            else {
+              return nil
+            }
+          }
+
+        default:
+          return nil
+        }
+      }
+    }
+
+    assert(direction == .backward)
+
+    while true {
+      guard let last = trace.last,
+        let offset = last.index.index()
+      else {
+        assertionFailure("Invalid location")
+        return nil
+      }
+      let node = last.node
+
+      switch node {
+      case let node as TextNode:
+        if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
+          let string = node.substring(for: prevOffset..<offset)
+          trace.moveTo(.index(prevOffset))
+          return .text(String(string), trace.toRawLocation()!)
+        }
+        else {
+          trace.truncate(to: trace.count - 1)
+          continue
+        }
+
+      case let node as GenElementNode:
+        assert(isElementNode(node) || isArgumentNode(node))
+        if offset > 0 {
+          let node = node.getChild(offset - 1)
+          if let textNode = node as? TextNode {
+            trace.emplaceBack(textNode, .index(textNode.length))
+            continue
+          }
+          else {
+            trace.moveTo(.index(offset - 1))
+            return .nonText(node, trace.toRawLocation()!)
+          }
+        }
+        else {
+          if node.isBlock {
+            return .newline
+          }
+          else {
+            return nil
+          }
         }
 
       default:
