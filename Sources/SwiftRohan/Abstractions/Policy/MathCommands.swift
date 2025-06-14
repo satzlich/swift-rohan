@@ -13,7 +13,7 @@ enum MathCommands {
         // attachments
         .init("attachments", Snippets.attachments),
         .init("subscript", Snippets.subscript_),
-        .init("superscript", Snippets.supscript),
+        .init("superscript", Snippets.superscript),
         .init("subsuperscript", Snippets.subsuperscript),
         // radicals
         .init("root", Snippets.root),

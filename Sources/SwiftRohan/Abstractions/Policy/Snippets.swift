@@ -36,7 +36,7 @@ enum Snippets {
     CommandBody(
       AttachExpr(nuc: [], lsub: [], lsup: [], sub: [], sup: []), 5,
       preview: .image("attachments"))
-  static let supscript =
+  static let superscript =
     CommandBody(AttachExpr(nuc: [], sup: []), 2, preview: .image("rsup"))
   static let subscript_ =
     CommandBody(AttachExpr(nuc: [], sub: []), 2, preview: .image("rsub"))
