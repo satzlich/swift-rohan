@@ -7,32 +7,16 @@ import Testing
 
 @testable import SwiftRohan
 
-struct MathListLayoutFragmentTests {
-  private let mathContext = Self.testingMathContext()
-  private var font: Font { mathContext.getFont() }
-  private var table: MathTable { mathContext.table }
-
-  private static func testingMathContext() -> MathContext {
-    let font = Font.createWithName("STIX Two Math", 10)
-    let context = MathContext(font, .text, false, .black)!
-    return context
-  }
-
-  private func getGlyph(for character: Character) -> MathGlyphLayoutFragment {
-    MathGlyphLayoutFragment(char: character, font, table, character.length)!
-  }
-
-  // MARK: - Test
-
+final class MathListLayoutFragmentTests: MathLayoutTestsBase {
   private func reflowExample(
     _ fragments: Array<MathLayoutFragment>
   ) -> MathListLayoutFragment {
-    let mathList = MathListLayoutFragment(mathContext)
+    let mathList = MathListLayoutFragment(context)
 
     mathList.beginEditing()
     mathList.insert(contentsOf: fragments, at: 0)
     mathList.endEditing()
-    mathList.fixLayout(mathContext)
+    mathList.fixLayout(context)
     #expect(mathList.reflowSegmentCount == 0)
     mathList.performReflow()
 
@@ -47,7 +31,7 @@ struct MathListLayoutFragmentTests {
 
   @Test
   func reflowMultiFragments() {
-    let glyphs = "x+y=+zw".map { getGlyph(for: $0) }
+    let glyphs = "x+y=+zw".compactMap { createGlyphFragment($0, styled: false) }
     let mathList = reflowExample(glyphs)
 
     #expect(mathList.count == 7)
@@ -60,9 +44,9 @@ struct MathListLayoutFragmentTests {
 
       let layoutLength = reflowSegments.map(\.offsetRange.count).reduce(0, +)
       #expect(layoutLength == mathList.contentLayoutLength)
-      
+
       for fragment in reflowSegments {
-        MathLayoutFragmentsTests.callStandardMethods(fragment, mathContext)
+        MathLayoutFragmentsTests.callStandardMethods(fragment, context)
       }
     }
 

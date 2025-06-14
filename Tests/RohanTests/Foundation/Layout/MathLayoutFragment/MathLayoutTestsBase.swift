@@ -13,16 +13,20 @@ class MathLayoutTestsBase {
   internal let context: MathContext
 
   init() throws {
-    self.font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
+    self.font = Font.createWithName("STIX Two Math", 10, isFlipped: false)
     self.table = font.copyMathTable()!
-    self.context = MathContext(font, .display, false, .black)!
+    self.context = MathContext(font, .text, false, .black)!
     try TestUtils.touchDirectory(folderName)
   }
 
-  func createGlyphFragment(_ char: Character) -> MathGlyphLayoutFragment? {
+  func createGlyphFragment(
+    _ char: Character, styled: Bool = true
+  ) -> MathGlyphLayoutFragment? {
     let styled =
-      MathUtils.styledChar(
+      styled
+      ? MathUtils.styledChar(
         for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
+      : char
     guard let glyph = MathGlyphLayoutFragment(char: styled, font, table, char.length)
     else {
       Issue.record("Failed to create MathGlyphLayoutFragment")
