@@ -48,7 +48,7 @@ extension DocumentView {
       // obtain the object to apply the command
       guard
         let (object, location) =
-          documentManager.objectAt(range.location, direction: .backward)
+          documentManager.crossedObjectAt(range.location, direction: .backward)
       else {
         return
       }

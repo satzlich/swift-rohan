@@ -349,7 +349,7 @@ public final class DocumentManager {
       case let .success(range1),
         let .paragraphInserted(range1):
 
-        guard let (object, location) = objectAt(range1.endLocation, direction: .backward)
+        guard let (object, location) = crossedObjectAt(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
@@ -616,7 +616,7 @@ public final class DocumentManager {
 
     switch direction {
     case .forward:
-      if let (object, _) = self.objectAt(location, direction: .backward),
+      if let (object, _) = self.crossedObjectAt(location, direction: .backward),
         case let .text(string) = object,
         isWhitespace(string)
       {
@@ -627,7 +627,7 @@ public final class DocumentManager {
       }
 
     case .backward:
-      if let (object, _) = self.objectAt(location, direction: .forward),
+      if let (object, _) = self.crossedObjectAt(location, direction: .forward),
         case let .text(string) = object,
         isWhitespace(string)
       {
@@ -1019,7 +1019,7 @@ public final class DocumentManager {
   /// given direction.
   /// - Returns: The object and the location of its downstream edge if successful;
   ///     otherwise, nil.
-  internal func objectAt(
+  internal func crossedObjectAt(
     _ location: TextLocation, direction: LinearDirection
   ) -> (LocateableObject, TextLocation)? {
     guard var trace = Trace.from(location, rootNode) else {
