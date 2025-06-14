@@ -35,6 +35,10 @@ the standard text editing options.
 
 ![](images/context_menu.png){width=75%}
 
+### 1.4 Navigation
+
+For navigation, the app linearise the components of math expressions, allowing you to use the left/right arrow keys to move through the document. Don't forget to use mouse clicks as well.
+
 ## 2. Other Features
 
 ### 2.1 Multilingual Support
