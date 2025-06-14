@@ -22,12 +22,12 @@ class MathLayoutTestsBase {
   func createGlyphFragment(
     _ char: Character, styled: Bool = true
   ) -> MathGlyphLayoutFragment? {
-    let char =
+    let newChar =
       styled
       ? MathUtils.styledChar(
         for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
       : char
-    guard let glyph = MathGlyphLayoutFragment(char: char, font, table, char.length)
+    guard let glyph = MathGlyphLayoutFragment(char: newChar, font, table, char.length)
     else {
       Issue.record("Failed to create MathGlyphLayoutFragment")
       return nil
