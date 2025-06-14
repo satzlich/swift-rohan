@@ -11,10 +11,10 @@ enum MathCommands {
     do {
       let records: Array<CommandRecord> = [
         // attachments
-        .init("subscript", Snippets.rSub),
-        .init("superscript", Snippets.rSup),
-        .init("subsuperscript", Snippets.rSupSub),
-        .init("lrsubscript", Snippets.lrSub),
+        .init("attachments", Snippets.attachments),
+        .init("subscript", Snippets.subscript_),
+        .init("superscript", Snippets.supscript),
+        .init("subsuperscript", Snippets.subsuperscript),
         // radicals
         .init("root", Snippets.root),
       ]

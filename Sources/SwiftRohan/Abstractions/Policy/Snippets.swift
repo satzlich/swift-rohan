@@ -25,19 +25,25 @@ enum Snippets {
   static let root = CommandBody(RadicalExpr([], []), 2, preview: .image("root"))
   static let textMode = CommandBody(TextModeExpr(), 1)
 
-  static let rSup =
-    CommandBody(AttachExpr(nuc: [], sup: []), 2, preview: .image("rsup"))
-  static let rSub =
-    CommandBody(AttachExpr(nuc: [], sub: []), 2, preview: .image("rsub"))
-  static let rSupSub =
-    CommandBody(AttachExpr(nuc: [], sub: [], sup: []), 3, preview: .image("rsupsub"))
-  static let lrSub =
-    CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, preview: .image("lrsub"))
-
   static func mathTextStyle(_ style: MathTextStyle, _ string: String) -> CommandBody {
     let expr = MathStylesExpr(MathStyles.mathTextStyle(style), [TextExpr(string)])
     return CommandBody(expr, 0)
   }
+
+  // attachments
+
+  static let attachments =
+    CommandBody(
+      AttachExpr(nuc: [], lsub: [], lsup: [], sub: [], sup: []), 5,
+      preview: .image("attachments"))
+  static let supscript =
+    CommandBody(AttachExpr(nuc: [], sup: []), 2, preview: .image("rsup"))
+  static let subscript_ =
+    CommandBody(AttachExpr(nuc: [], sub: []), 2, preview: .image("rsub"))
+  static let subsuperscript =
+    CommandBody(AttachExpr(nuc: [], sub: [], sup: []), 3, preview: .image("rsupsub"))
+
+  // left-right
 
   static func leftRight(_ delimiters: EitherBoth<String, String>) -> CommandBody? {
     switch delimiters {

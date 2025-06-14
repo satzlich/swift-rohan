@@ -7,15 +7,15 @@ Code snippets are expanded in place as you type, allowing you to quickly insert 
 
 |  \# | Mnemonic         | Expansion                     | Look                          |
 | --: | :--------------- | :---------------------------- | :---------------------------- |
-|   1 | `subscript`      | `{⬚}_{⬚}`                     | $⬚_⬚$                         |
-|   2 | `superscript`    | `{⬚}^{⬚}`                     | $⬚^⬚$                         |
-|   3 | `subsuperscript` | `{⬚}_{⬚}^{⬚}`                 | $⬚_⬚^⬚$                       |
-|   4 | `lrsubscript`    | `{}_{⬚}{⬚}_{⬚}`               | ${}_⬚ ⬚_⬚$                    |
+|   1 | `attachments`    | `{}_{⬚}^{⬚}{⬚}_{⬚}^{⬚}`       | ${}_⬚^⬚ ⬚_⬚^⬚$                |
+|   2 | `subscript`      | `{⬚}_{⬚}`                     | $⬚_⬚$                         |
+|   3 | `superscript`    | `{⬚}^{⬚}`                     | $⬚^⬚$                         |
+|   4 | `subsuperscript` | `{⬚}_{⬚}^{⬚}`                 | $⬚_⬚^⬚$                       |
 |   5 | `root`           | `\sqrt[⬚]{⬚}`                 | $\sqrt[⬚]{⬚}$                 |
-|   6 | `abs`            | `\left\lvert  ⬚\right\rvert`   | $\left\lvert ⬚\right\rvert$   |
-|   7 | `ceil`           | `\left\lceil  ⬚\right\rceil`   | $\left\lceil ⬚\right\rceil$   |
+|   6 | `abs`            | `\left\lvert  ⬚\right\rvert`  | $\left\lvert ⬚\right\rvert$   |
+|   7 | `ceil`           | `\left\lceil  ⬚\right\rceil`  | $\left\lceil ⬚\right\rceil$   |
 |   8 | `floor`          | `\left\lfloor ⬚\right\rfloor` | $\left\lfloor ⬚\right\rfloor$ |
-|   9 | `norm`           | `\left\lVert  ⬚\right\rVert`   | $\left\lVert ⬚\right\rVert$   |
+|   9 | `norm`           | `\left\lVert  ⬚\right\rVert`  | $\left\lVert ⬚\right\rVert$   |
 
 ## Stability of Code Snippets
 

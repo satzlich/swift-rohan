@@ -306,7 +306,7 @@ final class MousePickTests: TextKitTestsBase {
   private func resolveTextRange(
     with point: CGPoint, _ anchor: TextLocation, _ documentManager: DocumentManager
   ) -> RhTextSelection? {
-    let anchorSelection = RhTextSelection(anchor)
+    let anchorSelection = RhTextSelection(anchor, affinity: .downstream)
     return documentManager.textSelectionNavigation.textSelection(
       interactingAt: point, anchors: anchorSelection, modifiers: [], selecting: true,
       bounds: .infinite)

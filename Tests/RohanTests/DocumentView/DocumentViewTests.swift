@@ -54,7 +54,8 @@ struct DocumentViewTests {
   func insert() {
     let documentView = DocumentView()
     let documentManager = documentView.documentManager
-    let selection = RhTextSelection(documentManager.documentRange.location)
+    let selection =
+      RhTextSelection(documentManager.documentRange.location, affinity: .downstream)
     documentManager.textSelection = selection
 
     do {
@@ -103,7 +104,7 @@ struct DocumentViewTests {
     let documentManager = documentView.documentManager
     do {
       let location = TextLocation.parse("[↓0,↓0]:5")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
     }
 
     do {
@@ -178,12 +179,12 @@ struct DocumentViewTests {
     let documentManager = documentView.documentManager
     do {
       let range = RhTextRange.parse("[↓1,↓0]:4..<[↓1,↓0]:8")!
-      documentManager.textSelection = RhTextSelection(range)
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
     }
     do {
       documentView.copy(nil)
       let location = TextLocation.parse("[↓0,↓0]:6")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
       documentView.paste(nil)
 
       let expected =
@@ -198,7 +199,7 @@ struct DocumentViewTests {
     }
     do {
       let range = RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!
-      documentManager.textSelection = RhTextSelection(range)
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
       documentView.cut(nil)
       let expected =
         """
@@ -224,7 +225,7 @@ struct DocumentViewTests {
     }
     do {
       let range = RhTextRange.parse("[↓1,↓0]:5..<[↓1,↓0]:8")!
-      documentManager.textSelection = RhTextSelection(range)
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
       documentView.delete(nil)
       let expected =
         """
@@ -240,11 +241,11 @@ struct DocumentViewTests {
     // paste without success but no error
     do {
       let range = RhTextRange.parse("[]:0..<[]:1")!
-      documentManager.textSelection = RhTextSelection(range)
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
       documentView.copy(nil)
 
       let location = RhTextRange.parse("[↓0,↓0]:6")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
       documentView.paste(nil)
 
       let expected =
@@ -284,7 +285,7 @@ struct DocumentViewTests {
 
     do {
       let range = RhTextRange.parse("[↓0,↓0]:4..<[↓0,↓0]:9")!
-      documentManager.textSelection = RhTextSelection(range)
+      documentManager.textSelection = RhTextSelection(range, affinity: .downstream)
       documentView.deleteBackward(nil)
       #expect(documentManager.prettyPrint() == expected1)
     }
@@ -323,11 +324,11 @@ struct DocumentViewTests {
     // set selection
     func gotoLocation1() {
       let location = TextLocation.parse("[↓0,↓0]:7")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
     }
     func gotoLocation2() {
       let location = TextLocation.parse("[↓1,↓0]:8")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
     }
 
     // select all
@@ -467,7 +468,7 @@ struct DocumentViewTests {
     // trigger "..." -> "…"
     do {
       let location = TextLocation.parse("[↓0,↓0]:7")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
       documentView.insertText(".", replacementRange: .notFound)
 
       let expected = """
@@ -483,7 +484,7 @@ struct DocumentViewTests {
     // trigger "frac " -> FractionNode
     do {
       let location = TextLocation.parse("[↓1,nuc,↓0]:4")!
-      documentManager.textSelection = RhTextSelection(location)
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
       documentView.insertText(" ", replacementRange: .notFound)
 
       let expected = """
