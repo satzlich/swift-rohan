@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct SegmentFrame {
+struct SegmentFrame: Equatable {
   /// frame of the segment
   var frame: CGRect
   /// baseline position measured from the top of the frame

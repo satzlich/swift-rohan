@@ -35,7 +35,11 @@ the standard text editing options.
 
 ![](images/context_menu.png){width=75%}
 
-### 1.4 Navigation
+### 1.4 Copy and Paste
+
+The app allows you to copy selected content and paste LaTeX source code into external editors.
+
+### 1.5 Navigation
 
 For navigation, the app linearise the components of math expressions, allowing you to use the left/right arrow keys to move through the document. 
 This can be laborious in certain cases, such as when navigating through large matrices or complex expressions. Don't forget to use mouse clicks as well.

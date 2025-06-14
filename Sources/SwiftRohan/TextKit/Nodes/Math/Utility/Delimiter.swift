@@ -115,7 +115,7 @@ extension Delimiter {
       }
       return .success(syntax)
     case .null:
-      if let charSyntax = CharSyntax(" ", mode: .mathMode) {
+      if let charSyntax = CharSyntax(".", mode: .mathMode) {
         return .success(ComponentSyntax(charSyntax))
       }
       else {

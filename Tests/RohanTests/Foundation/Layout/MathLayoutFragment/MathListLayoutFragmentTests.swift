@@ -1,123 +1,71 @@
 // Copyright 2024-2025 Lie Yan
 
 import Algorithms
+import AppKit
 import CoreText
 import Foundation
 import Testing
 
 @testable import SwiftRohan
 
-struct MathListLayoutFragmentTests {
-  private let mathContext = Self.testingMathContext()
-  private var font: Font { mathContext.getFont() }
-  private var table: MathTable { mathContext.table }
+final class MathListLayoutFragmentTests: MathLayoutTestsBase {
+  @Test
+  func emptyMathList() {
+    let mathList = MathListLayoutFragment(context)
+    #expect(mathList.getSegmentFrame(0) == SegmentFrame(.zero, 0))
 
-  private static func testingMathContext() -> MathContext {
-    let font = Font.createWithName("STIX Two Math", 10)
-    let context = MathContext(font, .text, false, .black)!
-    return context
+    do {
+      var rect: CGRect? = nil
+      var baseline: CGFloat = 0
+
+      let shouldContinue =
+        mathList.enumerateTextSegments(
+          0..<0, context.cursorHeight(), type: .standard, options: .rangeNotRequired
+        ) {
+          (_, frame, baselinePosition) in
+          rect = frame
+          baseline = baselinePosition
+          return false  // stop
+        }
+
+      #expect(shouldContinue == false)
+      #expect(rect != nil)
+      #expect(baseline.isNearlyEqual(to: 7.6200154))
+    }
+
+    #expect(mathList.cursorDistanceThroughUpstream(0) == 0)
+
   }
 
-  private func getGlyph(for character: Character) -> MathGlyphLayoutFragment {
-    MathGlyphLayoutFragment(char: character, font, table, character.length)!
-  }
+  @Test
+  func moreMathList() {
+    guard let mathList = createMathListFragment("x+y-z"),
+      let w = createGlyphFragment("w")
+    else {
+      Issue.record("Failed to create math list fragment")
+      return
+    }
 
-  // MARK: - Test
-
-  private func reflowExample(
-    _ fragments: Array<MathLayoutFragment>
-  ) -> MathListLayoutFragment {
-    let mathList = MathListLayoutFragment(mathContext)
-
+    //
     mathList.beginEditing()
-    mathList.insert(contentsOf: fragments, at: 0)
+    mathList.insert(w, at: 5)  // ensure startIndex in fixLayout() is non-zero.
     mathList.endEditing()
-    mathList.fixLayout(mathContext)
-    #expect(mathList.reflowSegmentCount == 0)
-    mathList.performReflow()
+    mathList.fixLayout(context)
 
-    return mathList
-  }
+    //
+    #expect(mathList.count == 6)
+    #expect(mathList.getSegmentFrame(6) != nil)  // layout offset == count
+    #expect(mathList.getSegmentFrame(7) == nil)  // layout offset > count
 
-  @Test
-  func reflowEmpty() {
-    let mathList = reflowExample([])
-    #expect(mathList.reflowSegmentCount == 0)
-  }
+    //
+    #expect(mathList.getLayoutRange(interactingAt: CGPoint(x: -10, y: 5)) == (0..<0, 0))
+    #expect(mathList.getLayoutRange(interactingAt: CGPoint(x: 10000, y: 5)) == (6..<6, 0))
 
-  @Test
-  func reflowMultiFragments() {
-    let glyphs = "x+y=+zw".map { getGlyph(for: $0) }
-    let mathList = reflowExample(glyphs)
+    //
+    mathList.beginEditing()
+    #expect(mathList.index(0, llOffsetBy: 3) == 3)
+    mathList.endEditing()
 
-    #expect(mathList.count == 7)
-    #expect(mathList.reflowSegmentCount == 3)
-
-    let reflowSegments = mathList.reflowSegments
-    do {
-      let width = reflowSegments.map(\.width).reduce(0, +)
-      #expect(width.isNearlyEqual(to: mathList.width))
-
-      let layoutLength = reflowSegments.map(\.offsetRange.count).reduce(0, +)
-      #expect(layoutLength == mathList.contentLayoutLength)
-      
-      for fragment in reflowSegments {
-        MathLayoutFragmentsTests.callStandardMethods(fragment, mathContext)
-      }
-    }
-
-    do {
-      let segment = reflowSegments[0]
-      #expect(segment.range == 0..<2)
-      #expect(segment.offsetRange == 0..<2)
-      #expect(segment.fragmentIndex(0) == 0)
-      #expect(segment.fragmentIndex(1) == 1)
-      #expect(segment.fragmentIndex(2) == 2)
-      #expect(segment.distanceThroughSegment(0) == 0)
-      #expect(segment.distanceThroughSegment(1).isNearlyEqual(to: 7.0122222))
-      #expect(segment.distanceThroughSegment(2).isNearlyEqual(to: 14.21222222))
-      #expect(segment.cursorDistanceThroughSegment(0) == 0)
-      #expect(segment.cursorDistanceThroughSegment(1).isNearlyEqual(to: 4.79))
-      #expect(segment.cursorDistanceThroughSegment(2).isNearlyEqual(to: 16.43444444))
-      //
-      #expect(segment.equivalentPosition(0) == 0)
-    }
-    do {
-      let segment = reflowSegments[1]
-      #expect(segment.range == 2..<4)
-      #expect(segment.offsetRange == 2..<4)
-      #expect(segment.fragmentIndex(2) == 2)
-      #expect(segment.fragmentIndex(3) == 3)
-      #expect(segment.fragmentIndex(4) == 4)
-      #expect(segment.distanceThroughSegment(2) == 0)
-      #expect(segment.distanceThroughSegment(3).isNearlyEqual(to: 7.6077777))
-      #expect(segment.distanceThroughSegment(4).isNearlyEqual(to: 14.8077777))
-      #expect(segment.cursorDistanceThroughSegment(2) == 0)
-      #expect(segment.cursorDistanceThroughSegment(3).isNearlyEqual(to: 4.82999999))
-      #expect(segment.cursorDistanceThroughSegment(4).isNearlyEqual(to: 16.19666666))
-      //
-      #expect(segment.equivalentPosition(0).isNearlyEqual(to: 16.434444444))
-    }
-    do {
-      let segment = reflowSegments[2]
-      #expect(segment.range == 4..<7)
-      #expect(segment.offsetRange == 4..<7)
-      #expect(segment.fragmentIndex(3) == 4)
-      #expect(segment.fragmentIndex(4) == 4)
-      #expect(segment.fragmentIndex(5) == 5)
-      #expect(segment.fragmentIndex(6) == 6)
-      #expect(segment.fragmentIndex(7) == 7)
-      #expect(segment.fragmentIndex(8) == 7)
-      #expect(segment.distanceThroughSegment(4).isNearlyEqual(to: 1.38888888))
-      #expect(segment.distanceThroughSegment(5).isNearlyEqual(to: 8.58888888))
-      #expect(segment.distanceThroughSegment(6).isNearlyEqual(to: 13.1688888))
-      #expect(segment.distanceThroughSegment(7).isNearlyEqual(to: 20.6588888))
-      #expect(segment.cursorDistanceThroughSegment(4) == 0)
-      #expect(segment.cursorDistanceThroughSegment(5).isNearlyEqual(to: 8.5888888))
-      #expect(segment.cursorDistanceThroughSegment(6).isNearlyEqual(to: 13.1688888))
-      #expect(segment.cursorDistanceThroughSegment(7).isNearlyEqual(to: 20.65888888))
-      //
-      #expect(segment.equivalentPosition(0).isNearlyEqual(to: 32.63111111))
-    }
+    //
   }
 }
