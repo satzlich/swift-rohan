@@ -40,6 +40,7 @@ final class MathLineLayoutContext: LayoutContext {
 
   func resetCursor() {
     layoutCursor = originalString.length
+    layoutContext.resetCursor()
   }
 
   var isEditing: Bool { layoutContext.isEditing }

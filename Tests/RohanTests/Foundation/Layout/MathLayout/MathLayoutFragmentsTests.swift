@@ -302,6 +302,31 @@ struct MathLayoutFragmentsTests {
     callStandardMethods(wrapper, fileName: #function)
   }
 
+  @Test
+  func layoutFragmentWrapper() {
+    let attrString = NSMutableAttributedString(string: "Hello")
+    let ctLine = CTLineCreateWithAttributedString(attrString)
+
+    var fragments: Array<MathLayoutFragment> = []
+
+    let product =
+      Algorithms.product(LayoutMode.allCases, CTLineLayoutFragment.BoundsOption.allCases)
+
+    for (mode, bounds) in product {
+      let fragment = CTLineLayoutFragment(attrString, ctLine, mode, bounds)
+      fragment.fixLayout(context)
+      fragment.setGlyphOrigin(.zero)
+      
+      //
+      let wrapper = LayoutFragmentWrapper(fragment)
+      fragments.append(wrapper)
+    }
+
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
+    }
+  }
+
   // MARK: - More Tests
 
   @Test

@@ -3,7 +3,7 @@
 import Foundation
 import LatexParser
 
-enum LayoutMode {
+enum LayoutMode: CaseIterable {
   case textMode
   case mathMode
 

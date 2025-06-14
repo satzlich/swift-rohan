@@ -22,7 +22,7 @@ final class CTLineLayoutFragment: LayoutFragment {
   private(set) var originalString: String
   var resolvedString: String { attrString.string }
 
-  enum BoundsOption {
+  enum BoundsOption: CaseIterable {
     case imageBounds
     case typographicBounds
   }
