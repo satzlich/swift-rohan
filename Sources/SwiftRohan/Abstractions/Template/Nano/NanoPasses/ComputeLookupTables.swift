@@ -8,7 +8,7 @@ extension Nano {
 
   struct ComputeLookupTables: NanoPass {
     typealias Input = Array<Template>
-    typealias Output = [AnnotatedTemplate<LookupTable>]
+    typealias Output = Array<AnnotatedTemplate<LookupTable>>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map { template in
@@ -42,11 +42,11 @@ extension Nano {
     // MARK: - Template
 
     override func visit(apply: ApplyExpr, _ context: Context) {
-      preconditionFailure("The input must not contain apply")
+      assertionFailure("The input must not contain apply")
     }
 
     override func visit(variable: VariableExpr, _ context: Context) {
-      preconditionFailure("The input must not contain variable")
+      assertionFailure("The input must not contain variable")
     }
 
     override func visit(cVariable: CompiledVariableExpr, _ context: Context) {

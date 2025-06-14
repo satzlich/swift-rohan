@@ -7,8 +7,7 @@ public enum FontLoader {
   public static func registerFonts() {
     for font in allFonts {
       let parts = font.split(separator: ".", maxSplits: 1).map(String.init)
-      guard parts.count == 2
-      else {
+      guard parts.count == 2 else {
         assertionFailure("Invalid font file name: \(font)")
         continue
       }

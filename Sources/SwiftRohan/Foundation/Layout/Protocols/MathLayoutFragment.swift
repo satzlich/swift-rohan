@@ -18,12 +18,15 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
 }
 
 extension MathLayoutFragment {
-  var minX: CGFloat { glyphOrigin.x }
-  var midX: CGFloat { glyphOrigin.x + width / 2 }
-  var maxX: CGFloat { glyphOrigin.x + width }
-  var minY: CGFloat { glyphOrigin.y - ascent }
+  @inlinable @inline(__always) var minX: CGFloat { glyphOrigin.x }
+  @inlinable @inline(__always) var midX: CGFloat { glyphOrigin.x + width / 2 }
+  @inlinable @inline(__always) var maxX: CGFloat { glyphOrigin.x + width }
+  @inlinable @inline(__always) var minY: CGFloat { glyphOrigin.y - ascent }
+
+  @inlinable @inline(__always)
   var midY: CGFloat { glyphOrigin.y + (-ascent + descent) / 2 }
-  var maxY: CGFloat { glyphOrigin.y + descent }
+
+  @inlinable @inline(__always) var maxY: CGFloat { glyphOrigin.y + descent }
 
   var boxDescription: String {
     let origin = self.glyphOrigin.formatted(2)

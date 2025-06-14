@@ -30,7 +30,8 @@ extension Nano {
     }
 
     override func visit(variable: VariableExpr, _ context: Int) -> R {
-      preconditionFailure("VariableExpr should not be visited")
+      assertionFailure("VariableExpr should not be visited")
+      return variable
     }
   }
 }

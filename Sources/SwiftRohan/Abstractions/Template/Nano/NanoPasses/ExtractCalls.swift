@@ -8,7 +8,7 @@ extension Nano {
   struct ExtractCalls: NanoPass {
     typealias Input = Array<Template>
     // annoation is the set of template names that the template calls
-    typealias Output = [AnnotatedTemplate<TemplateNames>]
+    typealias Output = Array<AnnotatedTemplate<TemplateNames>>
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map { template in

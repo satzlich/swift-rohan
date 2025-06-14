@@ -89,11 +89,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     let table = mathContext.table
     let constants = mathContext.constants
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
-    }
-
-    let axisHeight = metric(from: constants.axisHeight)
+    let axisHeight = font.convertToPoints(constants.axisHeight)
     let rowGap = font.convertToPoints(subtype.getRowGap())
     let columnAlignments = subtype.getColumnAlignments()
     let colGapCalculator = subtype.getColumnGapCalculator(_columns, mathContext)

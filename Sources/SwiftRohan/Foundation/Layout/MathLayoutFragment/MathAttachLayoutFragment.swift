@@ -88,10 +88,6 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     let font = context.getFont()
     let constants = context.constants
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
-    }
-
     let tl = fragments[0]
     let t = fragments[1]
     let tr = fragments[2]
@@ -138,7 +134,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     // `space_after_script` is extra spacing that is at the start before each
     // pre-script, and at the end after each post-script (see the MathConstants
     // table in the OpenType MATH spec).
-    let space_after_script = metric(from: constants.spaceAfterScript)
+    let space_after_script = font.convertToPoints(constants.spaceAfterScript)
 
     // Calculate the distance each pre-script extends to the left of the base's
     // width.

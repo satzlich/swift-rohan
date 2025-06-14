@@ -136,10 +136,6 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
     let constants = mathContext.constants
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
-    }
-
     let extra_height: Double
     let content = nucleus
     let line_pos: CGPoint
@@ -149,9 +145,9 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     let total_descent: Double
 
     if isOver {
-      let sep = metric(from: constants.overbarExtraAscender)
-      bar_height = metric(from: constants.overbarRuleThickness)
-      let gap = metric(from: constants.overbarVerticalGap)
+      let sep = font.convertToPoints(constants.overbarExtraAscender)
+      bar_height = font.convertToPoints(constants.overbarRuleThickness)
+      let gap = font.convertToPoints(constants.overbarVerticalGap)
       extra_height = sep + bar_height + gap
 
       let line_y = -(content.ascent + gap + bar_height / 2)
@@ -162,9 +158,9 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
       total_descent = content.descent
     }
     else {
-      let sep = metric(from: constants.underbarExtraDescender)
-      bar_height = metric(from: constants.underbarRuleThickness)
-      let gap = metric(from: constants.underbarVerticalGap)
+      let sep = font.convertToPoints(constants.underbarExtraDescender)
+      bar_height = font.convertToPoints(constants.underbarRuleThickness)
+      let gap = font.convertToPoints(constants.underbarVerticalGap)
       extra_height = sep + bar_height + gap
 
       let line_y = content.descent + gap + bar_height / 2

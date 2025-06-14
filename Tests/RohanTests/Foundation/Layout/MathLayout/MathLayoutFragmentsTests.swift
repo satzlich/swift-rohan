@@ -49,8 +49,8 @@ struct MathLayoutFragmentsTests {
       _ = accent.rayshoot(from: point, .nuc, in: .down)
     }
 
-    for fragment in fragments {
-      callStandardMethods(fragment, fileName: #function)
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
     }
   }
 
@@ -115,8 +115,8 @@ struct MathLayoutFragmentsTests {
       _ = fraction.rayshoot(from: point, .denom, in: .down)
     }
 
-    for fragment in fragments {
-      callStandardMethods(fragment, fileName: #function)
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
     }
   }
 
@@ -124,8 +124,13 @@ struct MathLayoutFragmentsTests {
   func glyphsAndVariants() {
     var fragments: Array<MathLayoutFragment> = []
 
-    guard let glyph = createGlyphFragment("(", font, table)
-    else {
+    // init with UnicodeScalar
+    do {
+      let glyph = MathGlyphLayoutFragment("q", font, table, 1)!
+      fragments.append(glyph)
+    }
+
+    guard let glyph = createGlyphFragment("(", font, table) else {
       Issue.record("Failed to create glyph fragment")
       return
     }
@@ -138,8 +143,8 @@ struct MathLayoutFragmentsTests {
     fragments.append(variant)
 
     //
-    for fragment in fragments {
-      callStandardMethods(fragment, fileName: #function)
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
     }
   }
 
@@ -220,7 +225,7 @@ struct MathLayoutFragmentsTests {
     var fragments: Array<MathLayoutFragment> = []
 
     guard let radicand = createMathListFragment("x", context),
-      let index = createMathListFragment("2", context)
+      let index = createMathListFragment("2", context.with(mathStyle: .script))
     else {
       Issue.record("Failed to create radicand/index fragment")
       return
@@ -244,8 +249,8 @@ struct MathLayoutFragmentsTests {
       _ = radical.rayshoot(from: point1, .radicand, in: .down)
     }
     //
-    for fragment in fragments {
-      callStandardMethods(fragment, fileName: #function)
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
     }
   }
 
@@ -253,7 +258,11 @@ struct MathLayoutFragmentsTests {
   func underOver() {
     var fragments: Array<MathLayoutFragment> = []
 
-    for spreader in [MathSpreader.underline, .overline, .underbrace, .overbrace] {
+    for spreader in [
+      MathSpreader.underline, .overline, .underbrace, .overbrace,
+      // bad
+      MathSpreader(.xarrow("碐"), "_unresolved"),
+    ] {
       let nucleus = createMathListFragment("x", context)!
       let overspreader = MathUnderOverLayoutFragment(spreader, nucleus)
       overspreader.fixLayout(context)
@@ -261,8 +270,8 @@ struct MathLayoutFragmentsTests {
     }
 
     //
-    for fragment in fragments {
-      callStandardMethods(fragment, fileName: #function)
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
     }
   }
 
@@ -281,7 +290,9 @@ struct MathLayoutFragmentsTests {
 
   @Test
   func mathFragmentWrapper() {
-    let glyphFragment: GlyphFragment = GlyphFragment(char: "x", font, table)!
+    let styled: Character = MathUtils.styledChar(
+      for: "x", variant: .bb, bold: false, italic: nil, autoItalic: true)
+    let glyphFragment: GlyphFragment = GlyphFragment(char: styled, font, table)!
     let wrapper = MathFragmentWrapper(glyphFragment, 1)
 
     // the use of wrapper here is for test only. GlyphFragment should be used together
@@ -296,9 +307,7 @@ struct MathLayoutFragmentsTests {
   @Test
   func moreAttachments() {
     let font = Font.createWithName("STIX Two Math", 12)
-    guard let table = font.copyMathTable(),
-      let context = MathContext(font, .display, false, .blue)
-    else {
+    guard let context = MathContext(font, .display, false, .blue) else {
       Issue.record("Failed to create math table or MathContext")
       return
     }
@@ -367,9 +376,7 @@ struct MathLayoutFragmentsTests {
   @Test
   func moreMatrix() {
     let font = Font.createWithName("STIX Two Math", 12)
-    guard let table = font.copyMathTable(),
-      let context = MathContext(font, .display, false, .blue)
-    else {
+    guard let context = MathContext(font, .display, false, .blue) else {
       Issue.record("Failed to create math table or MathContext")
       return
     }
