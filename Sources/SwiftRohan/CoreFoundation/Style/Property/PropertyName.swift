@@ -23,6 +23,7 @@ internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
   case isBlock
 
   // multiline
+  // Not a typo. The name `{multline}` is a LaTeX math environment.
   case isMultline
 
   // heading
