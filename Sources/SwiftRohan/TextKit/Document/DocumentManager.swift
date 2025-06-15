@@ -782,8 +782,7 @@ public final class DocumentManager {
 
     // location
     trace.moveTo(.index(range.lowerBound))
-    guard let location = trace.toRawLocation()
-    else { return nil }
+    guard let location = trace.toRawLocation() else { return nil }
 
     // end location and range
     trace.moveTo(.index(range.upperBound))

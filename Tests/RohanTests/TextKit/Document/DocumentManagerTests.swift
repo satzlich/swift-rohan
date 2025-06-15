@@ -12,6 +12,52 @@ final class DocumentManagerTests {
     return documentManager
   }
 
+  // MARK: - Navigation
+
+  @Test
+  func enclosingTextRange() {
+    let documentManager = _createDocumentManager([
+      ParagraphNode([
+        TextNode("Mary has a little lamb")
+      ])
+    ])
+
+    func composeLocation(_ offset: Int) -> TextLocation {
+      TextLocation.parse("[↓0,↓0]:\(offset)")!
+    }
+
+    do {
+      let offset = "Mary has a li".length
+      let location = composeLocation(offset)
+      let range = documentManager.enclosingTextRange(for: .word, location)
+      guard let range = range else {
+        Issue.record("Enclosing text range failed")
+        return
+      }
+      #expect("\(range)" == "[↓0,↓0]:11..<[↓0,↓0]:18")  // "little "
+    }
+    do {
+      let offeset = "Mary has a ".length
+      let location = composeLocation(offeset)
+      let range = documentManager.enclosingTextRange(for: .word, location)
+      guard let range = range else {
+        Issue.record("Enclosing text range failed")
+        return
+      }
+      #expect("\(range)" == "[↓0,↓0]:11..<[↓0,↓0]:18")  // "little "
+    }
+    do {
+      let offeset = "Mary has a".length
+      let location = composeLocation(offeset)
+      let range = documentManager.enclosingTextRange(for: .word, location)
+      guard let range = range else {
+        Issue.record("Enclosing text range failed")
+        return
+      }
+      #expect("\(range)" == "[↓0,↓0]:9..<[↓0,↓0]:11")  // "a "
+    }
+  }
+
   // MARK: - IME Support
 
   private func _imeSupportExample() -> DocumentManager {
