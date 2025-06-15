@@ -988,7 +988,7 @@ public final class DocumentManager {
     return trace.toRawLocation()
   }
 
-  // MARK: - Location
+  // MARK: - Location Query
 
   /// Returns the node located at the given path.
   internal func getNode(at path: Array<RohanIndex>) -> Node? {
@@ -998,39 +998,6 @@ public final class DocumentManager {
   /// Returns the node located at the given location.
   internal func getNode(at location: TextLocation) -> Node? {
     TreeUtils.getNode(at: location, rootNode)
-  }
-
-  /// Determine the __contextual node__ the location is in.
-  /// - Returns: The contextual node, its location, and its associated index for
-  ///     accessing the next-level node if successful; otherwise, nil.
-  /// - Note: Skip text nodes and content nodes.
-  internal func contextualNode(
-    for location: TextLocation
-  ) -> (Node, TextLocation, RohanIndex)? {
-    guard var trace = Trace.from(location, rootNode)
-    else { return nil }
-
-    var contextual: Node?
-    var childIndex: RohanIndex?
-    while trace.isEmpty == false {
-      let last = trace.last!
-      let node = last.node
-      if isTextNode(node) || isContentNode(node) {
-        trace.truncate(to: trace.count - 1)
-      }
-      else {
-        contextual = node
-        childIndex = last.index
-        trace.truncate(to: trace.count - 1)
-        break
-      }
-    }
-
-    guard let contextual = contextual,
-      let childIndex = childIndex,
-      let target = trace.toRawLocation()
-    else { return nil }
-    return (contextual, target, childIndex)
   }
 
   /// Return the object (character/non-text node) covered by the range formed
@@ -1186,6 +1153,41 @@ public final class DocumentManager {
       let newLocation = TextLocation(indices, node.childCount)
       return newLocation.normalised(for: rootNode)
     }
+  }
+
+  /// Determine the __contextual node__ the location is in.
+  ///
+  /// A **contextual node** is the lowest ancestor node that emits a command.
+  /// According to this definition, text nodes and content nodes are skipped.
+  ///
+  /// - Returns: The contextual node, its location, and its associated index for
+  ///     accessing the next-level node if successful; otherwise, nil.
+  internal func contextualNode(
+    for location: TextLocation
+  ) -> (node: Node, location: TextLocation, index: RohanIndex)? {
+    guard var trace = Trace.from(location, rootNode) else { return nil }
+
+    var contextual: Node?
+    var childIndex: RohanIndex?
+    while trace.isEmpty == false {
+      let last = trace.last!
+      let node = last.node
+      if isTextNode(node) || isContentNode(node) {
+        trace.truncate(to: trace.count - 1)
+      }
+      else {
+        contextual = node
+        childIndex = last.index
+        trace.truncate(to: trace.count - 1)
+        break
+      }
+    }
+
+    guard let contextual = contextual,
+      let childIndex = childIndex,
+      let target = trace.toRawLocation()
+    else { return nil }
+    return (contextual, target, childIndex)
   }
 
   /// Compute the visual delimiter range for a location in the tree and also
