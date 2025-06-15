@@ -64,6 +64,12 @@ final class MultilineNode: ArrayNode {
     return json
   }
 
+  // MARK: - ArrayNode
+
+  final override func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
+    _matrixFragment?.getGridIndex(interactingAt: point, shouldClamp: true)
+  }
+
   // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> NodeLoaded<MultilineNode> {

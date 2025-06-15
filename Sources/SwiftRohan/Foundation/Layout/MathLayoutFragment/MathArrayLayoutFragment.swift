@@ -265,19 +265,32 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   // MARK: - Picking
 
   /// Resolve the point to a grid index.
-  /// - Parameter point: The point to resolve in the coordinate system of the fragment.
-  func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
+  /// - Parameters:
+  ///   - point: The point to resolve in the coordinate system of the fragment.
+  ///   - shouldClamp: If true, the x-coordinate will be clamped to the grid edges.
+  func getGridIndex(interactingAt point: CGPoint, shouldClamp: Bool = false) -> GridIndex?
+  {
     guard rowCount > 0, columnCount > 0 else { return nil }
 
     let minX = (0 + _columnEdges.first!) / 2
     let maxX = (width + _columnEdges.last!) / 2
 
-    if point.x < minX || point.x > maxX {
-      return nil
+    let x: Double
+
+    if !shouldClamp {
+      if point.x < minX || point.x > maxX {
+        return nil
+      }
+      else {
+        x = point.x
+      }
+    }
+    else {
+      x = point.x.clamped(minX, maxX)
     }
 
     let i = Satz.upperBound(_rowEdges, point.y)
-    let j = Satz.upperBound(_columnEdges, point.x)
+    let j = Satz.upperBound(_columnEdges, x)
     let ii = i > 0 ? min(i - 1, rowCount - 1) : 0
     let jj = j > 0 ? min(j - 1, columnCount - 1) : 0
     return GridIndex(ii, jj)

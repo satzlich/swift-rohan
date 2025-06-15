@@ -56,6 +56,12 @@ final class MatrixNode: ArrayNode {
     return json
   }
 
+  // MARK: - ArrayNode
+
+  final override func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
+    _matrixFragment?.getGridIndex(interactingAt: point)
+  }
+
   // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> NodeLoaded<MatrixNode> {

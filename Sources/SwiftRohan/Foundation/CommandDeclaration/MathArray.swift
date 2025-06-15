@@ -183,6 +183,7 @@ private struct AlternateCellAlignmentProvider: CellAlignmentProvider {
 }
 
 /// This is for `{multline}` environment.
+/// Note that **Multline** is not a typo, it stands for the environment name in LaTeX.
 private struct MultlineCellAlignmentProvider: CellAlignmentProvider {
   private let _rowCount: Int
 

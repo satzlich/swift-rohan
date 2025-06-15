@@ -388,7 +388,7 @@ class ArrayNode: Node {
   internal var _rows: Array<Row> = []
 
   private var _isDirty: Bool = false
-  private var _matrixFragment: MathArrayLayoutFragment? = nil
+  internal var _matrixFragment: MathArrayLayoutFragment? = nil
   final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
   final var rowCount: Int { _rows.count }
@@ -567,8 +567,8 @@ class ArrayNode: Node {
     return matrixFragment.getElement(index.row, index.column)
   }
 
-  private func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    _matrixFragment?.getGridIndex(interactingAt: point)
+  internal func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
+    preconditionFailure("overriding required")
   }
 
   private func rayshoot(
