@@ -481,7 +481,9 @@ public final class DocumentManager {
     switch instruction {
     case let .insertRow(elements, at: row):
       node.insertRow(at: row, inStorage: true)
-      let n = min(elements.count, node.columnCount)
+      // insertRow() above has inserted an empty row, so we need to
+      // insert elements at the beginning of the row.
+      let n = Swift.min(elements.count, node.columnCount)
       for column in 0..<n {
         node.getElement(row, column)
           .insertChildren(contentsOf: elements[column], at: 0, inStorage: true)
@@ -489,20 +491,20 @@ public final class DocumentManager {
 
     case let .insertColumn(elements, at: column):
       node.insertColumn(at: column, inStorage: true)
-      let n = min(elements.count, node.rowCount)
+      // insertColumn() above has inserted an empty column, so we need to
+      // insert elements at the beginning of the column.
+      let n = Swift.min(elements.count, node.rowCount)
       for row in 0..<n {
         node.getElement(row, column)
           .insertChildren(contentsOf: elements[row], at: 0, inStorage: true)
       }
 
     case let .removeRow(row):
-      guard node.rowCount > 1
-      else { return .failure(SatzError(.ModifyGridFailure)) }
+      guard node.rowCount > 1 else { return .failure(SatzError(.ModifyGridFailure)) }
       node.removeRow(at: row, inStorage: true)
 
     case let .removeColumn(column):
-      guard node.columnCount > 1
-      else { return .failure(SatzError(.ModifyGridFailure)) }
+      guard node.columnCount > 1 else { return .failure(SatzError(.ModifyGridFailure)) }
       node.removeColumn(at: column, inStorage: true)
     }
 

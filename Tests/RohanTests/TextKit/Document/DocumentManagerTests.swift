@@ -179,21 +179,9 @@ final class DocumentManagerTests {
         .block,
         [
           RadicalNode([TextNode("x")], index: nil)
-          //          MatrixNode(
-          //            .pmatrix,
-          //            [
-          //              MatrixNode.Row([
-          //                ContentNode([TextNode("1")]),
-          //                ContentNode([TextNode("2")]),
-          //              ]),
-          //              MatrixNode.Row([
-          //                ContentNode([TextNode("3")]),
-          //                ContentNode([TextNode("4")]),
-          //              ]),
-          //            ]),
         ])
     ])
-    
+
     let range = RhTextRange.parse("[↓0,nuc]:0..<[↓0,nuc]:1")!
     // attach index to the first RadicalNode
     let result1 =
@@ -216,7 +204,7 @@ final class DocumentManagerTests {
               └ text "x"
       """
     #expect(documentManager.prettyPrint() == expected1)
-    
+
     // remove index from the first RadicalNode
     let result2 = documentManager.removeMathComponent(range1, .index)
     guard let range2 = result2.success() else {
@@ -234,6 +222,125 @@ final class DocumentManagerTests {
               └ text "x"
       """
     #expect(documentManager.prettyPrint() == expected2)
+  }
+
+  @Test
+  func modifyGrid() {
+    let documentManager = _createDocumentManager([
+      EquationNode(
+        .block,
+        [
+          MatrixNode(
+            .pmatrix,
+            [
+              MatrixNode.Row([
+                ContentNode([TextNode("1")]),
+                ContentNode([TextNode("2")]),
+              ]),
+              MatrixNode.Row([
+                ContentNode([TextNode("3")]),
+                ContentNode([TextNode("4")]),
+              ]),
+            ])
+        ])
+    ])
+
+    let range = RhTextRange.parse("[↓0,nuc]:0..<[↓0,nuc]:1")!
+    // add a new row
+    let result1 =
+      documentManager.modifyGrid(range, .insertRow([[], [TextNode("a")]], at: 1))
+    guard let range1 = result1.success() else {
+      Issue.record("Modify grid failed")
+      return
+    }
+    #expect("\(range1)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+    let expected1 =
+      """
+      root
+      └ equation
+        └ nuc
+          └ matrix
+            ├ row 0
+            │ ├ #0
+            │ │ └ text "1"
+            │ └ #1
+            │   └ text "2"
+            ├ row 1
+            │ ├ #0
+            │ └ #1
+            │   └ text "a"
+            └ row 2
+              ├ #0
+              │ └ text "3"
+              └ #1
+                └ text "4"
+      """
+    #expect(documentManager.prettyPrint() == expected1)
+    // remove the added row
+    let result2 = documentManager.modifyGrid(range1, .removeRow(at: 1))
+    guard let range2 = result2.success() else {
+      Issue.record("Modify grid failed")
+      return
+    }
+    #expect("\(range2)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+    let expected2 =
+      """
+      root
+      └ equation
+        └ nuc
+          └ matrix
+            ├ row 0
+            │ ├ #0
+            │ │ └ text "1"
+            │ └ #1
+            │   └ text "2"
+            └ row 1
+              ├ #0
+              │ └ text "3"
+              └ #1
+                └ text "4"
+      """
+    #expect(documentManager.prettyPrint() == expected2)
+
+    // add a new column
+    let result3 =
+      documentManager.modifyGrid(range, .insertColumn([[], [TextNode("b")]], at: 1))
+    guard let range3 = result3.success() else {
+      Issue.record("Modify grid failed")
+      return
+    }
+    #expect("\(range3)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+    let expected3 =
+      """
+      root
+      └ equation
+        └ nuc
+          └ matrix
+            ├ row 0
+            │ ├ #0
+            │ │ └ text "1"
+            │ ├ #1
+            │ └ #2
+            │   └ text "2"
+            └ row 1
+              ├ #0
+              │ └ text "3"
+              ├ #1
+              │ └ text "b"
+              └ #2
+                └ text "4"
+      """
+    #expect(documentManager.prettyPrint() == expected3)
+
+    // remove the added column
+    let result4 = documentManager.modifyGrid(range3, .removeColumn(at: 1))
+    guard let range4 = result4.success() else {
+      Issue.record("Modify grid failed")
+      return
+    }
+    let expected4 = expected2
+    #expect("\(range4)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+    #expect(documentManager.prettyPrint() == expected4)
   }
 
   // MARK: - Navigation
