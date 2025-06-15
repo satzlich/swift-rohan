@@ -703,4 +703,25 @@ final class DocumentManagerTests {
       #expect(result?.node is FractionNode)
     }
   }
+
+  // MARK: - SegmentFrame
+
+  @Test
+  func primaryInsertionIndicatorFrame() {
+    let documentManager = _createDocumentManager([
+      ParagraphNode([
+        TextNode("Hello")
+      ]),
+      ParagraphNode([
+        TextNode("World")
+      ]),
+    ])
+    documentManager.reconcileLayout(scope: .document)
+
+    let location = TextLocation.parse("[↓1,↓0]:0")!
+    let frame =
+      documentManager.primaryInsertionIndicatorFrame(at: location, .downstream)
+    #expect(frame != nil)
+    #expect("\(frame!)" == "(5.0, 17.0, 0.0, 17.0)")
+  }
 }

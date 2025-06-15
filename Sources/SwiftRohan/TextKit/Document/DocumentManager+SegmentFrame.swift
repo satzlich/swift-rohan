@@ -12,8 +12,8 @@ extension DocumentManager {
       affinity == .upstream ? .upstreamAffinity : []
 
     var result: CGRect? = nil
-    enumerateTextSegments(in: range, type: .standard, options: options) {
-      _, segmentFrame, _ in
+    self.enumerateTextSegments(in: range, type: .standard, options: options) {
+      (_, segmentFrame, _) in
       result = segmentFrame
       return false  // discontinue
     }

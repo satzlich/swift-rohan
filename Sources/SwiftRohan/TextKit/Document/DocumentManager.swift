@@ -80,6 +80,9 @@ public final class DocumentManager {
     // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
+
+    // set up default text container
+    textLayoutManager.textContainer = NSTextContainer()
   }
 
   // MARK: - Query

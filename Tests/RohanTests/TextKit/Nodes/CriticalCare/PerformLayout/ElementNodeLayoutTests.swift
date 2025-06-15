@@ -19,7 +19,7 @@ struct ElementNodeLayoutTests {
       let context = TextLayoutContext(styleSheet)
 
       context.beginEditing()
-      element.performLayout(context, fromScratch: true)
+      _ = element.performLayout(context, fromScratch: true)
       context.endEditing()
     }
   }
@@ -36,7 +36,7 @@ struct ElementNodeLayoutTests {
     let context = TextLayoutContext(styleSheet)
     do {
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: true)
+      _ = rootNode.performLayout(context, fromScratch: true)
       context.endEditing()
     }
 
@@ -56,7 +56,7 @@ struct ElementNodeLayoutTests {
       //
       context.resetCursor()
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == 0)
     }
@@ -77,7 +77,7 @@ struct ElementNodeLayoutTests {
       //
       context.resetCursor()
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == 0)
     }
@@ -92,7 +92,7 @@ struct ElementNodeLayoutTests {
       //
       context.resetCursor()
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == 0)
     }
@@ -109,7 +109,7 @@ struct ElementNodeLayoutTests {
 
       context.resetCursor()
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == 0)
     }
@@ -131,7 +131,7 @@ struct ElementNodeLayoutTests {
 
       context.resetCursor()
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == 0)
     }
@@ -153,7 +153,7 @@ struct ElementNodeLayoutTests {
 
       context.resetCursor()
       context.beginEditing()
-      rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == 0)
     }
