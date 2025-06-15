@@ -73,7 +73,7 @@ struct CommandDeclarationTests {
       _ = array.isMatrix
       _ = array.delimiters
       _ = array.getRowGap()
-      _ = array.getColumnAlignments()
+      _ = array.getCellAlignments()
       _ = array.getColumnGapCalculator([], mathContext)
     }
   }

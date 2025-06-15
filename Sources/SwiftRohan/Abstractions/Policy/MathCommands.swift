@@ -73,6 +73,7 @@ enum MathCommands {
           (MathArray.aligned, "aligned"),
           (MathArray.cases, "cases"),
           (MathArray.gathered, "gathered"),
+          //
           (MathArray.matrix, "matrix"),
           (MathArray.pmatrix, "pmatrix"),
           (MathArray.bmatrix, "bmatrix"),
