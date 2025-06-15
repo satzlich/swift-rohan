@@ -585,7 +585,7 @@ class ArrayNode: Node {
     let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
     let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
     let containerWidth = pageWidth - leftMargin - rightMargin
-    // 1em for text container inset, 1em for leading indent.
+    // 1em for text container inset, 1em each for leading/trailing indent.
     return containerWidth.ptValue - 2 * fontSize.floatValue
   }
 }

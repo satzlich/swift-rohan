@@ -22,6 +22,9 @@ internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
   // equation
   case isBlock
 
+  // multiline
+  case isMultline
+
   // heading
   case level
 

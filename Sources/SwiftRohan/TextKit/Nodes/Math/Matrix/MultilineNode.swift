@@ -13,6 +13,10 @@ final class MultilineNode: ArrayNode {
 
   final override class var type: NodeType { .multiline }
 
+  final override func selector() -> TargetSelector {
+    MultilineNode.selector(isMultline: _isMultline())
+  }
+
   // MARK: - Node(Layout)
 
   final override var isBlock: Bool { true }
@@ -96,5 +100,18 @@ final class MultilineNode: ArrayNode {
 
   private init(deepCopyOf multilineNode: MultilineNode) {
     super.init(deepCopyOf: multilineNode)
+  }
+
+  internal static func selector(isMultline: Bool? = nil) -> TargetSelector {
+    return isMultline != nil
+      ? TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline!)))
+      : TargetSelector(.multiline)
+  }
+
+  private func _isMultline() -> Bool {
+    switch subtype.subtype {
+    case .multline: return true
+    default: return false
+    }
   }
 }

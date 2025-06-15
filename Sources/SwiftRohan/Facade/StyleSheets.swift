@@ -127,8 +127,11 @@ public enum StyleSheets {
         ParagraphProperty.textAlignment: .textAlignment(.center)
       ],
       // multiline
-      MultilineNode.selector(): [
+      MultilineNode.selector(isMultline: true): [
         ParagraphProperty.textAlignment: .textAlignment(.right)
+      ],
+      MultilineNode.selector(isMultline: false): [
+        ParagraphProperty.textAlignment: .textAlignment(.center)
       ],
     ]
 

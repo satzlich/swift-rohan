@@ -25,7 +25,8 @@ struct NodeStoreUtilsTests {
       "Longrightarrow", "Lsh", "Omega", "P", "Phi", "Pi", "Pr", "Psi", "Re", "Rightarrow",
       "Rrightarrow", "Rsh", "S", "Sigma", "Subset", "Supset", "Theta", "Uparrow",
       "Updownarrow", "Upsilon", "Vdash", "Vert", "Vmatrix", "Vvdash", "Xi",
-      "acute", "aleph", "aligned", "alpha", "amalg", "angle", "approx", "approxeq",
+      "acute", "aleph", "align*", "aligned", "alpha", "amalg", "angle", "approx",
+      "approxeq",
       "arccos", "arcsin", "arctan", "arg", "ast", "asymp", "atop", "attach", "backdprime",
       "backepsilon", "backprime", "backsim", "backsimeq", "backslash", "backtrprime",
       "bar", "barwedge", "because", "beta", "beth", "between", "bigcap", "bigcirc",
@@ -50,8 +51,8 @@ struct NodeStoreUtilsTests {
       "downharpoonleft", "downharpoonright", "dprime", "ell", "emph", "emptyset",
       "enspace", "epsilon", "eqcirc", "eqsim", "eqslantgtr", "eqslantless", "equiv",
       "eta", "eth", "exists", "exp", "fallingdotseq", "flat", "forall", "frac", "frown",
-      "fullouterjoin", "gamma", "gathered", "gcd", "ge", "geq", "geqq", "geqslant",
-      "gets", "gg",
+      "fullouterjoin", "gamma", "gather*", "gathered", "gcd", "ge", "geq", "geqq",
+      "geqslant", "gets", "gg",
       "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq", "gnsim", "grave", "gtrapprox",
       "gtrdot", "gtreqless", "gtreqqless", "gtrless", "gtrsim", "h1", "h2", "h3", "h4",
       "h5", "hat", "hbar", "heartsuit", "hom", "hookleftarrow", "hookrightarrow",
@@ -118,7 +119,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 622)
+    #expect(tags.count == 624)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

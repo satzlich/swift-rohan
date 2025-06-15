@@ -118,7 +118,9 @@ extension MathArray {
 
   /// - Note: These commands are used by MultilineNode.
   static let blockMathCommands: Array<MathArray> = [
-    multlineAst
+    alignAst,
+    gatherAst,
+    multlineAst,
   ]
 
   private static let _dictionary: Dictionary<String, MathArray> =
@@ -127,6 +129,8 @@ extension MathArray {
   static func lookup(_ command: String) -> MathArray? {
     _dictionary[command]
   }
+
+  // inline math commands
 
   static let aligned = MathArray("aligned", .aligned)
   static let cases = MathArray("cases", .cases)
@@ -138,9 +142,14 @@ extension MathArray {
   static let Bmatrix = MathArray("Bmatrix", .matrix(DelimiterPair.BRACE))
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
-  //
-  static let multlineAst = MathArray("multline*", .multline)
   static let substack = MathArray("substack", .substack)
+
+  // block math commands
+
+  //
+  static let alignAst = MathArray("align*", .aligned)
+  static let gatherAst = MathArray("gather*", .gathered)
+  static let multlineAst = MathArray("multline*", .multline)
 }
 
 protocol CellAlignmentProvider {

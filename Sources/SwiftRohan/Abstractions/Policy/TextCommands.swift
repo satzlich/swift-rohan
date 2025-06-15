@@ -23,7 +23,9 @@ enum TextCommands {
     // multiline
     do {
       let multilines: Array<(MathArray, String)> = [
-        (MathArray.multlineAst, "gathered")  // recycle "gathered"
+        (MathArray.alignAst, "aligned"),
+        (MathArray.gatherAst, "gathered"),  // recycle "gathered"
+        (MathArray.multlineAst, "gathered"),  // recycle "gathered"
       ]
       assert(multilines.count == MathArray.blockMathCommands.count)
 
