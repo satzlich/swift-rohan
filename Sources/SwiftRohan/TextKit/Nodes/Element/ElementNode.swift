@@ -693,6 +693,8 @@ internal class ElementNode: Node {
     var j = original.count - 1
 
     func updateVacuumRange() {
+      guard self.isParagraphContainer else { return }
+
       if j >= 0 && original[j].mark == .deleted {
         if i >= 0 {
           vacuumRange =
