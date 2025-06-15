@@ -174,7 +174,7 @@ final class TextLayoutContext: LayoutContext {
     var shouldContinue = false
     textLayoutManager.enumerateTextSegments(in: textRange, type: type, options: options) {
       (textRange, segmentFrame, baselinePosition, _) in
-      if let textRange {
+      if let textRange = textRange {
         let charRange = textContentStorage.characterRange(for: textRange)
         if charRange.location != NSNotFound {
           let range = charRange.lowerBound..<charRange.upperBound

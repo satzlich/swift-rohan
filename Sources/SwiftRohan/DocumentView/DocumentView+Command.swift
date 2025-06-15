@@ -52,7 +52,7 @@ extension DocumentView {
       // obtain the object to apply the command
       guard
         let crossedObject =
-          documentManager.crossedObjectAt_v2(range.location, direction: .backward)
+          documentManager.crossedObjectAt(range.location, direction: .backward)
       else { return }
 
       // obtain the target range

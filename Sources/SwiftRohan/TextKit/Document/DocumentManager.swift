@@ -80,6 +80,9 @@ public final class DocumentManager {
     // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
+
+    // set up default text container
+    textLayoutManager.textContainer = NSTextContainer()
   }
 
   // MARK: - Query
@@ -310,6 +313,23 @@ public final class DocumentManager {
     }
   }
 
+  /// Delete contents in range.
+  /// - Returns: the new insertion point if successful; otherwise, an error.
+  private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
+    // if range is empty, just return the location
+    if range.isEmpty { return .success(range) }
+
+    // validate range before deletion
+    guard TreeUtils.validateRange(range, rootNode)
+    else { return .failure(SatzError(.InvalidTextRange)) }
+
+    // perform deletion
+    return TreeUtils.removeTextRange(range, rootNode)
+      .map { RhTextRange($0.location) }
+  }
+
+  // MARK: - Edit Math
+
   /// Add a math component to the node/nodes at the given range.
   ///
   /// If the node at the location is a math node and the specified math component
@@ -330,6 +350,7 @@ public final class DocumentManager {
       let node = node as? MathNode,
       node.isComponentAllowed(mathIndex)
     {
+      // if component is absent, add it to the node
       if node.getComponent(mathIndex) == nil {
         node.addComponent(mathIndex, component, inStorage: true)
         return .success((range, true))
@@ -347,25 +368,23 @@ public final class DocumentManager {
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
       case let .success(range1):
+        // NOTE: we have to use `crossedObjectAt` instead of `getNode(at:)` here,
+        //    as replaceContents() may normalise the range.
         guard
-          let crossedObject =
-            crossedObjectAt_v2(range1.endLocation, direction: .backward)
+          let crossedObject = crossedObjectAt(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
 
         switch crossedObject {
-        case .text:
-          assertionFailure("Invalid crossed object")
-          return .failure(SatzError(.InvalidTextRange))
-
         case .nonTextNode(let node, let location):
           assert(node === mathNode)
           let end = location.with(offsetDelta: 1)
           let range2 = RhTextRange(location, end)!
           return .success((range2, true))
 
-        case .blockBoundary:
+        case .text,
+          .blockBoundary:
           assertionFailure("Invalid crossed object")
           return .failure(SatzError(.InvalidTextRange))
         }
@@ -389,8 +408,6 @@ public final class DocumentManager {
         return AttachNode(nuc: nucleus, sub: component)
       case .sup:
         return AttachNode(nuc: nucleus, sup: component)
-      case .index:
-        return RadicalNode(nucleus, index: component)
       default:
         assertionFailure("Invalid math index")
         return nil
@@ -467,7 +484,9 @@ public final class DocumentManager {
     switch instruction {
     case let .insertRow(elements, at: row):
       node.insertRow(at: row, inStorage: true)
-      let n = min(elements.count, node.columnCount)
+      // insertRow() above has inserted an empty row, so we need to
+      // insert elements at the beginning of the row.
+      let n = Swift.min(elements.count, node.columnCount)
       for column in 0..<n {
         node.getElement(row, column)
           .insertChildren(contentsOf: elements[column], at: 0, inStorage: true)
@@ -475,39 +494,24 @@ public final class DocumentManager {
 
     case let .insertColumn(elements, at: column):
       node.insertColumn(at: column, inStorage: true)
-      let n = min(elements.count, node.rowCount)
+      // insertColumn() above has inserted an empty column, so we need to
+      // insert elements at the beginning of the column.
+      let n = Swift.min(elements.count, node.rowCount)
       for row in 0..<n {
         node.getElement(row, column)
           .insertChildren(contentsOf: elements[row], at: 0, inStorage: true)
       }
 
     case let .removeRow(row):
-      guard node.rowCount > 1
-      else { return .failure(SatzError(.ModifyGridFailure)) }
+      guard node.rowCount > 1 else { return .failure(SatzError(.ModifyGridFailure)) }
       node.removeRow(at: row, inStorage: true)
 
     case let .removeColumn(column):
-      guard node.columnCount > 1
-      else { return .failure(SatzError(.ModifyGridFailure)) }
+      guard node.columnCount > 1 else { return .failure(SatzError(.ModifyGridFailure)) }
       node.removeColumn(at: column, inStorage: true)
     }
 
     return .success(range)
-  }
-
-  /// Delete contents in range.
-  /// - Returns: the new insertion point if successful; otherwise, an error.
-  private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
-    // if range is empty, just return the location
-    if range.isEmpty { return .success(range) }
-
-    // validate range before deletion
-    guard TreeUtils.validateRange(range, rootNode)
-    else { return .failure(SatzError(.InvalidTextRange)) }
-
-    // perform deletion
-    return TreeUtils.removeTextRange(range, rootNode)
-      .map { RhTextRange($0.location) }
   }
 
   // MARK: - Layout
@@ -639,7 +643,7 @@ public final class DocumentManager {
 
     switch direction {
     case .forward:
-      if let object = self.crossedObjectAt_v2(location, direction: .backward),
+      if let object = self.crossedObjectAt(location, direction: .backward),
         isWhitespace(object)
       {
         return .downstream
@@ -649,7 +653,7 @@ public final class DocumentManager {
       }
 
     case .backward:
-      if let object = self.crossedObjectAt_v2(location, direction: .forward),
+      if let object = self.crossedObjectAt(location, direction: .forward),
         isWhitespace(object)
       {
         return .upstream
@@ -675,10 +679,6 @@ public final class DocumentManager {
     direction: TextSelectionNavigation.Direction,
     extending: Bool
   ) -> AffineLocation? {
-
-    func isWhitespace(_ string: String) -> Bool {
-      string.count == 1 && string.first!.isWhitespace == true
-    }
 
     switch direction {
     case .forward, .backward:
@@ -786,8 +786,7 @@ public final class DocumentManager {
 
     // location
     trace.moveTo(.index(range.lowerBound))
-    guard let location = trace.toRawLocation()
-    else { return nil }
+    guard let location = trace.toRawLocation() else { return nil }
 
     // end location and range
     trace.moveTo(.index(range.upperBound))
@@ -835,6 +834,26 @@ public final class DocumentManager {
     else { return nil }
     return textNode.attributedSubstring(for: startOffset..<endOffset, styleSheet)
   }
+
+  /// Return layout offset from `location` to `endLocation` for the same text node.
+  internal func llOffset(
+    from location: TextLocation, to endLocation: TextLocation
+  ) -> Int? {
+    guard let trace = Trace.from(location, rootNode),
+      let endTrace = Trace.from(endLocation, rootNode),
+      let last = trace.last,
+      let endLast = endTrace.last,
+      let textNode = last.node as? TextNode,
+      textNode === endLast.node
+    else { return nil }
+    guard let startOffset = textNode.getLayoutOffset(last.index),
+      let endOffset = textNode.getLayoutOffset(endLast.index)
+    else { return nil }
+    // get offset
+    return endOffset - startOffset
+  }
+
+  // MARK: - Replacement Support
 
   /// Returns a substring before the given location with at most the given
   /// extended-character count.
@@ -972,25 +991,7 @@ public final class DocumentManager {
     return trace.toRawLocation()
   }
 
-  /// Return layout offset from `location` to `endLocation` for the same text node.
-  internal func llOffset(
-    from location: TextLocation, to endLocation: TextLocation
-  ) -> Int? {
-    guard let trace = Trace.from(location, rootNode),
-      let endTrace = Trace.from(endLocation, rootNode),
-      let last = trace.last,
-      let endLast = endTrace.last,
-      let textNode = last.node as? TextNode,
-      textNode === endLast.node
-    else { return nil }
-    guard let startOffset = textNode.getLayoutOffset(last.index),
-      let endOffset = textNode.getLayoutOffset(endLast.index)
-    else { return nil }
-    // get offset
-    return endOffset - startOffset
-  }
-
-  // MARK: - Location
+  // MARK: - Location Query
 
   /// Returns the node located at the given path.
   internal func getNode(at path: Array<RohanIndex>) -> Node? {
@@ -1002,45 +1003,12 @@ public final class DocumentManager {
     TreeUtils.getNode(at: location, rootNode)
   }
 
-  /// Determine the __contextual node__ the location is in.
-  /// - Returns: The contextual node, its location, and its associated index for
-  ///     accessing the next-level node if successful; otherwise, nil.
-  /// - Note: Skip text nodes and content nodes.
-  internal func contextualNode(
-    for location: TextLocation
-  ) -> (Node, TextLocation, RohanIndex)? {
-    guard var trace = Trace.from(location, rootNode)
-    else { return nil }
-
-    var contextual: Node?
-    var childIndex: RohanIndex?
-    while trace.isEmpty == false {
-      let last = trace.last!
-      let node = last.node
-      if isTextNode(node) || isContentNode(node) {
-        trace.truncate(to: trace.count - 1)
-      }
-      else {
-        contextual = node
-        childIndex = last.index
-        trace.truncate(to: trace.count - 1)
-        break
-      }
-    }
-
-    guard let contextual = contextual,
-      let childIndex = childIndex,
-      let target = trace.toRawLocation()
-    else { return nil }
-    return (contextual, target, childIndex)
-  }
-
   /// Return the object (character/non-text node) covered by the range formed
   /// by the given location and the next location obtained by moving in the
   /// given direction.
   /// - Returns: The object and the location of its downstream edge if successful;
   ///     otherwise, nil.
-  internal func crossedObjectAt_v2(
+  internal func crossedObjectAt(
     _ location: TextLocation, direction: LinearDirection
   ) -> CrossedObject? {
     guard var trace = Trace.from(location, rootNode) else {
@@ -1067,8 +1035,7 @@ public final class DocumentManager {
           }
           else {
             trace.truncate(to: trace.count - 1)
-            guard let index = trace.last?.index.index()
-            else {
+            guard let index = trace.last?.index.index() else {
               assertionFailure("Invalid location")
               return nil
             }
@@ -1189,6 +1156,41 @@ public final class DocumentManager {
       let newLocation = TextLocation(indices, node.childCount)
       return newLocation.normalised(for: rootNode)
     }
+  }
+
+  /// Determine the __contextual node__ the location is in.
+  ///
+  /// A **contextual node** is the lowest ancestor node that emits a command.
+  /// According to this definition, text nodes and content nodes are skipped.
+  ///
+  /// - Returns: The contextual node, its location, and its associated index for
+  ///     accessing the next-level node if successful; otherwise, nil.
+  internal func contextualNode(
+    for location: TextLocation
+  ) -> (node: Node, location: TextLocation, index: RohanIndex)? {
+    guard var trace = Trace.from(location, rootNode) else { return nil }
+
+    var contextual: Node?
+    var childIndex: RohanIndex?
+    while trace.isEmpty == false {
+      let last = trace.last!
+      let node = last.node
+      if isTextNode(node) || isContentNode(node) {
+        trace.truncate(to: trace.count - 1)
+      }
+      else {
+        contextual = node
+        childIndex = last.index
+        trace.truncate(to: trace.count - 1)
+        break
+      }
+    }
+
+    guard let contextual = contextual,
+      let childIndex = childIndex,
+      let target = trace.toRawLocation()
+    else { return nil }
+    return (contextual, target, childIndex)
   }
 
   /// Compute the visual delimiter range for a location in the tree and also

@@ -196,7 +196,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
   @Test
   func mathOperator() {
     let node = MathOperatorNode(MathOperator.min)
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
     let mathContext = MathUtils.resolveMathContext(for: node, styleSheet)
     let mathOp = MathOperatorLayoutFragment(node, styleSheet, mathContext)
     mathOp.fixLayout(context)

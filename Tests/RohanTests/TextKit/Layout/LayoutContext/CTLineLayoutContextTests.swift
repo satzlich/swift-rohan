@@ -66,7 +66,7 @@ struct CTLineLayoutContextTests {
     .imageBounds
   ])
   func textLineLayoutContext(_ bounds: CTLineLayoutFragment.BoundsOption) {
-    let context0 = TextLineLayoutContext(StyleSheetTests.sampleStyleSheet(), bounds)
+    let context0 = TextLineLayoutContext(StyleSheetTests.testingStyleSheet(), bounds)
 
     // Edit
     let string = "Hello, World!"
@@ -99,7 +99,7 @@ struct CTLineLayoutContextTests {
   func mathLineLayoutContext() {
     let font = Font.createWithName("Latin Modern Math", 10, isFlipped: true)
     let mathContext = MathContext(font, .display, false, Color.black)!
-    let context0 = MathLineLayoutContext(StyleSheetTests.sampleStyleSheet(), mathContext)
+    let context0 = MathLineLayoutContext(StyleSheetTests.testingStyleSheet(), mathContext)
 
     // Edit
     let string = "a+b-c/w"

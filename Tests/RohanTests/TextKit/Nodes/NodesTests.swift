@@ -12,7 +12,7 @@ struct NodesTests {
   @Test
   func coverage() {
     let nodes: Array<Node> = NodesTests.allSamples()
-    let stylesheet = StyleSheetTests.sampleStyleSheet()
+    let stylesheet = StyleSheetTests.testingStyleSheet()
 
     let visitor1 = NaiveNodeVisitor()
     let visitor2 = SimpleNodeVisitor<Void>()

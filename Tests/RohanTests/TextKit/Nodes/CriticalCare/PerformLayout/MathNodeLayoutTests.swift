@@ -10,14 +10,15 @@ import Testing
 struct MathNodeLayoutTests {
   @Test
   func mathNodes_fromScratch() {
-    let mathNodes: Array<MathNode> = MathNodeTests.allSamples().filter({ !isEquationNode($0) })
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let mathNodes: Array<MathNode> =
+      MathNodeTests.allSamples().filter({ !isEquationNode($0) })
+    let styleSheet = StyleSheetTests.testingStyleSheet()
     let contentNode = ContentNode(ElementStore(mathNodes))
     let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
     let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(styleSheet, mathContext, fragment)
     context.beginEditing()
-    contentNode.performLayout(context, fromScratch: true)
+    _ = contentNode.performLayout(context, fromScratch: true)
     context.endEditing()
 
     for node in mathNodes {
@@ -46,13 +47,13 @@ struct MathNodeLayoutTests {
   private func createTestScene<T: Node>(
     _ node: T
   ) -> (ContentNode, MathListLayoutContext) {
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
     let contentNode = ContentNode([node])
     let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
     let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(styleSheet, mathContext, fragment)
     context.beginEditing()
-    contentNode.performLayout(context, fromScratch: true)
+    _ = contentNode.performLayout(context, fromScratch: true)
     context.endEditing()
     return (contentNode, context)
   }
@@ -62,7 +63,7 @@ struct MathNodeLayoutTests {
   ) {
     context.resetCursor()
     context.beginEditing()
-    contentNode.performLayout(context, fromScratch: false)
+    _ = contentNode.performLayout(context, fromScratch: false)
     context.endEditing()
   }
 

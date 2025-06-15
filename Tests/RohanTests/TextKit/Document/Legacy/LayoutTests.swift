@@ -218,7 +218,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager =
-      createDocumentManager(RootNode(), StyleSheetTests.sampleStyleSheet())
+      createDocumentManager(RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -241,7 +241,7 @@ final class LayoutTests: TextKitTestsBase {
       ])
     ]
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -334,7 +334,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -361,7 +361,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -396,7 +396,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -421,7 +421,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -446,7 +446,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -472,7 +472,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -500,7 +500,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(
-      RootNode(), StyleSheetTests.sampleStyleSheet())
+      RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
@@ -527,7 +527,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager =
-      createDocumentManager(RootNode(), StyleSheetTests.sampleStyleSheet())
+      createDocumentManager(RootNode(), StyleSheetTests.testingStyleSheet())
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)

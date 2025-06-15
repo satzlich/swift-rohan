@@ -16,7 +16,7 @@ struct VisualDelimiterTests {
       ])
     ])
 
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
 
     do {
       // paragraph -> emphasis -> text -> <offset>

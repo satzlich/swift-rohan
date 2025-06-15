@@ -8,7 +8,7 @@ struct CTLineLayoutFragmentTests {
   @Test
   func coverage() {
     var fragments: Array<CTLineLayoutFragment> = []
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
 
     let textNode = TextNode("abc")
     do {

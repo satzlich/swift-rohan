@@ -7,7 +7,7 @@ import Testing
 struct StyleSheetTests {
   @Test
   static func getProperties() {
-    let styleSheet = sampleStyleSheet()
+    let styleSheet = testingStyleSheet()
 
     let defaultProperties = styleSheet.defaultProperties
     let properties = styleSheet.getProperties(for: HeadingNode.selector(level: 1))!
@@ -21,7 +21,7 @@ struct StyleSheetTests {
 
   @Test
   static func coverage() {
-    let styleSheet = sampleStyleSheet()
+    let styleSheet = testingStyleSheet()
 
     let font = styleSheet.resolveDefault(TextProperty.font).string()
     #expect(font == textFont)
@@ -33,7 +33,7 @@ struct StyleSheetTests {
   private static let textFont = "Latin Modern Roman"
   private static let mathFont = "Latin Modern Math"
 
-  internal static func sampleStyleSheet() -> StyleSheet {
+  internal static func testingStyleSheet() -> StyleSheet {
     let textSize = FontSize(12)
     let h1Size = FontSize(textSize.floatValue + 8)
     let h2Size = FontSize(textSize.floatValue + 6)
