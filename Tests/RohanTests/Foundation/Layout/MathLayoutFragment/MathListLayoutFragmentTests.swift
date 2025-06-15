@@ -12,8 +12,11 @@ final class MathListLayoutFragmentTests: MathLayoutTestsBase {
   @Test
   func emptyMathList() {
     let mathList = MathListLayoutFragment(context)
+    
+    _ = mathList.isSpaced
+    
     #expect(mathList.getSegmentFrame(0) == SegmentFrame(.zero, 0))
-
+    
     do {
       var rect: CGRect? = nil
       var baseline: CGFloat = 0
@@ -65,7 +68,5 @@ final class MathListLayoutFragmentTests: MathLayoutTestsBase {
     mathList.beginEditing()
     #expect(mathList.index(0, llOffsetBy: 3) == 3)
     mathList.endEditing()
-
-    //
   }
 }

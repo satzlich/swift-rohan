@@ -253,16 +253,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
         ascent: fragment.ascent, descent: fragment.descent)
       return segmentFrame
     }
-    else if i == self.count {
-      let fragment = _fragments[i - 1]
+    else {
+      assert(i == self.count)
+      let fragment = _fragments[self.count - 1]
       var segmentFrame = composeSegmentFrame(
         fragment.glyphOrigin, width: 0,
         ascent: fragment.ascent, descent: fragment.descent)
       segmentFrame.frame.origin.x += fragment.width
       return segmentFrame
-    }
-    else {
-      return nil
     }
   }
 
@@ -366,7 +364,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
     precondition(layoutOffset >= 0)
     let i = self.index(containing: layoutOffset)
     if i < _fragments.count {
-      if _fragments[i].layoutOffset == layoutOffset { return i }
+      if _fragments[i].layoutOffset == layoutOffset {
+        return i
+      }
     }
     else {
       assert(i == _fragments.count)
