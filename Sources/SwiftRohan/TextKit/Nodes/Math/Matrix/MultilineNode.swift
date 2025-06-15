@@ -1,9 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import UnicodeMathClass
 
 final class MultilineNode: ArrayNode {
   // MARK: - Node
+
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
@@ -20,6 +22,92 @@ final class MultilineNode: ArrayNode {
   // MARK: - Node(Layout)
 
   final override var isBlock: Bool { true }
+
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    precondition(context is TextLayoutContext)
+
+    guard _isMultline() else {
+      return super.performLayout(context, fromScratch: fromScratch)
+    }
+    assert(self.columnCount == 1)
+
+    let mathContext = _createMathContext(context)
+
+    if fromScratch {
+      let nodeFragment = _createMathArrayLayoutFragment(context, mathContext)
+      _nodeFragment = nodeFragment
+
+      // layout each element
+      for i in (0..<rowCount) {
+        let j = 0  // single column in multiline
+        let element = getElement(i, j)
+        let fragment = nodeFragment.getElement(i, j)
+        _reconcileMathListLayoutFragment(
+          element, fragment, parent: context,
+          fromScratch: true, previousClass: Self._previousClass(i))
+      }
+      nodeFragment.fixLayout(mathContext)
+      context.insertFragment(nodeFragment, self)
+    }
+    else {
+      assert(_nodeFragment != nil)
+      let nodeFragment = _nodeFragment!
+
+      // save metrics before any layout changes
+      let oldMetrics = nodeFragment.boxMetrics
+      var needsFixLayout = false
+
+      // play edit log
+      needsFixLayout = _applyEditLogToFragment(nodeFragment)
+
+      // layout each element
+      if _isDirty {
+        for i in (0..<rowCount) {
+          let j = 0
+          let element = getElement(i, j)
+          let fragment = nodeFragment.getElement(i, j)
+
+          if _addedNodes.contains(element.id) {
+            _reconcileMathListLayoutFragment(
+              element, fragment, parent: context,
+              fromScratch: true, previousClass: Self._previousClass(i))
+            needsFixLayout = true
+          }
+          else if element.isDirty {
+            let oldMetrics = fragment.boxMetrics
+            _reconcileMathListLayoutFragment(
+              element, fragment, parent: context,
+              fromScratch: false, previousClass: Self._previousClass(i))
+            if fragment.isNearlyEqual(to: oldMetrics) == false {
+              needsFixLayout = true
+            }
+          }
+        }
+      }
+
+      if needsFixLayout {
+        nodeFragment.fixLayout(mathContext)
+        if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
+          context.invalidateBackwards(1)
+        }
+        else {
+          context.skipBackwards(1)
+        }
+      }
+      else {
+        context.skipBackwards(1)
+      }
+    }
+
+    // clear
+    _isDirty = false
+    _editLog.removeAll()
+    _addedNodes.removeAll()
+
+    return 1
+  }
 
   // MARK: - Node(Codable)
 
@@ -67,7 +155,7 @@ final class MultilineNode: ArrayNode {
   // MARK: - ArrayNode
 
   final override func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    _matrixFragment?.getGridIndex(interactingAt: point, shouldClamp: true)
+    _nodeFragment?.getGridIndex(interactingAt: point, shouldClamp: true)
   }
 
   // MARK: - Storage
@@ -108,16 +196,39 @@ final class MultilineNode: ArrayNode {
     super.init(deepCopyOf: multilineNode)
   }
 
-  internal static func selector(isMultline: Bool? = nil) -> TargetSelector {
-    return isMultline != nil
-      ? TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline!)))
-      : TargetSelector(.multiline)
+  internal static func selector(isMultline: Bool) -> TargetSelector {
+    TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline)))
   }
 
+  /// Returns true if this node corresponds to a `{multline}` environment.
   private func _isMultline() -> Bool {
     switch subtype.subtype {
     case .multline: return true
     default: return false
     }
+  }
+
+  /// Get the width of the content container for this array node.
+  private static func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
+    let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
+    let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
+    let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
+    let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
+    let containerWidth = pageWidth - leftMargin - rightMargin
+    // 1em for text container inset, 1em for leading padding.
+    return containerWidth.ptValue - 2 * fontSize.floatValue
+  }
+
+  final override func _createMathArrayLayoutFragment(
+    _ context: LayoutContext, _ mathContext: MathContext
+  ) -> MathArrayLayoutFragment {
+    let containerWidth = Self._getContainerWidth(context.styleSheet)
+    return MathArrayLayoutFragment(
+      rowCount: rowCount, columnCount: columnCount, subtype: subtype,
+      mathContext, containerWidth)
+  }
+
+  private static func _previousClass(_ rowIndex: Int) -> MathClass? {
+    rowIndex > 0 ? MathClass.Normal : nil
   }
 }

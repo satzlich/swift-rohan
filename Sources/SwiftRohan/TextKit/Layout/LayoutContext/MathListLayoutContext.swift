@@ -45,8 +45,12 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   func endEditing() {
+    self.endEditing(previousClass: nil)
+  }
+
+  func endEditing(previousClass: MathClass?) {
     layoutFragment.endEditing()
-    layoutFragment.fixLayout(mathContext)
+    layoutFragment.fixLayout(mathContext, previousClass: previousClass)
   }
 
   // MARK: - Operations

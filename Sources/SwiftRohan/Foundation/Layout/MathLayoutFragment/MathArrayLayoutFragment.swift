@@ -84,11 +84,18 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   // MARK: - Layout
 
   // Used by fixLayout()
-  private struct Height {
+  private struct AscentDescent {
     var ascent, descent: Double
     init(_ ascent: Double, _ descent: Double) {
       self.ascent = ascent
       self.descent = descent
+    }
+  }
+
+  private func _columnWidth(_ column: Array<MathListLayoutFragment>) -> Double {
+    switch subtype.subtype {
+    case .multline: _containerWidth
+    case _: column.lazy.map(\.width).max() ?? 0
     }
   }
 
@@ -107,18 +114,19 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     // way too big.
     let paren = GlyphFragment("(", font, table)!
     // This variable stores the maximum ascent and descent for each row.
-    let heights: Array<Height> = {
-      let value = Height(paren.ascent, paren.descent)
-      var heights = Array(repeating: value, count: rowCount)
+    let heights: Array<AscentDescent>
+    do {
+      let value = AscentDescent(paren.ascent, paren.descent)
+      var heights_ = Array(repeating: value, count: rowCount)
       for i in 0..<rowCount {
         for j in 0..<columnCount {
           let fragment = getElement(i, j)
-          heights[i].ascent = max(heights[i].ascent, fragment.ascent)
-          heights[i].descent = max(heights[i].descent, fragment.descent)
+          heights_[i].ascent = max(heights_[i].ascent, fragment.ascent)
+          heights_[i].descent = max(heights_[i].descent, fragment.descent)
         }
       }
-      return heights
-    }()
+      heights = heights_
+    }
 
     // For each row, combine maximum ascent and descent into a row height.
     // Sum the row heights, then add the total height of the gaps between rows.
@@ -155,20 +163,14 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
     var x = xDelta
     var colGap = 0.0
-    for (columnIndex, col) in _columns.enumerated() {
+    for (columnIndex, column) in _columns.enumerated() {
       // add to column edges
       _columnEdges.append(x)
 
-      let rcol =
-        switch subtype.subtype {
-        case .multline:
-          _containerWidth  // For multline, we use the container width.
-        case _:
-          col.lazy.map(\.width).max() ?? 0
-        }
-
+      let rcol = _columnWidth(column)
       var y = yDelta
-      for (rowIndex, (cell, height)) in zip(col, heights).enumerated() {
+
+      for (rowIndex, (cell, height)) in zip(column, heights).enumerated() {
         let xx = x + cellAlignments.get(rowIndex, columnIndex).position(rcol - cell.width)
         let yy = y + height.ascent
         let pos = CGPoint(x: xx, y: yy)

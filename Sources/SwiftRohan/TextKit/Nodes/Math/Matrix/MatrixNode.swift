@@ -13,6 +13,15 @@ final class MatrixNode: ArrayNode {
 
   final override class var type: NodeType { .matrix }
 
+  // MARK: - Node(Layout)
+
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    precondition(context is MathListLayoutContext)
+    return super.performLayout(context, fromScratch: fromScratch)
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case rows, command }
@@ -59,7 +68,7 @@ final class MatrixNode: ArrayNode {
   // MARK: - ArrayNode
 
   final override func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    _matrixFragment?.getGridIndex(interactingAt: point)
+    _nodeFragment?.getGridIndex(interactingAt: point)
   }
 
   // MARK: - Storage
