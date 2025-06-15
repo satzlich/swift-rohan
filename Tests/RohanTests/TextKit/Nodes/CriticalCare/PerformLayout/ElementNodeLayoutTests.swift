@@ -13,7 +13,7 @@ struct ElementNodeLayoutTests {
   @Test
   func elementNodes_fromScratch() {
     let elements: Array<ElementNode> = ElementNodeTests.allSamples()
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
 
     for element in elements {
       let context = TextLayoutContext(styleSheet)
@@ -32,7 +32,7 @@ struct ElementNodeLayoutTests {
       ParagraphNode([TextNode("Veni. Vedi. Veci.")]),
     ])
 
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
     let context = TextLayoutContext(styleSheet)
     do {
       context.beginEditing()

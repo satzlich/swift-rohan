@@ -33,7 +33,7 @@ struct ElementNodeTests {
 
   @Test
   static func getProperties() {
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
 
     do {
       let emphasis = EmphasisNode([TextNode("ab😀")])

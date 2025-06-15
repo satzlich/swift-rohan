@@ -11,7 +11,7 @@ struct MathNodeLayoutTests {
   @Test
   func mathNodes_fromScratch() {
     let mathNodes: Array<MathNode> = MathNodeTests.allSamples().filter({ !isEquationNode($0) })
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
     let contentNode = ContentNode(ElementStore(mathNodes))
     let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
     let fragment = MathListLayoutFragment(mathContext)
@@ -46,7 +46,7 @@ struct MathNodeLayoutTests {
   private func createTestScene<T: Node>(
     _ node: T
   ) -> (ContentNode, MathListLayoutContext) {
-    let styleSheet = StyleSheetTests.sampleStyleSheet()
+    let styleSheet = StyleSheetTests.testingStyleSheet()
     let contentNode = ContentNode([node])
     let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
     let fragment = MathListLayoutFragment(mathContext)
