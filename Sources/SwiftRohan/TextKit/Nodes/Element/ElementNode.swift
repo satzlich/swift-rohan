@@ -374,8 +374,8 @@ internal class ElementNode: Node {
       assert(index <= self.childCount)
       let newOffset = layoutOffset + localOffset
       guard
-        var result = context.rayshoot(
-          from: newOffset, affinity: affinity, direction: direction)
+        var result =
+          context.rayshoot(from: newOffset, affinity: affinity, direction: direction)
       else {
         return nil
       }
@@ -568,6 +568,7 @@ internal class ElementNode: Node {
     assert(_children.isEmpty == false)
 
     if _children.isEmpty {
+      assertionFailure("Unreachable code: _children is empty")
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
         return 1

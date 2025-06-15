@@ -327,6 +327,38 @@ final class TextSegmentTests: TextKitTestsBase {
     }
   }
 
+  @Test
+  func testArrayNode() {
+    let rootNode = RootNode([
+      EquationNode(
+        .block,
+        [
+          MatrixNode(
+            .pmatrix,
+            [
+              MatrixNode.Row([
+                ContentNode([TextNode("a")]),
+                ContentNode([TextNode("beef")]),
+              ]),
+              MatrixNode.Row([
+                ContentNode([TextNode("c")]),
+                ContentNode([TextNode("d")]),
+              ]),
+            ])
+        ])
+    ])
+    let documentManager = createDocumentManager(rootNode)
+    let range = RhTextRange.parse("[↓0,nuc,↓0,(0,1),↓0]:0..<[↓0,nuc,↓0,(0,1),↓0]:3")!
+    
+    var frames: Array<CGRect> = []
+    documentManager.enumerateTextSegments(in: range, type: .standard) {
+      (_, segmentFrame, _) in
+      frames.append(segmentFrame)
+      return true // continue
+    }
+    #expect(frames.count == 1)
+  }
+
   private func outputPDF(
     _ fileName: String, _ point: CGRect, _ frames: Array<CGRect>,
     _ documentManager: DocumentManager
