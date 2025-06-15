@@ -12,7 +12,7 @@ class TextKitTestsBase {
   private let textContainer: NSTextContainer
   private let pageSize: CGSize
 
-  init(createFolder: Bool) throws {
+  init(createFolder: Bool = false) throws {
     self.folderName = String("\(type(of: self))")
     if createFolder {
       try TestUtils.touchDirectory(folderName)

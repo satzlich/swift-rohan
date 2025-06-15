@@ -30,7 +30,7 @@ struct CommandDeclarationTests {
     do {
       try standardCalls(MathStyles.mathStyle(.display))
       try standardCalls(MathStyles.mathTextStyle(.mathbb))
-      try standardCalls(MathStyles.inlineStyle)
+      try standardCalls(MathStyles.toInlineStyle)
     }
     do {
       try standardCalls(MathAccent.acute)
@@ -105,7 +105,7 @@ struct CommandDeclarationTests {
     let styles: Array<MathStyles> = [
       .mathStyle(.display),
       .mathTextStyle(.mathbb),
-      .inlineStyle,
+      .toInlineStyle,
     ]
 
     for style in styles {

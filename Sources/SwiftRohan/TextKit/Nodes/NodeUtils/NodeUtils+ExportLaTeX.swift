@@ -484,7 +484,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       let group = GroupSyntax(stream)
       return .success(StreamSyntax([.group(group)]))
 
-    case .mathTextStyle, .inlineStyle:
+    case .mathTextStyle, .toInlineStyle:
       return _visitMath(command: mathStyles.styles.command, mathStyles, context)
     }
   }

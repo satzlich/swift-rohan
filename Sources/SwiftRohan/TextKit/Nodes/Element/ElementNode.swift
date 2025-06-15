@@ -374,8 +374,8 @@ internal class ElementNode: Node {
       assert(index <= self.childCount)
       let newOffset = layoutOffset + localOffset
       guard
-        var result = context.rayshoot(
-          from: newOffset, affinity: affinity, direction: direction)
+        var result =
+          context.rayshoot(from: newOffset, affinity: affinity, direction: direction)
       else {
         return nil
       }
@@ -568,6 +568,7 @@ internal class ElementNode: Node {
     assert(_children.isEmpty == false)
 
     if _children.isEmpty {
+      assertionFailure("Unreachable code: _children is empty")
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
         return 1
@@ -776,7 +777,11 @@ internal class ElementNode: Node {
     do {
       let vacuumRange = vacuumRange ?? 0..<0
       refreshParagraphStyle(
-        context, { i in current[i].isAddedOrDirty || vacuumRange.contains(i) })
+        context,
+        { i in
+          current[i].mark == .added || current[i].mark == .dirty
+            || vacuumRange.contains(i)
+        })
     }
 
     return sum
@@ -1033,7 +1038,5 @@ internal class ElementNode: Node {
       self.insertNewline = insertNewline
       self.layoutLength = node.layoutLength()
     }
-
-    var isAddedOrDirty: Bool { mark == .added || mark == .deleted }
   }
 }

@@ -714,4 +714,21 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     }
   }
 
+  @Test
+  func enclosingTextRange() {
+    let documentManager = createDocumentManager(
+      RootNode([
+        HeadingNode(level: 1, [TextNode("The quick brown fox jumps")])
+      ]))
+    let location = TextLocation.parse("[↓0,↓0]:4")!
+    let selection = RhTextSelection(location, affinity: .downstream)
+
+    let enclosingRange =
+      documentManager.textSelectionNavigation.enclosingTextRange(for: .word, selection)
+    let expected =
+      "(anchor: [↓0,↓0]:4, focus: [↓0,↓0]:10, reversed: false, affinity: upstream)"
+
+    #expect(enclosingRange != nil)
+    #expect("\(enclosingRange!)" == expected)
+  }
 }

@@ -4,12 +4,10 @@ import Testing
 
 @testable import SwiftRohan
 
-final class DocumentManagerTests {
-  /// Helper function to create a `DocumentManager` instance with a given content.
-  private func _createDocumentManager(_ content: ElementStore) -> DocumentManager {
-    let rootNode = RootNode(content)
-    let documentManager = DocumentManager(rootNode, StyleSheetTests.testingStyleSheet())
-    return documentManager
+final class DocumentManagerTests: TextKitTestsBase {
+  private func _createDocumentManager(_ nodes: ElementStore) -> DocumentManager {
+    let rootNode = RootNode(nodes)
+    return self.createDocumentManager(rootNode)
   }
 
   // MARK: - Edit Math

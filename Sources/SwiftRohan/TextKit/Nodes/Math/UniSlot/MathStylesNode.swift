@@ -28,7 +28,7 @@ final class MathStylesNode: MathNode {
       case .mathStyle(let mathStyle):
         current[MathProperty.style] = .mathStyle(mathStyle)
 
-      case .inlineStyle:
+      case .toInlineStyle:
         let key = MathProperty.style
         let mathStyle = key.resolveValue(current, styleSheet).mathStyle()!
         current[key] = .mathStyle(mathStyle.inlineParallel())
