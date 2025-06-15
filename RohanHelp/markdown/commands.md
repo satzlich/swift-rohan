@@ -3,7 +3,7 @@ title: "Commands"
 css: styles.css
 ---
 
-We support 607 commands.
+We support 610 commands/environments.
 
 ## A
 
@@ -11,19 +11,20 @@ We support 607 commands.
 | --: | :---------- | :---------------------- | :------ |
 |   1 | `\acute`    | $\acute{x}$             |         |
 |   2 | `\aleph`    | $\aleph$                |         |
-|   3 | `{aligned}` | ![](images/aligned.svg) |         |
-|   4 | `\alpha`    | $\alpha$                |         |
-|   5 | `\amalg`    | $\amalg$                |         |
-|   6 | `\angle`    | $\angle$                |         |
-|   7 | `\approx`   | $\approx$               |         |
-|   8 | `\approxeq` | $\approxeq$             | AMS     |
-|   9 | `\arccos`   | $\arccos$               |         |
-|  10 | `\arcsin`   | $\arcsin$               |         |
-|  11 | `\arctan`   | $\arctan$               |         |
-|  12 | `\arg`      | $\arg$                  |         |
-|  13 | `\ast`      | $\ast$                  |         |
-|  14 | `\asymp`    | $\asymp$                |         |
-|  15 | `\atop`     | $x\atop y$              |         |
+|   3 | `{align*}`  | ![](images/aligned.svg) |         |
+|   4 | `{aligned}` | ![](images/aligned.svg) |         |
+|   5 | `\alpha`    | $\alpha$                |         |
+|   6 | `\amalg`    | $\amalg$                |         |
+|   7 | `\angle`    | $\angle$                |         |
+|   8 | `\approx`   | $\approx$               |         |
+|   9 | `\approxeq` | $\approxeq$             | AMS     |
+|  10 | `\arccos`   | $\arccos$               |         |
+|  11 | `\arcsin`   | $\arcsin$               |         |
+|  12 | `\arctan`   | $\arctan$               |         |
+|  13 | `\arg`      | $\arg$                  |         |
+|  14 | `\ast`      | $\ast$                  |         |
+|  15 | `\asymp`    | $\asymp$                |         |
+|  16 | `\atop`     | $x\atop y$              |         |
 
 ## B
 
@@ -214,28 +215,29 @@ We support 607 commands.
 |   1 | `\Game`       | $\Game$                  | AMS     |
 |   2 | `\Gamma`      | $\Gamma$                 |         |
 |   3 | `\gamma`      | $\gamma$                 |         |
-|   4 | `{gathered}`  | ![](images/gathered.svg) |         |
-|   5 | `\gcd`        | $\gcd$                   |         |
-|   6 | `\ge`         | $\ge$                    |         |
-|   7 | `\geq`        | $\geq$                   |         |
-|   8 | `\geqq`       | $\geqq$                  | AMS     |
-|   9 | `\geqslant`   | $\geqslant$              | AMS     |
-|  10 | `\gets`       | $\gets$                  |         |
-|  11 | `\gg`         | $\gg$                    |         |
-|  12 | `\ggg`        | $\ggg$                   | AMS     |
-|  13 | `\gggtr`      | $\gggtr$                 | AMS     |
-|  14 | `\gimel`      | $\gimel$                 | AMS     |
-|  15 | `\gnapprox`   | $\gnapprox$              | AMS     |
-|  16 | `\gneq`       | $\gneq$                  | AMS     |
-|  17 | `\gneqq`      | $\gneqq$                 | AMS     |
-|  18 | `\gnsim`      | $\gnsim$                 | AMS     |
-|  19 | `\grave`      | ![](images/grave.svg)    |         |
-|  20 | `\gtrapprox`  | $\gtrapprox$             | AMS     |
-|  21 | `\gtrdot`     | $\gtrdot$                | AMS     |
-|  22 | `\gtreqless`  | $\gtreqless$             | AMS     |
-|  23 | `\gtreqqless` | $\gtreqqless$            | AMS     |
-|  24 | `\gtrless`    | $\gtrless$               | AMS     |
-|  25 | `\gtrsim`     | $\gtrsim$                | AMS     |
+|   4 | `{gather*}`   | ![](images/gathered.svg) |         |
+|   5 | `{gathered}`  | ![](images/gathered.svg) |         |
+|   6 | `\gcd`        | $\gcd$                   |         |
+|   7 | `\ge`         | $\ge$                    |         |
+|   8 | `\geq`        | $\geq$                   |         |
+|   9 | `\geqq`       | $\geqq$                  | AMS     |
+|  10 | `\geqslant`   | $\geqslant$              | AMS     |
+|  11 | `\gets`       | $\gets$                  |         |
+|  12 | `\gg`         | $\gg$                    |         |
+|  13 | `\ggg`        | $\ggg$                   | AMS     |
+|  14 | `\gggtr`      | $\gggtr$                 | AMS     |
+|  15 | `\gimel`      | $\gimel$                 | AMS     |
+|  16 | `\gnapprox`   | $\gnapprox$              | AMS     |
+|  17 | `\gneq`       | $\gneq$                  | AMS     |
+|  18 | `\gneqq`      | $\gneqq$                 | AMS     |
+|  19 | `\gnsim`      | $\gnsim$                 | AMS     |
+|  20 | `\grave`      | ![](images/grave.svg)    |         |
+|  21 | `\gtrapprox`  | $\gtrapprox$             | AMS     |
+|  22 | `\gtrdot`     | $\gtrdot$                | AMS     |
+|  23 | `\gtreqless`  | $\gtreqless$             | AMS     |
+|  24 | `\gtreqqless` | $\gtreqqless$            | AMS     |
+|  25 | `\gtrless`    | $\gtrless$               | AMS     |
+|  26 | `\gtrsim`     | $\gtrsim$                | AMS     |
 
 ## H
 
@@ -365,38 +367,39 @@ We support 607 commands.
 
 ## M
 
-|  \# | Command          | Look                   | Package |
-| --: | :--------------- | :--------------------- | :------ |
-|   1 | `\maltese`       | $\maltese$             | AMS     |
-|   2 | `\mapsto`        | $\mapsto$              |         |
-|   3 | `\mathbb`        | $\mathbb{A}$           |         |
-|   4 | `\mathbf`        | $\mathbf{A}$           |         |
-|   5 | `\mathbin`       |                        |         |
-|   6 | `\mathcal`       | $\mathcal{A}$          |         |
-|   7 | `\mathclose`     |                        |         |
-|   8 | `\mathfrak`      | $\mathfrak{A}$         |         |
-|   9 | `\mathinner`     |                        |         |
-|  10 | `\mathit`        | $\mathit{A}$           |         |
-|  11 | `\mathop`        |                        |         |
-|  12 | `\mathopen`      |                        |         |
-|  13 | `\mathord`       |                        |         |
-|  14 | `\mathpunct`     |                        |         |
-|  15 | `\mathrel`       |                        |         |
-|  16 | `\mathring`      | $\mathring{x}$         |         |
-|  17 | `\mathrm`        | $\mathrm{A}$           |         |
-|  18 | `\mathsf`        | $\mathsf{A}$           |         |
-|  19 | `\mathtt`        | $\mathtt{A}$           |         |
-|  20 | `{matrix}`       | ![](images/matrix.svg) |         |
-|  21 | `\max`           | $\max$                 |         |
-|  22 | `\measuredangle` | $\measuredangle$       | AMS     |
-|  23 | `\medspace`      |                        |         |
-|  24 | `\mho`           | $\mho$                 |         |
-|  25 | `\mid`           | $\mid$                 |         |
-|  26 | `\min`           | $\min$                 |         |
-|  27 | `\models`        | $\models$              |         |
-|  28 | `\mp`            | $\mp$                  |         |
-|  29 | `\mu`            | $\mu$                  |         |
-|  30 | `\multimap`      | $\multimap$            | AMS     |
+|  \# | Command          | Look                     | Package |
+| --: | :--------------- | :----------------------- | :------ |
+|   1 | `\maltese`       | $\maltese$               | AMS     |
+|   2 | `\mapsto`        | $\mapsto$                |         |
+|   3 | `\mathbb`        | $\mathbb{A}$             |         |
+|   4 | `\mathbf`        | $\mathbf{A}$             |         |
+|   5 | `\mathbin`       |                          |         |
+|   6 | `\mathcal`       | $\mathcal{A}$            |         |
+|   7 | `\mathclose`     |                          |         |
+|   8 | `\mathfrak`      | $\mathfrak{A}$           |         |
+|   9 | `\mathinner`     |                          |         |
+|  10 | `\mathit`        | $\mathit{A}$             |         |
+|  11 | `\mathop`        |                          |         |
+|  12 | `\mathopen`      |                          |         |
+|  13 | `\mathord`       |                          |         |
+|  14 | `\mathpunct`     |                          |         |
+|  15 | `\mathrel`       |                          |         |
+|  16 | `\mathring`      | $\mathring{x}$           |         |
+|  17 | `\mathrm`        | $\mathrm{A}$             |         |
+|  18 | `\mathsf`        | $\mathsf{A}$             |         |
+|  19 | `\mathtt`        | $\mathtt{A}$             |         |
+|  20 | `{matrix}`       | ![](images/matrix.svg)   |         |
+|  21 | `\max`           | $\max$                   |         |
+|  22 | `\measuredangle` | $\measuredangle$         | AMS     |
+|  23 | `\medspace`      |                          |         |
+|  24 | `\mho`           | $\mho$                   |         |
+|  25 | `\mid`           | $\mid$                   |         |
+|  26 | `\min`           | $\min$                   |         |
+|  27 | `\models`        | $\models$                |         |
+|  28 | `\mp`            | $\mp$                    |         |
+|  29 | `\mu`            | $\mu$                    |         |
+|  30 | `\multimap`      | $\multimap$              | AMS     |
+|  31 | `{multline}`     | ![](images/multline.svg) |         |
 
 ## N
 
