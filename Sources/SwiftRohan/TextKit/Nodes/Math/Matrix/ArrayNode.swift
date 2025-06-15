@@ -124,7 +124,7 @@ class ArrayNode: Node {
     let mathContext = _createMathContext(context)
 
     if fromScratch {
-      let nodeFragment = createMathArrayLayoutFragment(context, mathContext)
+      let nodeFragment = _createMathArrayLayoutFragment(context, mathContext)
       _nodeFragment = nodeFragment
 
       // layout each element
@@ -436,7 +436,7 @@ class ArrayNode: Node {
   }
 
   /// Creates layout fragment for the array node.
-  internal func createMathArrayLayoutFragment(
+  internal func _createMathArrayLayoutFragment(
     _ context: LayoutContext, _ mathContext: MathContext
   ) -> MathArrayLayoutFragment {
     MathArrayLayoutFragment(

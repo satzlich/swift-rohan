@@ -36,7 +36,7 @@ final class MultilineNode: ArrayNode {
     let mathContext = _createMathContext(context)
 
     if fromScratch {
-      let nodeFragment = createMathArrayLayoutFragment(context, mathContext)
+      let nodeFragment = _createMathArrayLayoutFragment(context, mathContext)
       _nodeFragment = nodeFragment
 
       // layout each element
@@ -219,7 +219,7 @@ final class MultilineNode: ArrayNode {
     return containerWidth.ptValue - 2 * fontSize.floatValue
   }
 
-  final override func createMathArrayLayoutFragment(
+  final override func _createMathArrayLayoutFragment(
     _ context: LayoutContext, _ mathContext: MathContext
   ) -> MathArrayLayoutFragment {
     let containerWidth = Self._getContainerWidth(context.styleSheet)
