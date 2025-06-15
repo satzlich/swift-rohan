@@ -7,7 +7,7 @@ import Testing
 
 struct NodesTests {
 
-  static var uncoveredNodeTypes: Set<NodeType> = [.argument, .apply, .cVariable]
+  static var uncoveredNodeTypes: Set<NodeType> = [.argument, /*.apply,*/ .cVariable]
 
   @Test
   func coverage() {
@@ -41,8 +41,8 @@ struct NodesTests {
       _ = node.debugPrint()
       _ = node.layoutLengthSynopsis()
 
-      //
-      if [NodeType.apply, .argument, .variable, .content].contains(node.type) == false {
+      // Store/Load
+      if [NodeType.argument, .variable, .content].contains(node.type) == false {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
 

@@ -279,6 +279,14 @@ final class ExprNodeSyncTests {
         """
       try testRoundTrip(variable, json)
     }
+    do {
+      let applyNode = ApplyNode(MathTemplate.pmod, [[]])!
+      let json =
+        """
+        {"arguments":[[]],"template":{"command":"pmod","subtype":"functionCall"},"type":"apply"}
+        """
+      try testRoundTrip(applyNode, json)
+    }
   }
 
   func testElementWithUnknown() throws {
