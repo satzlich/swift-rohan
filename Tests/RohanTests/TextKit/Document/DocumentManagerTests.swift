@@ -12,6 +12,179 @@ final class DocumentManagerTests {
     return documentManager
   }
 
+  // MARK: - IME Support
+
+  private func _imeSupportExample() -> DocumentManager {
+    let documentManager = _createDocumentManager([
+      ParagraphNode([
+        TextNode("Hello"),
+        EmphasisNode([TextNode("a😀bc")]),
+        TextNode("!"),
+      ])
+    ])
+    return documentManager
+  }
+
+  @Test
+  func location_llOffsetBy() {
+    let documentManager = _imeSupportExample()
+    do {
+      let location = TextLocation.parse("[↓0,↓0]:0")!
+      let result = documentManager.location(location, llOffsetBy: 3)
+      #expect(result == TextLocation.parse("[↓0,↓0]:3"))
+    }
+  }
+
+  @Test
+  func attributedSubstring() {
+    let documentManager = _imeSupportExample()
+    do {
+      let location = TextLocation.parse("[↓0,↓1,↓0]:1")!
+      let end = TextLocation.parse("[↓0,↓1,↓0]:4")!
+      let range = RhTextRange(location, end)!
+      let result = documentManager.attributedSubstring(for: range)
+      #expect(result?.string == "😀b")
+    }
+  }
+
+  @Test
+  func llOffset_from_to() {
+    let documentManager = _imeSupportExample()
+    let location = TextLocation.parse("[↓0,↓1,↓0]:1")!
+    let end = TextLocation.parse("[↓0,↓1,↓0]:4")!
+    do {
+      let result = documentManager.llOffset(from: location, to: end)
+      #expect(result == 3)
+    }
+    do {
+      let result = documentManager.llOffset(from: end, to: location)
+      #expect(result == -3)
+    }
+  }
+
+  // MARK: - Replacement Support
+
+  private func _replacementSupportExample() -> DocumentManager {
+    let documentManager = _createDocumentManager([
+      EquationNode(
+        .block,
+        [
+          TextNode("xyzw"),
+          NamedSymbolNode(NamedSymbol.lookup("alpha")!),
+          TextNode("bc"),
+          NamedSymbolNode(NamedSymbol.lookup("beta")!),
+          NamedSymbolNode(NamedSymbol.lookup("iota")!),
+          TextNode("jk"),
+          FractionNode(num: [TextNode("a")], denom: [TextNode("b")]),
+          TextNode("mn"),
+        ])
+    ])
+    return documentManager
+  }
+
+  @Test
+  func prefixString__traceBackward() {
+    let documentManager = _replacementSupportExample()
+
+    func makeReversed(_ extendedString: ExtendedString) -> ExtendedSubstring {
+      ExtendedSubstring(extendedString.reversed())
+    }
+
+    // unexpected argument
+    do {
+      let location = TextLocation.parse("[↓0,nuc]:1")!
+      let result = documentManager.prefixString(from: location, count: 2)
+      #expect(result == nil)
+    }
+    // size larger than available range
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓0]:1")!
+      let result = documentManager.prefixString(from: location, count: 2)
+      let expected = ExtendedString([.char("x")])
+      #expect(result == expected)
+
+      let traceResult =
+        documentManager.traceBackward(from: location, makeReversed(expected))
+      guard let traceLocation = traceResult else {
+        Issue.record("Trace backward failed")
+        return
+      }
+      #expect("\(traceLocation)" == "[↓0,nuc,↓0]:0")
+    }
+    // cross non-text node
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓2]:1")!
+      let result = documentManager.prefixString(from: location, count: 2)
+      let expected = ExtendedString([.symbol(NamedSymbol.lookup("alpha")!), .char("b")])
+      #expect(result == expected)
+
+      let traceResult =
+        documentManager.traceBackward(from: location, makeReversed(expected))
+      guard let traceLocation = traceResult else {
+        Issue.record("Trace backward failed")
+        return
+      }
+      #expect("\(traceLocation)" == "[↓0,nuc]:1")
+    }
+    // cross non-text node, then text node
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓2]:1")!
+      let result = documentManager.prefixString(from: location, count: 3)
+      let expected =
+        ExtendedString([.char("w"), .symbol(NamedSymbol.lookup("alpha")!), .char("b")])
+      #expect(result == expected)
+
+      let traceResult =
+        documentManager.traceBackward(from: location, makeReversed(expected))
+      guard let traceLocation = traceResult else {
+        Issue.record("Trace backward failed")
+        return
+      }
+      #expect("\(traceLocation)" == "[↓0,nuc,↓0]:3")
+    }
+    // cross non-text node, then text node, then non-text node
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓5]:1")!
+      let result = documentManager.prefixString(from: location, count: 7)
+      let expected =
+        ExtendedString([
+          .char("w"),
+          .symbol(NamedSymbol.lookup("alpha")!),
+          .char("b"),
+          .char("c"),
+          .symbol(NamedSymbol.lookup("beta")!),
+          .symbol(NamedSymbol.lookup("iota")!),
+          .char("j"),
+        ])
+      #expect(result == expected)
+
+      let traceResult =
+        documentManager.traceBackward(from: location, makeReversed(expected))
+      guard let traceLocation = traceResult else {
+        Issue.record("Trace backward failed")
+        return
+      }
+      #expect("\(traceLocation)" == "[↓0,nuc,↓0]:3")
+    }
+    // meet unsupported node and stop
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓7]:1")!
+      let result = documentManager.prefixString(from: location, count: 6)
+      let expected = ExtendedString([.char("m")])
+      #expect(result == expected)
+
+      let traceResult =
+        documentManager.traceBackward(from: location, makeReversed(expected))
+      guard let traceLocation = traceResult else {
+        Issue.record("Trace backward failed")
+        return
+      }
+      #expect("\(traceLocation)" == "[↓0,nuc,↓7]:0")
+    }
+  }
+
+  // MARK: - Location Query
+
   @Test
   func getNode() {
     let documentManager = _createDocumentManager([
