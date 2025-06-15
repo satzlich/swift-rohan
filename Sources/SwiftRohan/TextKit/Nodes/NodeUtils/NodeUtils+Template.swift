@@ -198,6 +198,16 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return MatrixNode(matrix.subtype, rows)
   }
 
+  override func visit(multiline: MultilineExpr, _ context: Void) -> Node {
+    typealias Element = MultilineNode.Cell
+    let rows = multiline.rows.map { row in
+      let elements = row.map { _convertChildren(of: $0, context) }
+        .map { Element.init($0) }
+      return ArrayNode.Row(elements)
+    }
+    return MultilineNode(multiline.subtype, rows)
+  }
+
   override func visit(radical: RadicalExpr, _ context: Void) -> Node {
     let radicand = _convertChildren(of: radical.radicand, context)
     let index = radical.index.map { _convertChildren(of: $0, context) }

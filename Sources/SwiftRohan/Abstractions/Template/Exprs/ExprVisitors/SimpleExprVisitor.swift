@@ -118,6 +118,10 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitArray(matrix, context)
   }
 
+  override func visit(multiline: MultilineExpr, _ context: C) -> Void {
+    _visitArray(multiline, context)
+  }
+
   override func visit(radical: RadicalExpr, _ context: C) -> Void {
     _visitMath(radical, context)
   }

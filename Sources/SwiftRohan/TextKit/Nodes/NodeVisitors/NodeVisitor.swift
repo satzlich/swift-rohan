@@ -166,6 +166,10 @@ class NodeVisitor<R, C> {
     visitNode(matrix, context)
   }
 
+  internal func visit(multiline: MultilineNode, _ context: C) -> R {
+    visitNode(multiline, context)
+  }
+
   public func visit(radical: RadicalNode, _ context: C) -> R {
     visitNode(radical, context)
   }

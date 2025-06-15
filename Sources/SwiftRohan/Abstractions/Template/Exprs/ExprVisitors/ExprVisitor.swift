@@ -108,6 +108,10 @@ class ExprVisitor<C, R> {
     visitExpr(matrix, context)
   }
 
+  func visit(multiline: MultilineExpr, _ context: C) -> R {
+    visitExpr(multiline, context)
+  }
+
   func visit(radical: RadicalExpr, _ context: C) -> R {
     visitExpr(radical, context)
   }

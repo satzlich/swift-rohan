@@ -15,7 +15,7 @@ internal class ArrayExpr: Expr {
     return rows[row][column]
   }
 
-  internal init(_ subtype: MathArray, _ rows: Array<Row>) {
+  required init(_ subtype: MathArray, _ rows: Array<Row>) {
     precondition(ArrayExpr.validate(rows: rows))
     self.subtype = subtype
     self.rows = rows

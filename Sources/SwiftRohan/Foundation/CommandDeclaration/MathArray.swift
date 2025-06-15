@@ -70,13 +70,13 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     }
   }
 
-  func getCellAlignments() -> CellAlignmentProvider {
+  func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
     switch subtype {
     case .aligned: return AlternateCellAlignmentProvider()
     case .cases: return FixedCellAlignmentProvider(.start)
     case .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
-    case .multline: return MultlineCellAlignmentProvider()
+    case .multline: return MultlineCellAlignmentProvider(rowCount)
     case .substack: return FixedCellAlignmentProvider(.center)
     }
   }
@@ -85,7 +85,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ mathContext: MathContext
   ) -> ColumnGapProvider {
-    let alignments = getCellAlignments()
+    let alignments = getCellAlignments(columns.first?.count ?? 0)
     switch subtype {
     case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
     case .cases: return MatrixColumnGapProvider()
@@ -98,7 +98,10 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 }
 
 extension MathArray {
-  static let allCommands: Array<MathArray> = [
+  static let allCommands: Array<MathArray> = inlineMathCommands + blockMathCommands
+
+  /// - Note: These commands are used by MatrixNode.
+  static let inlineMathCommands: Array<MathArray> = [
     aligned,
     cases,
     gathered,
@@ -113,12 +116,21 @@ extension MathArray {
     substack,
   ]
 
+  /// - Note: These commands are used by MultilineNode.
+  static let blockMathCommands: Array<MathArray> = [
+    alignAst,
+    gatherAst,
+    multlineAst,
+  ]
+
   private static let _dictionary: Dictionary<String, MathArray> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathArray? {
     _dictionary[command]
   }
+
+  // inline math commands
 
   static let aligned = MathArray("aligned", .aligned)
   static let cases = MathArray("cases", .cases)
@@ -130,9 +142,14 @@ extension MathArray {
   static let Bmatrix = MathArray("Bmatrix", .matrix(DelimiterPair.BRACE))
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
-  //
-  static let multline = MathArray("multline", .multline)
   static let substack = MathArray("substack", .substack)
+
+  // block math commands
+
+  //
+  static let alignAst = MathArray("align*", .aligned)
+  static let gatherAst = MathArray("gather*", .gathered)
+  static let multlineAst = MathArray("multline*", .multline)
 }
 
 protocol CellAlignmentProvider {
@@ -166,11 +183,22 @@ private struct AlternateCellAlignmentProvider: CellAlignmentProvider {
 }
 
 /// This is for `{multline}` environment.
+/// Note that **Multline** is not a typo, it stands for the environment name in LaTeX.
 private struct MultlineCellAlignmentProvider: CellAlignmentProvider {
+  private let _rowCount: Int
+
+  init(_ rowCount: Int) {
+    self._rowCount = rowCount
+  }
+
   func get(_ column: Int) -> FixedAlignment { .start }
 
   func get(_ row: Int, _ column: Int) -> FixedAlignment {
-    row == 0 ? .start : .end
+    row == 0
+      ? .start
+      : row == _rowCount - 1
+        ? .end
+        : .center
   }
 }
 

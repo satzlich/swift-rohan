@@ -78,18 +78,49 @@ class ArrayNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
+  private final func _reconcileMathListLayoutFragment(
+    _ element: ContentNode, _ fragment: MathListLayoutFragment,
+    parent context: LayoutContext, fromScratch: Bool
+  ) {
+    switch context {
+    case let context as TextLayoutContext:
+      LayoutUtils.reconcileMathListLayoutFragment(
+        element, fragment, parent: context, fromScratch: fromScratch)
+
+    case let context as MathListLayoutContext:
+      LayoutUtils.reconcileMathListLayoutFragment(
+        element, fragment, parent: context, fromScratch: fromScratch)
+
+    default:
+      preconditionFailure("unsupported context type: \(Swift.type(of: context))")
+    }
+  }
+
+  private final func _createMathContext(_ parentContext: LayoutContext) -> MathContext {
+    switch parentContext {
+    case let context as TextLayoutContext:
+      let mathContext = MathUtils.resolveMathContext(for: self, context.styleSheet)
+      return mathContext
+
+    case let context as MathListLayoutContext:
+      return context.mathContext
+
+    default:
+      preconditionFailure("unsupported context type: \(Swift.type(of: parentContext))")
+    }
+  }
+
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     // for layout, only MathListLayoutContext is supported.
     // MathReflowLayoutContext is used in a different way.
+    precondition(context is MathListLayoutContext || context is TextLayoutContext)
 
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-    let mathContext = context.mathContext
+    let mathContext = _createMathContext(context)
 
     if fromScratch {
-      let containerWidth = ArrayNode.getContainerWidth(context.styleSheet)
+      let containerWidth = ArrayNode._getContainerWidth(context.styleSheet)
       let matrixFragment =
         MathArrayLayoutFragment(
           rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext,
@@ -101,8 +132,11 @@ class ArrayNode: Node {
         for j in (0..<columnCount) {
           let element = getElement(i, j)
           let fragment = matrixFragment.getElement(i, j)
-          LayoutUtils.reconcileMathListLayoutFragment(
+
+          _reconcileMathListLayoutFragment(
             element, fragment, parent: context, fromScratch: true)
+          //          LayoutUtils.reconcileMathListLayoutFragment(
+          //            element, fragment, parent: context, fromScratch: true)
         }
       }
       // layout the matrix
@@ -140,13 +174,13 @@ class ArrayNode: Node {
             let element = getElement(i, j)
             let fragment = matrixFragment.getElement(i, j)
             if _addedNodes.contains(element.id) {
-              LayoutUtils.reconcileMathListLayoutFragment(
+              _reconcileMathListLayoutFragment(
                 element, fragment, parent: context, fromScratch: true)
               needsFixLayout = true
             }
             else if element.isDirty {
               let oldMetrics = fragment.boxMetrics
-              LayoutUtils.reconcileMathListLayoutFragment(
+              _reconcileMathListLayoutFragment(
                 element, fragment, parent: context, fromScratch: false)
               if fragment.isNearlyEqual(to: oldMetrics) == false {
                 needsFixLayout = true
@@ -186,7 +220,9 @@ class ArrayNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
+    precondition(
+      context is MathListLayoutContext || context is MathReflowLayoutContext
+        || context is TextLayoutContext)
 
     guard path.count >= 2,
       endPath.count >= 2,
@@ -222,7 +258,9 @@ class ArrayNode: Node {
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
-    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
+    precondition(
+      context is MathListLayoutContext || context is MathReflowLayoutContext
+        || context is TextLayoutContext)
 
     // resolve grid index for point
     guard let point = convertToLocal(point, context, layoutOffset),
@@ -258,7 +296,9 @@ class ArrayNode: Node {
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {
-    precondition(context is MathListLayoutContext || context is MathReflowLayoutContext)
+    precondition(
+      context is MathListLayoutContext || context is MathReflowLayoutContext
+        || context is TextLayoutContext)
 
     guard path.count >= 2,
       let index: GridIndex = path.first?.gridIndex(),
@@ -348,7 +388,7 @@ class ArrayNode: Node {
   internal var _rows: Array<Row> = []
 
   private var _isDirty: Bool = false
-  private var _matrixFragment: MathArrayLayoutFragment? = nil
+  internal var _matrixFragment: MathArrayLayoutFragment? = nil
   final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
   final var rowCount: Int { _rows.count }
@@ -527,8 +567,8 @@ class ArrayNode: Node {
     return matrixFragment.getElement(index.row, index.column)
   }
 
-  private func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    _matrixFragment?.getGridIndex(interactingAt: point)
+  internal func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
+    preconditionFailure("overriding required")
   }
 
   private func rayshoot(
@@ -539,11 +579,13 @@ class ArrayNode: Node {
   }
 
   /// Get the width of the content container for this array node.
-  private static func getContainerWidth(_ styleSheet: StyleSheet) -> Double {
+  private static func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
     let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
     let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
     let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
+    let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
     let containerWidth = pageWidth - leftMargin - rightMargin
-    return containerWidth.ptValue - 10  // 5+5 is the inset for the text container.
+    // 1em for text container inset, 1em each for leading/trailing indent.
+    return containerWidth.ptValue - 2 * fontSize.floatValue
   }
 }

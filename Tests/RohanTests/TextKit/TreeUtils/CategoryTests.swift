@@ -35,6 +35,14 @@ struct CategoryTests {
         MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),
         .mathContent
       ),
+      (
+        MultilineNode(
+          .multlineAst,
+          [
+            MultilineNode.Row([MultilineNode.Cell([TextNode("a")])])
+          ]),
+        .topLevelNodes
+      ),
       (RadicalNode([], index: []), .mathContent),
       (TextModeNode([]), .mathContent),
       (UnderOverNode(MathSpreader.overbrace, []), .mathContent),
