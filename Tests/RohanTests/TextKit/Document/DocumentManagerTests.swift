@@ -12,6 +12,230 @@ final class DocumentManagerTests {
     return documentManager
   }
 
+  // MARK: - Edit Math
+
+  /// cover the following methods:
+  /// ```
+  /// attachOrGotoMathComponent()
+  /// removeMathComponent()
+  /// ```
+  @Test
+  func editAttachNode_modifyExisting() {
+    // create an example that contains AttachNode, RadicalNode, and MatrixNode
+    let documentManager = _createDocumentManager([
+      EquationNode(.block, [AttachNode(nuc: [TextNode("x")], sup: [TextNode("y")])])
+    ])
+
+    do {
+      // attach sub to the first AttachNode
+      let range = RhTextRange.parse("[↓0,nuc]:0..<[↓0,nuc]:1")!
+      let result1 =
+        documentManager.attachOrGotoMathComponent(range, .sub, [TextNode("a")])
+      guard let (range1, isAdded) = result1.success() else {
+        Issue.record("Attach or goto math component failed")
+        return
+      }
+      #expect(isAdded)
+      #expect("\(range1)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+
+      let expected1 =
+        """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ nuc
+              │ └ text "x"
+              ├ sub
+              │ └ text "a"
+              └ sup
+                └ text "y"
+        """
+      #expect(documentManager.prettyPrint() == expected1)
+
+      // remove sub from the first AttachNode
+      let result2 = documentManager.removeMathComponent(range1, .sub)
+      guard let range2 = result2.success() else {
+        Issue.record("Remove math component failed")
+        return
+      }
+      let expected2 =
+        """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ nuc
+              │ └ text "x"
+              └ sup
+                └ text "y"
+        """
+      #expect("\(range2)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+      #expect(documentManager.prettyPrint() == expected2)
+
+      // goto sup of the first AttachNode
+      let result3 = documentManager.attachOrGotoMathComponent(range2, .sup, [])
+      guard let (range3, isAdded) = result3.success() else {
+        Issue.record("Attach or goto math component failed")
+        return
+      }
+      #expect(isAdded == false)
+      #expect("\(range3)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+      let expected3 = expected2
+      #expect(documentManager.prettyPrint() == expected3)
+
+      // remove sup from the first AttachNode
+      let result4 = documentManager.removeMathComponent(range3, .sup)
+      guard let range4 = result4.success() else {
+        Issue.record("Remove math component failed")
+        return
+      }
+      #expect("\(range4)" == "[↓0,nuc,↓0]:0..<[↓0,nuc,↓0]:1")
+      let expected4 =
+        """
+        root
+        └ equation
+          └ nuc
+            └ text "x"
+        """
+      #expect(documentManager.prettyPrint() == expected4)
+    }
+  }
+
+  /// cover the following methods:
+  /// ```
+  /// attachOrGotoMathComponent()
+  /// removeMathComponent()
+  /// ```
+  @Test
+  func editAttachNode_createNew() {
+    let documentManager = _createDocumentManager([
+      EquationNode(
+        .block,
+        [
+          NamedSymbolNode(NamedSymbol.lookup("alpha")!),
+          NamedSymbolNode(NamedSymbol.lookup("beta")!),
+        ])
+    ])
+
+    do {
+      let range = RhTextRange.parse("[↓0,nuc]:0..<[↓0,nuc]:1")!
+      let result1 =
+        documentManager.attachOrGotoMathComponent(range, .sub, [TextNode("c")])
+      guard let (range1, isAdded) = result1.success() else {
+        Issue.record("Attach or goto math component failed")
+        return
+      }
+      #expect(isAdded)
+      #expect("\(range1)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+      let expected1 =
+        """
+        root
+        └ equation
+          └ nuc
+            ├ attach
+            │ ├ nuc
+            │ │ └ namedSymbol alpha
+            │ └ sub
+            │   └ text "c"
+            └ namedSymbol beta
+        """
+      #expect(documentManager.prettyPrint() == expected1)
+    }
+    do {
+      let range = RhTextRange.parse("[↓0,nuc]:1..<[↓0,nuc]:2")!
+      let result1 =
+        documentManager.attachOrGotoMathComponent(range, .sup, [TextNode("d")])
+      guard let (range1, isAdded) = result1.success() else {
+        Issue.record("Attach or goto math component failed")
+        return
+      }
+      #expect(isAdded)
+      #expect("\(range1)" == "[↓0,nuc]:1..<[↓0,nuc]:2")
+      let expected1 =
+        """
+        root
+        └ equation
+          └ nuc
+            ├ attach
+            │ ├ nuc
+            │ │ └ namedSymbol alpha
+            │ └ sub
+            │   └ text "c"
+            └ attach
+              ├ nuc
+              │ └ namedSymbol beta
+              └ sup
+                └ text "d"
+        """
+      #expect(documentManager.prettyPrint() == expected1)
+    }
+  }
+
+  @Test
+  func editRadicalNode() {
+    let documentManager = _createDocumentManager([
+      EquationNode(
+        .block,
+        [
+          RadicalNode([TextNode("x")], index: nil)
+          //          MatrixNode(
+          //            .pmatrix,
+          //            [
+          //              MatrixNode.Row([
+          //                ContentNode([TextNode("1")]),
+          //                ContentNode([TextNode("2")]),
+          //              ]),
+          //              MatrixNode.Row([
+          //                ContentNode([TextNode("3")]),
+          //                ContentNode([TextNode("4")]),
+          //              ]),
+          //            ]),
+        ])
+    ])
+    
+    let range = RhTextRange.parse("[↓0,nuc]:0..<[↓0,nuc]:1")!
+    // attach index to the first RadicalNode
+    let result1 =
+      documentManager.attachOrGotoMathComponent(range, .index, [TextNode("n")])
+    guard let (range1, isAdded) = result1.success() else {
+      Issue.record("Attach or goto math component failed")
+      return
+    }
+    #expect(isAdded)
+    #expect("\(range1)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+    let expected1 =
+      """
+      root
+      └ equation
+        └ nuc
+          └ radical
+            ├ index
+            │ └ text "n"
+            └ radicand
+              └ text "x"
+      """
+    #expect(documentManager.prettyPrint() == expected1)
+    
+    // remove index from the first RadicalNode
+    let result2 = documentManager.removeMathComponent(range1, .index)
+    guard let range2 = result2.success() else {
+      Issue.record("Remove math component failed")
+      return
+    }
+    #expect("\(range2)" == "[↓0,nuc]:0..<[↓0,nuc]:1")
+    let expected2 =
+      """
+      root
+      └ equation
+        └ nuc
+          └ radical
+            └ radicand
+              └ text "x"
+      """
+    #expect(documentManager.prettyPrint() == expected2)
+  }
+
   // MARK: - Navigation
 
   @Test

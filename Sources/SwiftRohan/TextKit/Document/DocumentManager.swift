@@ -310,6 +310,23 @@ public final class DocumentManager {
     }
   }
 
+  /// Delete contents in range.
+  /// - Returns: the new insertion point if successful; otherwise, an error.
+  private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
+    // if range is empty, just return the location
+    if range.isEmpty { return .success(range) }
+
+    // validate range before deletion
+    guard TreeUtils.validateRange(range, rootNode)
+    else { return .failure(SatzError(.InvalidTextRange)) }
+
+    // perform deletion
+    return TreeUtils.removeTextRange(range, rootNode)
+      .map { RhTextRange($0.location) }
+  }
+
+  // MARK: - Edit Math
+
   /// Add a math component to the node/nodes at the given range.
   ///
   /// If the node at the location is a math node and the specified math component
@@ -330,6 +347,7 @@ public final class DocumentManager {
       let node = node as? MathNode,
       node.isComponentAllowed(mathIndex)
     {
+      // if component is absent, add it to the node
       if node.getComponent(mathIndex) == nil {
         node.addComponent(mathIndex, component, inStorage: true)
         return .success((range, true))
@@ -347,25 +365,23 @@ public final class DocumentManager {
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
       case let .success(range1):
+        // NOTE: we have to use `crossedObjectAt` instead of `getNode(at:)` here,
+        //    as replaceContents() may normalise the range.
         guard
-          let crossedObject =
-            crossedObjectAt(range1.endLocation, direction: .backward)
+          let crossedObject = crossedObjectAt(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
 
         switch crossedObject {
-        case .text:
-          assertionFailure("Invalid crossed object")
-          return .failure(SatzError(.InvalidTextRange))
-
         case .nonTextNode(let node, let location):
           assert(node === mathNode)
           let end = location.with(offsetDelta: 1)
           let range2 = RhTextRange(location, end)!
           return .success((range2, true))
 
-        case .blockBoundary:
+        case .text,
+          .blockBoundary:
           assertionFailure("Invalid crossed object")
           return .failure(SatzError(.InvalidTextRange))
         }
@@ -389,8 +405,6 @@ public final class DocumentManager {
         return AttachNode(nuc: nucleus, sub: component)
       case .sup:
         return AttachNode(nuc: nucleus, sup: component)
-      case .index:
-        return RadicalNode(nucleus, index: component)
       default:
         assertionFailure("Invalid math index")
         return nil
@@ -493,21 +507,6 @@ public final class DocumentManager {
     }
 
     return .success(range)
-  }
-
-  /// Delete contents in range.
-  /// - Returns: the new insertion point if successful; otherwise, an error.
-  private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
-    // if range is empty, just return the location
-    if range.isEmpty { return .success(range) }
-
-    // validate range before deletion
-    guard TreeUtils.validateRange(range, rootNode)
-    else { return .failure(SatzError(.InvalidTextRange)) }
-
-    // perform deletion
-    return TreeUtils.removeTextRange(range, rootNode)
-      .map { RhTextRange($0.location) }
   }
 
   // MARK: - Layout
