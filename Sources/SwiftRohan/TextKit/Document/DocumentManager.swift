@@ -676,10 +676,6 @@ public final class DocumentManager {
     extending: Bool
   ) -> AffineLocation? {
 
-    func isWhitespace(_ string: String) -> Bool {
-      string.count == 1 && string.first!.isWhitespace == true
-    }
-
     switch direction {
     case .forward, .backward:
       guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
@@ -836,6 +832,26 @@ public final class DocumentManager {
     return textNode.attributedSubstring(for: startOffset..<endOffset, styleSheet)
   }
 
+  /// Return layout offset from `location` to `endLocation` for the same text node.
+  internal func llOffset(
+    from location: TextLocation, to endLocation: TextLocation
+  ) -> Int? {
+    guard let trace = Trace.from(location, rootNode),
+      let endTrace = Trace.from(endLocation, rootNode),
+      let last = trace.last,
+      let endLast = endTrace.last,
+      let textNode = last.node as? TextNode,
+      textNode === endLast.node
+    else { return nil }
+    guard let startOffset = textNode.getLayoutOffset(last.index),
+      let endOffset = textNode.getLayoutOffset(endLast.index)
+    else { return nil }
+    // get offset
+    return endOffset - startOffset
+  }
+
+  // MARK: - Replacement Support
+
   /// Returns a substring before the given location with at most the given
   /// extended-character count.
   /// - Returns: The substring and its range if successful; otherwise, nil.
@@ -970,24 +986,6 @@ public final class DocumentManager {
 
     // return the location
     return trace.toRawLocation()
-  }
-
-  /// Return layout offset from `location` to `endLocation` for the same text node.
-  internal func llOffset(
-    from location: TextLocation, to endLocation: TextLocation
-  ) -> Int? {
-    guard let trace = Trace.from(location, rootNode),
-      let endTrace = Trace.from(endLocation, rootNode),
-      let last = trace.last,
-      let endLast = endTrace.last,
-      let textNode = last.node as? TextNode,
-      textNode === endLast.node
-    else { return nil }
-    guard let startOffset = textNode.getLayoutOffset(last.index),
-      let endOffset = textNode.getLayoutOffset(endLast.index)
-    else { return nil }
-    // get offset
-    return endOffset - startOffset
   }
 
   // MARK: - Location
