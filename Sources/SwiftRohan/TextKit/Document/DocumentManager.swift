@@ -349,7 +349,7 @@ public final class DocumentManager {
       case let .success(range1):
         guard
           let crossedObject =
-            crossedObjectAt_v2(range1.endLocation, direction: .backward)
+            crossedObjectAt(range1.endLocation, direction: .backward)
         else {
           return .failure(SatzError(.InvalidTextRange))
         }
@@ -639,7 +639,7 @@ public final class DocumentManager {
 
     switch direction {
     case .forward:
-      if let object = self.crossedObjectAt_v2(location, direction: .backward),
+      if let object = self.crossedObjectAt(location, direction: .backward),
         isWhitespace(object)
       {
         return .downstream
@@ -649,7 +649,7 @@ public final class DocumentManager {
       }
 
     case .backward:
-      if let object = self.crossedObjectAt_v2(location, direction: .forward),
+      if let object = self.crossedObjectAt(location, direction: .forward),
         isWhitespace(object)
       {
         return .upstream
@@ -1038,7 +1038,7 @@ public final class DocumentManager {
   /// given direction.
   /// - Returns: The object and the location of its downstream edge if successful;
   ///     otherwise, nil.
-  internal func crossedObjectAt_v2(
+  internal func crossedObjectAt(
     _ location: TextLocation, direction: LinearDirection
   ) -> CrossedObject? {
     guard var trace = Trace.from(location, rootNode) else {
@@ -1065,8 +1065,7 @@ public final class DocumentManager {
           }
           else {
             trace.truncate(to: trace.count - 1)
-            guard let index = trace.last?.index.index()
-            else {
+            guard let index = trace.last?.index.index() else {
               assertionFailure("Invalid location")
               return nil
             }
