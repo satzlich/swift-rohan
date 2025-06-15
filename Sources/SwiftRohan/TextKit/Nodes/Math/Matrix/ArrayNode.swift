@@ -77,43 +77,6 @@ class ArrayNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
-  /// - Parameters:
-  ///   - previousClass: the math class to precede the first fragment of the layout.
-  final func _reconcileMathListLayoutFragment(
-    _ element: ContentNode, _ fragment: MathListLayoutFragment,
-    parent context: LayoutContext,
-    fromScratch: Bool, previousClass: MathClass? = nil
-  ) {
-    switch context {
-    case let context as TextLayoutContext:
-      LayoutUtils.reconcileMathListLayoutFragment(
-        element, fragment, parent: context,
-        fromScratch: fromScratch, previousClass: previousClass)
-
-    case let context as MathListLayoutContext:
-      LayoutUtils.reconcileMathListLayoutFragment(
-        element, fragment, parent: context,
-        fromScratch: fromScratch, previousClass: previousClass)
-
-    default:
-      preconditionFailure("unsupported context type: \(Swift.type(of: context))")
-    }
-  }
-
-  final func _createMathContext(_ parentContext: LayoutContext) -> MathContext {
-    switch parentContext {
-    case let context as TextLayoutContext:
-      let mathContext = MathUtils.resolveMathContext(for: self, context.styleSheet)
-      return mathContext
-
-    case let context as MathListLayoutContext:
-      return context.mathContext
-
-    default:
-      preconditionFailure("unsupported context type: \(Swift.type(of: parentContext))")
-    }
-  }
-
   internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
@@ -134,7 +97,8 @@ class ArrayNode: Node {
           let fragment = nodeFragment.getElement(i, j)
 
           _reconcileMathListLayoutFragment(
-            element, fragment, parent: context, fromScratch: true)
+            element, fragment, parent: context,
+            fromScratch: true, previousClass: _previousClass(i, j))
         }
       }
       // layout the matrix
@@ -161,13 +125,15 @@ class ArrayNode: Node {
             let fragment = nodeFragment.getElement(i, j)
             if _addedNodes.contains(element.id) {
               _reconcileMathListLayoutFragment(
-                element, fragment, parent: context, fromScratch: true)
+                element, fragment, parent: context,
+                fromScratch: true, previousClass: _previousClass(i, j))
               needsFixLayout = true
             }
             else if element.isDirty {
               let oldMetrics = fragment.boxMetrics
               _reconcileMathListLayoutFragment(
-                element, fragment, parent: context, fromScratch: false)
+                element, fragment, parent: context,
+                fromScratch: false, previousClass: _previousClass(i, j))
               if fragment.isNearlyEqual(to: oldMetrics) == false {
                 needsFixLayout = true
               }
@@ -196,6 +162,42 @@ class ArrayNode: Node {
     _addedNodes.removeAll()
 
     return 1
+  }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case rows, command }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let command = try container.decode(String.self, forKey: .command)
+
+    guard let subtype = MathArray.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid matrix command: \(command)")
+    }
+
+    let rows = try container.decode(Array<Row>.self, forKey: .rows)
+
+    guard ArrayNode.validate(rows: rows, subtype: subtype) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .rows, in: container,
+        debugDescription: "Invalid matrix rows")
+    }
+
+    self.subtype = subtype
+    self._rows = rows
+    super.init()
+    self._setUp()
+  }
+
+  final override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(subtype.command, forKey: .command)
+    try container.encode(_rows, forKey: .rows)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Node(Tree API)
@@ -413,10 +415,6 @@ class ArrayNode: Node {
     }
   }
 
-  required init(from decoder: any Decoder) throws {
-    preconditionFailure("should not be called")
-  }
-
   private static func validate(rows: Array<Row>) -> Bool {
     guard rows.isEmpty == false,
       rows[0].isEmpty == false
@@ -433,14 +431,6 @@ class ArrayNode: Node {
   static func validate(rows: Array<Row>, subtype: MathArray) -> Bool {
     validate(rows: rows)
       && (subtype.isMultiColumnEnabled || rows[0].count == 1)
-  }
-
-  /// Creates layout fragment for the array node.
-  internal func _createMathArrayLayoutFragment(
-    _ context: LayoutContext, _ mathContext: MathContext
-  ) -> MathArrayLayoutFragment {
-    MathArrayLayoutFragment(
-      rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext, 0)
   }
 
   // MARK: - Content
@@ -574,7 +564,7 @@ class ArrayNode: Node {
 
   /// Applies the edit log to the given node fragment.
   /// - Returns: `true` if the edit log is applied, `false` if the edit log is empty.
-  internal func _applyEditLogToFragment(_ nodeFragment: MathArrayLayoutFragment) -> Bool {
+  final func _applyEditLogToFragment(_ nodeFragment: MathArrayLayoutFragment) -> Bool {
     guard _editLog.isEmpty == false else { return false }
 
     for event in _editLog {
@@ -590,5 +580,46 @@ class ArrayNode: Node {
       }
     }
     return true
+  }
+
+  // MARK: - Overriding Required
+
+  /// Creates layout fragment for the array node.
+  internal func _createMathArrayLayoutFragment(
+    _ context: LayoutContext, _ mathContext: MathContext
+  ) -> MathArrayLayoutFragment {
+    // default implementation.
+    MathArrayLayoutFragment(
+      rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext, 0)
+  }
+
+  /// Returns the math class to **virtually precede** the first fragment of the
+  /// math list for the cell at the given row and column index.
+  internal func _previousClass(_ rowIndex: Int, _ columnIndex: Int) -> MathClass? {
+    nil  // default implementation
+  }
+
+  /// - Parameters:
+  ///   - previousClass: the math class to precede the first fragment of the layout.
+  internal func _reconcileMathListLayoutFragment(
+    _ element: ContentNode, _ fragment: MathListLayoutFragment,
+    parent context: LayoutContext,
+    fromScratch: Bool, previousClass: MathClass? = nil
+  ) {
+    preconditionFailure("overriding required")
+  }
+
+  final func _createMathContext(_ parentContext: LayoutContext) -> MathContext {
+    switch parentContext {
+    case let context as TextLayoutContext:
+      let mathContext = MathUtils.resolveMathContext(for: self, context.styleSheet)
+      return mathContext
+
+    case let context as MathListLayoutContext:
+      return context.mathContext
+
+    default:
+      preconditionFailure("unsupported context type: \(Swift.type(of: parentContext))")
+    }
   }
 }

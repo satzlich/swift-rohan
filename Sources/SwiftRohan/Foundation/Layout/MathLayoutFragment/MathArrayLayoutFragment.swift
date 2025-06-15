@@ -167,11 +167,12 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       // add to column edges
       _columnEdges.append(x)
 
-      let rcol = _columnWidth(column)
+      let columnWidth = _columnWidth(column)
       var y = yDelta
 
       for (rowIndex, (cell, height)) in zip(column, heights).enumerated() {
-        let xx = x + cellAlignments.get(rowIndex, columnIndex).position(rcol - cell.width)
+        let alignment = cellAlignments.get(rowIndex, columnIndex)
+        let xx = x + alignment.position(columnWidth - cell.width)
         let yy = y + height.ascent
         let pos = CGPoint(x: xx, y: yy)
 
@@ -183,7 +184,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       }
 
       // Advance to the end of the column
-      x += rcol
+      x += columnWidth
       // advance to the start of the next column
       colGap = font.convertToPoints(colGapCalculator.get(columnIndex))
       x += colGap

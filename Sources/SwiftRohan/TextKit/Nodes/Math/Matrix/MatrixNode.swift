@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import UnicodeMathClass
 
 final class MatrixNode: ArrayNode {
   // MARK: - Node
@@ -24,26 +25,8 @@ final class MatrixNode: ArrayNode {
 
   // MARK: - Node(Codable)
 
-  private enum CodingKeys: CodingKey { case rows, command }
-
   required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let subtype = MathArray.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Invalid matrix command: \(command)")
-    }
-    let rows = try container.decode(Array<Row>.self, forKey: .rows)
-    super.init(subtype, rows)
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype.command, forKey: .command)
-    try container.encode(_rows, forKey: .rows)
-    try super.encode(to: encoder)
+    try super.init(from: decoder)
   }
 
   // MARK: - Node(Storage)
@@ -109,4 +92,14 @@ final class MatrixNode: ArrayNode {
     super.init(deepCopyOf: matrixNode)
   }
 
+  final override func _reconcileMathListLayoutFragment(
+    _ element: ContentNode, _ fragment: MathListLayoutFragment,
+    parent context: LayoutContext,
+    fromScratch: Bool, previousClass: MathClass? = nil
+  ) {
+    let context = context as! MathListLayoutContext
+    return LayoutUtils.reconcileMathListLayoutFragment(
+      element, fragment, parent: context,
+      fromScratch: fromScratch, previousClass: previousClass)
+  }
 }

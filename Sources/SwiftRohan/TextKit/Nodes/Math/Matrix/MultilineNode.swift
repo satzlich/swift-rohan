@@ -27,110 +27,13 @@ final class MultilineNode: ArrayNode {
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is TextLayoutContext)
-
-    guard _isMultline() else {
-      return super.performLayout(context, fromScratch: fromScratch)
-    }
-    assert(self.columnCount == 1)
-
-    let mathContext = _createMathContext(context)
-
-    if fromScratch {
-      let nodeFragment = _createMathArrayLayoutFragment(context, mathContext)
-      _nodeFragment = nodeFragment
-
-      // layout each element
-      for i in (0..<rowCount) {
-        let j = 0  // single column in multiline
-        let element = getElement(i, j)
-        let fragment = nodeFragment.getElement(i, j)
-        _reconcileMathListLayoutFragment(
-          element, fragment, parent: context,
-          fromScratch: true, previousClass: Self._previousClass(i))
-      }
-      nodeFragment.fixLayout(mathContext)
-      context.insertFragment(nodeFragment, self)
-    }
-    else {
-      assert(_nodeFragment != nil)
-      let nodeFragment = _nodeFragment!
-
-      // save metrics before any layout changes
-      let oldMetrics = nodeFragment.boxMetrics
-      var needsFixLayout = false
-
-      // play edit log
-      needsFixLayout = _applyEditLogToFragment(nodeFragment)
-
-      // layout each element
-      if _isDirty {
-        for i in (0..<rowCount) {
-          let j = 0
-          let element = getElement(i, j)
-          let fragment = nodeFragment.getElement(i, j)
-
-          if _addedNodes.contains(element.id) {
-            _reconcileMathListLayoutFragment(
-              element, fragment, parent: context,
-              fromScratch: true, previousClass: Self._previousClass(i))
-            needsFixLayout = true
-          }
-          else if element.isDirty {
-            let oldMetrics = fragment.boxMetrics
-            _reconcileMathListLayoutFragment(
-              element, fragment, parent: context,
-              fromScratch: false, previousClass: Self._previousClass(i))
-            if fragment.isNearlyEqual(to: oldMetrics) == false {
-              needsFixLayout = true
-            }
-          }
-        }
-      }
-
-      if needsFixLayout {
-        nodeFragment.fixLayout(mathContext)
-        if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(1)
-        }
-        else {
-          context.skipBackwards(1)
-        }
-      }
-      else {
-        context.skipBackwards(1)
-      }
-    }
-
-    // clear
-    _isDirty = false
-    _editLog.removeAll()
-    _addedNodes.removeAll()
-
-    return 1
+    return super.performLayout(context, fromScratch: fromScratch)
   }
 
   // MARK: - Node(Codable)
 
-  private enum CodingKeys: CodingKey { case rows, command }
-
   required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let command = try container.decode(String.self, forKey: .command)
-    guard let subtype = MathArray.lookup(command) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .command, in: container,
-        debugDescription: "Invalid matrix command: \(command)")
-    }
-    let rows = try container.decode(Array<Row>.self, forKey: .rows)
-    super.init(subtype, rows)
-  }
-
-  final override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype.command, forKey: .command)
-    try container.encode(_rows, forKey: .rows)
-    try super.encode(to: encoder)
+    try super.init(from: decoder)
   }
 
   // MARK: - Node(Storage)
@@ -215,20 +118,32 @@ final class MultilineNode: ArrayNode {
     let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
     let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
     let containerWidth = pageWidth - leftMargin - rightMargin
-    // 1em for text container inset, 1em for leading padding.
-    return containerWidth.ptValue - 2 * fontSize.floatValue
+    // 10pt for text container inset, 1em for leading padding.
+    return containerWidth.ptValue - 10 - fontSize.floatValue
+  }
+
+  final override func _reconcileMathListLayoutFragment(
+    _ element: ContentNode, _ fragment: MathListLayoutFragment,
+    parent context: any LayoutContext, fromScratch: Bool, previousClass: MathClass? = nil
+  ) {
+    let context = context as! TextLayoutContext
+    return LayoutUtils.reconcileMathListLayoutFragment(
+      element, fragment, parent: context,
+      fromScratch: fromScratch, previousClass: previousClass)
   }
 
   final override func _createMathArrayLayoutFragment(
     _ context: LayoutContext, _ mathContext: MathContext
   ) -> MathArrayLayoutFragment {
-    let containerWidth = Self._getContainerWidth(context.styleSheet)
+    let containerWidth = _isMultline() ? Self._getContainerWidth(context.styleSheet) : 0
     return MathArrayLayoutFragment(
       rowCount: rowCount, columnCount: columnCount, subtype: subtype,
       mathContext, containerWidth)
   }
 
-  private static func _previousClass(_ rowIndex: Int) -> MathClass? {
-    rowIndex > 0 ? MathClass.Normal : nil
+  final override func _previousClass(_ rowIndex: Int, _ columnIndex: Int) -> MathClass? {
+    _isMultline()
+      ? (rowIndex > 0 ? MathClass.Normal : nil)
+      : nil
   }
 }
