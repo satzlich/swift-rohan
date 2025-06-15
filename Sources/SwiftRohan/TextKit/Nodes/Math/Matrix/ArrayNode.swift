@@ -120,7 +120,7 @@ class ArrayNode: Node {
     let mathContext = _createMathContext(context)
 
     if fromScratch {
-      let containerWidth = ArrayNode.getContainerWidth(context.styleSheet)
+      let containerWidth = ArrayNode._getContainerWidth(context.styleSheet)
       let matrixFragment =
         MathArrayLayoutFragment(
           rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext,
@@ -579,11 +579,13 @@ class ArrayNode: Node {
   }
 
   /// Get the width of the content container for this array node.
-  private static func getContainerWidth(_ styleSheet: StyleSheet) -> Double {
+  private static func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
     let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
     let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
     let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
+    let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
     let containerWidth = pageWidth - leftMargin - rightMargin
-    return containerWidth.ptValue - 10  // 5+5 is the inset for the text container.
+    // 1em for text container inset, 1em for leading indent.
+    return containerWidth.ptValue - 2 * fontSize.floatValue
   }
 }
