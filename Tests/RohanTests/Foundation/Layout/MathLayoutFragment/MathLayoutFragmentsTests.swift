@@ -169,8 +169,6 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     callStandardMethods(mathList, fileName: #function)
   }
 
-
-
   @Test
   func matrix() {
     guard let a = createMathListFragment("x"),
@@ -182,7 +180,9 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
       return
     }
     let matrix = MathArrayLayoutFragment(
-      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context)
+      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context,
+      // 300 is arbitrary
+      300)
     matrix.setElement(0, 0, a)
     matrix.setElement(0, 1, b)
     matrix.setElement(1, 0, c)
@@ -401,7 +401,9 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     }
 
     let matrix = MathArrayLayoutFragment(
-      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context)
+      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context,
+      // 300 is arbitrary
+      300)
     matrix.setElement(0, 0, x)
     matrix.setElement(0, 1, y)
     matrix.setElement(1, 0, z)

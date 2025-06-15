@@ -18,6 +18,8 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
   private var _columns: Array<Array<MathListLayoutFragment>>
   private var _composition: MathComposition
+  /// The width of the content container.
+  private let _containerWidth: Double
 
   /// y-coordinates of the (top) row edges from 0 to rowCount
   private var _rowEdges: Array<Double>
@@ -27,7 +29,10 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
 
-  init(rowCount: Int, columnCount: Int, subtype: MathArray, _ mathContext: MathContext) {
+  init(
+    rowCount: Int, columnCount: Int,
+    subtype: MathArray, _ mathContext: MathContext, _ containerWidth: Double
+  ) {
     precondition(rowCount > 0 && columnCount > 0)
 
     self.subtype = subtype
@@ -38,8 +43,11 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       }
     self._columns = columns
 
+    //
     self.mathContext = mathContext
+    self._containerWidth = containerWidth
 
+    //
     self._composition = MathComposition()
     self.glyphOrigin = .zero
     self._rowEdges = []
@@ -91,7 +99,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
     let axisHeight = font.convertToPoints(constants.axisHeight)
     let rowGap = font.convertToPoints(subtype.getRowGap())
-    let columnAlignments = subtype.getCellAlignments()
+    let cellAlignments = subtype.getCellAlignments()
     let colGapCalculator = subtype.getColumnGapCalculator(_columns, mathContext)
 
     // We pad ascent and descent with the ascent and descent of the paren
@@ -147,15 +155,21 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
     var x = xDelta
     var colGap = 0.0
-    for (j, col) in _columns.enumerated() {
+    for (columnIndex, col) in _columns.enumerated() {
       // add to column edges
       _columnEdges.append(x)
 
-      let rcol = col.lazy.map(\.width).max() ?? 0
+      let rcol =
+        switch subtype.subtype {
+        case .multline:
+          _containerWidth  // For multline, we use the container width.
+        case _:
+          col.lazy.map(\.width).max() ?? 0
+        }
 
       var y = yDelta
-      for (cell, height) in zip(col, heights) {
-        let xx = x + columnAlignments.get(j).position(rcol - cell.width)
+      for (rowIndex, (cell, height)) in zip(col, heights).enumerated() {
+        let xx = x + cellAlignments.get(rowIndex, columnIndex).position(rcol - cell.width)
         let yy = y + height.ascent
         let pos = CGPoint(x: xx, y: yy)
 
@@ -169,7 +183,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       // Advance to the end of the column
       x += rcol
       // advance to the start of the next column
-      colGap = font.convertToPoints(colGapCalculator.get(j))
+      colGap = font.convertToPoints(colGapCalculator.get(columnIndex))
       x += colGap
     }
 

@@ -15,6 +15,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case cases
     case gathered
     case matrix(DelimiterPair)
+    case multline
     case substack
 
     var isMatrix: Bool {
@@ -28,6 +29,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
       case .cases: true
       case .gathered: false
       case .matrix: true
+      case .multline: false
       case .substack: false
       }
     }
@@ -47,6 +49,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return DelimiterPair.LBRACE
     case .gathered: return DelimiterPair.NONE
     case .matrix(let delimiters): return delimiters
+    case .multline: return DelimiterPair.NONE
     case .substack: return DelimiterPair.NONE
     }
   }
@@ -62,6 +65,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return MATRIX_ROW_GAP
     case .gathered: return ALIGN_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
+    case .multline: return ALIGN_ROW_GAP
     case .substack: return SUBSTACK_ROW_GAP
     }
   }
@@ -72,6 +76,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return FixedCellAlignmentProvider(.start)
     case .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
+    case .multline: return MultlineCellAlignmentProvider()
     case .substack: return FixedCellAlignmentProvider(.center)
     }
   }
@@ -81,13 +86,13 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     _ mathContext: MathContext
   ) -> ColumnGapProvider {
     let alignments = getCellAlignments()
-
     switch subtype {
     case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
     case .cases: return MatrixColumnGapProvider()
-    case .gathered: return PlaceholderColumnGapProvider()
+    case .gathered: return PlaceholderColumnGapProvider()  // unused
     case .matrix: return MatrixColumnGapProvider()
-    case .substack: return PlaceholderColumnGapProvider()
+    case .multline: return PlaceholderColumnGapProvider()  // unused
+    case .substack: return PlaceholderColumnGapProvider()  // unused
     }
   }
 }
@@ -126,6 +131,7 @@ extension MathArray {
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
   //
+  static let multline = MathArray("multline", .multline)
   static let substack = MathArray("substack", .substack)
 }
 
@@ -156,6 +162,15 @@ private struct FixedCellAlignmentProvider: CellAlignmentProvider {
 private struct AlternateCellAlignmentProvider: CellAlignmentProvider {
   func get(_ column: Int) -> FixedAlignment {
     column % 2 == 0 ? .end : .start
+  }
+}
+
+/// This is for `{multline}` environment.
+private struct MultlineCellAlignmentProvider: CellAlignmentProvider {
+  func get(_ column: Int) -> FixedAlignment { .start }
+
+  func get(_ row: Int, _ column: Int) -> FixedAlignment {
+    row == 0 ? .start : .end
   }
 }
 

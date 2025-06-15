@@ -25,8 +25,13 @@ class ArrayNode: Node {
       let value = key.resolveValue(current, styleSheet).mathStyle()!
       let mathStyle =
         switch subtype.subtype {
-        case .matrix, .cases, .substack: MathUtils.matrixStyle(for: value)
-        case .aligned, .gathered: MathUtils.alignedStyle(for: value)
+        case .aligned: MathUtils.alignedStyle(for: value)
+        case .gathered: MathUtils.gatheredStyle(for: value)
+        case .multline: MathUtils.multlineStyle(for: value)
+
+        case .cases: MathUtils.matrixStyle(for: value)
+        case .matrix: MathUtils.matrixStyle(for: value)
+        case .substack: MathUtils.matrixStyle(for: value)
         }
       current[key] = .mathStyle(mathStyle)
 
@@ -84,8 +89,11 @@ class ArrayNode: Node {
     let mathContext = context.mathContext
 
     if fromScratch {
-      let matrixFragment = MathArrayLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext)
+      let containerWidth = ArrayNode.getContainerWidth(context.styleSheet)
+      let matrixFragment =
+        MathArrayLayoutFragment(
+          rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext,
+          containerWidth)
       _matrixFragment = matrixFragment
 
       // layout each element
@@ -530,4 +538,12 @@ class ArrayNode: Node {
     _matrixFragment?.rayshoot(from: point, index, in: direction)
   }
 
+  /// Get the width of the content container for this array node.
+  private static func getContainerWidth(_ styleSheet: StyleSheet) -> Double {
+    let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
+    let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
+    let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
+    let containerWidth = pageWidth - leftMargin - rightMargin
+    return containerWidth.ptValue - 10  // 5+5 is the inset for the text container.
+  }
 }
