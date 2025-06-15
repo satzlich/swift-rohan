@@ -84,14 +84,10 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 
     switch subtype {
     case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
-    case .cases: return MatrixColumnGapProvider(columns, alignments, mathContext)
-    case .gathered:
-      // placeholder only, gathered does not support multi-column
-      return MatrixColumnGapProvider(columns, alignments, mathContext)
-    case .matrix: return MatrixColumnGapProvider(columns, alignments, mathContext)
-    case .substack:
-      // placeholder only, substack does not support multi-column
-      return MatrixColumnGapProvider(columns, alignments, mathContext)
+    case .cases: return MatrixColumnGapProvider()
+    case .gathered: return PlaceholderColumnGapProvider()
+    case .matrix: return MatrixColumnGapProvider()
+    case .substack: return PlaceholderColumnGapProvider()
     }
   }
 }
@@ -163,28 +159,6 @@ private struct AlternateCellAlignmentProvider: CellAlignmentProvider {
   }
 }
 
-//protocol ColumnAlignmentProvider {
-//  func get(_ index: Int) -> FixedAlignment
-//}
-//
-//private struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
-//  let alignment: FixedAlignment
-//
-//  init(_ alignment: FixedAlignment) {
-//    self.alignment = alignment
-//  }
-//
-//  func get(_ index: Int) -> FixedAlignment {
-//    return alignment
-//  }
-//}
-//
-//private struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
-//  func get(_ index: Int) -> FixedAlignment {
-//    return index % 2 == 0 ? .end : .start
-//  }
-//}
-
 // MARK: - Column Gaps
 
 protocol ColumnGapProvider {
@@ -193,15 +167,12 @@ protocol ColumnGapProvider {
   func get(_ index: Int) -> Em
 }
 
-private struct MatrixColumnGapProvider: ColumnGapProvider {
-  init(
-    _ columns: Array<Array<MathListLayoutFragment>>,
-    _ columnAlignments: CellAlignmentProvider,
-    _ mathContext: MathContext
-  ) {
-    // no-op
-  }
+/// Placeholder column gap provider, used when the column gap is not specified.
+private struct PlaceholderColumnGapProvider: ColumnGapProvider {
+  func get(_ index: Int) -> Em { MATRIX_COL_GAP }
+}
 
+private struct MatrixColumnGapProvider: ColumnGapProvider {
   func get(_ index: Int) -> Em { MATRIX_COL_GAP }
 }
 
