@@ -91,7 +91,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
     let axisHeight = font.convertToPoints(constants.axisHeight)
     let rowGap = font.convertToPoints(subtype.getRowGap())
-    let columnAlignments = subtype.getColumnAlignments()
+    let columnAlignments = subtype.getCellAlignments()
     let colGapCalculator = subtype.getColumnGapCalculator(_columns, mathContext)
 
     // We pad ascent and descent with the ascent and descent of the paren

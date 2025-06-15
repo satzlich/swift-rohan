@@ -66,13 +66,13 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     }
   }
 
-  func getColumnAlignments() -> ColumnAlignmentProvider {
+  func getCellAlignments() -> CellAlignmentProvider {
     switch subtype {
-    case .aligned: return AlternateColumnAlignmentProvider()
-    case .cases: return FixedColumnAlignmentProvider(.start)
-    case .gathered: return FixedColumnAlignmentProvider(.center)
-    case .matrix: return FixedColumnAlignmentProvider(.center)
-    case .substack: return FixedColumnAlignmentProvider(.center)
+    case .aligned: return AlternateCellAlignmentProvider()
+    case .cases: return FixedCellAlignmentProvider(.start)
+    case .gathered: return FixedCellAlignmentProvider(.center)
+    case .matrix: return FixedCellAlignmentProvider(.center)
+    case .substack: return FixedCellAlignmentProvider(.center)
     }
   }
 
@@ -80,7 +80,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ mathContext: MathContext
   ) -> ColumnGapProvider {
-    let alignments = getColumnAlignments()
+    let alignments = getCellAlignments()
 
     switch subtype {
     case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
@@ -133,27 +133,57 @@ extension MathArray {
   static let substack = MathArray("substack", .substack)
 }
 
-protocol ColumnAlignmentProvider {
-  func get(_ index: Int) -> FixedAlignment
+protocol CellAlignmentProvider {
+  /// Column alignment.
+  func get(_ column: Int) -> FixedAlignment
+  /// Cell alignment if more refined alignment is needed.
+  func get(_ row: Int, _ column: Int) -> FixedAlignment
 }
 
-private struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
+extension CellAlignmentProvider {
+  func get(_ row: Int, _ column: Int) -> FixedAlignment {
+    self.get(column)
+  }
+}
+
+private struct FixedCellAlignmentProvider: CellAlignmentProvider {
   let alignment: FixedAlignment
 
   init(_ alignment: FixedAlignment) {
     self.alignment = alignment
   }
 
-  func get(_ index: Int) -> FixedAlignment {
-    return alignment
+  func get(_ column: Int) -> FixedAlignment { alignment }
+}
+
+/// This is for `{aligned}` environment.
+private struct AlternateCellAlignmentProvider: CellAlignmentProvider {
+  func get(_ column: Int) -> FixedAlignment {
+    column % 2 == 0 ? .end : .start
   }
 }
 
-private struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
-  func get(_ index: Int) -> FixedAlignment {
-    return index % 2 == 0 ? .end : .start
-  }
-}
+//protocol ColumnAlignmentProvider {
+//  func get(_ index: Int) -> FixedAlignment
+//}
+//
+//private struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
+//  let alignment: FixedAlignment
+//
+//  init(_ alignment: FixedAlignment) {
+//    self.alignment = alignment
+//  }
+//
+//  func get(_ index: Int) -> FixedAlignment {
+//    return alignment
+//  }
+//}
+//
+//private struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
+//  func get(_ index: Int) -> FixedAlignment {
+//    return index % 2 == 0 ? .end : .start
+//  }
+//}
 
 // MARK: - Column Gaps
 
@@ -166,7 +196,7 @@ protocol ColumnGapProvider {
 private struct MatrixColumnGapProvider: ColumnGapProvider {
   init(
     _ columns: Array<Array<MathListLayoutFragment>>,
-    _ columnAlignments: ColumnAlignmentProvider,
+    _ columnAlignments: CellAlignmentProvider,
     _ mathContext: MathContext
   ) {
     // no-op
@@ -177,12 +207,12 @@ private struct MatrixColumnGapProvider: ColumnGapProvider {
 
 private struct AlignColumnGapProvider: ColumnGapProvider {
   private let _columns: Array<Array<MathListLayoutFragment>>
-  private let _columnAlignments: ColumnAlignmentProvider
+  private let _columnAlignments: CellAlignmentProvider
   private let _mathContext: MathContext
 
   init(
     _ columns: Array<Array<MathListLayoutFragment>>,
-    _ columnAlignments: ColumnAlignmentProvider,
+    _ columnAlignments: CellAlignmentProvider,
     _ mathContext: MathContext
   ) {
     self._columns = columns
