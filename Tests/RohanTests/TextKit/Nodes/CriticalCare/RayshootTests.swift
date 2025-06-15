@@ -1,5 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
+import CoreGraphics
+import DequeModule
 import Testing
 
 @testable import SwiftRohan
@@ -133,6 +136,31 @@ final class RayshootTests: TextKitTestsBase {
       }
       #expect("\(result1)" == expected1)
 
+    }
+  }
+
+  @Test
+  func mathNode_rayshoot() {
+
+    let mathNodes: Array<MathNode> = [
+      MathAttributesNode(.limits, [TextNode("abc")]),
+      MathStylesNode(.mathcal, [TextNode("abc")]),
+      TextModeNode([TextNode("abc")]),
+      AccentNode(.widehat, nucleus: [TextNode("abc")]),
+      AttachNode(nuc: [TextNode("abc")], sub: [TextNode("2")]),
+      FractionNode(num: [TextNode("m")], denom: [TextNode("n")]),
+      LeftRightNode(.BRACE, [TextNode("abc")]),
+      RadicalNode([TextNode("abc")], index: [TextNode("k")]),
+      UnderOverNode(.overbrace, [TextNode("abc")]),
+    ]
+    let equationNode = EquationNode(.block, ElementStore(mathNodes))
+
+    // Call createDocumentManager() to ensure the tree is laid out.
+    _ = self.createDocumentManager(RootNode([equationNode]))
+
+    for node in chain(mathNodes, [equationNode]) {
+      _ = node.rayshoot(from: CGPoint(x: 5, y: 5), .nuc, in: .up)
+      _ = node.rayshoot(from: CGPoint(x: 5, y: 5), .nuc, in: .down)
     }
   }
 }
