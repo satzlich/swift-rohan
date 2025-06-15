@@ -4,15 +4,36 @@ import Foundation
 
 /// Non-symbol text commands.
 enum TextCommands {
-  static let allCases: Array<CommandRecord> = [
-    // sections
-    .init("h1", Snippets.header(level: 1)),
-    .init("h2", Snippets.header(level: 2)),
-    .init("h3", Snippets.header(level: 3)),
-    // style
-    .init("emph", Snippets.emphasis),
-    .init("strong", Snippets.strong),
-    // math
-    .init("equation*", Snippets.equation),
-  ]
+  static let allCases: Array<CommandRecord> = _allCases()
+
+  private static func _allCases() -> Array<CommandRecord> {
+    var result: Array<CommandRecord> =
+      [
+        // sections
+        .init("h1", Snippets.header(level: 1)),
+        .init("h2", Snippets.header(level: 2)),
+        .init("h3", Snippets.header(level: 3)),
+        // style
+        .init("emph", Snippets.emphasis),
+        .init("strong", Snippets.strong),
+        // math
+        .init("equation*", Snippets.equation),
+      ]
+
+    // multiline
+    do {
+      let multilines: Array<(MathArray, String)> = [
+        (MathArray.multlineAst, "gathered")  // recycle "gathered"
+      ]
+      assert(multilines.count == MathArray.blockMathCommands.count)
+
+      let records = multilines.map { multiline, image in
+        let expr = CommandBody.arrayExpr(multiline, image: image, MultilineExpr.self)
+        return CommandRecord(multiline.command, expr)
+      }
+      result.append(contentsOf: records)
+    }
+
+    return result
+  }
 }

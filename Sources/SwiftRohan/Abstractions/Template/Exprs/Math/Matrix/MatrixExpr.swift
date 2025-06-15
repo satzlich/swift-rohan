@@ -3,7 +3,7 @@
 final class MatrixExpr: ArrayExpr {
   override class var type: ExprType { .matrix }
 
-  override init(_ subtype: MathArray, _ rows: Array<Row>) {
+  required override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
   }
 

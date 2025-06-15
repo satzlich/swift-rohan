@@ -524,7 +524,10 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit(
     multiline: MultilineNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _visitArray(command: multiline.subtype.command, multiline, context)
+    precondition(context == .textMode)
+    // switch context
+    let context = LayoutMode.mathMode
+    return _visitArray(command: multiline.subtype.command, multiline, context)
   }
 
   override func visit(

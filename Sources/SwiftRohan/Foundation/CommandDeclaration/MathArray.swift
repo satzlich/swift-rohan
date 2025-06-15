@@ -70,13 +70,13 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     }
   }
 
-  func getCellAlignments() -> CellAlignmentProvider {
+  func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
     switch subtype {
     case .aligned: return AlternateCellAlignmentProvider()
     case .cases: return FixedCellAlignmentProvider(.start)
     case .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
-    case .multline: return MultlineCellAlignmentProvider()
+    case .multline: return MultlineCellAlignmentProvider(rowCount)
     case .substack: return FixedCellAlignmentProvider(.center)
     }
   }
@@ -85,7 +85,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ mathContext: MathContext
   ) -> ColumnGapProvider {
-    let alignments = getCellAlignments()
+    let alignments = getCellAlignments(columns.first?.count ?? 0)
     switch subtype {
     case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
     case .cases: return MatrixColumnGapProvider()
@@ -175,10 +175,20 @@ private struct AlternateCellAlignmentProvider: CellAlignmentProvider {
 
 /// This is for `{multline}` environment.
 private struct MultlineCellAlignmentProvider: CellAlignmentProvider {
+  private let _rowCount: Int
+
+  init(_ rowCount: Int) {
+    self._rowCount = rowCount
+  }
+
   func get(_ column: Int) -> FixedAlignment { .start }
 
   func get(_ row: Int, _ column: Int) -> FixedAlignment {
-    row == 0 ? .start : .end
+    row == 0
+      ? .start
+      : row == _rowCount - 1
+        ? .end
+        : .center
   }
 }
 

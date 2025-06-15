@@ -172,16 +172,18 @@ extension CommandBody {
 
   /// Create a command body from a matrix.
   /// - Parameter image: preview image name without extension.
-  static func from(_ matrix: MathArray, image: String) -> CommandBody {
+  static func arrayExpr<T: ArrayExpr>(
+    _ matrix: MathArray, image: String, _ arrayClass: T.Type
+  ) -> CommandBody {
     let rowCount = 2
     let columnCount = matrix.isMultiColumnEnabled ? 2 : 1
     let count = rowCount * columnCount
 
-    let rows: Array<MatrixExpr.Row> = (0..<rowCount).map { _ in
+    let rows: Array<ArrayExpr.Row> = (0..<rowCount).map { _ in
       let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
-      return MatrixExpr.Row(elements)
+      return ArrayExpr.Row(elements)
     }
-    let expr = MatrixExpr(matrix, rows)
+    let expr = arrayClass.init(matrix, rows)
     return CommandBody(expr, count, preview: .image(image))
   }
 

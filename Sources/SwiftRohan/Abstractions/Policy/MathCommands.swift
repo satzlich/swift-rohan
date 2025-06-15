@@ -85,7 +85,8 @@ enum MathCommands {
       assert(matrices.count == MathArray.inlineMathCommands.count)
 
       let records = matrices.map { matrix, image in
-        CommandRecord(matrix.command, CommandBody.from(matrix, image: image))
+        let expr = CommandBody.arrayExpr(matrix, image: image, MatrixExpr.self)
+        return CommandRecord(matrix.command, expr)
       }
       result.append(contentsOf: records)
     }

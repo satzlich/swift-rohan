@@ -94,11 +94,11 @@ enum LayoutUtils {
 
   static func reconcileMathListLayoutFragment(
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: TextLayoutContext
+    parent: TextLayoutContext, fromScratch: Bool = false
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
-    _ = component.performLayout(context, fromScratch: false)
+    _ = component.performLayout(context, fromScratch: fromScratch)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
@@ -118,15 +118,7 @@ enum LayoutUtils {
 
   static func reconcileMathListLayoutFragment(
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: MathListLayoutContext
-  ) {
-    reconcileMathListLayoutFragment(
-      component, fragment, parent: parent, fromScratch: false)
-  }
-
-  static func reconcileMathListLayoutFragment(
-    _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: MathListLayoutContext, fromScratch: Bool
+    parent: MathListLayoutContext, fromScratch: Bool = false
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
