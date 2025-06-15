@@ -32,6 +32,7 @@ enum NodePolicy {
       .apply,
       // Array
       .matrix,
+      .multiline,
       // Math
       .accent,
       .attach,
@@ -124,7 +125,7 @@ enum NodePolicy {
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inline(__always)
   static func canBeTopLevel(_ node: Node) -> Bool {
-    [.heading, .paragraph].contains(node.type)
+    [.heading, .paragraph, .multiline].contains(node.type)
       || isEquationNode(node) && node.isBlock
   }
 

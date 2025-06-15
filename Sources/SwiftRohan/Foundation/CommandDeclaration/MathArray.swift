@@ -100,6 +100,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 extension MathArray {
   static let allCommands: Array<MathArray> = inlineMathCommands + blockMathCommands
 
+  /// - Note: These commands are used by MatrixNode.
   static let inlineMathCommands: Array<MathArray> = [
     aligned,
     cases,
@@ -115,8 +116,9 @@ extension MathArray {
     substack,
   ]
 
+  /// - Note: These commands are used by MultilineNode.
   static let blockMathCommands: Array<MathArray> = [
-    multline
+    multlineAst
   ]
 
   private static let _dictionary: Dictionary<String, MathArray> =
@@ -137,7 +139,7 @@ extension MathArray {
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
   //
-  static let multline = MathArray("multline", .multline)
+  static let multlineAst = MathArray("multline*", .multline)
   static let substack = MathArray("substack", .substack)
 }
 

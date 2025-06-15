@@ -43,7 +43,18 @@ struct ArrayExprTests {
             ContentExpr([TextExpr("i")]),
             ContentExpr([TextExpr("j")]),
           ]),
-        ])
+        ]),
+      //
+      MultilineExpr(
+        .multlineAst,
+        [
+          MatrixExpr.Row([
+            ContentExpr([TextExpr("g")])
+          ]),
+          MatrixExpr.Row([
+            ContentExpr([TextExpr("i")])
+          ]),
+        ]),
     ]
   }
 

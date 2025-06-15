@@ -10,7 +10,7 @@ struct AbstractionPolicyTests {
   @Test
   static func commandSet() {
     #expect(MathAccent.allCommands.count == 25)
-    #expect(MathArray.allCommands.count == 10)
+    #expect(MathArray.allCommands.count == 11)
     #expect(MathAttributes.allCommands.count == 10)
     #expect(MathExpression.allCommands.count == 11)
     #expect(MathGenFrac.allCommands.count == 8)
@@ -27,7 +27,7 @@ struct AbstractionPolicyTests {
       + MathSpreader.allCommands.count + MathStyles.allCommands.count
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
 
-    #expect(sum == 605)
+    #expect(sum == 606)
     #expect(CommandDeclaration.allCommands.count == sum)
     #expect(CommandRecords.allCases.count == 622)
   }

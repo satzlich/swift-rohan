@@ -11,7 +11,11 @@ final class MultilineNode: ArrayNode {
     visitor.visit(multiline: self, context)
   }
 
-  final override class var type: NodeType { .matrix }
+  final override class var type: NodeType { .multiline }
+
+  // MARK: - Node(Layout)
+
+  final override var isBlock: Bool { true }
 
   // MARK: - Node(Codable)
 

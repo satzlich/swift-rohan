@@ -28,6 +28,7 @@ enum NodeStoreUtils {
     NamedSymbolNode.self,
     MathStylesNode.self,
     MatrixNode.self,
+    MultilineNode.self,
     RadicalNode.self,
     TextModeNode.self,
     UnderOverNode.self,

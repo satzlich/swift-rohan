@@ -104,6 +104,24 @@ final class ExprNodeSyncTests {
         """
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
+    // Multiline
+    do {
+      let multiline = MultilineExpr(
+        .multlineAst,
+        [
+          MultilineExpr.Row([
+            MultilineExpr.Element([TextExpr("abc")])
+          ]),
+          MultilineExpr.Row([
+            MultilineExpr.Element([TextExpr("def")])
+          ]),
+        ])
+      let json =
+        """
+        {"command":"multline*","rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"}]],[[{"children":[{"string":"def","type":"text"}],"type":"content"}]]],"type":"multiline"}
+        """
+      try testSerdeSync(multiline, MultilineNode.self, json)
+    }
 
     // Math
     do {
