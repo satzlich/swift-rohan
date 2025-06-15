@@ -21,6 +21,12 @@ struct ElementNodeTests {
       RootNode([ParagraphNode([TextNode("abc")])]),
       //
       ContentNode([TextNode("abc")]),
+      CrampedNode([TextNode("abc")]),
+      DegreeNode([TextNode("abc")]),
+      DenominatorNode([TextNode("abc")]),
+      NumeratorNode([TextNode("abc")]),
+      SubscriptNode([TextNode("abc")]),
+      SuperscriptNode([TextNode("abc")]),
       //
       EmphasisNode([TextNode("abc")]),
       HeadingNode(level: 1, [TextNode("abc")]),
