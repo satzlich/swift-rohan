@@ -86,7 +86,7 @@ extension MathExpression {
 
   static let smallint =
     MathExpression(
-      "smallint", MathStylesExpr(.inlineStyle, [TextExpr("∫")]), tag: .null)
+      "smallint", MathStylesExpr(.toInlineStyle, [TextExpr("∫")]), tag: .null)
 
   static let varDelta =
     MathExpression(

@@ -5,14 +5,14 @@ import LatexParser
 enum MathStyles: CommandDeclarationProtocol {
   case mathStyle(MathStyle)
   case mathTextStyle(MathTextStyle)
-  /// Switch to parallel style in inline.
-  case inlineStyle
+  /// Switch current math style to corresponding inline style.
+  case toInlineStyle
 
   var command: String {
     switch self {
     case let .mathStyle(style): return style.command
     case let .mathTextStyle(textStyle): return textStyle.command
-    case .inlineStyle: return "_inlinestyle"
+    case .toInlineStyle: return "_inlinestyle"
     }
   }
 
@@ -20,15 +20,15 @@ enum MathStyles: CommandDeclarationProtocol {
     switch self {
     case let .mathStyle(style): return style.tag
     case let .mathTextStyle(textStyle): return textStyle.tag
-    case .inlineStyle: return .null
+    case .toInlineStyle: return .null
     }
   }
-  
+
   var source: CommandSource {
     switch self {
     case let .mathStyle(style): return style.source
     case let .mathTextStyle(textStyle): return textStyle.source
-    case .inlineStyle: return .customExtension
+    case .toInlineStyle: return .customExtension
     }
   }
 
@@ -37,14 +37,14 @@ enum MathStyles: CommandDeclarationProtocol {
     case .mathStyle: return .string("⬚")
     case let .mathTextStyle(textStyle):
       return .string(textStyle.preview())
-    case .inlineStyle:
+    case .toInlineStyle:
       return .string("⬚")
     }
   }
 
   static let allCommands: Array<MathStyles> =
     MathStyle.allCommands.map { .mathStyle($0) }
-    + MathTextStyle.allCommands.map { .mathTextStyle($0) }  // + [.inlineStyle]
+    + MathTextStyle.allCommands.map { .mathTextStyle($0) }  // + [.toInlineStyle]
 }
 
 extension MathStyles {
@@ -71,5 +71,5 @@ extension MathStyles {
   static let mathtt = MathStyles.mathTextStyle(.mathtt)
 
   //
-  static let _inlinestyle = MathStyles.inlineStyle
+  static let _inlinestyle = MathStyles.toInlineStyle
 }
