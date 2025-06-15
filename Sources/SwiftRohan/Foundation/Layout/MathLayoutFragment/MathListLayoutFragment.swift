@@ -141,9 +141,17 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   var layoutLength: Int { 1 }
 
-  /// Fixes layout of the math list.
-  /// - Complexity: O(n-k) where k is the number of fragments before the dirty index.
   func fixLayout(_ mathContext: MathContext) {
+    self.fixLayout(mathContext, previousClass: nil)
+  }
+
+  /// Fixes layout of the math list.
+  /// - Parameters:
+  ///   - mathContext: the math context to use for layout.
+  ///   - previousClass: the math class to precede the first fragment of this list
+  ///       for the purpose of spacing.
+  /// - Complexity: O(n-k) where k is the number of fragments before the dirty index.
+  func fixLayout(_ mathContext: MathContext, previousClass: MathClass?) {
     precondition(!isEditing)
 
     guard let dirtyIndex = _dirtyIndex else { return }
@@ -170,7 +178,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // resolve running math classes
     let resolvedClasses =
-      MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
+      startIndex == 0
+      ? MathUtils.resolveMathClass(_fragments.lazy.map(\.clazz), previous: previousClass)
+      : MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
 
     // initialize position and layout offset
     var position: CGPoint

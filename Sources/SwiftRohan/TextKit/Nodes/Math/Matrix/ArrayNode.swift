@@ -110,11 +110,11 @@ class ArrayNode: Node {
     }
   }
 
-  final override func performLayout(
+  internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
-    // for layout, only MathListLayoutContext is supported.
-    // MathReflowLayoutContext is used in a different way.
+    // MathReflowLayoutContext is not used for layout, though it is used for
+    // other methods such as rayshoot(), etc.
     precondition(context is MathListLayoutContext || context is TextLayoutContext)
 
     let mathContext = _createMathContext(context)
@@ -135,8 +135,6 @@ class ArrayNode: Node {
 
           _reconcileMathListLayoutFragment(
             element, fragment, parent: context, fromScratch: true)
-          //          LayoutUtils.reconcileMathListLayoutFragment(
-          //            element, fragment, parent: context, fromScratch: true)
         }
       }
       // layout the matrix
@@ -585,7 +583,7 @@ class ArrayNode: Node {
     let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
     let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
     let containerWidth = pageWidth - leftMargin - rightMargin
-    // 1em for text container inset, 1em each for leading/trailing indent.
+    // 1em for text container inset, 1em for leading padding.
     return containerWidth.ptValue - 2 * fontSize.floatValue
   }
 }

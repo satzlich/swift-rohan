@@ -21,6 +21,20 @@ final class MultilineNode: ArrayNode {
 
   final override var isBlock: Bool { true }
 
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    precondition(context is TextLayoutContext)
+
+    guard _isMultline() else {
+      return super.performLayout(context, fromScratch: fromScratch)
+    }
+    assert(self.columnCount == 1)
+
+    // TODO: Implement multiline layout logic
+    return super.performLayout(context, fromScratch: fromScratch)
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case rows, command }
@@ -108,12 +122,11 @@ final class MultilineNode: ArrayNode {
     super.init(deepCopyOf: multilineNode)
   }
 
-  internal static func selector(isMultline: Bool? = nil) -> TargetSelector {
-    return isMultline != nil
-      ? TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline!)))
-      : TargetSelector(.multiline)
+  internal static func selector(isMultline: Bool) -> TargetSelector {
+    TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline)))
   }
 
+  /// Returns true if this node corresponds to a `{multline}` environment.
   private func _isMultline() -> Bool {
     switch subtype.subtype {
     case .multline: return true
