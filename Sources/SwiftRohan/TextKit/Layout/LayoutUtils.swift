@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import UnicodeMathClass
 
 enum LayoutUtils {
   /// Initialize MathListLayoutContext and MathListLayoutFragment for the given component.
@@ -92,14 +93,18 @@ enum LayoutUtils {
     return fragment
   }
 
+  ///
+  /// - Parameters:
+  ///   - previousClass: The math class to precede the first item in the layout.
   static func reconcileMathListLayoutFragment(
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: TextLayoutContext, fromScratch: Bool = false
+    parent: TextLayoutContext,
+    fromScratch: Bool = false, previousClass: MathClass? = nil
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
     _ = component.performLayout(context, fromScratch: fromScratch)
-    context.endEditing()
+    context.endEditing(previousClass: previousClass)
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
 
@@ -116,14 +121,18 @@ enum LayoutUtils {
     return fragment
   }
 
+  ///
+  /// - Parameters:
+  ///   - previousClass: The math class to precede the first item in the layout.
   static func reconcileMathListLayoutFragment(
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: MathListLayoutContext, fromScratch: Bool = false
+    parent: MathListLayoutContext,
+    fromScratch: Bool = false, previousClass: MathClass? = nil
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
     _ = component.performLayout(context, fromScratch: fromScratch)
-    context.endEditing()
+    context.endEditing(previousClass: previousClass)
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
 

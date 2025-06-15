@@ -1,9 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import UnicodeMathClass
 
 final class MultilineNode: ArrayNode {
   // MARK: - Node
+
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
@@ -31,8 +33,80 @@ final class MultilineNode: ArrayNode {
     }
     assert(self.columnCount == 1)
 
-    // TODO: Implement multiline layout logic
-    return super.performLayout(context, fromScratch: fromScratch)
+    let mathContext = _createMathContext(context)
+
+    if fromScratch {
+      let nodeFragment = createMathArrayLayoutFragment(context, mathContext)
+      _nodeFragment = nodeFragment
+
+      // layout each element
+      for i in (0..<rowCount) {
+        let j = 0  // single column in multiline
+        let element = getElement(i, j)
+        let fragment = nodeFragment.getElement(i, j)
+        _reconcileMathListLayoutFragment(
+          element, fragment, parent: context,
+          fromScratch: true, previousClass: Self._previousClass(i))
+      }
+      nodeFragment.fixLayout(mathContext)
+      context.insertFragment(nodeFragment, self)
+    }
+    else {
+      assert(_nodeFragment != nil)
+      let nodeFragment = _nodeFragment!
+
+      // save metrics before any layout changes
+      let oldMetrics = nodeFragment.boxMetrics
+      var needsFixLayout = false
+
+      // play edit log
+      needsFixLayout = _applyEditLogToFragment(nodeFragment)
+
+      // layout each element
+      if _isDirty {
+        for i in (0..<rowCount) {
+          let j = 0
+          let element = getElement(i, j)
+          let fragment = nodeFragment.getElement(i, j)
+
+          if _addedNodes.contains(element.id) {
+            _reconcileMathListLayoutFragment(
+              element, fragment, parent: context,
+              fromScratch: true, previousClass: Self._previousClass(i))
+            needsFixLayout = true
+          }
+          else if element.isDirty {
+            let oldMetrics = fragment.boxMetrics
+            _reconcileMathListLayoutFragment(
+              element, fragment, parent: context,
+              fromScratch: false, previousClass: Self._previousClass(i))
+            if fragment.isNearlyEqual(to: oldMetrics) == false {
+              needsFixLayout = true
+            }
+          }
+        }
+      }
+
+      if needsFixLayout {
+        nodeFragment.fixLayout(mathContext)
+        if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
+          context.invalidateBackwards(1)
+        }
+        else {
+          context.skipBackwards(1)
+        }
+      }
+      else {
+        context.skipBackwards(1)
+      }
+    }
+
+    // clear
+    _isDirty = false
+    _editLog.removeAll()
+    _addedNodes.removeAll()
+
+    return 1
   }
 
   // MARK: - Node(Codable)
@@ -152,5 +226,9 @@ final class MultilineNode: ArrayNode {
     return MathArrayLayoutFragment(
       rowCount: rowCount, columnCount: columnCount, subtype: subtype,
       mathContext, containerWidth)
+  }
+
+  private static func _previousClass(_ rowIndex: Int) -> MathClass? {
+    rowIndex > 0 ? MathClass.Normal : nil
   }
 }

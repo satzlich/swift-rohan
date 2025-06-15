@@ -1,9 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import UnicodeMathClass
 import _RopeModule
-
-private let UNIT_LENGTH = 1
 
 class ArrayNode: Node {
   // MARK: - Node(Styles)
@@ -74,29 +73,34 @@ class ArrayNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func layoutLength() -> Int { UNIT_LENGTH }
+  final override func layoutLength() -> Int { 1 }
 
   final override var isDirty: Bool { _isDirty }
 
-  private final func _reconcileMathListLayoutFragment(
+  /// - Parameters:
+  ///   - previousClass: the math class to precede the first fragment of the layout.
+  final func _reconcileMathListLayoutFragment(
     _ element: ContentNode, _ fragment: MathListLayoutFragment,
-    parent context: LayoutContext, fromScratch: Bool
+    parent context: LayoutContext,
+    fromScratch: Bool, previousClass: MathClass? = nil
   ) {
     switch context {
     case let context as TextLayoutContext:
       LayoutUtils.reconcileMathListLayoutFragment(
-        element, fragment, parent: context, fromScratch: fromScratch)
+        element, fragment, parent: context,
+        fromScratch: fromScratch, previousClass: previousClass)
 
     case let context as MathListLayoutContext:
       LayoutUtils.reconcileMathListLayoutFragment(
-        element, fragment, parent: context, fromScratch: fromScratch)
+        element, fragment, parent: context,
+        fromScratch: fromScratch, previousClass: previousClass)
 
     default:
       preconditionFailure("unsupported context type: \(Swift.type(of: context))")
     }
   }
 
-  private final func _createMathContext(_ parentContext: LayoutContext) -> MathContext {
+  final func _createMathContext(_ parentContext: LayoutContext) -> MathContext {
     switch parentContext {
     case let context as TextLayoutContext:
       let mathContext = MathUtils.resolveMathContext(for: self, context.styleSheet)
@@ -147,19 +151,7 @@ class ArrayNode: Node {
       var needsFixLayout = false
 
       // play edit log
-      needsFixLayout = !_editLog.isEmpty
-      for event in _editLog {
-        switch event {
-        case let .insertRow(at: index):
-          nodeFragment.insertRow(at: index)
-        case let .removeRow(at: index):
-          nodeFragment.removeRow(at: index)
-        case let .insertColumn(at: index):
-          nodeFragment.insertColumn(at: index)
-        case let .removeColumn(at: index):
-          nodeFragment.removeColumn(at: index)
-        }
-      }
+      needsFixLayout = _applyEditLogToFragment(nodeFragment)
 
       // layout each element
       if _isDirty {
@@ -187,14 +179,14 @@ class ArrayNode: Node {
       if needsFixLayout {
         nodeFragment.fixLayout(mathContext)
         if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(UNIT_LENGTH)
+          context.invalidateBackwards(1)
         }
         else {
-          context.skipBackwards(UNIT_LENGTH)
+          context.skipBackwards(1)
         }
       }
       else {
-        context.skipBackwards(UNIT_LENGTH)
+        context.skipBackwards(1)
       }
     }
 
@@ -203,7 +195,7 @@ class ArrayNode: Node {
     _editLog.removeAll()
     _addedNodes.removeAll()
 
-    return UNIT_LENGTH
+    return 1
   }
 
   // MARK: - Node(Tree API)
@@ -371,7 +363,7 @@ class ArrayNode: Node {
   typealias Cell = ContentNode
   typealias Row = GridRow<Cell>
 
-  private enum ArrayEvent {
+  internal enum _ArrayEvent {
     case insertRow(at: Int)
     case insertColumn(at: Int)
     case removeRow(at: Int)
@@ -381,7 +373,7 @@ class ArrayNode: Node {
   let subtype: MathArray
   internal var _rows: Array<Row> = []
 
-  private var _isDirty: Bool = false
+  internal var _isDirty: Bool = false
   internal var _nodeFragment: MathArrayLayoutFragment? = nil
   final var layoutFragment: MathLayoutFragment? { _nodeFragment }
 
@@ -460,8 +452,8 @@ class ArrayNode: Node {
     return _rows[index.row][index.column]
   }
 
-  private var _editLog: Array<ArrayEvent> = []
-  private var _addedNodes: Set<NodeIdentifier> = []
+  internal var _editLog: Array<_ArrayEvent> = []
+  internal var _addedNodes: Set<NodeIdentifier> = []
 
   final func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)
@@ -578,5 +570,25 @@ class ArrayNode: Node {
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     _nodeFragment?.rayshoot(from: point, index, in: direction)
+  }
+
+  /// Applies the edit log to the given node fragment.
+  /// - Returns: `true` if the edit log is applied, `false` if the edit log is empty.
+  internal func _applyEditLogToFragment(_ nodeFragment: MathArrayLayoutFragment) -> Bool {
+    guard _editLog.isEmpty == false else { return false }
+
+    for event in _editLog {
+      switch event {
+      case let .insertRow(at: index):
+        nodeFragment.insertRow(at: index)
+      case let .removeRow(at: index):
+        nodeFragment.removeRow(at: index)
+      case let .insertColumn(at: index):
+        nodeFragment.insertColumn(at: index)
+      case let .removeColumn(at: index):
+        nodeFragment.removeColumn(at: index)
+      }
+    }
+    return true
   }
 }
