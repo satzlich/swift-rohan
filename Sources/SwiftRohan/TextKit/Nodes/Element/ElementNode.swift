@@ -317,8 +317,14 @@ internal class ElementNode: Node {
 
         func fallbackLastIndex() {
           let fraction = computeFraction(consumed, child)
-          let resolved = index + (fraction > 0.5 ? 1 : 0)
-          trace.moveTo(.index(resolved))
+          if fraction > 0.5 {
+            trace.moveTo(.index(index + 1))
+            affinity = .upstream
+          }
+          else {
+            trace.moveTo(.index(index))
+            affinity = .downstream
+          }
         }
 
         switch child {
