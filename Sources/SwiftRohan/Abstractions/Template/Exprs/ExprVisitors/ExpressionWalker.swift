@@ -6,7 +6,7 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
   func willVisitExpression(_ expression: Expr, _ context: C) -> Void {}
   func didVisitExpression(_ expression: Expr, _ context: C) -> Void {}
 
-  final override func visitExpr(_ expression: Expr, _ context: C) -> Void {
+  override func visitExpr(_ expression: Expr, _ context: C) -> Void {
     assertionFailure("visitExpr should not be called directly")
   }
 
@@ -15,7 +15,7 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     do { didVisitExpression(linebreak, context) }
   }
 
-  override final func visit(text: TextExpr, _ context: C) -> Void {
+  override func visit(text: TextExpr, _ context: C) -> Void {
     willVisitExpression(text, context)
     do { didVisitExpression(text, context) }
   }
@@ -27,18 +27,18 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
 
   // MARK: - Template
 
-  override final func visit(apply: ApplyExpr, _ context: C) -> Void {
+  override func visit(apply: ApplyExpr, _ context: C) -> Void {
     willVisitExpression(apply, context)
     defer { didVisitExpression(apply, context) }
     apply.arguments.forEach { $0.accept(self, context) }
   }
 
-  override final func visit(variable: VariableExpr, _ context: C) -> Void {
+  override func visit(variable: VariableExpr, _ context: C) -> Void {
     willVisitExpression(variable, context)
     do { didVisitExpression(variable, context) }
   }
 
-  override final func visit(cVariable: CompiledVariableExpr, _ context: C) -> Void {
+  override func visit(cVariable: CompiledVariableExpr, _ context: C) -> Void {
     willVisitExpression(cVariable, context)
     do { didVisitExpression(cVariable, context) }
   }
@@ -51,23 +51,23 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     element.children.forEach { $0.accept(self, context) }
   }
 
-  override final func visit(content: ContentExpr, _ context: C) -> Void {
+  override func visit(content: ContentExpr, _ context: C) -> Void {
     _visitElement(content, context)
   }
 
-  override final func visit(emphasis: EmphasisExpr, _ context: C) -> Void {
+  override func visit(emphasis: EmphasisExpr, _ context: C) -> Void {
     _visitElement(emphasis, context)
   }
 
-  override final func visit(heading: HeadingExpr, _ context: C) -> Void {
+  override func visit(heading: HeadingExpr, _ context: C) -> Void {
     _visitElement(heading, context)
   }
 
-  override final func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
+  override func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
     _visitElement(paragraph, context)
   }
 
-  override final func visit(root: RootExpr, _ context: C) -> Void {
+  override func visit(root: RootExpr, _ context: C) -> Void {
     _visitElement(root, context)
   }
 
@@ -77,7 +77,7 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
 
   // MARK: - Math
 
-  override final func visit(attach: AttachExpr, _ context: C) -> Void {
+  override func visit(attach: AttachExpr, _ context: C) -> Void {
     willVisitExpression(attach, context)
     defer { didVisitExpression(attach, context) }
 
@@ -95,13 +95,13 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     accent.nucleus.accept(self, context)
   }
 
-  override final func visit(equation: EquationExpr, _ context: C) -> Void {
+  override func visit(equation: EquationExpr, _ context: C) -> Void {
     willVisitExpression(equation, context)
     defer { didVisitExpression(equation, context) }
     equation.nucleus.accept(self, context)
   }
 
-  override final func visit(fraction: FractionExpr, _ context: C) -> Void {
+  override func visit(fraction: FractionExpr, _ context: C) -> Void {
     willVisitExpression(fraction, context)
     defer { didVisitExpression(fraction, context) }
     fraction.numerator.accept(self, context)
@@ -144,13 +144,24 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     mathStyles.nucleus.accept(self, context)
   }
 
-  override final func visit(matrix: MatrixExpr, _ context: C) -> Void {
+  override func visit(matrix: MatrixExpr, _ context: C) -> Void {
     willVisitExpression(matrix, context)
     defer { didVisitExpression(matrix, context) }
 
     for i in 0..<matrix.rowCount {
       for j in 0..<matrix.columnCount {
         matrix.get(i, j).accept(self, context)
+      }
+    }
+  }
+
+  override func visit(multiline: MultilineExpr, _ context: C) -> Void {
+    willVisitExpression(multiline, context)
+    defer { didVisitExpression(multiline, context) }
+
+    for i in 0..<multiline.rowCount {
+      for j in 0..<multiline.columnCount {
+        multiline.get(i, j).accept(self, context)
       }
     }
   }

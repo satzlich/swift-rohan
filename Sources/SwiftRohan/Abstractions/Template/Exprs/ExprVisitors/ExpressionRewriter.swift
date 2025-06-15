@@ -168,6 +168,16 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     return matrix.with(rows: rows)
   }
 
+  override func visit(multiline: MultilineExpr, _ context: C) -> R {
+    let context = nextLevelContext(multiline, context)
+
+    let rows = multiline.rows.map { row in
+      let elements = row.map { $0.accept(self, context) as! ContentExpr }
+      return MultilineExpr.Row(elements)
+    }
+    return multiline.with(rows: rows)
+  }
+
   override func visit(radical: RadicalExpr, _ context: C) -> R {
     let context = nextLevelContext(radical, context)
 

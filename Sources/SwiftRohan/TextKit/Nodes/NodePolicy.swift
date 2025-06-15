@@ -219,6 +219,7 @@ enum NodePolicy {
     case .mathOperator: return nil
     case .mathStyles: return .mathContainer
     case .matrix: return .mathContainer
+    case .multiline: return .mathContainer
     case .namedSymbol: return nil
     case .radical: return .mathContainer
     case .textMode: return .textTextContainer

@@ -98,7 +98,9 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 }
 
 extension MathArray {
-  static let allCommands: Array<MathArray> = [
+  static let allCommands: Array<MathArray> = inlineMathCommands + blockMathCommands
+
+  static let inlineMathCommands: Array<MathArray> = [
     aligned,
     cases,
     gathered,
@@ -111,6 +113,10 @@ extension MathArray {
     Vmatrix,
     //
     substack,
+  ]
+
+  static let blockMathCommands: Array<MathArray> = [
+    multline
   ]
 
   private static let _dictionary: Dictionary<String, MathArray> =

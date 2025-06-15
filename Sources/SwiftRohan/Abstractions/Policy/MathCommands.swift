@@ -68,7 +68,7 @@ enum MathCommands {
 
     // matrices
     do {
-      let matrices: [(MathArray, String)] =
+      let matrices: Array<(MathArray, String)> =
         [
           (MathArray.aligned, "aligned"),
           (MathArray.cases, "cases"),
@@ -82,7 +82,7 @@ enum MathCommands {
           (MathArray.Vmatrix, "Vmatrix_"),
           (MathArray.substack, "substack"),
         ]
-      assert(matrices.count == MathArray.allCommands.count)
+      assert(matrices.count == MathArray.inlineMathCommands.count)
 
       let records = matrices.map { matrix, image in
         CommandRecord(matrix.command, CommandBody.from(matrix, image: image))

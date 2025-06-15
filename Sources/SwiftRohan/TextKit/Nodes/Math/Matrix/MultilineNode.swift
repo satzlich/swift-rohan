@@ -2,13 +2,13 @@
 
 import Foundation
 
-final class MatrixNode: ArrayNode {
+final class MultilineNode: ArrayNode {
   // MARK: - Node
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(matrix: self, context)
+    visitor.visit(multiline: self, context)
   }
 
   final override class var type: NodeType { .matrix }
@@ -40,7 +40,7 @@ final class MatrixNode: ArrayNode {
   // MARK: - Node(Storage)
 
   final override class var storageTags: Array<String> {
-    MathArray.inlineMathCommands.map(\.command)
+    MathArray.blockMathCommands.map(\.command)
   }
 
   final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
@@ -58,7 +58,7 @@ final class MatrixNode: ArrayNode {
 
   // MARK: - Storage
 
-  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MatrixNode> {
+  final class func loadSelf(from json: JSONValue) -> NodeLoaded<MultilineNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -79,7 +79,7 @@ final class MatrixNode: ArrayNode {
     }
   }
 
-  // MARK: - MatrixNode
+  // MARK: - MultilineNode
 
   override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
@@ -90,8 +90,7 @@ final class MatrixNode: ArrayNode {
     super.init(subtype, rows)
   }
 
-  private init(deepCopyOf matrixNode: MatrixNode) {
-    super.init(deepCopyOf: matrixNode)
+  private init(deepCopyOf multilineNode: MultilineNode) {
+    super.init(deepCopyOf: multilineNode)
   }
-
 }

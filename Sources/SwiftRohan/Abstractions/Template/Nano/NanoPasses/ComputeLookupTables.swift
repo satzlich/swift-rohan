@@ -55,7 +55,7 @@ extension Nano {
 
     // MARK: - Misc
 
-    override func visit(linebreak: LinebreakExpr, _ context: TreePath) -> Void {
+    override func visit(linebreak: LinebreakExpr, _ context: Context) -> Void {
       // no-op as LinebreakExpr does not have children
     }
 
@@ -63,7 +63,7 @@ extension Nano {
       // no-op as TextExpr does not have children
     }
 
-    override func visit(unknown: UnknownExpr, _ context: TreePath) -> Void {
+    override func visit(unknown: UnknownExpr, _ context: Context) -> Void {
       // no-op as UnknownExpr does not have children
     }
 
@@ -93,11 +93,11 @@ extension Nano {
       _visitElement(paragraph, context)
     }
 
-    override func visit(root: RootExpr, _ context: TreePath) -> Void {
+    override func visit(root: RootExpr, _ context: Context) -> Void {
       _visitElement(root, context)
     }
 
-    override func visit(strong: StrongExpr, _ context: TreePath) -> Void {
+    override func visit(strong: StrongExpr, _ context: Context) -> Void {
       _visitElement(strong, context)
     }
 
@@ -112,7 +112,16 @@ extension Nano {
       }
     }
 
-    override func visit(accent: AccentExpr, _ context: TreePath) -> Void {
+    private func _visitArray<T: ArrayExpr>(_ array: T, _ context: Context) {
+      for i in 0..<array.rowCount {
+        for j in 0..<array.columnCount {
+          let newContext = context + [.gridIndex(i, j)]
+          array.get(i, j).accept(self, newContext)
+        }
+      }
+    }
+
+    override func visit(accent: AccentExpr, _ context: Context) -> Void {
       _visitMath(accent, context)
     }
 
@@ -128,48 +137,47 @@ extension Nano {
       _visitMath(fraction, context)
     }
 
-    override func visit(leftRight: LeftRightExpr, _ context: TreePath) -> Void {
+    override func visit(leftRight: LeftRightExpr, _ context: Context) -> Void {
       _visitMath(leftRight, context)
     }
 
-    override func visit(mathAttributes: MathAttributesExpr, _ context: TreePath) -> Void {
+    override func visit(mathAttributes: MathAttributesExpr, _ context: Context) -> Void {
       _visitMath(mathAttributes, context)
     }
 
-    override func visit(mathExpression: MathExpressionExpr, _ context: TreePath) -> Void {
+    override func visit(mathExpression: MathExpressionExpr, _ context: Context) -> Void {
       // no-op
     }
 
-    override func visit(mathOperator: MathOperatorExpr, _ context: TreePath) -> Void {
+    override func visit(mathOperator: MathOperatorExpr, _ context: Context) -> Void {
       // no-op
     }
 
-    override func visit(namedSymbol: NamedSymbolExpr, _ context: TreePath) -> Void {
+    override func visit(namedSymbol: NamedSymbolExpr, _ context: Context) -> Void {
       // no-op
     }
 
-    override func visit(mathStyles: MathStylesExpr, _ context: TreePath) -> Void {
+    override func visit(mathStyles: MathStylesExpr, _ context: Context) -> Void {
       _visitMath(mathStyles, context)
     }
 
-    override func visit(matrix: MatrixExpr, _ context: Context) {
-      for i in 0..<matrix.rowCount {
-        for j in 0..<matrix.columnCount {
-          let newContext = context + [.gridIndex(i, j)]
-          matrix.get(i, j).accept(self, newContext)
-        }
-      }
+    override func visit(matrix: MatrixExpr, _ context: Context) -> Void {
+      _visitArray(matrix, context)
     }
 
-    override func visit(radical: RadicalExpr, _ context: TreePath) -> Void {
+    override func visit(multiline: MultilineExpr, _ context: Context) -> Void {
+      _visitArray(multiline, context)
+    }
+
+    override func visit(radical: RadicalExpr, _ context: Context) -> Void {
       _visitMath(radical, context)
     }
 
-    override func visit(textMode: TextModeExpr, _ context: TreePath) -> Void {
+    override func visit(textMode: TextModeExpr, _ context: Context) -> Void {
       _visitMath(textMode, context)
     }
 
-    override func visit(underOver: UnderOverExpr, _ context: TreePath) -> Void {
+    override func visit(underOver: UnderOverExpr, _ context: Context) -> Void {
       _visitMath(underOver, context)
     }
   }

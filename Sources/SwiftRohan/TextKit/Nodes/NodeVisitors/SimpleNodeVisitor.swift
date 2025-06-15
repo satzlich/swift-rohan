@@ -138,6 +138,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitGridNode(matrix, context)
   }
 
+  override func visit(multiline: MultilineNode, _ context: C) -> Void {
+    _visitGridNode(multiline, context)
+  }
+
   override func visit(radical: RadicalNode, _ context: C) -> Void {
     _visitMathNode(radical, context)
   }

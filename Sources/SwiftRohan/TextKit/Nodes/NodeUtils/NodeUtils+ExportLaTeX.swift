@@ -328,6 +328,32 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     return _composeControlSeq(command, arguments: components, context)
   }
 
+  private func _visitArray(
+    command: String, _ node: ArrayNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+
+    let envName = node.subtype.command
+    guard let name = NameToken(envName)
+    else { return .failure(SatzError(.ExportLatexFailure)) }
+
+    var resultRows: Array<ArraySyntax.Row> = []
+    resultRows.reserveCapacity(node.rowCount)
+    for row in (0..<node.rowCount).map({ node.getRow(at: $0) }) {
+      var resultRow: Array<StreamSyntax> = []
+      resultRow.reserveCapacity(row.count)
+      for cell in row {
+        guard let cellSyntax = cell.accept(self, context).success()
+        else { return .failure(SatzError(.ExportLatexFailure)) }
+        resultRow.append(cellSyntax)
+      }
+      resultRows.append(resultRow)
+    }
+    let arraySyntax = ArraySyntax(resultRows)
+    let arrayEnvSyntax = ArrayEnvSyntax(name: name, wrapped: arraySyntax)
+    return .success(StreamSyntax([.arrayEnv(arrayEnvSyntax)]))
+  }
+
   override func visit(
     accent: AccentNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
@@ -492,27 +518,13 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit(
     matrix: MatrixNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    precondition(context == .mathMode)
+    _visitArray(command: matrix.subtype.command, matrix, context)
+  }
 
-    let envName = matrix.subtype.command
-    guard let name = NameToken(envName)
-    else { return .failure(SatzError(.ExportLatexFailure)) }
-
-    var resultRows: Array<ArraySyntax.Row> = []
-    resultRows.reserveCapacity(matrix.rowCount)
-    for row in (0..<matrix.rowCount).map({ matrix.getRow(at: $0) }) {
-      var resultRow: Array<StreamSyntax> = []
-      resultRow.reserveCapacity(row.count)
-      for cell in row {
-        guard let cellSyntax = cell.accept(self, context).success()
-        else { return .failure(SatzError(.ExportLatexFailure)) }
-        resultRow.append(cellSyntax)
-      }
-      resultRows.append(resultRow)
-    }
-    let arraySyntax = ArraySyntax(resultRows)
-    let arrayEnvSyntax = ArrayEnvSyntax(name: name, wrapped: arraySyntax)
-    return .success(StreamSyntax([.arrayEnv(arrayEnvSyntax)]))
+  override func visit(
+    multiline: MultilineNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    _visitArray(command: multiline.subtype.command, multiline, context)
   }
 
   override func visit(

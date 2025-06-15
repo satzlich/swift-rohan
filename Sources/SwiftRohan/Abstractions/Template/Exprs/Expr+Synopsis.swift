@@ -79,10 +79,21 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return PrintUtils.compose(description, children)
   }
 
+  private final func _visitArray<T: ArrayExpr>(
+    _ array: T, _ context: Void, _ description: Array<String>? = nil
+  ) -> Array<String> {
+    let description = "\(array.type) \(array.rowCount)x\(array.columnCount)"
+    let rows: Array<Array<String>> = array.rows.enumerated().map { (i, row) in
+      let description = "row \(i)"
+      return _visitRow(row, context, [description])
+    }
+    return PrintUtils.compose([description], rows)
+  }
+
   private final func _visitRow(
     _ row: GridRow<ContentExpr>, _ context: Void, _ description: Array<String>
   ) -> Array<String> {
-    let children: [Array<String>] = row.map { $0.accept(self, context) }
+    let children: Array<Array<String>> = row.map { $0.accept(self, context) }
     return PrintUtils.compose(description, children)
   }
 
@@ -132,12 +143,11 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {
-    let description = "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"
-    let rows: [Array<String>] = matrix.rows.enumerated().map { (i, row) in
-      let description = "row \(i)"
-      return _visitRow(row, context, [description])
-    }
-    return PrintUtils.compose([description], rows)
+    _visitArray(matrix, context)
+  }
+
+  override func visit(multiline: MultilineExpr, _ context: Void) -> Array<String> {
+    _visitArray(multiline, context)
   }
 
   override func visit(namedSymbol: NamedSymbolExpr, _ context: Void) -> Array<String> {
