@@ -68,7 +68,7 @@ final class MatrixNode: ArrayNode {
   // MARK: - ArrayNode
 
   final override func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    _matrixFragment?.getGridIndex(interactingAt: point)
+    _nodeFragment?.getGridIndex(interactingAt: point)
   }
 
   // MARK: - Storage

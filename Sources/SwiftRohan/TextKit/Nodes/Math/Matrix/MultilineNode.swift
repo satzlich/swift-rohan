@@ -81,7 +81,7 @@ final class MultilineNode: ArrayNode {
   // MARK: - ArrayNode
 
   final override func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    _matrixFragment?.getGridIndex(interactingAt: point, shouldClamp: true)
+    _nodeFragment?.getGridIndex(interactingAt: point, shouldClamp: true)
   }
 
   // MARK: - Storage
@@ -132,5 +132,25 @@ final class MultilineNode: ArrayNode {
     case .multline: return true
     default: return false
     }
+  }
+
+  /// Get the width of the content container for this array node.
+  private static func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
+    let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
+    let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
+    let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
+    let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
+    let containerWidth = pageWidth - leftMargin - rightMargin
+    // 1em for text container inset, 1em for leading padding.
+    return containerWidth.ptValue - 2 * fontSize.floatValue
+  }
+
+  final override func createMathArrayLayoutFragment(
+    _ context: LayoutContext, _ mathContext: MathContext
+  ) -> MathArrayLayoutFragment {
+    let containerWidth = Self._getContainerWidth(context.styleSheet)
+    return MathArrayLayoutFragment(
+      rowCount: rowCount, columnCount: columnCount, subtype: subtype,
+      mathContext, containerWidth)
   }
 }

@@ -120,34 +120,30 @@ class ArrayNode: Node {
     let mathContext = _createMathContext(context)
 
     if fromScratch {
-      let containerWidth = ArrayNode._getContainerWidth(context.styleSheet)
-      let matrixFragment =
-        MathArrayLayoutFragment(
-          rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext,
-          containerWidth)
-      _matrixFragment = matrixFragment
+      let nodeFragment = createMathArrayLayoutFragment(context, mathContext)
+      _nodeFragment = nodeFragment
 
       // layout each element
       for i in (0..<rowCount) {
         for j in (0..<columnCount) {
           let element = getElement(i, j)
-          let fragment = matrixFragment.getElement(i, j)
+          let fragment = nodeFragment.getElement(i, j)
 
           _reconcileMathListLayoutFragment(
             element, fragment, parent: context, fromScratch: true)
         }
       }
       // layout the matrix
-      matrixFragment.fixLayout(mathContext)
+      nodeFragment.fixLayout(mathContext)
       // insert the matrix fragment
-      context.insertFragment(matrixFragment, self)
+      context.insertFragment(nodeFragment, self)
     }
     else {
-      assert(_matrixFragment != nil)
-      let matrixFragment = _matrixFragment!
+      assert(_nodeFragment != nil)
+      let nodeFragment = _nodeFragment!
 
       // save metrics before any layout changes
-      let oldMetrics = matrixFragment.boxMetrics
+      let oldMetrics = nodeFragment.boxMetrics
       var needsFixLayout = false
 
       // play edit log
@@ -155,13 +151,13 @@ class ArrayNode: Node {
       for event in _editLog {
         switch event {
         case let .insertRow(at: index):
-          matrixFragment.insertRow(at: index)
+          nodeFragment.insertRow(at: index)
         case let .removeRow(at: index):
-          matrixFragment.removeRow(at: index)
+          nodeFragment.removeRow(at: index)
         case let .insertColumn(at: index):
-          matrixFragment.insertColumn(at: index)
+          nodeFragment.insertColumn(at: index)
         case let .removeColumn(at: index):
-          matrixFragment.removeColumn(at: index)
+          nodeFragment.removeColumn(at: index)
         }
       }
 
@@ -170,7 +166,7 @@ class ArrayNode: Node {
         for i in (0..<rowCount) {
           for j in (0..<columnCount) {
             let element = getElement(i, j)
-            let fragment = matrixFragment.getElement(i, j)
+            let fragment = nodeFragment.getElement(i, j)
             if _addedNodes.contains(element.id) {
               _reconcileMathListLayoutFragment(
                 element, fragment, parent: context, fromScratch: true)
@@ -189,8 +185,8 @@ class ArrayNode: Node {
       }
 
       if needsFixLayout {
-        matrixFragment.fixLayout(mathContext)
-        if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
+        nodeFragment.fixLayout(mathContext)
+        if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(UNIT_LENGTH)
         }
         else {
@@ -386,8 +382,8 @@ class ArrayNode: Node {
   internal var _rows: Array<Row> = []
 
   private var _isDirty: Bool = false
-  internal var _matrixFragment: MathArrayLayoutFragment? = nil
-  final var layoutFragment: MathLayoutFragment? { _matrixFragment }
+  internal var _nodeFragment: MathArrayLayoutFragment? = nil
+  final var layoutFragment: MathLayoutFragment? { _nodeFragment }
 
   final var rowCount: Int { _rows.count }
   final var columnCount: Int { _rows.first?.count ?? 0 }
@@ -445,6 +441,14 @@ class ArrayNode: Node {
   static func validate(rows: Array<Row>, subtype: MathArray) -> Bool {
     validate(rows: rows)
       && (subtype.isMultiColumnEnabled || rows[0].count == 1)
+  }
+
+  /// Creates layout fragment for the array node.
+  internal func createMathArrayLayoutFragment(
+    _ context: LayoutContext, _ mathContext: MathContext
+  ) -> MathArrayLayoutFragment {
+    MathArrayLayoutFragment(
+      rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext, 0)
   }
 
   // MARK: - Content
@@ -558,7 +562,7 @@ class ArrayNode: Node {
   // MARK: - Layout
 
   private func getFragment(_ index: GridIndex) -> MathListLayoutFragment? {
-    guard let matrixFragment = _matrixFragment,
+    guard let matrixFragment = _nodeFragment,
       index.row < rowCount,
       index.column < columnCount
     else { return nil }
@@ -573,17 +577,6 @@ class ArrayNode: Node {
     from point: CGPoint, _ index: GridIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    _matrixFragment?.rayshoot(from: point, index, in: direction)
-  }
-
-  /// Get the width of the content container for this array node.
-  private static func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
-    let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
-    let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
-    let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
-    let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
-    let containerWidth = pageWidth - leftMargin - rightMargin
-    // 1em for text container inset, 1em for leading padding.
-    return containerWidth.ptValue - 2 * fontSize.floatValue
+    _nodeFragment?.rayshoot(from: point, index, in: direction)
   }
 }
