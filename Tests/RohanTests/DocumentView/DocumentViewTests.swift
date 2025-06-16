@@ -554,8 +554,10 @@ struct DocumentViewTests {
     }
   }
 
+  /// match string and named symbols
+  /// \lvert. -> \left\lvert\right.
   @Test
-  func moreReplacementRule() {  // match string and named symbols
+  func replacementRule_leftRightDelimiters() {
     // for this test case, we need the "baked" DocumentView.
     let documentView = Self.bakedDocumentView()
     do {
@@ -588,6 +590,108 @@ struct DocumentViewTests {
       #expect(
         "\(documentManager.textSelection!)"
           == "(location: [↓0,nuc,↓0,nuc]:0, affinity: downstream)")
+    }
+  }
+
+  @Test
+  func replacementRule_attachOrGotoMathComponent() {
+    // for this test case, we need the "baked" DocumentView.
+    let documentView = Self.bakedDocumentView()
+    do {
+      let rootNode = RootNode([
+        EquationNode(
+          .block,
+          [
+            NamedSymbolNode(NamedSymbol.lookup("alpha")!),
+            TextNode("a"),
+          ])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+
+    func resetLocation(_ location: TextLocation) {
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
+    }
+
+    let documentManager = documentView.documentManager
+
+    // after a named symbol
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓1]:0")!
+      resetLocation(location)
+      documentView.insertText("_", replacementRange: .notFound)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            ├ attach
+            │ ├ nuc
+            │ │ └ namedSymbol alpha
+            │ └ sub
+            └ text "a"
+        """
+      #expect(documentManager.prettyPrint() == expected)
+      let selection = "(location: [↓0,nuc,↓0,sub]:0, affinity: upstream)"
+      #expect("\(documentManager.textSelection!)" == selection)
+
+      // do again
+      resetLocation(location)
+      documentView.insertText("_", replacementRange: .notFound)
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+
+    // after text
+    do {
+      let location = TextLocation.parse("[↓0,nuc,↓1]:1")!
+      resetLocation(location)
+      documentView.insertText("^", replacementRange: .notFound)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            ├ attach
+            │ ├ nuc
+            │ │ └ namedSymbol alpha
+            │ └ sub
+            └ attach
+              ├ nuc
+              │ └ text "a"
+              └ sup
+        """
+      #expect(documentManager.prettyPrint() == expected)
+      let selection = "(location: [↓0,nuc,↓1,sup]:0, affinity: upstream)"
+      #expect("\(documentManager.textSelection!)" == selection)
+      // do again
+      let location2 = TextLocation.parse("[↓0,nuc]:2")!
+      resetLocation(location2)
+      documentView.insertText("^", replacementRange: .notFound)
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+
+    // after nothing
+    do {
+      let location = TextLocation.parse("[↓0,nuc]:0")!
+      resetLocation(location)
+      documentView.insertText("_", replacementRange: .notFound)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            ├ text "_"
+            ├ attach
+            │ ├ nuc
+            │ │ └ namedSymbol alpha
+            │ └ sub
+            └ attach
+              ├ nuc
+              │ └ text "a"
+              └ sup
+        """
+      let selection = "(location: [↓0,nuc,↓0]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
     }
   }
 

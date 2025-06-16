@@ -5,9 +5,11 @@ import Testing
 
 @testable import SwiftRohan
 
-struct VisualDelimiterTests {
+final class VisualDelimiterTests: TextKitTestsBase {
+  private var styleSheet: StyleSheet = StyleSheetTests.testingStyleSheet()
+
   @Test
-  func coverage() {
+  func treeUtils() {
     let tree = RootNode([
       ParagraphNode([
         EmphasisNode([TextNode("Hello")]),
@@ -15,8 +17,6 @@ struct VisualDelimiterTests {
         StrongNode([]),
       ])
     ])
-
-    let styleSheet = StyleSheetTests.testingStyleSheet()
 
     do {
       // paragraph -> emphasis -> text -> <offset>
@@ -66,5 +66,26 @@ struct VisualDelimiterTests {
       let result = TreeUtils.visualDelimiterRange(for: location, tree, styleSheet)
       #expect(result == nil)
     }
+  }
+
+  @Test
+  func documentManager() {
+    let rootNode = RootNode([
+      EquationNode(
+        .inline,
+        [
+          ApplyNode(.pmod, [[TextNode("a")]])!
+        ])
+    ])
+
+    let location = TextLocation.parse("[↓0,nuc,↓0,⇒0]:0")!
+    guard let (range, level)
+            = TreeUtils.visualDelimiterRange(for: location, rootNode, styleSheet)
+    else {
+      Issue.record("Failed to get visual delimiter range")
+      return
+    }
+    #expect("\(range)" == "[↓0,nuc,↓0,⇒0]:0..<[↓0,nuc,↓0,⇒0]:1")
+    #expect(level == 4)
   }
 }
