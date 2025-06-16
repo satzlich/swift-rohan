@@ -142,6 +142,19 @@ struct CommandDeclarationTests {
       _ = MathTextStyle.lookup(style.command)
     }
   }
+  
+  @Test
+  func mathTemplate_decodeThrows() throws {
+    let json =
+    """
+    {"subtype": "functionCall", "command": "nonexistent"}
+    """
+    let decoder = JSONDecoder()
+    
+    #expect(throws: DecodingError.self) {
+      try decoder.decode(MathTemplate.self, from: Data(json.utf8))
+    }
+  }
 
   @Test
   func namedSymbol() {
