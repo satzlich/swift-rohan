@@ -15,7 +15,13 @@ public enum CommandBody {
   /// edit matrix
   case editArray(EditArray)
 
-  // MARK: - Canonical
+  /// Command preview type.
+  enum CommandPreview {
+    case string(String)
+    case image(String)  // file name without extension
+  }
+
+  // MARK: - Initialization
 
   private init(_ expressions: Array<Expr>, _ backwardMoves: Int, preview: CommandPreview)
   {
@@ -30,8 +36,6 @@ public enum CommandBody {
     self = .editMath(editAttach)
   }
 
-  // MARK: - Convenience
-
   init(_ string: String, _ category: ContentCategory) {
     let insertString = InsertString(string, category)
     self = .insertString(insertString)
@@ -40,6 +44,8 @@ public enum CommandBody {
   init(_ expr: Expr, _ backwardMoves: Int, preview: CommandPreview = .string("⬚")) {
     self.init([expr], backwardMoves, preview: preview)
   }
+
+  // MARK: - Properties
 
   func isCompatible(with container: ContainerCategory) -> Bool {
     switch self {
@@ -100,12 +106,7 @@ public enum CommandBody {
     return nil
   }
 
-  // MARK: - Variants
-
-  enum CommandPreview {
-    case string(String)
-    case image(String)  // file name without extension
-  }
+  // MARK: - Variant Representations
 
   public struct InsertString {
     let string: String
@@ -160,14 +161,15 @@ public enum CommandBody {
 }
 
 extension CommandBody {
-  static func from(_ accent: MathAccent) -> CommandBody {
+  static func accentExpr(_ accent: MathAccent) -> CommandBody {
     let expr = AccentExpr(accent, [])
     return CommandBody(expr, 1, preview: accent.preview())
   }
 
-  static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
-    let expr = FractionExpr(num: [], denom: [], genfrac: frac)
-    return CommandBody(expr, 2, preview: .image(image))
+  static func applyExpr(_ template: MathTemplate, preview: CommandPreview) -> CommandBody
+  {
+    let expr = ApplyExpr(template)
+    return CommandBody(expr, template.parameterCount, preview: preview)
   }
 
   /// Create a command body from a MathArray instance. Either creates a
@@ -188,45 +190,44 @@ extension CommandBody {
     return CommandBody(expr, count, preview: .image(image))
   }
 
-  static func from(
+  static func fractionExpr(_ frac: MathGenFrac, image: String) -> CommandBody {
+    let expr = FractionExpr(num: [], denom: [], genfrac: frac)
+    return CommandBody(expr, 2, preview: .image(image))
+  }
+
+  static func mathAttributesExpr(_ mathAttributes: MathAttributes) -> CommandBody {
+    let expr = MathAttributesExpr(mathAttributes)
+    return CommandBody(expr, 1)
+  }
+
+  static func mathExpressionExpr(
     _ mathExpression: MathExpression, preview: CommandPreview
   ) -> CommandBody {
     let expr = MathExpressionExpr(mathExpression)
     return CommandBody(expr, 0, preview: preview)
   }
 
-  static func from(_ mathAttributes: MathAttributes) -> CommandBody {
-    let expr = MathAttributesExpr(mathAttributes)
-    return CommandBody(expr, 1)
-  }
-
-  static func from(_ mathOp: MathOperator) -> CommandBody {
+  static func mathOperatorExpr(_ mathOp: MathOperator) -> CommandBody {
     let expr = MathOperatorExpr(mathOp)
     return CommandBody(expr, 0, preview: .string(mathOp.string))
   }
 
-  static func from(_ symbol: NamedSymbol) -> CommandBody {
-    let expr = NamedSymbolExpr(symbol)
-    return CommandBody(expr, 0, preview: .string(symbol.preview()))
-  }
-
-  static func fromNamedSymbol(_ command: String) -> CommandBody? {
-    guard let symbol = NamedSymbol.lookup(command)
-    else { return nil }
-    return from(symbol)
-  }
-
-  static func from(_ template: MathTemplate, preview: CommandPreview) -> CommandBody {
-    let expr = ApplyExpr(template)
-    return CommandBody(expr, template.parameterCount, preview: preview)
-  }
-
-  static func from(_ mathStyles: MathStyles) -> CommandBody {
+  static func mathStylesExpr(_ mathStyles: MathStyles) -> CommandBody {
     let expr = MathStylesExpr(mathStyles, [])
     return CommandBody(expr, 1, preview: mathStyles.preview())
   }
 
-  static func from(_ spreader: MathSpreader, image: String) -> CommandBody {
+  static func namedSymbolExpr(_ symbol: NamedSymbol) -> CommandBody {
+    let expr = NamedSymbolExpr(symbol)
+    return CommandBody(expr, 0, preview: .string(symbol.preview()))
+  }
+
+  static func namedSymbolExpr(_ command: String) -> CommandBody? {
+    guard let symbol = NamedSymbol.lookup(command) else { return nil }
+    return namedSymbolExpr(symbol)
+  }
+
+  static func underOverExpr(_ spreader: MathSpreader, image: String) -> CommandBody {
     let expr = UnderOverExpr(spreader, [])
     return CommandBody(expr, 1, preview: .image(image))
   }

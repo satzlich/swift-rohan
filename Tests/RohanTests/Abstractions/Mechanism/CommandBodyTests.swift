@@ -18,6 +18,20 @@ struct CommandBodyTests {
       _ = body.isMathOnly
       _ = body.isUniversal
       _ = body.preview
+      _ = body.insertString()
     }
+  }
+
+  @Test
+  func extraCoverage() {
+    // cover preview for long string.
+    do {
+      let body =
+        CommandBody.insertString(CommandBody.InsertString("LongString", .textText))
+      _ = body.preview
+    }
+
+    // nil case for namedSymbolExpr
+    #expect(nil == CommandBody.namedSymbolExpr("nonexistent"))
   }
 }

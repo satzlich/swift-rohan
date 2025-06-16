@@ -42,7 +42,7 @@ enum MathCommands {
     // accents
     do {
       let records = MathAccent.allCommands.map { accent in
-        CommandRecord(accent.command, CommandBody.from(accent))
+        CommandRecord(accent.command, CommandBody.accentExpr(accent))
       }
       result.append(contentsOf: records)
     }
@@ -61,7 +61,7 @@ enum MathCommands {
       ]
       assert(fractions.count == MathGenFrac.allCommands.count)
       let records = fractions.map { frac, image in
-        CommandRecord(frac.command, CommandBody.from(frac, image: image))
+        CommandRecord(frac.command, CommandBody.fractionExpr(frac, image: image))
       }
       result.append(contentsOf: records)
     }
@@ -94,7 +94,7 @@ enum MathCommands {
     // math attributes
     do {
       let records = MathAttributes.allCommands.map { attr in
-        CommandRecord(attr.command, CommandBody.from(attr))
+        CommandRecord(attr.command, CommandBody.mathAttributesExpr(attr))
       }
       result.append(contentsOf: records)
     }
@@ -117,7 +117,7 @@ enum MathCommands {
       ]
 
       let records = expressions.map { (expr, preview) in
-        CommandRecord(expr.command, CommandBody.from(expr, preview: preview))
+        CommandRecord(expr.command, CommandBody.mathExpressionExpr(expr, preview: preview))
       }
       assert(records.count == MathExpression.allCommands.count)
 
@@ -127,7 +127,7 @@ enum MathCommands {
     // math operators
     do {
       let records = MathOperator.allCommands.map { op in
-        CommandRecord(op.command, CommandBody.from(op))
+        CommandRecord(op.command, CommandBody.mathOperatorExpr(op))
       }
       result.append(contentsOf: records)
     }
@@ -135,7 +135,7 @@ enum MathCommands {
     // math variants
     do {
       let records = MathStyles.allCommands.map { style in
-        CommandRecord(style.command, CommandBody.from(style))
+        CommandRecord(style.command, CommandBody.mathStylesExpr(style))
       }
       result.append(contentsOf: records)
     }
@@ -174,7 +174,7 @@ enum MathCommands {
       assert(spreaders.count == MathSpreader.allCommands.count)
 
       let records = spreaders.map { spreader, image in
-        CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
+        CommandRecord(spreader.command, CommandBody.underOverExpr(spreader, image: image))
       }
       result.append(contentsOf: records)
     }
@@ -189,7 +189,7 @@ enum MathCommands {
       ]
       assert(commands.count == MathTemplate.allCommands.count)
       let records = commands.map { (template, preview) in
-        CommandRecord(template.command, CommandBody.from(template, preview: preview))
+        CommandRecord(template.command, CommandBody.applyExpr(template, preview: preview))
       }
       result.append(contentsOf: records)
     }
