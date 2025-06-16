@@ -50,9 +50,8 @@ extension DocumentView {
     guard let range = documentManager.textSelection?.textRange,
       range.isEmpty,
       let (node, location, _) = documentManager.contextualNode(for: range.location)
-    else {
-      return
-    }
+    else { return }
+
     let end = location.with(offsetDelta: 1)
     let target = RhTextRange(location, end)!
 

@@ -40,7 +40,19 @@ extension TextSyntax {
     }
 
     for char in text {
-      if EscapedCharToken.isEscapeable(char) {
+      if char == "\\" {
+        appendSegmentIfNeeded()
+        switch mode {
+        case .textMode:
+          stream.append(StreamletSyntax(ControlWordSyntax(command: .textbackslash)))
+        case .mathMode:
+          stream.append(StreamletSyntax(ControlWordSyntax(command: .backslash)))
+        case .rawMode:
+          // In raw mode, we treat backslash as a regular character.
+          segment.append(char)
+        }
+      }
+      else if EscapedCharToken.isEscapeable(char) {
         appendSegmentIfNeeded()
         stream.append(StreamletSyntax(EscapedCharSyntax(char: char)!))
       }

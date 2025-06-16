@@ -7,13 +7,7 @@ import SwiftRohan
 class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    // Register fonts and handle potential errors
-    let fontErrors = FontLoader.registerFonts()
-
-    if !fontErrors.isEmpty {
-      handleFontLoadingErrors(fontErrors)
-    }
-
+    setupFonts()
     MenuManager.shared.setupThemeMenu()
   }
 
@@ -25,22 +19,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     return true
   }
 
-  // MARK: - Font Loading Errors
+  // MARK: - Font Setup
 
-  private func handleFontLoadingErrors(_ errors: Array<FontLoader.FontLoadingError>) {
-    for error in errors {
-      Rohan.logger.error("Font loading error: \(error.localizedDescription)")
-    }
+  private func setupFonts() {
+    let errors = FontLoader.registerFonts()
 
-    if shouldShowFontErrorAlert(for: errors) {
+    if errors.isEmpty == false {
+      for error in errors {
+        Rohan.logger.error("Font loading error: \(error.localizedDescription)")
+      }
       showFontErrorAlert(errors: errors)
     }
-  }
-
-  private func shouldShowFontErrorAlert(
-    for errors: Array<FontLoader.FontLoadingError>
-  ) -> Bool {
-    errors.isEmpty == false
   }
 
   private func showFontErrorAlert(errors: Array<FontLoader.FontLoadingError>) {

@@ -1,0 +1,13 @@
+// Copyright 2024-2025 Lie Yan
+
+import Testing
+
+@testable import SwiftRohan
+
+struct CompositorStyleTests {
+  @Test
+  func coverage() {
+    _ = CompositorStyle.previewAttrs(mathMode: true)
+    _ = CompositorStyle.previewAttrs(mathMode: false)
+  }
+}

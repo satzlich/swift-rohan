@@ -24,6 +24,8 @@ final class InsertionIndicatorView: RohanView {
     self.secondaryIndicators = []
     super.init(frame: frameRect)
 
+    assert(clipsToBounds == false)
+
     primaryIndicator.isHidden = true
     primaryIndicator.width = indicatorWidth
     addSubview(primaryIndicator)

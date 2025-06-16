@@ -30,6 +30,8 @@ extension ControlWordToken {
   public static let qprime = ControlWordToken("\\qprime")!
   public static let limits = ControlWordToken("\\limits")!
   public static let nolimits = ControlWordToken("\\nolimits")!
+  public static let backslash = ControlWordToken("\\backslash")!
+  public static let textbackslash = ControlWordToken("\\textbackslash")!
 }
 
 extension ControlWordToken {

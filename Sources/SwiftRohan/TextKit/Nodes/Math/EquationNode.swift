@@ -110,7 +110,7 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Storage)
 
-  private enum Tag: String, Codable, CaseIterable { case blockmath, inlinemath }
+  private enum Tag: String, Codable, CaseIterable { case displaymath, inlinemath }
 
   final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
 
@@ -122,7 +122,7 @@ final class EquationNode: MathNode {
     let nucleus = nucleus.store()
     switch subtype {
     case .block:
-      return JSONValue.array([.string(Tag.blockmath.rawValue), nucleus])
+      return JSONValue.array([.string(Tag.displaymath.rawValue), nucleus])
     case .inline:
       return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
     }
@@ -283,7 +283,7 @@ final class EquationNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
+    let subtype = (tag == .displaymath) ? Subtype.block : Subtype.inline
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
 
     switch nucleus {

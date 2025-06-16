@@ -15,7 +15,7 @@ struct CommandPolicyTests {
     #expect(MathAttributes.allCommands.count == 10)
     #expect(MathExpression.allCommands.count == 11)
     #expect(MathGenFrac.allCommands.count == 8)
-    #expect(MathOperator.allCommands.count == 43)
+    #expect(MathOperator.allCommands.count == 34)
     #expect(MathSpreader.allCommands.count == 23)
     #expect(MathStyles.allCommands.count == 12)
     #expect(MathTemplate.allCommands.count == 5)
@@ -28,13 +28,13 @@ struct CommandPolicyTests {
       + MathSpreader.allCommands.count + MathStyles.allCommands.count
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
 
-    #expect(sum == 608)  // + 2 ("\sqrt", "\text").
+    #expect(sum == 599)  // + 2 ("\sqrt", "\text").
     #expect(CommandDeclaration.allCommands.count == sum)
-    #expect(CommandRecords.allCases.count == 625)
+    #expect(CommandRecords.allCases.count == 616)
   }
 
   @Test
   static func replacementRuleSet() {
-    #expect(ReplacementRules.allCases.count == 600)
+    #expect(ReplacementRules.allCases.count == 591)
   }
 }
