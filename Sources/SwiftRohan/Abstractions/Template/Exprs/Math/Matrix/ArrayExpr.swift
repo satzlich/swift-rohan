@@ -19,7 +19,7 @@ internal class ArrayExpr: Expr {
   }
 
   required init(_ subtype: MathArray, _ rows: Array<Row>) {
-    precondition(ArrayExpr.validate(rows: rows))
+    precondition(Self.validate(rows: rows))
     self.subtype = subtype
     self.rows = rows
     super.init()
@@ -30,8 +30,8 @@ internal class ArrayExpr: Expr {
   }
 
   static func validate(rows: Array<Row>) -> Bool {
-    if rows.isEmpty || rows[0].isEmpty { return false }
-    let columnCount = rows[0].count
+    if rows.isEmpty || rows.first!.isEmpty { return false }
+    let columnCount = rows.first!.count
     return rows.dropFirst().allSatisfy { row in row.count == columnCount }
   }
 
@@ -41,14 +41,15 @@ internal class ArrayExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
+
     let command = try container.decode(String.self, forKey: .command)
     guard let subtype = MathArray.lookup(command) else {
       throw DecodingError.dataCorruptedError(
         forKey: .command, in: container,
         debugDescription: "Invalid matrix subtype: \(command)")
     }
-    let rows = try container.decode(Array<Row>.self, forKey: .rows)
 
+    let rows = try container.decode(Array<Row>.self, forKey: .rows)
     guard Self.validate(rows: rows) else {
       throw DecodingError.dataCorruptedError(
         forKey: .rows, in: container,

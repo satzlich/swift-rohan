@@ -115,5 +115,16 @@ struct ExprSerdeUtilsTests {
     }
   }
 
-  
+  /// Tests that `ArrayExpr` fails `ArrayExpr.validate()` when decoding an empty array.
+  @Test
+  func arrayNode_decodeThrows() {
+    let json =
+      """
+      {"command":"pmatrix","rows":[],"type":"matrix"}
+      """
+    let decoder = JSONDecoder()
+    #expect(throws: DecodingError.self) {
+      _ = try decoder.decode(MatrixExpr.self, from: Data(json.utf8))
+    }
+  }
 }
