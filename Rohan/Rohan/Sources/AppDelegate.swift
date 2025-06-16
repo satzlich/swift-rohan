@@ -19,30 +19,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     return true
   }
 
-  // MARK: - Font Loading Errors
+  // MARK: - Font Setup
 
   private func setupFonts() {
-    let fontErrors = FontLoader.registerFonts()
+    let errors = FontLoader.registerFonts()
 
-    if !fontErrors.isEmpty {
-      handleFontLoadingErrors(fontErrors)
-    }
-  }
-
-  private func handleFontLoadingErrors(_ errors: Array<FontLoader.FontLoadingError>) {
-    for error in errors {
-      Rohan.logger.error("Font loading error: \(error.localizedDescription)")
-    }
-
-    if shouldShowFontErrorAlert(for: errors) {
+    if errors.isEmpty == false {
+      for error in errors {
+        Rohan.logger.error("Font loading error: \(error.localizedDescription)")
+      }
       showFontErrorAlert(errors: errors)
     }
-  }
-
-  private func shouldShowFontErrorAlert(
-    for errors: Array<FontLoader.FontLoadingError>
-  ) -> Bool {
-    errors.isEmpty == false
   }
 
   private func showFontErrorAlert(errors: Array<FontLoader.FontLoadingError>) {
