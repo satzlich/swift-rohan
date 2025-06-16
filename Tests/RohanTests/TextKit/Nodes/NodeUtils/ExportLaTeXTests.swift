@@ -5,8 +5,10 @@ import Testing
 @testable import SwiftRohan
 
 final class ExportLatexTests: TextKitTestsBase {
-  init() throws {
-    try super.init(createFolder: false)
+  private func _simpleExport(_ content: ElementStore) -> String? {
+    let documentManager = createDocumentManager(RootNode(content))
+    let latex = documentManager.getLatexContent()
+    return latex
   }
 
   @Test
@@ -364,6 +366,35 @@ final class ExportLatexTests: TextKitTestsBase {
         """#
       #expect(latex == expected)
     }
+  }
+
+  @Test
+  func multiline() {
+    guard
+      let latex = _simpleExport([
+        MultilineNode(
+          .multlineAst,
+          [
+            MultilineNode.Row([
+              ContentNode([TextNode("a")])
+            ]),
+            MultilineNode.Row([
+              ContentNode([TextNode("b")])
+            ]),
+          ])
+      ])
+    else {
+      Issue.record("Failed to export multiline node")
+      return
+    }
+    let expected =
+      #"""
+      \begin{multline*}
+      a\\
+      b
+      \end{multline*}
+      """#
+    #expect(latex == expected)
   }
 
   @Test

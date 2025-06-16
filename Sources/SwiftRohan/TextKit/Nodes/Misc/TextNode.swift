@@ -234,13 +234,6 @@ final class TextNode: Node {
     return TextNode(str)
   }
 
-  func strictSplit(at offset: Int) -> (TextNode, TextNode) {
-    precondition(offset > 0 && offset < length)
-
-    let (lhs, rhs) = StringUtils.strictSplit(_string, at: offset)
-    return (TextNode(lhs), TextNode(rhs))
-  }
-
   func getSlice(for range: Range<Int>) -> TextNode {
     precondition(!range.isEmpty)
     let substring = StringUtils.substring(of: _string, for: range)

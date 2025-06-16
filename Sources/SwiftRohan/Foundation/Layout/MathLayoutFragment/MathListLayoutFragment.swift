@@ -25,7 +25,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private var _dirtyIndex: Optional<Int> = nil
   private var _flags: _Flags = []
 
-  private func _markDirty(_ dirtyIndex: Int) {
+  internal func markDirty(_ dirtyIndex: Int) {
     _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
     _flags.insert(.isReflowDirty)
   }
@@ -80,19 +80,19 @@ final class MathListLayoutFragment: MathLayoutFragment {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments.map(AnnotatedFragment.init), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
-    _markDirty(index)
+    markDirty(index)
   }
 
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
-    _markDirty(range.lowerBound)
+    markDirty(range.lowerBound)
   }
 
   func invalidateSubrange(_ range: Range<Int>) {
     precondition(isEditing)
-    _markDirty(range.lowerBound)
+    markDirty(range.lowerBound)
   }
 
   // MARK: - MathLayoutFragment
@@ -171,7 +171,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // ensure we are processing non-empty fragments
     guard startIndex < _fragments.count else {
       assert(startIndex == _fragments.count)
-      let width = (_fragments.last).map { $0.glyphOrigin.x + $0.width } ?? 0
+      let width = _fragments.last.map { $0.glyphOrigin.x + $0.width } ?? 0
       updateMetrics(width)
       return
     }
@@ -494,8 +494,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     else {
       let (minAscent, minDescent) = minAsccentDescent
       let range = range.clamped(to: 0..<_fragments.count)
-      let ascent = _fragments[range].lazy.map(\.ascent).max() ?? 0
-      let descent = _fragments[range].lazy.map(\.descent).max() ?? 0
+      let ascent = _fragments[range].lazy.map(\.ascent).max()!
+      let descent = _fragments[range].lazy.map(\.descent).max()!
       return (max(ascent, minAscent), max(descent, minDescent))
     }
   }
