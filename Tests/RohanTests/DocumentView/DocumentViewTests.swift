@@ -23,7 +23,7 @@ struct DocumentViewTests {
   }
 
   @Test
-  func main() {
+  func basic() {
     let scrollView = NSScrollView()
     let documentView = DocumentView()
     scrollView.documentView = documentView
@@ -300,8 +300,8 @@ struct DocumentViewTests {
           └ text "xyz vici."
         """
       #expect(documentManager.prettyPrint() == expected)
-      
-      // paste again in heading 
+
+      // paste again in heading
       setSelection(RhTextRange.parse("[↓0,↓0]:1..<[↓0,↓0]:3")!)
       documentView.paste(nil)
       // no change expected
@@ -588,6 +588,230 @@ struct DocumentViewTests {
       #expect(
         "\(documentManager.textSelection!)"
           == "(location: [↓0,nuc,↓0,nuc]:0, affinity: downstream)")
+    }
+  }
+
+  @Test
+  func editMath_AttachNode() {
+    let documentView = DocumentView()
+    do {
+      let rootNode = RootNode([
+        EquationNode(
+          .block,
+          [
+            AttachNode(
+              nuc: [TextNode("a")], lsub: [TextNode("b")], lsup: [TextNode("c")])
+          ])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+
+    func gotoLocation(_ location: TextLocation) {
+      let documentManager = documentView.documentManager
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
+    }
+
+    let documentManager = documentView.documentManager
+    let nucleusLocation = TextLocation.parse("[↓0,nuc,↓0,nuc,↓0]:1")!
+    // remove lsub
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.removeLeftSubscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ lsup
+              │ └ text "c"
+              └ nuc
+                └ text "a"
+        """
+      let selection1 = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // add sub
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.addSubscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ lsup
+              │ └ text "c"
+              ├ nuc
+              │ └ text "a"
+              └ sub
+        """
+      let selection1 = "(location: [↓0,nuc,↓0,sub]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // remove lsup
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.removeLeftSuperscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ nuc
+              │ └ text "a"
+              └ sub
+        """
+      let selection1 = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // add sup
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.addSuperscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ nuc
+              │ └ text "a"
+              ├ sub
+              └ sup
+        """
+      let selection1 = "(location: [↓0,nuc,↓0,sup]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // remove sub
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.removeSubscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ nuc
+              │ └ text "a"
+              └ sup
+        """
+      let selection1 = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // add lsub
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.addLeftSubscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ lsub
+              ├ nuc
+              │ └ text "a"
+              └ sup
+        """
+      let selection1 = "(location: [↓0,nuc,↓0,lsub]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // remove sup
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.removeSuperscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ lsub
+              └ nuc
+                └ text "a"
+        """
+      let selection1 = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // add lsup
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.addLeftSuperscript(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ attach
+              ├ lsub
+              ├ lsup
+              └ nuc
+                └ text "a"
+        """
+      let selection1 = "(location: [↓0,nuc,↓0,lsup]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+  }
+  
+  
+  @Test
+  func editMath_RadicalNode() {
+    let documentView = DocumentView()
+    do {
+      let rootNode = RootNode([
+        EquationNode(
+          .block,
+          [
+            RadicalNode([TextNode("a")], index: [TextNode("b")])
+          ])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+    }
+    
+    func gotoLocation(_ location: TextLocation) {
+      let documentManager = documentView.documentManager
+      documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
+    }
+    
+    let documentManager = documentView.documentManager
+    let nucleusLocation = TextLocation.parse("[↓0,nuc,↓0,radicand,↓0]:1")!
+    
+    // remove index
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.removeDegree(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ radical
+              └ radicand
+                └ text "a"
+        """
+      let selection1 = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
+    }
+    // add index
+    do {
+      gotoLocation(nucleusLocation)
+      documentView.addDegree(nil)
+      let expected1 = """
+        root
+        └ equation
+          └ nuc
+            └ radical
+              ├ index
+              └ radicand
+                └ text "a"
+        """
+      let selection1 = "(location: [↓0,nuc,↓0,index]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected1)
+      #expect("\(documentManager.textSelection!)" == selection1)
     }
   }
 }
