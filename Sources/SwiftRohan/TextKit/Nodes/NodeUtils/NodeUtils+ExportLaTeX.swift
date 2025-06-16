@@ -89,7 +89,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit(text: TextNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
     let stream = TextSyntax.sanitize(
-      String(text.string), Rohan.latexRegistry, mode: context.forLatexParser)
+      String(text.string), Rohan.latexRegistry, mode: context.toLatexParserType)
     return .success(stream)
   }
 
@@ -97,7 +97,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     unknown: UnknownNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let stream = TextSyntax.sanitize(
-      unknown.placeholder, Rohan.latexRegistry, mode: context.forLatexParser)
+      unknown.placeholder, Rohan.latexRegistry, mode: context.toLatexParserType)
     return .success(stream)
   }
 
