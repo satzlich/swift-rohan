@@ -4,26 +4,17 @@ import Foundation
 import LatexParser
 
 struct MathLimits: CommandDeclarationProtocol {
-  let limits: Limits
+  private let _limits: Bool
 
-  /// "_" inidicates it is not exported.
-  var command: String {
-    switch limits {
-    case .always:
-      return "limits"
-    case .never:
-      return "nolimits"
-    case .display:
-      assertionFailure("Display limits should not be used in a command.")
-      return "displaylimits"
-    }
-  }
+  var limits: Limits { _limits ? .always : .never }
+
+  var command: String { _limits ? "limits" : "nolimits" }
 
   var tag: CommandTag { .null }
   var source: CommandSource { .customExtension }
 
   init(_ limits: Bool) {
-    self.limits = limits ? .always : .never
+    self._limits = limits
   }
 }
 

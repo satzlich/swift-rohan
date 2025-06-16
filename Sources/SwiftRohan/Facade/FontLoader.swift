@@ -11,9 +11,13 @@ public enum FontLoader {
   }
 
   public static func registerFonts() -> Array<FontLoadingError> {
+    registerFonts(allFonts)
+  }
+
+  internal static func registerFonts(_ fonts: Array<String>) -> Array<FontLoadingError> {
     var errors = Array<FontLoadingError>()
 
-    for font in allFonts {
+    for font in fonts {
       let parts = font.split(separator: ".", maxSplits: 1).map(String.init)
       guard parts.count == 2 else {
         errors.append(.invalidFileName(font))
@@ -45,7 +49,7 @@ public enum FontLoader {
     return nil
   }
 
-  static let allFonts: Array<String> = _allFonts()
+  public static let allFonts: Array<String> = _allFonts()
 
   private static func _allFonts() -> Array<String> {
     let ConcreteMath: Array<String> = [

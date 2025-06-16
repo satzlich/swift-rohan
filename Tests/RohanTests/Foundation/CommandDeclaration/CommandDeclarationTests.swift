@@ -64,17 +64,30 @@ struct CommandDeclarationTests {
       MathArray.cases,
       MathArray.gathered,
       MathArray.substack,
+      MathArray.multlineAst,
     ]
 
     let font = Font.createWithName("STIX Two Math", 10)
     let mathContext = MathContext(font, .display, false, .black)!
 
+    let rowCount = 3
+    let columns = (0..<3).map { _ in [MathListLayoutFragment(mathContext)] }
+
     for array in arrays {
       _ = array.isMatrix
       _ = array.delimiters
       _ = array.getRowGap()
-      _ = array.getCellAlignments(0)
-      _ = array.getColumnGapCalculator([], mathContext)
+
+      //
+      let cellAlignments = array.getCellAlignments(rowCount)
+      _ = cellAlignments.get(0)
+      for i in 0..<rowCount {
+        _ = cellAlignments.get(i, 0)
+      }
+
+      //
+      let columnGaps = array.getColumnGapCalculator(columns, mathContext)
+      _ = columnGaps.get(0)
     }
   }
 

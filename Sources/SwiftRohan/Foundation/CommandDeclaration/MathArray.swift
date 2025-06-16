@@ -207,16 +207,16 @@ private struct MultlineCellAlignmentProvider: CellAlignmentProvider {
 protocol ColumnGapProvider {
   /// Get the gap between the given column and its next column.
   /// - Precondition: `index\in [0,columnCount)`
-  func get(_ index: Int) -> Em
+  func get(_ columnIndex: Int) -> Em
 }
 
 /// Placeholder column gap provider, used when the column gap is not specified.
 private struct PlaceholderColumnGapProvider: ColumnGapProvider {
-  func get(_ index: Int) -> Em { MATRIX_COL_GAP }
+  func get(_ columnIndex: Int) -> Em { MATRIX_COL_GAP }
 }
 
 private struct MatrixColumnGapProvider: ColumnGapProvider {
-  func get(_ index: Int) -> Em { MATRIX_COL_GAP }
+  func get(_ columnIndex: Int) -> Em { MATRIX_COL_GAP }
 }
 
 private struct AlignColumnGapProvider: ColumnGapProvider {
@@ -234,16 +234,16 @@ private struct AlignColumnGapProvider: ColumnGapProvider {
     self._mathContext = mathContext
   }
 
-  func get(_ index: Int) -> Em {
-    precondition(0..<_columns.count ~= index)
+  func get(_ columnIndex: Int) -> Em {
+    precondition(0..<_columns.count ~= columnIndex)
 
-    guard index + 1 < _columns.count,
-      _columnAlignments.get(index) == .end
-        && _columnAlignments.get(index + 1) == .start
+    guard columnIndex + 1 < _columns.count,
+      _columnAlignments.get(columnIndex) == .end
+        && _columnAlignments.get(columnIndex + 1) == .start
     else { return ALIGN_COL_GAP }
 
-    let column = _columns[index]
-    let nextColumn = _columns[index + 1]
+    let column = _columns[columnIndex]
+    let nextColumn = _columns[columnIndex + 1]
 
     var maxSpacing = Em.zero
     for i in 0..<column.count {
