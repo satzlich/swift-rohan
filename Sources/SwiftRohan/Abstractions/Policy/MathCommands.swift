@@ -47,7 +47,7 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
-    // generic fractions
+    // fractions
     do {
       let fractions = [
         (MathGenFrac.frac, "frac"),
@@ -62,31 +62,6 @@ enum MathCommands {
       assert(fractions.count == MathGenFrac.allCommands.count)
       let records = fractions.map { frac, image in
         CommandRecord(frac.command, CommandBody.fractionExpr(frac, image: image))
-      }
-      result.append(contentsOf: records)
-    }
-
-    // matrices
-    do {
-      let matrices: Array<(MathArray, String)> =
-        [
-          (MathArray.aligned, "aligned"),
-          (MathArray.cases, "cases"),
-          (MathArray.gathered, "gathered"),
-          //
-          (MathArray.matrix, "matrix"),
-          (MathArray.pmatrix, "pmatrix"),
-          (MathArray.bmatrix, "bmatrix"),
-          (MathArray.Bmatrix, "Bmatrix_"),
-          (MathArray.vmatrix, "vmatrix"),
-          (MathArray.Vmatrix, "Vmatrix_"),
-          (MathArray.substack, "substack"),
-        ]
-      assert(matrices.count == MathArray.inlineMathCommands.count)
-
-      let records = matrices.map { matrix, image in
-        let expr = CommandBody.arrayExpr(matrix, image: image, MatrixExpr.self)
-        return CommandRecord(matrix.command, expr)
       }
       result.append(contentsOf: records)
     }
@@ -117,7 +92,8 @@ enum MathCommands {
       ]
 
       let records = expressions.map { (expr, preview) in
-        CommandRecord(expr.command, CommandBody.mathExpressionExpr(expr, preview: preview))
+        CommandRecord(
+          expr.command, CommandBody.mathExpressionExpr(expr, preview: preview))
       }
       assert(records.count == MathExpression.allCommands.count)
 
@@ -190,6 +166,31 @@ enum MathCommands {
       assert(commands.count == MathTemplate.allCommands.count)
       let records = commands.map { (template, preview) in
         CommandRecord(template.command, CommandBody.applyExpr(template, preview: preview))
+      }
+      result.append(contentsOf: records)
+    }
+
+    // matrices
+    do {
+      let matrices: Array<(MathArray, String)> =
+        [
+          (MathArray.aligned, "aligned"),
+          (MathArray.cases, "cases"),
+          (MathArray.gathered, "gathered"),
+          //
+          (MathArray.matrix, "matrix"),
+          (MathArray.pmatrix, "pmatrix"),
+          (MathArray.bmatrix, "bmatrix"),
+          (MathArray.Bmatrix, "Bmatrix_"),
+          (MathArray.vmatrix, "vmatrix"),
+          (MathArray.Vmatrix, "Vmatrix_"),
+          (MathArray.substack, "substack"),
+        ]
+      assert(matrices.count == MathArray.inlineMathCommands.count)
+
+      let records = matrices.map { matrix, image in
+        let expr = CommandBody.arrayExpr(matrix, image: image, MatrixExpr.self)
+        return CommandRecord(matrix.command, expr)
       }
       result.append(contentsOf: records)
     }

@@ -32,7 +32,7 @@ public enum ReplacementRules {
   private static func _mathRules() -> Array<ReplacementRule> {
     var results: Array<ReplacementRule> = []
 
-    // basics (6)
+    // basics (7)
     results.append(contentsOf: [
       .init("$", Snippets.inlineMath),
       .init("^", Snippets.attachMathComponent(.sup)),
@@ -48,7 +48,8 @@ public enum ReplacementRules {
       .init("...", CommandBody.namedSymbolExpr("ldots")!),
       spaceTriggered("cdots", CommandBody.namedSymbolExpr("cdots")!),
       spaceTriggered(
-        "mod", CommandBody.mathExpressionExpr(MathExpression.bmod, preview: .string("mod"))),
+        "mod",
+        CommandBody.mathExpressionExpr(MathExpression.bmod, preview: .string("mod"))),
       spaceTriggered("frac", Snippets.fraction),
       spaceTriggered("oo", CommandBody.namedSymbolExpr("infty")!),
       spaceTriggered("xx", CommandBody.namedSymbolExpr("times")!),
@@ -87,7 +88,7 @@ public enum ReplacementRules {
       spaceTriggered("oint", CommandBody.namedSymbolExpr("oint")!),
     ])
 
-    // greek letters (no more than 5 chars; total: 31)
+    // greek letters (no more than 5 chars; total: 32)
     results.append(contentsOf: [
       spaceTriggered("alpha", CommandBody.namedSymbolExpr("alpha")!),
       spaceTriggered("beta", CommandBody.namedSymbolExpr("beta")!),
@@ -174,29 +175,21 @@ public enum ReplacementRules {
     }
 
     // math variants
-    for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
-      let char = String(UnicodeScalar(char)!)
-      let list = [
-        spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
-        spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
-        spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
-        spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
-        spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
-        spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
-      ]
-      results.append(contentsOf: list)
-    }
-    for char in UnicodeScalar("a").value...UnicodeScalar("z").value {
-      let char = String(UnicodeScalar(char)!)
-      let list = [
-        spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
-        spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
-        spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
-        spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
-        spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
-        spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
-      ]
-      results.append(contentsOf: list)
+    do {
+      let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+      assert(letters.count == 52)
+      for char in letters {
+        let char = String(char)
+        let list = [
+          spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
+          spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
+          spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
+          spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
+          spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
+          spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
+        ]
+        results.append(contentsOf: list)
+      }
     }
 
     // math operators
