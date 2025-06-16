@@ -5,14 +5,14 @@ import Foundation
 final class MathExpressionExpr: Expr {
   override class var type: ExprType { .mathExpression }
 
-  let mathExpression: MathExpression
+  internal let mathExpression: MathExpression
 
   init(_ mathExpression: MathExpression) {
     self.mathExpression = mathExpression
     super.init()
   }
 
-  override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
+  final override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
     visitor.visit(mathExpression: self, context)
   }

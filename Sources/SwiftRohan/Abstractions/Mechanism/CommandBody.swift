@@ -164,7 +164,7 @@ extension CommandBody {
     let count = rowCount * columnCount
 
     let rows: Array<ArrayExpr.Row> = (0..<rowCount).map { _ in
-      let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
+      let elements = (0..<columnCount).map { _ in MatrixExpr.Cell() }
       return ArrayExpr.Row(elements)
     }
     let expr = arrayClass.init(mathArray, rows)

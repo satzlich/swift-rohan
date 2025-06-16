@@ -72,7 +72,7 @@ struct ExprSerdeUtilsTests {
   }
 
   @Test
-  func decodeListOfExprs_BadCase() throws {
+  func decodeListOfExprs_fallbackToUnknown() throws {
     // decode ContentNode calls `decodeListOfExprs` internally,
     let decoder = JSONDecoder()
     let json = """
@@ -106,12 +106,14 @@ struct ExprSerdeUtilsTests {
         _ = try decoder.decode(clazz, from: json(for: clazz.type))
       }
     }
+
+    func json(for type: ExprType) -> Data {
+      let json = """
+        { "type": "\(type)", "command": "unsupported" }
+        """
+      return Data(json.utf8)
+    }
   }
 
-  private func json(for type: ExprType) -> Data {
-    let json = """
-      { "type": "\(type)", "command": "unsupported" }
-      """
-    return Data(json.utf8)
-  }
+  
 }
