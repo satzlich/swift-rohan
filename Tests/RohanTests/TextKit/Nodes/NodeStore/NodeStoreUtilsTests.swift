@@ -39,7 +39,7 @@ struct NodeStoreUtilsTests {
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "clubsuit", "colon",
       "complement", "cong", "coprod", "copyright", "cos", "cosh", "cot", "coth", "csc",
-      "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
+      "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowright", "dag", "dagger", "daleth", "dashleftarrow",
       "dashrightarrow", "dashv", "dbinom", "ddag", "ddagger", "ddddot", "dddot", "ddot",
       "ddots", "deg", "delta", "det", "dfrac", "diagdown", "diagup", "diameter",
@@ -55,10 +55,10 @@ struct NodeStoreUtilsTests {
       "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq", "gnsim", "grave", "gtrapprox",
       "gtrdot", "gtreqless", "gtreqqless", "gtrless", "gtrsim", "h1", "h2", "h3", "h4",
       "h5", "hat", "hbar", "heartsuit", "hom", "hookleftarrow", "hookrightarrow",
-      "hslash", "id", "idotsint", "iff", "iiiint", "iiint", "iint", "im", "imath",
+      "hslash", "idotsint", "iff", "iiiint", "iiint", "iint", "imath",
       "impliedby", "implies", "in", "inf", "infty", "injlim", "inlinemath", "int",
       "intercal", "intop", "iota", "jmath", "kappa", "ker", "lVert", "lambda", "land",
-      "langle", "lbrace", "lbrack", "lceil", "lcm", "ldotp", "ldots", "le", "leadsto",
+      "langle", "lbrace", "lbrack", "lceil", "ldotp", "ldots", "le", "leadsto",
       "leftarrow", "leftarrowtail", "leftharpoondown", "leftharpoonup", "leftleftarrows",
       "leftouterjoin", "leftrightarrow", "leftrightarrows", "leftrightharpoons",
       "leftrightsquigarrow", "leftthreetimes", "leq", "leqq", "leqslant", "lessapprox",
@@ -90,17 +90,17 @@ struct NodeStoreUtilsTests {
       "rightarrow", "rightarrowtail", "rightharpoondown", "rightharpoonup",
       "rightleftarrows", "rightleftharpoons", "rightouterjoin", "rightrightarrows",
       "rightsquigarrow", "rightthreetimes", "risingdotseq", "rmoustache", "rtimes",
-      "rvert", "scriptscriptstyle", "scriptstyle", "searrow", "sec", "sech", "setminus",
+      "rvert", "scriptscriptstyle", "scriptstyle", "searrow", "sec", "setminus",
       "sharp", "sigma", "sim", "simeq",
-      "sin", "sinc", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
+      "sin", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
       "square", "stackrel", "star", "strong", "subset", "subseteq", "subseteqq",
       "subsetneq", "subsetneqq", "substack", "succ", "succapprox", "succcurlyeq",
       "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sup", "supset", "supseteq", "supseteqq",
       "supsetneq", "supsetneqq", "surd", "swarrow", "tan", "tanh", "tau", "tbinom",
-      "text", "textstyle", "tfrac", "tg", "therefore", "theta", "thickspace", "thinspace",
-      "tilde", "times", "to", "top", "tr", "triangle", "triangledown", "triangleleft",
+      "text", "textstyle", "tfrac", "therefore", "theta", "thickspace", "thinspace",
+      "tilde", "times", "to", "top", "triangle", "triangledown", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadrightarrow", "ulcorner", "underbrace", "underbracket",
       "underleftarrow", "underleftrightarrow", "underline", "underparen",
@@ -118,7 +118,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 624)
+    #expect(tags.count == 615)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

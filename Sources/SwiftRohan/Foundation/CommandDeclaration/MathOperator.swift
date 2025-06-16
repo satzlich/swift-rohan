@@ -39,11 +39,6 @@ extension MathOperator {
     // total 6 (Table 204: Log-like Symbols)
     .injlim, .projlim,
     // `varinjlim, varliminf, varlimsup, varprojlim` defined as MathExpression's
-
-    // other (9)
-    .csch, .ctg, .lcm, .id,
-    .im, .sech, .sinc, .tg,
-    .tr,
   ]
 
   private static let _dictionary: Dictionary<String, MathOperator> =
@@ -69,20 +64,15 @@ extension MathOperator {
   static let cot = MathOperator("cot", "cot")
   static let coth = MathOperator("coth", "coth")
   static let csc = MathOperator("csc", "csc")
-  static let csch = MathOperator("csch", "csch", source: .customExtension)
-  static let ctg = MathOperator("ctg", "ctg", source: .customExtension)
   static let deg = MathOperator("deg", "deg")
   static let det = MathOperator("det", "det", limits: true)
   static let dim = MathOperator("dim", "dim")
   static let exp = MathOperator("exp", "exp")
   static let gcd = MathOperator("gcd", "gcd", limits: true)
   static let hom = MathOperator("hom", "hom")
-  static let id = MathOperator("id", "id", source: .customExtension)
-  static let im = MathOperator("im", "im", source: .customExtension)
   static let inf = MathOperator("inf", "inf", limits: true)
   static let injlim = MathOperator("injlim", "inj\u{2009}lim", limits: true)
   static let ker = MathOperator("ker", "ker")
-  static let lcm = MathOperator("lcm", "lcm", source: .customExtension)
   static let lg = MathOperator("lg", "lg")
   static let lim = MathOperator("lim", "lim", limits: true)
   static let liminf = MathOperator("liminf", "lim\u{2009}inf", limits: true)
@@ -94,13 +84,10 @@ extension MathOperator {
   static let Pr = MathOperator("Pr", "Pr", limits: true)
   static let projlim = MathOperator("projlim", "proj\u{2009}lim", limits: true)
   static let sec = MathOperator("sec", "sec")
-  static let sech = MathOperator("sech", "sech", source: .customExtension)
   static let sin = MathOperator("sin", "sin")
-  static let sinc = MathOperator("sinc", "sinc", source: .customExtension)
   static let sinh = MathOperator("sinh", "sinh")
   static let sup = MathOperator("sup", "sup", limits: true)
   static let tan = MathOperator("tan", "tan")
   static let tanh = MathOperator("tanh", "tanh")
-  static let tg = MathOperator("tg", "tg", source: .customExtension)
   static let tr = MathOperator("tr", "tr", source: .customExtension)
 }
