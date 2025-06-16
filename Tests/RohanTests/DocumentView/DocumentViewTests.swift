@@ -756,8 +756,7 @@ struct DocumentViewTests {
       #expect("\(documentManager.textSelection!)" == selection1)
     }
   }
-  
-  
+
   @Test
   func editMath_RadicalNode() {
     let documentView = DocumentView()
@@ -771,15 +770,15 @@ struct DocumentViewTests {
       ])
       documentView.setContent(DocumentContent(rootNode))
     }
-    
+
     func gotoLocation(_ location: TextLocation) {
       let documentManager = documentView.documentManager
       documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
     }
-    
+
     let documentManager = documentView.documentManager
     let nucleusLocation = TextLocation.parse("[↓0,nuc,↓0,radicand,↓0]:1")!
-    
+
     // remove index
     do {
       gotoLocation(nucleusLocation)
@@ -812,6 +811,185 @@ struct DocumentViewTests {
       let selection1 = "(location: [↓0,nuc,↓0,index]:0, affinity: upstream)"
       #expect(documentManager.prettyPrint() == expected1)
       #expect("\(documentManager.textSelection!)" == selection1)
+    }
+  }
+
+  @Test
+  func editMath_ArrayNode() {
+    let documentView = DocumentView()
+    let documentManager = documentView.documentManager
+
+    func resetContent() {
+      let rootNode = RootNode([
+        EquationNode(
+          .block,
+          [
+            MatrixNode(
+              .pmatrix,
+              [
+                MatrixNode.Row([
+                  ContentNode([TextNode("a")]),
+                  ContentNode([TextNode("b")]),
+                ]),
+                MatrixNode.Row([
+                  ContentNode([TextNode("c")]),
+                  ContentNode([TextNode("d")]),
+                ]),
+              ])
+          ])
+      ])
+      documentView.setContent(DocumentContent(rootNode))
+      let location = TextLocation.parse("[↓0,nuc,↓0,(0,1),↓0]:1")!
+      documentView.documentManager.textSelection =
+        RhTextSelection(location, affinity: .downstream)
+    }
+
+    // insert row after
+    do {
+      resetContent()
+      documentView.insertRowBefore(nil)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            └ matrix
+              ├ row 0
+              │ ├ #0
+              │ └ #1
+              ├ row 1
+              │ ├ #0
+              │ │ └ text "a"
+              │ └ #1
+              │   └ text "b"
+              └ row 2
+                ├ #0
+                │ └ text "c"
+                └ #1
+                  └ text "d"
+        """
+      let selection = "(location: [↓0,nuc,↓0,(0,0)]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+
+    // insert row after
+    do {
+      resetContent()
+      documentView.insertRowAfter(nil)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            └ matrix
+              ├ row 0
+              │ ├ #0
+              │ │ └ text "a"
+              │ └ #1
+              │   └ text "b"
+              ├ row 1
+              │ ├ #0
+              │ └ #1
+              └ row 2
+                ├ #0
+                │ └ text "c"
+                └ #1
+                  └ text "d"
+        """
+      let selection = "(location: [↓0,nuc,↓0,(1,0)]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+    // insert column before
+    do {
+      resetContent()
+      documentView.insertColumnBefore(nil)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            └ matrix
+              ├ row 0
+              │ ├ #0
+              │ │ └ text "a"
+              │ ├ #1
+              │ └ #2
+              │   └ text "b"
+              └ row 1
+                ├ #0
+                │ └ text "c"
+                ├ #1
+                └ #2
+                  └ text "d"
+        """
+      let selection = "(location: [↓0,nuc,↓0,(0,1)]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+    // insert column after
+    do {
+      resetContent()
+      documentView.insertColumnAfter(nil)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            └ matrix
+              ├ row 0
+              │ ├ #0
+              │ │ └ text "a"
+              │ ├ #1
+              │ │ └ text "b"
+              │ └ #2
+              └ row 1
+                ├ #0
+                │ └ text "c"
+                ├ #1
+                │ └ text "d"
+                └ #2
+        """
+      let selection = "(location: [↓0,nuc,↓0,(0,2)]:0, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+
+    // remove row
+    do {
+      resetContent()
+      documentView.deleteRow(nil)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            └ matrix
+              └ row 0
+                ├ #0
+                │ └ text "c"
+                └ #1
+                  └ text "d"
+        """
+      let selection = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
+    }
+    // remove column
+    do {
+      resetContent()
+      documentView.deleteColumn(nil)
+      let expected = """
+        root
+        └ equation
+          └ nuc
+            └ matrix
+              ├ row 0
+              │ └ #0
+              │   └ text "a"
+              └ row 1
+                └ #0
+                  └ text "c"
+        """
+      let selection = "(location: [↓0,nuc]:1, affinity: upstream)"
+      #expect(documentManager.prettyPrint() == expected)
+      #expect("\(documentManager.textSelection!)" == selection)
     }
   }
 }
