@@ -13,7 +13,7 @@ public final class DocumentManager {
   typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
   /// The content of the document.
-  private let content: DocumentContent
+  private var content: DocumentContent
   /// The root node of the document.
   private var rootNode: RootNode { content.rootNode }
 
@@ -83,6 +83,21 @@ public final class DocumentManager {
 
     // set up default text container
     textLayoutManager.textContainer = NSTextContainer()
+  }
+
+  internal func setContent(_ content: DocumentContent, with styleSheet: StyleSheet) {
+    // reset content
+    self.content = content
+    self.styleSheet = styleSheet
+
+    // rest base content storage and layout manager
+    textContentStorage.performEditingTransaction {
+      textContentStorage.replaceContents(in: textContentStorage.documentRange, with: nil)
+    }
+    assert(textContentStorage.documentRange.isEmpty)
+
+    // reset text selection
+    textSelection = nil
   }
 
   // MARK: - Query

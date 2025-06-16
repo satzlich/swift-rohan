@@ -12,11 +12,27 @@ final class MathListLayoutFragmentTests: MathLayoutTestsBase {
   @Test
   func emptyMathList() {
     let mathList = MathListLayoutFragment(context)
-    
     _ = mathList.isSpaced
-    
+
+    // insert and delete to obtain an empty math list
+    do {
+      guard let x = createGlyphFragment("x"),
+        let y = createGlyphFragment("y")
+      else {
+        Issue.record("Failed to create glyph fragment")
+        return
+      }
+      mathList.beginEditing()
+      mathList.insert(x, at: 0)
+      mathList.insert(y, at: 1)
+      mathList.removeSubrange(0..<2)
+      mathList.endEditing()
+      mathList.fixLayout(context)
+    }
+
     #expect(mathList.getSegmentFrame(0) == SegmentFrame(.zero, 0))
-    
+
+    // test enumerateTextSegments()
     do {
       var rect: CGRect? = nil
       var baseline: CGFloat = 0
@@ -37,7 +53,6 @@ final class MathListLayoutFragmentTests: MathLayoutTestsBase {
     }
 
     #expect(mathList.cursorDistanceThroughUpstream(0) == 0)
-
   }
 
   @Test
@@ -68,5 +83,18 @@ final class MathListLayoutFragmentTests: MathLayoutTestsBase {
     mathList.beginEditing()
     #expect(mathList.index(0, llOffsetBy: 3) == 3)
     mathList.endEditing()
+  }
+
+  @Test
+  func cursorDistance_edgeCases() {
+    guard let mathList = createMathListFragment("x+(y-z)") else {
+      Issue.record("Failed to create math list fragment")
+      return
+    }
+    mathList.markDirty(0)
+    mathList.fixLayout(context)
+
+    // cursor position between "+" and "(" is middle.
+    #expect(mathList.cursorDistanceThroughUpstream(2).isNearlyEqual(to: 16.2233333))
   }
 }

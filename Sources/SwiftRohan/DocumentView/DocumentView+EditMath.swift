@@ -64,8 +64,7 @@ extension DocumentView {
       _ = addMathComponentForEdit(target, mathIndex, [])
 
     case let .removeComponent(mathIndex):
-      guard isAttachNode(node) || isRadicalNode(node)
-      else { return }
+      guard isAttachNode(node) || isRadicalNode(node) else { return }
       _ = removeMathComponentForEdit(target, mathIndex)
     }
   }

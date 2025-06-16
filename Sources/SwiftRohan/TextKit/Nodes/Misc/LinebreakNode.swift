@@ -3,8 +3,6 @@
 import Foundation
 import _RopeModule
 
-private let UNIT_LENGTH = 1
-
 final class LinebreakNode: SimpleNode {
   // MARK: - Node
 
@@ -21,7 +19,7 @@ final class LinebreakNode: SimpleNode {
 
   // MARK: - Node(Layout)
 
-  final override func layoutLength() -> Int { UNIT_LENGTH }
+  final override func layoutLength() -> Int { 1 }
 
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
@@ -29,11 +27,11 @@ final class LinebreakNode: SimpleNode {
 
     if fromScratch {
       context.insertText("\n", self)
-      return UNIT_LENGTH
+      return layoutLength()
     }
     else {
       assertionFailure("LinebreakNode should not be re-laid out")
-      return UNIT_LENGTH
+      return layoutLength()
     }
   }
 

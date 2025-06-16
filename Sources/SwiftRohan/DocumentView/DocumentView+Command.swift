@@ -48,13 +48,12 @@ extension DocumentView {
     case .sub, .sup:
       // obtain the object to apply the command
       guard
-        let crossedObject =
-          documentManager.crossedObjectAt(range.location, direction: .backward)
+        let object = documentManager.crossedObjectAt(range.location, direction: .backward)
       else { return }
 
       // obtain the target range
       let range2: RhTextRange
-      switch crossedObject {
+      switch object {
       case let .text(string, location):
         // remove range if non-empty
         if range.isEmpty == false {

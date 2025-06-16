@@ -48,7 +48,7 @@ final class FractionNode: MathNode {
         MathFractionLayoutFragment(numFragment, denomFragment, genfrac)
       _nodeFragment = fractionFragment
 
-      let mathContext = resolveMathContext(context.mathContext)
+      let mathContext = _resolveMathContext(context.mathContext)
       fractionFragment.fixLayout(mathContext)
       context.insertFragment(fractionFragment, self)
     }
@@ -81,7 +81,7 @@ final class FractionNode: MathNode {
       }
 
       if needsFixLayout {
-        let mathContext = resolveMathContext(context.mathContext)
+        let mathContext = _resolveMathContext(context.mathContext)
         fractionFragment.fixLayout(mathContext)
 
         if fractionFragment.isNearlyEqual(to: oldBoxMetrics) == false {
@@ -253,7 +253,7 @@ final class FractionNode: MathNode {
     _denominator.setParent(self)
   }
 
-  private func resolveMathContext(_ context: MathContext) -> MathContext {
+  private func _resolveMathContext(_ context: MathContext) -> MathContext {
     if let style = genfrac.style {
       return context.with(mathStyle: style)
     }

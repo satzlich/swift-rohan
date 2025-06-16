@@ -26,7 +26,7 @@ public final class DocumentView: NSView {
     // reset document manager
     // No need to explicitly set styleSheet, as it will be set in documentManager.
     let styleSheet = styleSheet ?? self.styleSheet
-    documentManager = DocumentManager(content: content, styleSheet)
+    documentManager.setContent(content, with: styleSheet)
 
     _setUpDocumentManager()
     _setPageConstraints(styleSheet.resolveDefault() as PageProperty)
