@@ -12,9 +12,6 @@ public enum CommandBody {
   /// edit attach
   case editMath(EditMath)
 
-  /// edit matrix
-  case editArray(EditArray)
-
   /// Command preview type.
   enum CommandPreview {
     case string(String)
@@ -55,8 +52,6 @@ public enum CommandBody {
       return container.isCompatible(with: insertExprs.category)
     case .editMath:
       return container == .mathContainer
-    case .editArray:
-      return container == .mathContainer
     }
   }
 
@@ -67,8 +62,6 @@ public enum CommandBody {
     case .insertExprs(let insertExprs):
       return insertExprs.category.isUniversal
     case .editMath:
-      return false
-    case .editArray:
       return false
     }
   }
@@ -81,8 +74,6 @@ public enum CommandBody {
       return insertExprs.category.isMathOnly
     case .editMath:
       return true
-    case .editArray:
-      return true
     }
   }
 
@@ -93,8 +84,6 @@ public enum CommandBody {
     case .insertExprs(let insertExprs):
       return insertExprs.preview
     case .editMath(_):
-      return .string("⬚")
-    case .editArray(_):
       return .string("⬚")
     }
   }
@@ -150,14 +139,6 @@ public enum CommandBody {
     case removeComponent(MathIndex)
   }
 
-  public enum EditArray {
-    case insertRowBefore
-    case insertRowAfter
-    case insertColumnBefore
-    case insertColumnAfter
-    case deleteRow
-    case deleteColumn
-  }
 }
 
 extension CommandBody {

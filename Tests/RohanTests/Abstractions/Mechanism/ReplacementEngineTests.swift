@@ -71,4 +71,9 @@ struct ReplacementEngineTests {
       #expect(result == nil)
     }
   }
+
+  @Test
+  func testEmpty() {
+    _ = ReplacementEngine([])
+  }
 }
