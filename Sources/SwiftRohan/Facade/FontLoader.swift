@@ -4,36 +4,52 @@ import CoreText
 import Foundation
 
 public enum FontLoader {
-  public static func registerFonts() {
+  public enum FontLoadingError: Error {
+    case invalidFileName(String)
+    case fontFileNotFound(String)
+    case registrationFailed(String, String)
+  }
+
+  public static func registerFonts() -> Array<FontLoadingError> {
+    var errors = Array<FontLoadingError>()
+
     for font in allFonts {
       let parts = font.split(separator: ".", maxSplits: 1).map(String.init)
       guard parts.count == 2 else {
-        assertionFailure("Invalid font file name: \(font)")
+        errors.append(.invalidFileName(font))
         continue
       }
-      _registerFont(named: parts[0], extension: parts[1])
+      if let error = _registerFont(named: parts[0], extension: parts[1]) {
+        errors.append(error)
+      }
     }
+
+    return errors
   }
 
   private static func _registerFont(
     named name: String, extension extensionName: String
-  ) {
+  ) -> FontLoadingError? {
     guard let fontURL = Bundle.module.url(forResource: name, withExtension: extensionName)
     else {
-      assertionFailure("Failed to load font: \(name)")
-      return
+      return .fontFileNotFound(name + "." + extensionName)
     }
+
     var error: Unmanaged<CFError>?
     if !CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error) {
-      let error = error?.takeUnretainedValue().localizedDescription ?? "Unknown error"
-      assertionFailure("Failed to register font: \(name), error: \(error)")
+      let errorDescription =
+        error?.takeUnretainedValue().localizedDescription ?? "Unknown error"
+      return .registrationFailed(name + "." + extensionName, errorDescription)
     }
+
+    return nil
   }
 
   static let allFonts: Array<String> = _allFonts()
 
   private static func _allFonts() -> Array<String> {
     let ConcreteMath: Array<String> = [
+      // "NonExistent.otf",
       "Concrete-Math.otf",
       "Concrete-Math-Bold.otf",
     ]
@@ -92,5 +108,18 @@ public enum FontLoader {
     ]
 
     return ConcreteMath + CMUConcrete + Libertinus + Noto + NewComputerModern + STIX
+  }
+}
+
+extension FontLoader.FontLoadingError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case .invalidFileName(let name):
+      return "Invalid font file name: \(name)"
+    case .fontFileNotFound(let name):
+      return "Font file not found: \(name)"
+    case .registrationFailed(let name, let error):
+      return "Failed to register font \(name): \(error)"
+    }
   }
 }
