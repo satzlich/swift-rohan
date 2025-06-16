@@ -414,7 +414,17 @@ struct NanoPassTests {
                   ContentExpr([TextExpr("4")]),
                 ]),
               ]),
-            RadicalExpr([CompiledVariableExpr(0)], [TextExpr("n")]),
+            MultilineExpr(
+              .multlineAst,
+              [
+                MultilineExpr.Row([
+                  ContentExpr([TextExpr("a")])
+                ]),
+                MultilineExpr.Row([
+                  ContentExpr([TextExpr("a")])
+                ]),
+              ]),
+            RadicalExpr([CompiledVariableExpr(0)], index: [TextExpr("n")]),
             TextModeExpr([TextExpr("Text Mode")]),
             UnderOverExpr(.overline, [TextExpr("Overline")]),
           ])

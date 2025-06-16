@@ -4,6 +4,7 @@ import Foundation
 
 enum Snippets {
   // text
+
   static let emphasis = CommandBody(EmphasisExpr(), 1)
   static let strong = CommandBody(StrongExpr(), 1)
   static let equation = CommandBody(EquationExpr(.block), 1)
@@ -15,14 +16,14 @@ enum Snippets {
 
   // math
 
-  static func attachMathComponent(_ index: MathIndex) -> CommandBody {
+  static func attachOrGotoMathComponent(_ index: MathIndex) -> CommandBody {
     CommandBody(.attachOrGotoComponent(index))
   }
 
   static let fraction =
     CommandBody(FractionExpr(num: [], denom: []), 2, preview: .image("frac"))
   static let sqrt = CommandBody(RadicalExpr([]), 1, preview: .image("sqrt"))
-  static let root = CommandBody(RadicalExpr([], []), 2, preview: .image("root"))
+  static let root = CommandBody(RadicalExpr([], index: []), 2, preview: .image("root"))
   static let textMode = CommandBody(TextModeExpr(), 1)
 
   static func mathTextStyle(_ style: MathTextStyle, _ string: String) -> CommandBody {

@@ -30,9 +30,9 @@ struct MathTemplate: CommandDeclarationProtocol {
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let command = try container.decode(String.self, forKey: .command)
     self.subtype = try container.decode(Subtype.self, forKey: .subtype)
 
+    let command = try container.decode(String.self, forKey: .command)
     guard let template = MathTemplate.lookup(command) else {
       throw DecodingError.dataCorruptedError(
         forKey: .command,

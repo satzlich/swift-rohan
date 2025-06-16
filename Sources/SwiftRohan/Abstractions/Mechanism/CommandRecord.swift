@@ -6,7 +6,7 @@ public struct CommandRecord {
 
   init(_ symbol: NamedSymbol) {
     self.name = symbol.command
-    self.body = CommandBody.from(symbol)
+    self.body = CommandBody.namedSymbolExpr(symbol)
   }
 
   init(_ name: String, _ body: CommandBody) {

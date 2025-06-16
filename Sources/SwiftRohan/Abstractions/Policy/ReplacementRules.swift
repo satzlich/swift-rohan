@@ -32,11 +32,11 @@ public enum ReplacementRules {
   private static func _mathRules() -> Array<ReplacementRule> {
     var results: Array<ReplacementRule> = []
 
-    // basics (6)
+    // basics (7)
     results.append(contentsOf: [
       .init("$", Snippets.inlineMath),
-      .init("^", Snippets.attachMathComponent(.sup)),
-      .init("_", Snippets.attachMathComponent(.sub)),
+      .init("^", Snippets.attachOrGotoMathComponent(.sup)),
+      .init("_", Snippets.attachOrGotoMathComponent(.sub)),
       .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
       .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
       .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
@@ -45,83 +45,84 @@ public enum ReplacementRules {
 
     // miscellaneous (6)
     results.append(contentsOf: [
-      .init("...", CommandBody.fromNamedSymbol("ldots")!),
-      spaceTriggered("cdots", CommandBody.fromNamedSymbol("cdots")!),
+      .init("...", CommandBody.namedSymbolExpr("ldots")!),
+      spaceTriggered("cdots", CommandBody.namedSymbolExpr("cdots")!),
       spaceTriggered(
-        "mod", CommandBody.from(MathExpression.bmod, preview: .string("mod"))),
+        "mod",
+        CommandBody.mathExpressionExpr(MathExpression.bmod, preview: .string("mod"))),
       spaceTriggered("frac", Snippets.fraction),
-      spaceTriggered("oo", CommandBody.fromNamedSymbol("infty")!),
-      spaceTriggered("xx", CommandBody.fromNamedSymbol("times")!),
+      spaceTriggered("oo", CommandBody.namedSymbolExpr("infty")!),
+      spaceTriggered("xx", CommandBody.namedSymbolExpr("times")!),
     ])
 
     // inequalities (3)
     results.append(contentsOf: [
-      .init("/=", CommandBody.fromNamedSymbol("neq")!),
-      .init("<=", CommandBody.fromNamedSymbol("leq")!),
-      .init(">=", CommandBody.fromNamedSymbol("geq")!),
+      .init("/=", CommandBody.namedSymbolExpr("neq")!),
+      .init("<=", CommandBody.namedSymbolExpr("leq")!),
+      .init(">=", CommandBody.namedSymbolExpr("geq")!),
     ])
 
     // arrows (5)
     results.append(contentsOf: [
-      .init("<-", CommandBody.fromNamedSymbol("leftarrow")!),
-      .init("->", CommandBody.fromNamedSymbol("rightarrow")!),
-      .init("=>", CommandBody.fromNamedSymbol("Rightarrow")!),
-      .init("-->", CommandBody.fromNamedSymbol("longrightarrow")!),
-      .init("==>", CommandBody.fromNamedSymbol("Longrightarrow")!),
+      .init("<-", CommandBody.namedSymbolExpr("leftarrow")!),
+      .init("->", CommandBody.namedSymbolExpr("rightarrow")!),
+      .init("=>", CommandBody.namedSymbolExpr("Rightarrow")!),
+      .init("-->", CommandBody.namedSymbolExpr("longrightarrow")!),
+      .init("==>", CommandBody.namedSymbolExpr("Longrightarrow")!),
     ])
 
     // set operations (5)
     results.append(contentsOf: [
-      spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
-      spaceTriggered("cup", CommandBody.fromNamedSymbol("cup")!),
-      spaceTriggered("in", CommandBody.fromNamedSymbol("in")!),
-      spaceTriggered("sub", CommandBody.fromNamedSymbol("subset")!),
-      spaceTriggered("sube", CommandBody.fromNamedSymbol("subseteq")!),
+      spaceTriggered("cap", CommandBody.namedSymbolExpr("cap")!),
+      spaceTriggered("cup", CommandBody.namedSymbolExpr("cup")!),
+      spaceTriggered("in", CommandBody.namedSymbolExpr("in")!),
+      spaceTriggered("sub", CommandBody.namedSymbolExpr("subset")!),
+      spaceTriggered("sube", CommandBody.namedSymbolExpr("subseteq")!),
     ])
 
     // sum-like operators (4)
     results.append(contentsOf: [
-      spaceTriggered("sum", CommandBody.fromNamedSymbol("sum")!),
-      spaceTriggered("prod", CommandBody.fromNamedSymbol("prod")!),
-      spaceTriggered("int", CommandBody.fromNamedSymbol("int")!),
-      spaceTriggered("oint", CommandBody.fromNamedSymbol("oint")!),
+      spaceTriggered("sum", CommandBody.namedSymbolExpr("sum")!),
+      spaceTriggered("prod", CommandBody.namedSymbolExpr("prod")!),
+      spaceTriggered("int", CommandBody.namedSymbolExpr("int")!),
+      spaceTriggered("oint", CommandBody.namedSymbolExpr("oint")!),
     ])
 
-    // greek letters (no more than 5 chars; total: 31)
+    // greek letters (no more than 5 chars; total: 32)
     results.append(contentsOf: [
-      spaceTriggered("alpha", CommandBody.fromNamedSymbol("alpha")!),
-      spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
-      spaceTriggered("chi", CommandBody.fromNamedSymbol("chi")!),
-      spaceTriggered("delta", CommandBody.fromNamedSymbol("delta")!),
-      spaceTriggered("eta", CommandBody.fromNamedSymbol("eta")!),
-      spaceTriggered("gamma", CommandBody.fromNamedSymbol("gamma")!),
-      spaceTriggered("iota", CommandBody.fromNamedSymbol("iota")!),
-      spaceTriggered("kappa", CommandBody.fromNamedSymbol("kappa")!),
-      spaceTriggered("mu", CommandBody.fromNamedSymbol("mu")!),
-      spaceTriggered("nu", CommandBody.fromNamedSymbol("nu")!),
-      spaceTriggered("omega", CommandBody.fromNamedSymbol("omega")!),
-      spaceTriggered("phi", CommandBody.fromNamedSymbol("phi")!),
-      spaceTriggered("pi", CommandBody.fromNamedSymbol("pi")!),
-      spaceTriggered("psi", CommandBody.fromNamedSymbol("psi")!),
-      spaceTriggered("rho", CommandBody.fromNamedSymbol("rho")!),
-      spaceTriggered("sigma", CommandBody.fromNamedSymbol("sigma")!),
-      spaceTriggered("tau", CommandBody.fromNamedSymbol("tau")!),
-      spaceTriggered("theta", CommandBody.fromNamedSymbol("theta")!),
-      spaceTriggered("varpi", CommandBody.fromNamedSymbol("varpi")!),
-      spaceTriggered("xi", CommandBody.fromNamedSymbol("xi")!),
-      spaceTriggered("zeta", CommandBody.fromNamedSymbol("zeta")!),
-      spaceTriggered("Delta", CommandBody.fromNamedSymbol("Delta")!),
-      spaceTriggered("Gamma", CommandBody.fromNamedSymbol("Gamma")!),
-      spaceTriggered("Omega", CommandBody.fromNamedSymbol("Omega")!),
-      spaceTriggered("Phi", CommandBody.fromNamedSymbol("Phi")!),
-      spaceTriggered("Pi", CommandBody.fromNamedSymbol("Pi")!),
-      spaceTriggered("Psi", CommandBody.fromNamedSymbol("Psi")!),
-      spaceTriggered("Sigma", CommandBody.fromNamedSymbol("Sigma")!),
-      spaceTriggered("Theta", CommandBody.fromNamedSymbol("Theta")!),
-      spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
+      spaceTriggered("alpha", CommandBody.namedSymbolExpr("alpha")!),
+      spaceTriggered("beta", CommandBody.namedSymbolExpr("beta")!),
+      spaceTriggered("chi", CommandBody.namedSymbolExpr("chi")!),
+      spaceTriggered("delta", CommandBody.namedSymbolExpr("delta")!),
+      spaceTriggered("eta", CommandBody.namedSymbolExpr("eta")!),
+      spaceTriggered("gamma", CommandBody.namedSymbolExpr("gamma")!),
+      spaceTriggered("iota", CommandBody.namedSymbolExpr("iota")!),
+      spaceTriggered("kappa", CommandBody.namedSymbolExpr("kappa")!),
+      spaceTriggered("mu", CommandBody.namedSymbolExpr("mu")!),
+      spaceTriggered("nu", CommandBody.namedSymbolExpr("nu")!),
+      spaceTriggered("omega", CommandBody.namedSymbolExpr("omega")!),
+      spaceTriggered("phi", CommandBody.namedSymbolExpr("phi")!),
+      spaceTriggered("pi", CommandBody.namedSymbolExpr("pi")!),
+      spaceTriggered("psi", CommandBody.namedSymbolExpr("psi")!),
+      spaceTriggered("rho", CommandBody.namedSymbolExpr("rho")!),
+      spaceTriggered("sigma", CommandBody.namedSymbolExpr("sigma")!),
+      spaceTriggered("tau", CommandBody.namedSymbolExpr("tau")!),
+      spaceTriggered("theta", CommandBody.namedSymbolExpr("theta")!),
+      spaceTriggered("varpi", CommandBody.namedSymbolExpr("varpi")!),
+      spaceTriggered("xi", CommandBody.namedSymbolExpr("xi")!),
+      spaceTriggered("zeta", CommandBody.namedSymbolExpr("zeta")!),
+      spaceTriggered("Delta", CommandBody.namedSymbolExpr("Delta")!),
+      spaceTriggered("Gamma", CommandBody.namedSymbolExpr("Gamma")!),
+      spaceTriggered("Omega", CommandBody.namedSymbolExpr("Omega")!),
+      spaceTriggered("Phi", CommandBody.namedSymbolExpr("Phi")!),
+      spaceTriggered("Pi", CommandBody.namedSymbolExpr("Pi")!),
+      spaceTriggered("Psi", CommandBody.namedSymbolExpr("Psi")!),
+      spaceTriggered("Sigma", CommandBody.namedSymbolExpr("Sigma")!),
+      spaceTriggered("Theta", CommandBody.namedSymbolExpr("Theta")!),
+      spaceTriggered("Xi", CommandBody.namedSymbolExpr("Xi")!),
       //
-      spaceTriggered("eps", CommandBody.fromNamedSymbol("epsilon")!),
-      spaceTriggered("veps", CommandBody.fromNamedSymbol("varepsilon")!),
+      spaceTriggered("eps", CommandBody.namedSymbolExpr("epsilon")!),
+      spaceTriggered("veps", CommandBody.namedSymbolExpr("varepsilon")!),
     ])
 
     // left-right delimiters
@@ -174,35 +175,27 @@ public enum ReplacementRules {
     }
 
     // math variants
-    for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
-      let char = String(UnicodeScalar(char)!)
-      let list = [
-        spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
-        spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
-        spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
-        spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
-        spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
-        spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
-      ]
-      results.append(contentsOf: list)
-    }
-    for char in UnicodeScalar("a").value...UnicodeScalar("z").value {
-      let char = String(UnicodeScalar(char)!)
-      let list = [
-        spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
-        spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
-        spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
-        spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
-        spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
-        spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
-      ]
-      results.append(contentsOf: list)
+    do {
+      let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+      assert(letters.count == 52)
+      for char in letters {
+        let char = String(char)
+        let list = [
+          spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
+          spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
+          spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
+          spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
+          spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
+          spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
+        ]
+        results.append(contentsOf: list)
+      }
     }
 
     // math operators
     do {
       let rules = MathOperator.allCommands.map {
-        spaceTriggered($0.command, CommandBody.from($0))
+        spaceTriggered($0.command, CommandBody.mathOperatorExpr($0))
       }
       results.append(contentsOf: rules)
     }

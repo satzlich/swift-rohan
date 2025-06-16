@@ -42,13 +42,7 @@ final class CTLineLayoutFragment: LayoutFragment {
     self.boundsOption = .imageBounds
     //
     self.glyphOrigin = .zero
-
-    switch boundsOption {
-    case .typographicBounds:
-      self._width = ctLine.getTypographicBounds(&_ascent, &_descent, nil)
-    case .imageBounds:
-      self._width = ctLine.getImageBounds(&_ascent, &_descent)
-    }
+    self._width = ctLine.getImageBounds(&_ascent, &_descent)
   }
 
   init(_ context: TextLineLayoutContext, _ option: BoundsOption) {

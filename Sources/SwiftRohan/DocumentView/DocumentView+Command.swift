@@ -36,9 +36,6 @@ extension DocumentView {
       case .removeComponent(_):
         preconditionFailure("not implemented")
       }
-
-    case .editArray(_):
-      preconditionFailure("not implemented")
     }
   }
 

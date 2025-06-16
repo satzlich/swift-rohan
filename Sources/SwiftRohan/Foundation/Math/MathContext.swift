@@ -39,6 +39,10 @@ struct MathContext {
     MathContext(mathFont, mathStyle, cramped, textColor)
   }
 
+  func with(cramped: Bool) -> MathContext {
+    MathContext(mathFont, mathStyle, cramped, textColor)
+  }
+
   func getFont(for style: MathStyle) -> Font { mathFont.getFont(for: style) }
 
   /// Returns the font for the current math style

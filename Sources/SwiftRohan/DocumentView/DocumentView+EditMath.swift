@@ -96,7 +96,7 @@ extension DocumentView {
     _performGridOperation(.deleteColumn)
   }
 
-  private func _performGridOperation(_ instruction: CommandBody.EditArray) {
+  private func _performGridOperation(_ instruction: EditArrayInstruction) {
     guard let range = documentManager.textSelection?.textRange,
       range.isEmpty,
       let (node, location, childIndex) =

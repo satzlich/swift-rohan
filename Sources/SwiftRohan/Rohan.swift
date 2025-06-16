@@ -11,7 +11,7 @@ internal enum Rohan {
   /// tolerance for layout calculations
   static let tolerance: CGFloat = 1e-6
 
-  /// True if text in math mode should be auto-italicized.
+  /// True if text in math mode should be auto-italicised.
   static let autoItalic: Bool = true
 }
 

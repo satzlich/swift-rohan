@@ -11,7 +11,7 @@ struct TemplateManager {
 
   init(_ templates: Array<Template>) {
     guard let compiled = Nano.NanoPassDriver.process(templates).success()
-    else { preconditionFailure() }
+    else { preconditionFailure("Unexpected failure") }
 
     self.templates = Dictionary(uniqueKeysWithValues: templates.map { ($0.name, $0) })
     self.compiledTemplates =

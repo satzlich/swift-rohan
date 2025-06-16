@@ -5,7 +5,8 @@ import Testing
 
 @testable import SwiftRohan
 
-struct AbstractionPolicyTests {
+/// Check the total number of commands and replacement rules.
+struct CommandPolicyTests {
 
   @Test
   static func commandSet() {
@@ -27,7 +28,7 @@ struct AbstractionPolicyTests {
       + MathSpreader.allCommands.count + MathStyles.allCommands.count
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
 
-    #expect(sum == 608)
+    #expect(sum == 608)  // + 2 ("\sqrt", "\text").
     #expect(CommandDeclaration.allCommands.count == sum)
     #expect(CommandRecords.allCases.count == 625)
   }

@@ -7,7 +7,13 @@ import SwiftRohan
 class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    FontLoader.registerFonts()
+    // Register fonts and handle potential errors
+    let fontErrors = FontLoader.registerFonts()
+
+    if !fontErrors.isEmpty {
+      handleFontLoadingErrors(fontErrors)
+    }
+
     MenuManager.shared.setupThemeMenu()
   }
 
@@ -17,5 +23,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
     return true
+  }
+
+  // MARK: - Font Loading Errors
+
+  private func handleFontLoadingErrors(_ errors: Array<FontLoader.FontLoadingError>) {
+    for error in errors {
+      Rohan.logger.error("Font loading error: \(error.localizedDescription)")
+    }
+
+    if shouldShowFontErrorAlert(for: errors) {
+      showFontErrorAlert(errors: errors)
+    }
+  }
+
+  private func shouldShowFontErrorAlert(
+    for errors: Array<FontLoader.FontLoadingError>
+  ) -> Bool {
+    errors.isEmpty == false
+  }
+
+  private func showFontErrorAlert(errors: Array<FontLoader.FontLoadingError>) {
+    let alert = NSAlert()
+    alert.messageText = "Font Loading Issue"
+
+    if errors.count == 1 {
+      let message = errors[0].errorDescription ?? "There was an issue loading a font."
+      alert.informativeText = message
+    }
+    else {
+      alert.informativeText = "There were issues loading \(errors.count) fonts."
+    }
+
+    alert.addButton(withTitle: "OK")
+    alert.alertStyle = .warning
+
+    // Run the alert as a sheet if you have a window, or as modal
+    if let window = NSApp.mainWindow {
+      alert.beginSheetModal(for: window) { _ in }
+    }
+    else {
+      alert.runModal()
+    }
   }
 }

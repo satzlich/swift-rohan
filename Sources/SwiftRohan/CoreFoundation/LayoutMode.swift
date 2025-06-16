@@ -7,7 +7,7 @@ enum LayoutMode: CaseIterable {
   case textMode
   case mathMode
 
-  var forLatexParser: LatexParser.LayoutMode {
+  var toLatexParserType: LatexParser.LayoutMode {
     switch self {
     case .textMode: return .textMode
     case .mathMode: return .mathMode

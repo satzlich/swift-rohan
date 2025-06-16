@@ -8,8 +8,7 @@ class Expr: Codable {
 
   init() {}
 
-  func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExprVisitor<C, R> {
+  func accept<V, C, R>(_ visitor: V, _ context: C) -> R where V: ExprVisitor<C, R> {
     preconditionFailure("overriding required")
   }
 
@@ -18,15 +17,16 @@ class Expr: Codable {
   internal enum CodingKeys: CodingKey { case type }
 
   required init(from decoder: any Decoder) throws {
-    // This is unnecessary, but it's a good practice to check type consistency
+    // The check below is unnecessary in terms of correctness, but it is
+    // useful for debugging.
 
-    // for unknown expr, the encoded type can be arbitrary
-    guard Self.type != .unknown else { return }
-    // for known expr, the encoded type must match
+    // if the type is unknown, it doesn't matter what we decode.
+    if Self.type == .unknown { return }
+
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let type = try container.decode(ExprType.self, forKey: .type)
-    guard type == Self.type
-    else {
+
+    guard type == Self.type else {
       throw DecodingError.dataCorruptedError(
         forKey: .type, in: container,
         debugDescription: "Expr type mismatch: \(type) vs \(Self.type)")

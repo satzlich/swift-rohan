@@ -90,12 +90,12 @@ final class ExprNodeSyncTests {
         .Bmatrix,
         [
           MatrixExpr.Row([
-            MatrixExpr.Element([TextExpr("abc")]),
-            MatrixExpr.Element([TextExpr("def")]),
+            MatrixExpr.Cell([TextExpr("abc")]),
+            MatrixExpr.Cell([TextExpr("def")]),
           ]),
           MatrixExpr.Row([
-            MatrixExpr.Element([TextExpr("ghi")]),
-            MatrixExpr.Element([TextExpr("jkl")]),
+            MatrixExpr.Cell([TextExpr("ghi")]),
+            MatrixExpr.Cell([TextExpr("jkl")]),
           ]),
         ])
       let json =
@@ -110,10 +110,10 @@ final class ExprNodeSyncTests {
         .multlineAst,
         [
           MultilineExpr.Row([
-            MultilineExpr.Element([TextExpr("abc")])
+            MultilineExpr.Cell([TextExpr("abc")])
           ]),
           MultilineExpr.Row([
-            MultilineExpr.Element([TextExpr("def")])
+            MultilineExpr.Cell([TextExpr("def")])
           ]),
         ])
       let json =
@@ -216,7 +216,7 @@ final class ExprNodeSyncTests {
       try testSerdeSync(variant, MathStylesNode.self, json)
     }
     do {
-      let radical = RadicalExpr([TextExpr("x")], [TextExpr("y")])
+      let radical = RadicalExpr([TextExpr("x")], index: [TextExpr("y")])
       let json =
         """
         {"index":{"children":[{"string":"y","type":"text"}],"type":"content"},\

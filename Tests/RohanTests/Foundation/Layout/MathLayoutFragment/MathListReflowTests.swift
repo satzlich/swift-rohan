@@ -104,4 +104,15 @@ final class MathListReflowTests: MathLayoutTestsBase {
       #expect(segment.equivalentPosition(0).isNearlyEqual(to: 32.63111111))
     }
   }
+
+  /// Cover edge cases of `cursorDistanceThroughSegment` where cursor position is
+  /// in middle between two fragments.
+  @Test
+  func coverage_cursorDistanceThroughSegment() {
+    let glyphs = "(x)(y)".compactMap { createGlyphFragment($0, styled: false) }
+    let mathList = reflowExample(glyphs)
+
+    let segment = mathList.reflowSegments[0]
+    _ = segment.cursorDistanceThroughSegment(3)
+  }
 }

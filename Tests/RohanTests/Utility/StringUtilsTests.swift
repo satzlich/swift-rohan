@@ -7,6 +7,11 @@ import _RopeModule
 @testable import SwiftRohan
 
 struct StringUtilsTests {
+  @Test
+  func splice_edgeCase() {
+    let str: BigString = "abcd efgh"
+    _ = StringUtils.splice(str, 4, "")
+  }
 
   @Test
   func getNodes_fromRaw() {
@@ -144,5 +149,29 @@ struct StringUtilsTests {
 
     let range2 = StringUtils.wordBoundaryRange(str, offset: 7, direction: .forward)  // "5.9"
     #expect(range2 == 7..<8)
+  }
+  
+  @Test
+  func wordBoundaryRange_edgeCases() async throws {
+    do {
+      let str = BigString("HelloWorld")
+      let range1 = StringUtils.wordBoundaryRange(str, offset: 5, direction: .forward)
+      #expect(range1 == 5..<10)  // "World"
+    }
+    do {
+      let str = BigString("Hello?,;.")
+      let range2 = StringUtils.wordBoundaryRange(str, offset: 5, direction: .forward)
+      #expect(range2 == 5..<9)  // ","
+    }
+    do {
+      let str = BigString("  World")
+      let range3 = StringUtils.wordBoundaryRange(str, offset: 2, direction: .backward)
+      #expect(range3 == 0..<2)  // "  "
+    }
+    do {
+      let str = BigString(" ;,. World")
+      let range4 = StringUtils.wordBoundaryRange(str, offset: 5, direction: .backward)
+      #expect(range4 == 0..<5)  // ", "
+    }
   }
 }

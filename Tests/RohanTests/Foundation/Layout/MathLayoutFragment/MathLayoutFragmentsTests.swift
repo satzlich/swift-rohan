@@ -53,6 +53,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     let attach =
       MathAttachLayoutFragment(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
     attach.fixLayout(context)
+    attach.fixLayout(context.with(cramped: true))
 
     //
     callStandardMethods(attach, fileName: #function)
@@ -111,6 +112,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     do {
       let glyph = MathGlyphLayoutFragment("q", font, table, 1)!
       fragments.append(glyph)
+      // abnormal path
+      #expect(MathGlyphLayoutFragment("\u{7890}", font, table, 1) == nil)
     }
 
     guard let glyph = createGlyphFragment("(") else {
@@ -171,26 +174,52 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
 
   @Test
   func matrix() {
-    guard let a = createMathListFragment("x"),
-      let b = createMathListFragment("y"),
-      let c = createMathListFragment("z"),
-      let d = createMathListFragment("w")
-    else {
-      Issue.record("Failed to create matrix elements")
-      return
-    }
-    let matrix = MathArrayLayoutFragment(
-      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context,
-      // 300 is arbitrary
-      300)
-    matrix.setElement(0, 0, a)
-    matrix.setElement(0, 1, b)
-    matrix.setElement(1, 0, c)
-    matrix.setElement(1, 1, d)
-    matrix.fixLayout(context)
+    var fragments: Array<MathLayoutFragment> = []
 
-    //
-    callStandardMethods(matrix, fileName: #function)
+    do {
+      guard let a = createMathListFragment("x"),
+        let b = createMathListFragment("y"),
+        let c = createMathListFragment("z"),
+        let d = createMathListFragment("w")
+      else {
+        Issue.record("Failed to create matrix elements")
+        return
+      }
+      let matrix = MathArrayLayoutFragment(
+        rowCount: 2, columnCount: 2, subtype: MathArray.cases, context,
+        // zero is default.
+        0)
+      matrix.setElement(0, 0, a)
+      matrix.setElement(0, 1, b)
+      matrix.setElement(1, 0, c)
+      matrix.setElement(1, 1, d)
+      matrix.fixLayout(context)
+
+      //
+      fragments.append(matrix)
+    }
+    do {
+      guard let a = createMathListFragment("x"),
+        let b = createMathListFragment("y")
+      else {
+        Issue.record("Failed to create matrix elements")
+        return
+      }
+      let multline = MathArrayLayoutFragment(
+        rowCount: 2, columnCount: 1, subtype: .multlineAst, context,
+        // 300 is arbitrary
+        300)
+      multline.setElement(0, 0, a)
+      multline.setElement(1, 0, b)
+      multline.fixLayout(context)
+
+      //
+      fragments.append(multline)
+    }
+
+    for (i, fragment) in fragments.enumerated() {
+      callStandardMethods(fragment, fileName: #function + "_\(i)")
+    }
   }
 
   @Test
@@ -246,7 +275,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     for spreader in [
       MathSpreader.underline, .overline, .underbrace, .overbrace,
       // bad
-      MathSpreader(.xarrow("碐"), "_unresolved"),
+      MathSpreader(.overspreader("\u{7890}"), "_nonexistent"),
+      MathSpreader(.xarrow("\u{7890}"), "_nonexistent"),
     ] {
       let nucleus = createMathListFragment("x")!
       let overspreader = MathUnderOverLayoutFragment(spreader, nucleus)
@@ -433,6 +463,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     for (x, y) in product(xs, ys) {
       let point = CGPoint(x: x, y: y)
       _ = matrix.getGridIndex(interactingAt: point)
+      _ = matrix.getGridIndex(interactingAt: point, shouldClamp: true)
       for i in 0..<matrix.rowCount {
         for j in 0..<matrix.columnCount {
           _ = matrix.rayshoot(from: point, GridIndex(i, j), in: .up)
