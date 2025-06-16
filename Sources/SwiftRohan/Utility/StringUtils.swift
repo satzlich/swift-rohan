@@ -178,11 +178,6 @@ private extension BigString {
       }
       else {
         let end = self[index...].firstIndex(where: { isWordCharacter($0) })
-          .flatMap { j in
-            isWhitespace(self[j])
-              ? self[j...].firstIndex(where: { !isWhitespace($0) })
-              : j
-          }
         return index..<(end ?? endIndex)
       }
     }

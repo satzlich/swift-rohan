@@ -53,6 +53,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     let attach =
       MathAttachLayoutFragment(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
     attach.fixLayout(context)
+    attach.fixLayout(context.with(cramped: true))
 
     //
     callStandardMethods(attach, fileName: #function)
@@ -111,6 +112,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     do {
       let glyph = MathGlyphLayoutFragment("q", font, table, 1)!
       fragments.append(glyph)
+      // abnormal path
+      #expect(MathGlyphLayoutFragment("\u{7890}", font, table, 1) == nil)
     }
 
     guard let glyph = createGlyphFragment("(") else {
@@ -272,7 +275,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     for spreader in [
       MathSpreader.underline, .overline, .underbrace, .overbrace,
       // bad
-      MathSpreader(.xarrow("碐"), "_unresolved"),
+      MathSpreader(.overspreader("\u{7890}"), "_nonexistent"),
+      MathSpreader(.xarrow("\u{7890}"), "_nonexistent"),
     ] {
       let nucleus = createMathListFragment("x")!
       let overspreader = MathUnderOverLayoutFragment(spreader, nucleus)
