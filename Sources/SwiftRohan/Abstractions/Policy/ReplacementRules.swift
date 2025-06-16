@@ -35,8 +35,8 @@ public enum ReplacementRules {
     // basics (7)
     results.append(contentsOf: [
       .init("$", Snippets.inlineMath),
-      .init("^", Snippets.attachMathComponent(.sup)),
-      .init("_", Snippets.attachMathComponent(.sub)),
+      .init("^", Snippets.attachOrGotoMathComponent(.sup)),
+      .init("_", Snippets.attachOrGotoMathComponent(.sub)),
       .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
       .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
       .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034

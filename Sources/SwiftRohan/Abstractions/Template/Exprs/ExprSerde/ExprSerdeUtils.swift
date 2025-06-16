@@ -36,6 +36,8 @@ enum ExprSerdeUtils {
     .underOver: UnderOverExpr.self,
   ]
 
+  /// A subroutine for decoding a list of expressions from an **unkeyed decoding
+  /// container**.
   static func decodeListOfExprs<Store: RangeReplaceableCollection<Expr>>(
     from container: inout UnkeyedDecodingContainer
   ) throws -> Store {

@@ -3,7 +3,7 @@
 final class MultilineExpr: ArrayExpr {
   override class var type: ExprType { .multiline }
 
-  required override init(_ subtype: MathArray, _ rows: Array<Row>) {
+  required init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
   }
 

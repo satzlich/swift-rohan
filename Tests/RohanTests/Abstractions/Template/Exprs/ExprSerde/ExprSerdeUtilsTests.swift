@@ -51,13 +51,38 @@ struct ExprSerdeUtilsTests {
 
   @Test
   func wildExpr() throws {
-    let json = """
-      {"type":"unsupported","value":1}
-      """
-
     let decoder = JSONDecoder()
-    let wildcard = try decoder.decode(WildcardExpr.self, from: Data(json.utf8))
-    #expect(wildcard.expr.type == .unknown)
+
+    // test non-existent type
+    do {
+      let json = """
+        {"type":"nonexistent","value":1}
+        """
+      let wildcard = try decoder.decode(WildcardExpr.self, from: Data(json.utf8))
+      #expect(wildcard.expr.type == .unknown)
+    }
+    // test existent but unregistered type
+    do {
+      let json = """
+        {"type":"argument","value":1}
+        """
+      let wildcard = try decoder.decode(WildcardExpr.self, from: Data(json.utf8))
+      #expect(wildcard.expr.type == .unknown)
+    }
+  }
+
+  @Test
+  func decodeListOfExprs_BadCase() throws {
+    // decode ContentNode calls `decodeListOfExprs` internally,
+    let decoder = JSONDecoder()
+    let json = """
+      {"type": "content", 
+      "children": [
+        {"type": "unsupported", "command": "unsupported"},
+        {"type": "argument", "children": []}
+      ]}
+      """
+    _ = try decoder.decode(WildcardExpr.self, from: Data(json.utf8))
   }
 
   @Test
