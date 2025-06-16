@@ -71,6 +71,9 @@ extension Rohan {
         \usepackage{mathtools}
         \usepackage{unicode-math}
 
+        \setlength\parindent{0pt}
+        \setlength{\parskip}{0.5em}
+
         \DeclareMathOperator{\csch}{csch}
         \DeclareMathOperator{\ctg}{ctg}
         \DeclareMathOperator{\id}{id}
@@ -80,7 +83,7 @@ extension Rohan {
         \DeclareMathOperator{\sinc}{sinc}
         \DeclareMathOperator{\tg}{tg}
         \DeclareMathOperator{\tr}{tr}
-
+        
         """#
       registry.preamble = preamble
     }
