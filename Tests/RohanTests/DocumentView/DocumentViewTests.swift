@@ -695,8 +695,9 @@ struct DocumentViewTests {
     }
   }
 
+  /// Test editing math and context menu actions on AttachNode.
   @Test
-  func editMath_AttachNode() {
+  func editMath_contextMenu_AttachNode() {
     let documentView = DocumentView()
     do {
       let rootNode = RootNode([
@@ -715,11 +716,21 @@ struct DocumentViewTests {
       documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
     }
 
+    func getContextMenu() {
+      let event = NSEvent.mouseEvent(
+        with: .rightMouseDown, location: NSPoint(x: 0, y: 0),
+        modifierFlags: [], timestamp: Date().timeIntervalSince1970,
+        windowNumber: 0, context: nil, eventNumber: 0, clickCount: 1,
+        pressure: 1.0)!
+      _ = documentView.menu(for: event)
+    }
+
     let documentManager = documentView.documentManager
     let nucleusLocation = TextLocation.parse("[↓0,nuc,↓0,nuc,↓0]:1")!
     // remove lsub
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
       documentView.removeLeftSubscript(nil)
       let expected1 = """
         root
@@ -738,6 +749,7 @@ struct DocumentViewTests {
     // add sub
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
       documentView.addSubscript(nil)
       let expected1 = """
         root
@@ -757,6 +769,8 @@ struct DocumentViewTests {
     // remove lsup
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.removeLeftSuperscript(nil)
       let expected1 = """
         root
@@ -774,6 +788,8 @@ struct DocumentViewTests {
     // add sup
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.addSuperscript(nil)
       let expected1 = """
         root
@@ -792,6 +808,8 @@ struct DocumentViewTests {
     // remove sub
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.removeSubscript(nil)
       let expected1 = """
         root
@@ -809,6 +827,8 @@ struct DocumentViewTests {
     // add lsub
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.addLeftSubscript(nil)
       let expected1 = """
         root
@@ -827,6 +847,8 @@ struct DocumentViewTests {
     // remove sup
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.removeSuperscript(nil)
       let expected1 = """
         root
@@ -844,6 +866,8 @@ struct DocumentViewTests {
     // add lsup
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.addLeftSuperscript(nil)
       let expected1 = """
         root
@@ -861,6 +885,7 @@ struct DocumentViewTests {
     }
   }
 
+  /// Test editing math and context menu actions on RadicalNode.
   @Test
   func editMath_RadicalNode() {
     let documentView = DocumentView()
@@ -880,12 +905,23 @@ struct DocumentViewTests {
       documentManager.textSelection = RhTextSelection(location, affinity: .downstream)
     }
 
+    func getContextMenu() {
+      let event = NSEvent.mouseEvent(
+        with: .rightMouseDown, location: NSPoint(x: 0, y: 0),
+        modifierFlags: [], timestamp: Date().timeIntervalSince1970,
+        windowNumber: 0, context: nil, eventNumber: 0, clickCount: 1,
+        pressure: 1.0)!
+      _ = documentView.menu(for: event)
+    }
+
     let documentManager = documentView.documentManager
     let nucleusLocation = TextLocation.parse("[↓0,nuc,↓0,radicand,↓0]:1")!
 
     // remove index
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.removeDegree(nil)
       let expected1 = """
         root
@@ -902,6 +938,8 @@ struct DocumentViewTests {
     // add index
     do {
       gotoLocation(nucleusLocation)
+      getContextMenu()
+
       documentView.addDegree(nil)
       let expected1 = """
         root
@@ -918,8 +956,9 @@ struct DocumentViewTests {
     }
   }
 
+  /// Test editing math and context menu actions on ArrayNode.
   @Test
-  func editMath_ArrayNode() {
+  func editMath_contextMenu_ArrayNode() {
     let documentView = DocumentView()
     let documentManager = documentView.documentManager
 
@@ -948,9 +987,20 @@ struct DocumentViewTests {
         RhTextSelection(location, affinity: .downstream)
     }
 
+    func getContextMenu() {
+      let event = NSEvent.mouseEvent(
+        with: .rightMouseDown, location: NSPoint(x: 0, y: 0),
+        modifierFlags: [], timestamp: Date().timeIntervalSince1970,
+        windowNumber: 0, context: nil, eventNumber: 0, clickCount: 1,
+        pressure: 1.0)!
+      _ = documentView.menu(for: event)
+    }
+
     // insert row after
     do {
       resetContent()
+      getContextMenu()
+
       documentView.insertRowBefore(nil)
       let expected = """
         root
@@ -979,6 +1029,8 @@ struct DocumentViewTests {
     // insert row after
     do {
       resetContent()
+      getContextMenu()
+
       documentView.insertRowAfter(nil)
       let expected = """
         root
@@ -1006,6 +1058,8 @@ struct DocumentViewTests {
     // insert column before
     do {
       resetContent()
+      getContextMenu()
+
       documentView.insertColumnBefore(nil)
       let expected = """
         root
@@ -1032,6 +1086,8 @@ struct DocumentViewTests {
     // insert column after
     do {
       resetContent()
+      getContextMenu()
+
       documentView.insertColumnAfter(nil)
       let expected = """
         root
@@ -1059,6 +1115,8 @@ struct DocumentViewTests {
     // remove row
     do {
       resetContent()
+      getContextMenu()
+
       documentView.deleteRow(nil)
       let expected = """
         root
@@ -1078,6 +1136,8 @@ struct DocumentViewTests {
     // remove column
     do {
       resetContent()
+      getContextMenu()
+
       documentView.deleteColumn(nil)
       let expected = """
         root
