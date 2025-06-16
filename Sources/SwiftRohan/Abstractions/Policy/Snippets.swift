@@ -23,7 +23,7 @@ enum Snippets {
   static let fraction =
     CommandBody(FractionExpr(num: [], denom: []), 2, preview: .image("frac"))
   static let sqrt = CommandBody(RadicalExpr([]), 1, preview: .image("sqrt"))
-  static let root = CommandBody(RadicalExpr([], []), 2, preview: .image("root"))
+  static let root = CommandBody(RadicalExpr([], index: []), 2, preview: .image("root"))
   static let textMode = CommandBody(TextModeExpr(), 1)
 
   static func mathTextStyle(_ style: MathTextStyle, _ string: String) -> CommandBody {

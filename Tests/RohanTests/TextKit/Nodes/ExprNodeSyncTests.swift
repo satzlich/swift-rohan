@@ -216,7 +216,7 @@ final class ExprNodeSyncTests {
       try testSerdeSync(variant, MathStylesNode.self, json)
     }
     do {
-      let radical = RadicalExpr([TextExpr("x")], [TextExpr("y")])
+      let radical = RadicalExpr([TextExpr("x")], index: [TextExpr("y")])
       let json =
         """
         {"index":{"children":[{"string":"y","type":"text"}],"type":"content"},\

@@ -58,6 +58,7 @@ extension Nano {
       case let (lhs as ElementExpr, rhs as ElementExpr):
         return mergeElement(lhs, rhs)
       default:
+        // This should never happen, because we have checked the types.
         preconditionFailure("unreachable")
       }
     }

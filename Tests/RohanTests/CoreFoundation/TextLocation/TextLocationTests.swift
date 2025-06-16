@@ -88,6 +88,13 @@ struct TextLocationTests {
         #expect(TextLocation.parse(str) == nil)
       }
     }
+  }
 
+  // Here we test the edge cases.
+  @Test
+  func toUserSpace() {
+    let location = TextLocation.parse("[↓2]:0")!
+    let rootNode = RootNode()
+    #expect(nil == location.toUseSpace(for: rootNode))
   }
 }

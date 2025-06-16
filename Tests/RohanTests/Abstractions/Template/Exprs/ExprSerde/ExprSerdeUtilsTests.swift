@@ -85,6 +85,7 @@ struct ExprSerdeUtilsTests {
     _ = try decoder.decode(WildcardExpr.self, from: Data(json.utf8))
   }
 
+  /// Tests that decoding known expr from input throws a `DecodingError`.
   @Test
   func decodeThrows() {
     let decoder = JSONDecoder()
@@ -115,6 +116,18 @@ struct ExprSerdeUtilsTests {
     }
   }
 
+  @Test
+  func decodeThrows_typeMismatch() {
+    let json = """
+      {"type":"content","children":[]}
+      """
+    let decoder = JSONDecoder()
+
+    #expect(throws: DecodingError.self) {
+      _ = try decoder.decode(StrongExpr.self, from: Data(json.utf8))
+    }
+  }
+
   /// Tests that `ArrayExpr` fails `ArrayExpr.validate()` when decoding an empty array.
   @Test
   func arrayNode_decodeThrows() {
@@ -125,6 +138,17 @@ struct ExprSerdeUtilsTests {
     let decoder = JSONDecoder()
     #expect(throws: DecodingError.self) {
       _ = try decoder.decode(MatrixExpr.self, from: Data(json.utf8))
+    }
+  }
+
+  @Test
+  func compiledVariableExpr_decodeThrows() {
+    let json = """
+      {"type":"cVariable","argIndex":-1}
+      """
+    let decoder = JSONDecoder()
+    #expect(throws: DecodingError.self) {
+      _ = try decoder.decode(CompiledVariableExpr.self, from: Data(json.utf8))
     }
   }
 }

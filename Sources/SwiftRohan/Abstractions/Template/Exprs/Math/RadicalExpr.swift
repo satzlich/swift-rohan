@@ -8,32 +8,32 @@ final class RadicalExpr: MathExpr {
   let radicand: ContentExpr
   let index: ContentExpr?
 
-  init(_ radicand: ContentExpr, _ index: ContentExpr?) {
+  init(_ radicand: ContentExpr, index: ContentExpr?) {
     self.radicand = radicand
     self.index = index
     super.init()
   }
 
-  convenience init(_ radicand: Array<Expr>, _ index: Array<Expr>? = nil) {
+  convenience init(_ radicand: Array<Expr>, index: Array<Expr>? = nil) {
     let radicand = ContentExpr(radicand)
     let index = index.map { ContentExpr($0) }
-    self.init(radicand, index)
+    self.init(radicand, index: index)
   }
 
-  func with(radicand: ContentExpr) -> RadicalExpr {
-    RadicalExpr(radicand, index)
+  final func with(radicand: ContentExpr) -> RadicalExpr {
+    RadicalExpr(radicand, index: index)
   }
 
-  func with(index: ContentExpr?) -> RadicalExpr {
-    RadicalExpr(radicand, index)
+  final func with(index: ContentExpr?) -> RadicalExpr {
+    RadicalExpr(radicand, index: index)
   }
 
-  override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
+  final override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
     visitor.visit(radical: self, context)
   }
 
-  override func enumerateComponents() -> Array<MathExpr.MathComponent> {
+  final override func enumerateComponents() -> Array<MathExpr.MathComponent> {
     var components: Array<MathExpr.MathComponent> = []
     components.append((MathIndex.radicand, radicand))
     if let index = index {
@@ -53,11 +53,10 @@ final class RadicalExpr: MathExpr {
     try super.init(from: decoder)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(radicand, forKey: .radicand)
     try container.encodeIfPresent(index, forKey: .index)
     try super.encode(to: encoder)
   }
-
 }
