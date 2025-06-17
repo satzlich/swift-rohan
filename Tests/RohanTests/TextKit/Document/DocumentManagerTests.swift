@@ -393,7 +393,7 @@ final class DocumentManagerTests: TextKitTestsBase {
     let documentManager = _createDocumentManager([
       ParagraphNode([
         TextNode("Hello"),
-        StrongNode(.emph, [TextNode("a😀bc")]),
+        TextStylesNode(.emph, [TextNode("a😀bc")]),
         TextNode("!"),
       ])
     ])
@@ -564,7 +564,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func getNode() {
     let documentManager = _createDocumentManager([
       ParagraphNode([
-        StrongNode(.emph, [TextNode("Hello")])
+        TextStylesNode(.emph, [TextNode("Hello")])
       ])
     ])
 

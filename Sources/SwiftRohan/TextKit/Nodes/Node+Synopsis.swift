@@ -85,11 +85,11 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   // MARK: - Element
 
-  override func visit(strong: StrongNode, _ context: Void) -> Array<String> {
-    let name = "\(strong.subtype)"
-    let description = description(of: strong, name)
-    let children = (0..<strong.childCount)
-      .map { strong.getChild($0).accept(self, context) }
+  override func visit(textStyles: TextStylesNode, _ context: Void) -> Array<String> {
+    let name = "\(textStyles.subtype)"
+    let description = description(of: textStyles, name)
+    let children = (0..<textStyles.childCount)
+      .map { textStyles.getChild($0).accept(self, context) }
     return PrintUtils.compose(description, children)
   }
 

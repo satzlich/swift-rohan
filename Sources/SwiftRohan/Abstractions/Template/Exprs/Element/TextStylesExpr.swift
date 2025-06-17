@@ -1,16 +1,16 @@
 // Copyright 2024-2025 Lie Yan
 
-final class StrongExpr: ElementExpr {
+final class TextStylesExpr: ElementExpr {
   class override var type: ExprType { .textStyles }
 
   override func with(children: Array<Expr>) -> Self { Self(subtype, children) }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
-    visitor.visit(strong: self, context)
+    visitor.visit(textStyles: self, context)
   }
 
-  // MARK: - StrongExpr
+  // MARK: - TextStylesExpr
 
   let subtype: TextStyles
 

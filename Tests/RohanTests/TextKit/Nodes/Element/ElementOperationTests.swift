@@ -180,7 +180,7 @@ struct ElementOperationTests {
       ]),
       ParagraphNode([
         TextNode("2"),
-        StrongNode(.emph, [
+        TextStylesNode(.emph, [
           TextNode("3")
         ]),
       ]),
@@ -199,7 +199,7 @@ struct ElementOperationTests {
           └ text "3"
         """)
 
-    (newParagraph.getChild(1) as! StrongNode)
+    (newParagraph.getChild(1) as! TextStylesNode)
       .insertChild(TextNode("X"), at: 1, inStorage: false)
 
     // check new paragraph
@@ -238,10 +238,10 @@ struct ElementOperationTests {
     let paragraph = ParagraphNode([
       TextNode("0"),
       TextNode("1"),
-      StrongNode(.emph, [TextNode("2")]),
+      TextStylesNode(.emph, [TextNode("2")]),
       TextNode("3"),
       TextNode("4"),
-      StrongNode(.emph, [TextNode("5")]),
+      TextStylesNode(.emph, [TextNode("5")]),
       TextNode("6"),
     ])
     #expect(
@@ -321,7 +321,7 @@ struct ElementOperationTests {
         level: 1,
         [
           TextNode("abc"),
-          StrongNode(.emph, [TextNode("def😀")]),
+          TextStylesNode(.emph, [TextNode("def😀")]),
         ]
       ),
       ParagraphNode([

@@ -128,9 +128,9 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return RootNode(children)
   }
 
-  override func visit(strong: StrongExpr, _ context: Void) -> StrongNode {
-    let children = _convertChildren(of: strong, context)
-    return StrongNode(strong.subtype, children)
+  override func visit(textStyles: TextStylesExpr, _ context: Void) -> TextStylesNode {
+    let children = _convertChildren(of: textStyles, context)
+    return TextStylesNode(textStyles.subtype, children)
   }
 
   // MARK: - Math

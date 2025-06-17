@@ -61,7 +61,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("The quick brown fox jumps over the"),
-          StrongNode(.emph, [TextNode(" lazy")]),
+          TextStylesNode(.emph, [TextNode(" lazy")]),
           TextNode(" dog."),
         ])
       ])
@@ -123,7 +123,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("Newton's"),
-            StrongNode(.emph, [TextNode(" Second")]),
+            TextStylesNode(.emph, [TextNode(" Second")]),
             TextNode(" Law of Motion"),
           ])
       ])
@@ -186,7 +186,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("Newton's"),
-            StrongNode(.emph, [TextNode(" Second")]),
+            TextStylesNode(.emph, [TextNode(" Second")]),
             TextNode(" Law of Motion"),
           ]),
         ParagraphNode([
@@ -336,7 +336,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           TextNode("fox jumps over "),
         ])
       ])
@@ -368,7 +368,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           TextNode("fox jumps over "),
         ])
       ])
@@ -398,7 +398,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           TextNode("fox jumps over "),
         ])
       ])
@@ -601,11 +601,11 @@ final class DeleteRangeTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([
-          StrongNode(.emph, [TextNode("the quick ")]),
+          TextStylesNode(.emph, [TextNode("the quick ")]),
           TextNode("brown fox "),
-          StrongNode(.emph, [TextNode("jumps over ")]),
+          TextStylesNode(.emph, [TextNode("jumps over ")]),
           TextNode("the lazy "),
-          StrongNode(.emph, [TextNode("dog.")]),
+          TextStylesNode(.emph, [TextNode("dog.")]),
         ])
       ])
       return self.createDocumentManager(rootNode)
@@ -639,7 +639,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick brown "),  // text_1
-          StrongNode(.emph, [TextNode("fox ")]),
+          TextStylesNode(.emph, [TextNode("fox ")]),
         ]),
         ParagraphNode([
           TextNode("jumps over the lazy dog.")  // text_2

@@ -97,8 +97,8 @@ extension Nano {
       _visitElement(root, context)
     }
 
-    override func visit(strong: StrongExpr, _ context: Context) -> Void {
-      _visitElement(strong, context)
+    override func visit(textStyles: TextStylesExpr, _ context: Context) -> Void {
+      _visitElement(textStyles, context)
     }
 
     // MARK: - Math

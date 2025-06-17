@@ -115,11 +115,11 @@ public enum StyleSheets {
         TextProperty.size: .fontSize(textSize),
       ],
       // emphasis
-      StrongNode.selector(command: TextStyles.emph.command): [
+      TextStylesNode.selector(command: TextStyles.emph.command): [
         TextProperty.foregroundColor: .color(emphasisColor)
       ],
       // strong
-      StrongNode.selector(command: TextStyles.textbf.command): [
+      TextStylesNode.selector(command: TextStyles.textbf.command): [
         TextProperty.foregroundColor: .color(strongColor)
       ],
       // equation

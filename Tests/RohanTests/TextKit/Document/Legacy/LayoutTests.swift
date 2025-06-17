@@ -20,15 +20,15 @@ final class LayoutTests: TextKitTestsBase {
         level: 1,
         [
           TextNode("Alpha "),
-          StrongNode(.emph, [TextNode("Bravo Charlie")]),
+          TextStylesNode(.emph, [TextNode("Bravo Charlie")]),
         ]),
       ParagraphNode([
         TextNode("The quick brown fox "),
-        StrongNode(
+        TextStylesNode(
           .emph,
           [
             TextNode("jumps over the "),
-            StrongNode(.emph, [TextNode("lazy ")]),
+            TextStylesNode(.emph, [TextNode("lazy ")]),
             TextNode("dog."),
           ]),
       ]),
@@ -541,7 +541,7 @@ final class LayoutTests: TextKitTestsBase {
       HeadingNode(level: 1, [TextNode("H1")]),
       HeadingNode(level: 2, []),
       HeadingNode(level: 3, [TextNode("H3")]),
-      HeadingNode(level: 4, [TextNode("H4"), StrongNode(.emph, [])]),
+      HeadingNode(level: 4, [TextNode("H4"), TextStylesNode(.emph, [])]),
       HeadingNode(level: 5, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),

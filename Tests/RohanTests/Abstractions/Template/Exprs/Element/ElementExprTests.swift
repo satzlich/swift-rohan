@@ -20,11 +20,11 @@ struct ElementExprTests {
   static func allSamples() -> Array<ElementExpr> {
     [
       ContentExpr(),
-      StrongExpr(.emph),
+      TextStylesExpr(.emph),
       HeadingExpr(level: 1),
       ParagraphExpr(),
       RootExpr(),
-      StrongExpr(.textbf),
+      TextStylesExpr(.textbf),
     ]
   }
 

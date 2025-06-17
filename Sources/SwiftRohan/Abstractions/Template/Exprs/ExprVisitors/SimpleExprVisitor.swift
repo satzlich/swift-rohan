@@ -56,8 +56,8 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitElement(root, context)
   }
 
-  override func visit(strong: StrongExpr, _ context: C) -> Void {
-    _visitElement(strong, context)
+  override func visit(textStyles: TextStylesExpr, _ context: C) -> Void {
+    _visitElement(textStyles, context)
   }
 
   // MARK: - Math

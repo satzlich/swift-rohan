@@ -124,7 +124,7 @@ struct ExprSerdeUtilsTests {
     let decoder = JSONDecoder()
 
     #expect(throws: DecodingError.self) {
-      _ = try decoder.decode(StrongExpr.self, from: Data(json.utf8))
+      _ = try decoder.decode(TextStylesExpr.self, from: Data(json.utf8))
     }
   }
 

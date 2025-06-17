@@ -15,7 +15,7 @@ enum NodeStoreUtils {
     HeadingNode.self,
     ParagraphNode.self,
     RootNode.self,
-    StrongNode.self,
+    TextStylesNode.self,
     // Math
     AccentNode.self,
     AttachNode.self,

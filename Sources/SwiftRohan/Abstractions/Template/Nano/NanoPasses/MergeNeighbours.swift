@@ -52,8 +52,8 @@ extension Nano {
           return true
         }
 
-        if let lhs = lhs as? StrongExpr,
-          let rhs = rhs as? StrongExpr,
+        if let lhs = lhs as? TextStylesExpr,
+          let rhs = rhs as? TextStylesExpr,
           lhs.subtype == rhs.subtype
         {
           return true

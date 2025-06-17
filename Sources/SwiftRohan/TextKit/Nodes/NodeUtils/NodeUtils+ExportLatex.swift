@@ -288,17 +288,17 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
-    strong: StrongNode, _ context: LayoutMode
+    textStyles: TextStylesNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    return visit(strong: strong, context, withChildren: strong.childrenReadonly())
+    return visit(textStyles: textStyles, context, withChildren: textStyles.childrenReadonly())
   }
 
   override func visit<T, S>(
-    strong: StrongNode, _ context: LayoutMode, withChildren children: S
+    textStyles: TextStylesNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-    return _composeControlSeqCall(strong.command, children: children, context)
+    return _composeControlSeqCall(textStyles.command, children: children, context)
   }
 
   // MARK: - Partial

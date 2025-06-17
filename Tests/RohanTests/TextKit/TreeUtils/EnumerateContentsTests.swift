@@ -113,7 +113,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
         level: 1,
         [
           TextNode("Hello, "),
-          StrongNode(.emph, [TextNode("world")]),
+          TextStylesNode(.emph, [TextNode("world")]),
           TextNode("!"),
         ])
     ])
@@ -243,11 +243,11 @@ final class EnumerateContentsTests: TextKitTestsBase {
         level: 1,
         [
           TextNode("Hello, "),
-          StrongNode(.emph, [TextNode("world")]),
+          TextStylesNode(.emph, [TextNode("world")]),
           TextNode("!"),
         ]),
       ParagraphNode([
-        StrongNode(.emph, [TextNode("Emphasized text. ")]),
+        TextStylesNode(.emph, [TextNode("Emphasized text. ")]),
         TextNode("Normal text."),
       ]),
     ])
@@ -728,7 +728,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           [
             [
               TextNode("Good "),
-              StrongNode(.emph, [TextNode("job")]),
+              TextStylesNode(.emph, [TextNode("job")]),
             ]
           ])!
       ]),

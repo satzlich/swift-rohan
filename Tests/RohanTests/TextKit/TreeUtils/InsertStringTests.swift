@@ -34,7 +34,7 @@ final class InsertStringTests: TextKitTestsBase {
   func test_insertString_TextNode() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [StrongNode(.emph, [TextNode("Newton's😀")])])
+        HeadingNode(level: 1, [TextStylesNode(.emph, [TextNode("Newton's😀")])])
       ])
       return createDocumentManager(rootNode)
     }()
@@ -64,7 +64,7 @@ final class InsertStringTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(level: 1, []),
-        ParagraphNode([StrongNode(.emph, [TextNode("over ")])]),
+        ParagraphNode([TextStylesNode(.emph, [TextNode("over ")])]),
       ])
       return createDocumentManager(rootNode)
     }()
@@ -93,7 +93,7 @@ final class InsertStringTests: TextKitTestsBase {
         HeadingNode(level: 1, []),
         ParagraphNode([
           TextNode("fox "),
-          StrongNode(.emph, [TextNode("over ")]),
+          TextStylesNode(.emph, [TextNode("over ")]),
         ]),
       ])
       return createDocumentManager(rootNode)
@@ -123,7 +123,7 @@ final class InsertStringTests: TextKitTestsBase {
         HeadingNode(level: 1, []),
         ParagraphNode([
           TextNode("The quick brown fox "),
-          StrongNode(.emph, [TextNode("over ")]),
+          TextStylesNode(.emph, [TextNode("over ")]),
         ]),
       ])
       return createDocumentManager(rootNode)
@@ -283,7 +283,7 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("The "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           EquationNode(.inline, [TextNode("jumps ")]),
           TextNode("the lazy dog."),
         ])

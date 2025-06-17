@@ -5,8 +5,8 @@ import Foundation
 enum Snippets {
   // text
 
-  static let emphasis = CommandBody(StrongExpr(.emph), 1)
-  static let strong = CommandBody(StrongExpr(.textbf), 1)
+  static let emphasis = CommandBody(TextStylesExpr(.emph), 1)
+  static let strong = CommandBody(TextStylesExpr(.textbf), 1)
   static let equation = CommandBody(EquationExpr(.block), 1)
   static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 

@@ -28,10 +28,10 @@ struct ElementNodeTests {
       SubscriptNode([TextNode("abc")]),
       SuperscriptNode([TextNode("abc")]),
       //
-      StrongNode(.emph, [TextNode("abc")]),
+      TextStylesNode(.emph, [TextNode("abc")]),
       HeadingNode(level: 1, [TextNode("abc")]),
       ParagraphNode([TextNode("abc")]),
-      StrongNode(.textbf, [TextNode("abc")]),
+      TextStylesNode(.textbf, [TextNode("abc")]),
     ]
   }
 
@@ -42,7 +42,7 @@ struct ElementNodeTests {
     let styleSheet = StyleSheetTests.testingStyleSheet()
 
     do {
-      let emphasis = StrongNode(.emph, [TextNode("ab😀")])
+      let emphasis = TextStylesNode(.emph, [TextNode("ab😀")])
       let heading = HeadingNode(level: 1, [emphasis])
       do {
         let properties = heading.getProperties(styleSheet)
@@ -55,7 +55,7 @@ struct ElementNodeTests {
     }
 
     do {
-      let emphasis = StrongNode(.emph, [TextNode("cd😀")])
+      let emphasis = TextStylesNode(.emph, [TextNode("cd😀")])
       let paragraph = ParagraphNode([emphasis])
       do {
         let properties = emphasis.getProperties(styleSheet)
@@ -71,7 +71,7 @@ struct ElementNodeTests {
 
   @Test
   func layoutLength() {
-    let emphasis = StrongNode(
+    let emphasis = TextStylesNode(
       .emph,
       [
         TextNode("a😀b"),

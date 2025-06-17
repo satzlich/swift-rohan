@@ -88,8 +88,8 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitElementNode(root, context)
   }
 
-  override func visit(strong: StrongNode, _ context: C) -> Void {
-    _visitElementNode(strong, context)
+  override func visit(textStyles: TextStylesNode, _ context: C) -> Void {
+    _visitElementNode(textStyles, context)
   }
 
   // MARK: - Math

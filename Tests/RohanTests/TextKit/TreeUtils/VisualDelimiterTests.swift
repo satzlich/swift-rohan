@@ -12,9 +12,9 @@ final class VisualDelimiterTests: TextKitTestsBase {
   func treeUtils() {
     let tree = RootNode([
       ParagraphNode([
-        StrongNode(.emph, [TextNode("Hello")]),
+        TextStylesNode(.emph, [TextNode("Hello")]),
         TextNode(" "),
-        StrongNode(.textbf, []),
+        TextStylesNode(.textbf, []),
       ])
     ])
 
