@@ -95,9 +95,7 @@ struct WildcardExpr: Decodable {
       return
     }
     let exprType = ExprType(rawValue: rawValue) ?? .unknown
-    // get expr class
     let klass = ExprSerdeUtils.registeredExprs[exprType] ?? UnknownExpr.self
-    // decode expr
     expr = try klass.init(from: decoder)
   }
 }
