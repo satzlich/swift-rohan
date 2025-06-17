@@ -45,27 +45,58 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   /// Compose a control sequence call with given command and components.
-  private func _composeControlSeq<C: Collection<Node>>(
-    _ command: String, arguments: C, _ context: LayoutMode
+  private func _composeControlSeqCall<T: Node>(
+    _ command: String, arguments: Array<T>, _ context: LayoutMode,
+    affixPosition: AffixPosition = .prefix
   ) -> SatzResult<StreamSyntax> {
-    guard let command = NameToken(command).map({ ControlWordToken(name: $0) })
-    else { return .failure(SatzError(.ExportLatexFailure)) }
 
-    let arguments: Array<ComponentSyntax> =
-      arguments
-      .compactMap { component in component.accept(self, context).success() }
-      .map { .group(GroupSyntax($0)) }
+    guard (affixPosition != .infix || arguments.count == 2),
+      (affixPosition != .postfix || arguments.count == 1),
+      let command = NameToken(command).map({ ControlWordToken(name: $0) })
+    else {
+      return .failure(SatzError(.ExportLatexFailure))
+    }
 
-    guard arguments.count == arguments.count
-    else { return .failure(SatzError(.ExportLatexFailure)) }
+    let argumentSyntaxes: Array<StreamSyntax> =
+      arguments.compactMap { component in component.accept(self, context).success() }
 
-    let controlWord = ControlWordSyntax(command: command, arguments: arguments)
-    return .success(StreamSyntax([.controlWord(controlWord)]))
+    guard argumentSyntaxes.count == arguments.count else {
+      return .failure(SatzError(.ExportLatexFailure))
+    }
+
+    switch affixPosition {
+    case .prefix:
+      let groupedArguments: Array<ComponentSyntax> =
+        argumentSyntaxes.map { .group(GroupSyntax($0)) }
+      let controlWord = ControlWordSyntax(command: command, arguments: groupedArguments)
+      return .success(StreamSyntax([.controlWord(controlWord)]))
+
+    case .infix:
+      assert(argumentSyntaxes.count == 2)
+      // compose "{ left command right }"
+      let left = argumentSyntaxes[0]
+      let right = argumentSyntaxes[1]
+      let command = ControlWordSyntax(command: command)
+      let content = left.stream + [.controlWord(command)] + right.stream
+      return .success(StreamSyntax([.group(GroupSyntax(StreamSyntax(content)))]))
+
+    case .postfix:
+      assert(argumentSyntaxes.count == 1)
+      // compose "left command"
+      let left = argumentSyntaxes[0]
+      let controlWord = ControlWordSyntax(command: command)
+      let content = left.stream + [.controlWord(controlWord)]
+      return .success(StreamSyntax(content))
+
+    case .undefined:
+      return .failure(SatzError(.ExportLatexFailure))
+    }
+
   }
 
   /// Compose a control sequence call with given command and the children of the element
   /// as a single argument.
-  private func _composeControlSeq<T: GenNode, C: Collection<T>>(
+  private func _composeControlSeqCall<T: GenNode, C: Collection<T>>(
     _ command: String, children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlWordToken(name: $0) }),
@@ -109,7 +140,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     case .functionCall:
       let command = apply.template.command
       let components = (0..<apply.argumentCount).map { apply.getArgument($0) }
-      return _composeControlSeq(command, arguments: components, context)
+      return _composeControlSeqCall(command, arguments: components, context)
 
     case .codeSnippet:
       preconditionFailure("TODO: handle code snippets")
@@ -177,7 +208,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-    return _composeControlSeq(emphasis.command, children: children, context)
+    return _composeControlSeqCall(emphasis.command, children: children, context)
   }
 
   override func visit(
@@ -193,7 +224,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     precondition(context == .textMode)
     guard let command = heading.command
     else { return .failure(SatzError(.ExportLatexFailure)) }
-    return _composeControlSeq(command, children: children, context)
+    return _composeControlSeqCall(command, children: children, context)
   }
 
   override func visit(
@@ -254,7 +285,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     strong: StrongNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-    return _composeControlSeq(strong.command, children: children, context)
+    return _composeControlSeqCall(strong.command, children: children, context)
   }
 
   // MARK: - Partial
@@ -321,11 +352,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   private func _visitMath(
-    command: String, _ node: MathNode, _ context: LayoutMode
+    command: String, _ node: MathNode, _ context: LayoutMode,
+    affixPosition: AffixPosition = .prefix
   ) -> SatzResult<StreamSyntax> {
-    // context can be either text or math mode due to the existence of `textMode` nodes.
+    precondition(context == .mathMode || context == .textMode)  // due to TextModeNode
+
     let components = node.enumerateComponents().map(\.content)
-    return _composeControlSeq(command, arguments: components, context)
+
+    // infix => 2 arguments
+    guard (affixPosition != .infix || components.count == 2) else {
+      return .failure(SatzError(.ExportLatexFailure))
+    }
+
+    return _composeControlSeqCall(
+      command, arguments: components, context, affixPosition: affixPosition)
   }
 
   private func _visitArray(
@@ -411,7 +451,10 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     fraction: FractionNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
-    return _visitMath(command: fraction.genfrac.command, fraction, context)
+    let subtype = fraction.genfrac
+    return _visitMath(
+      command: subtype.command, fraction, context,
+      affixPosition: subtype.affixPosition)
   }
 
   override func visit(
@@ -437,6 +480,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
     switch mathAttributes.subtype {
+    // for limits, put \limits or \nolimits in postfix position.
     case .mathLimits(let limits):
       guard let nucleus = mathAttributes.nucleus.accept(self, context).success(),
         let limitsCommand = NameToken(limits.command).map({ ControlWordToken(name: $0) })
