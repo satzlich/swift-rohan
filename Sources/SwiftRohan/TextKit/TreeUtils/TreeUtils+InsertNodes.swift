@@ -430,7 +430,7 @@ extension TreeUtils {
   // MARK: - Insert paragraph nodes
 
   /// Insert paragraph nodes into a tree at given location.
-  /// (The method also applies to `topLevelNodes`.)
+  /// (The method also applies to `blockNodes`.)
   /// - Returns: The range of inserted content.
   static func insertParagraphNodes(
     _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode

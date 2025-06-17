@@ -11,13 +11,10 @@ public enum ContentCategory: CaseIterable {
   case extendedText
   /// inline text content
   case inlineContent
-  /// text content that can be contained in a ParagraphNode, and that contains at
-  /// least a block node
-  case containsBlock
   /// a list of ParagraphNode's
   case paragraphNodes
   /// a list of top-level nodes of which at least one is non-ParagraphNode
-  case topLevelNodes
+  case blockNodes
   /// plaintext + math symbols
   case mathText
   /// math-text + other math content
@@ -54,28 +51,28 @@ private func isCompatible(
   case .universalText:
     return match(
       container, .textTextContainer, .extendedTextContainer, .inlineContentContainer,
-      .paragraphContainer, .topLevelContainer)
+      .paragraphContainer, .blockContainer)
       || match(container, .mathTextContainer, .mathContainer)
 
   case .textText:
     return match(
       container, .textTextContainer, .extendedTextContainer, .inlineContentContainer,
-      .paragraphContainer, .topLevelContainer)
+      .paragraphContainer, .blockContainer)
 
   case .extendedText:
     return match(
       container, .extendedTextContainer, .inlineContentContainer, .paragraphContainer,
-      .topLevelContainer)
+      .blockContainer)
 
   case .inlineContent:
     return match(
-      container, .inlineContentContainer, .paragraphContainer, .topLevelContainer)
+      container, .inlineContentContainer, .paragraphContainer, .blockContainer)
 
-  case .containsBlock, .paragraphNodes:
-    return match(container, .paragraphContainer, .topLevelContainer)
+  case .paragraphNodes:
+    return match(container, .paragraphContainer, .blockContainer)
 
-  case .topLevelNodes:
-    return container == .topLevelContainer
+  case .blockNodes:
+    return container == .blockContainer
 
   case .mathText:
     return match(container, .mathTextContainer, .mathContainer)

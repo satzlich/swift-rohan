@@ -74,11 +74,13 @@ enum NodePolicy {
   }
 
   /// Returns true if the node is inline-math.
+  @inline(__always)
   static func isInlineMath(_ node: Node) -> Bool {
     isEquationNode(node) && node.isBlock == false
   }
 
   /// Returns true if the node is inline but not inline-math.
+  @inline(__always)
   static func isInlineOther(_ node: Node) -> Bool {
     [.emphasis, .linebreak, .strong, .unknown].contains(node.type)
   }
@@ -207,7 +209,7 @@ enum NodePolicy {
     case .emphasis: return .extendedTextContainer
     case .heading: return .inlineContentContainer
     case .paragraph: return nil
-    case .root: return .topLevelContainer
+    case .root: return .blockContainer
     case .strong: return .extendedTextContainer
 
     // Math

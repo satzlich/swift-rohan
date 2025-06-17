@@ -206,11 +206,11 @@ public final class DocumentManager {
       assertionFailure("Unreachable")
       return .failure(SatzError(.UnreachableCodePath))
 
-    case .universalText, .textText, .mathText, .extendedText, .inlineContent,
-      .containsBlock, .mathContent:
+    case .universalText, .textText, .mathText, .extendedText,
+      .inlineContent, .mathContent:
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
-    case .paragraphNodes, .topLevelNodes:
+    case .paragraphNodes, .blockNodes:
       switch TreeUtils.insertParagraphNodes(nodes, at: location, rootNode) {
       case let .success(range):
         result = .success(range)
