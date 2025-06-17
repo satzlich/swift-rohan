@@ -54,9 +54,7 @@ final class EquationNode: MathNode {
         _layoutLength = 1
       }
       else {
-        context.insertText("\u{2060}", self)  // word joiner
-        let emitted = emitReflowSegments(nodeFragment)
-        _layoutLength = 1 + emitted
+        _layoutLength = emitReflowSegments(nodeFragment)
       }
     }
     else {
@@ -72,11 +70,9 @@ final class EquationNode: MathNode {
         _layoutLength = 1
       }
       else {
-        context.skipBackwards(1)
         // delete segments emitted in previous layout, and emit new segments
-        context.deleteBackwards(_layoutLength - 1)
-        let emitted = emitReflowSegments(nodeFragment)
-        _layoutLength = 1 + emitted
+        context.deleteBackwards(_layoutLength)
+        _layoutLength = emitReflowSegments(nodeFragment)
       }
     }
 
