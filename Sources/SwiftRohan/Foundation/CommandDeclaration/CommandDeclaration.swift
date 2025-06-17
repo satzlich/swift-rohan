@@ -14,6 +14,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
   case mathStyles(MathStyles)
   case mathTemplate(MathTemplate)
   case namedSymbol(NamedSymbol)
+  case textStyles(TextStyles)
 
   var command: String {
     switch self {
@@ -27,6 +28,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathStyles(styles): return styles.command
     case let .mathTemplate(template): return template.command
     case let .namedSymbol(symbol): return symbol.command
+    case let .textStyles(styles): return styles.command
     }
   }
 
@@ -42,6 +44,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathStyles(styles): return styles.tag
     case let .mathTemplate(template): return template.tag
     case let .namedSymbol(symbol): return symbol.tag
+    case let .textStyles(styles): return styles.tag
     }
   }
 
@@ -57,6 +60,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathStyles(styles): return styles.source
     case let .mathTemplate(template): return template.source
     case let .namedSymbol(symbol): return symbol.source
+    case let .textStyles(styles): return styles.source
     }
   }
 }
@@ -76,6 +80,7 @@ extension CommandDeclaration {
     cases.append(contentsOf: MathStyles.allCommands.map { .mathStyles($0) })
     cases.append(contentsOf: MathTemplate.allCommands.map { .mathTemplate($0) })
     cases.append(contentsOf: NamedSymbol.allCommands.map { .namedSymbol($0) })
+    cases.append(contentsOf: TextStyles.allCommands.map { .textStyles($0) })
     return cases
   }
 
