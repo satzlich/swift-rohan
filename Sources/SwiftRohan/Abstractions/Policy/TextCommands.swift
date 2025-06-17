@@ -7,16 +7,19 @@ enum TextCommands {
   static let allCases: Array<CommandRecord> = _allCases()
 
   private static func _allCases() -> Array<CommandRecord> {
-    var result: Array<CommandRecord> =
-      [
-        // style
-        .init("emph", Snippets.emphasis),
-        .init("strong", Snippets.strong),
-        // math
-        .init("equation*", Snippets.equation),
-      ]
+    var result: Array<CommandRecord> = []
 
+    result.append(CommandRecord("equation*", Snippets.equation))
     result.append(contentsOf: HeadingNode.commandRecords)
+
+    // textStyles
+    do {
+      let records = TextStyles.allCases.map { textStyle in
+        let expr = TextStylesExpr(textStyle)
+        return CommandRecord(textStyle.command, CommandBody(expr, 1))
+      }
+      result.append(contentsOf: records)
+    }
 
     // multiline
     do {

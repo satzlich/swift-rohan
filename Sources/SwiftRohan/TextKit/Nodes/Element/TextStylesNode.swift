@@ -27,6 +27,7 @@ final class TextStylesNode: ElementNode {
     switch subtype {
     case .emph: return _getProperties(styleSheet, emph: ())
     case .textbf: return _getProperties(styleSheet, textbf: ())
+    case .textit: return _getProperties(styleSheet, textit: ())
     }
   }
 
@@ -36,6 +37,17 @@ final class TextStylesNode: ElementNode {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
       current[TextProperty.weight] = .fontWeight(.bold)
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
+  private final func _getProperties(
+    _ styleSheet: StyleSheet, textit: Void
+  ) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+      current[TextProperty.style] = .fontStyle(.italic)
       _cachedProperties = current
     }
     return _cachedProperties!

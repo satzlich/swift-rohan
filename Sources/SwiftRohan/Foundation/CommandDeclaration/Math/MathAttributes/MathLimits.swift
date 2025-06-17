@@ -11,7 +11,7 @@ struct MathLimits: CommandDeclarationProtocol {
   var command: String { _limits ? "limits" : "nolimits" }
 
   var tag: CommandTag { .null }
-  var source: CommandSource { .customExtension }
+  var source: CommandSource { .preBuilt }
 
   init(_ limits: Bool) {
     self._limits = limits

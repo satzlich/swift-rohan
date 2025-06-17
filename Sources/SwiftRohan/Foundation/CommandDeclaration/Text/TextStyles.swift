@@ -5,6 +5,7 @@ import LatexParser
 enum TextStyles: String, CaseIterable, CommandDeclarationProtocol {
   case emph
   case textbf
+  case textit
 
   var command: String { rawValue }
   var source: CommandSource { .preBuilt }
