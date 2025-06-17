@@ -13,10 +13,10 @@ final class StrongNode: ElementNode {
     visitor.visit(strong: self, context)
   }
 
-  final override class var type: NodeType { .strong }
+  final override class var type: NodeType { .textStyles }
 
   final class func selector(command: String) -> TargetSelector {
-    TargetSelector(.strong, PropertyMatcher(.command, .string(command)))
+    TargetSelector(.textStyles, PropertyMatcher(.command, .string(command)))
   }
 
   final override func selector() -> TargetSelector {
@@ -73,7 +73,7 @@ final class StrongNode: ElementNode {
     guard let subtype = TextStyles.lookup(command) else {
       throw DecodingError.dataCorruptedError(
         forKey: .command, in: container,
-        debugDescription: "Invalid strong node command: \(command)")
+        debugDescription: "Invalid textStyles node command: \(command)")
     }
     self.subtype = subtype
     try super.init(from: decoder)

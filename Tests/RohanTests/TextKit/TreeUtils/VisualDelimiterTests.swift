@@ -54,7 +54,7 @@ final class VisualDelimiterTests: TextKitTestsBase {
     }
 
     do {
-      // to strong (empty)
+      // to textStyles (empty)
       let location = TextLocation.parse("[↓0,↓2]:0")!
       let result = TreeUtils.visualDelimiterRange(for: location, tree, styleSheet)
       #expect(result == nil)

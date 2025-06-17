@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 final class StrongExpr: ElementExpr {
-  class override var type: ExprType { .strong }
+  class override var type: ExprType { .textStyles }
 
   override func with(children: Array<Expr>) -> Self { Self(subtype, children) }
 
@@ -29,7 +29,7 @@ final class StrongExpr: ElementExpr {
     guard let subtype = TextStyles.lookup(command) else {
       throw DecodingError.dataCorruptedError(
         forKey: .command, in: container,
-        debugDescription: "Invalid strong command: \(command)")
+        debugDescription: "Invalid textStyles command: \(command)")
     }
     self.subtype = subtype
     try super.init(from: decoder)

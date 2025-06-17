@@ -80,7 +80,7 @@ final class ExprNodeSyncTests {
       let strong = StrongExpr(.textbf, [TextExpr("abc")])
       let json =
         """
-        {"children":[{"string":"abc","type":"text"}],"type":"strong"}
+        {"children":[{"string":"abc","type":"text"}],"type":"textStyles"}
         """
       try testSerdeSync(strong, StrongNode.self, json)
     }

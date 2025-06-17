@@ -17,7 +17,7 @@ enum NodeSerdeUtils {
     .heading: HeadingNode.self,
     .paragraph: ParagraphNode.self,
     .root: RootNode.self,
-    .strong: StrongNode.self,
+    .textStyles: StrongNode.self,
     .textMode: TextModeNode.self,
     // math
     .accent: AccentNode.self,
