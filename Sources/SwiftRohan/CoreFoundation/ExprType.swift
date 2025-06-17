@@ -11,7 +11,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
 
   // Elements
   case content
-  case emphasis
+//  case emphasis
   case heading
   case paragraph
   case root

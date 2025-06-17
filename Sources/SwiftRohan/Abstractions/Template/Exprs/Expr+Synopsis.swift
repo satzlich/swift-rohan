@@ -44,9 +44,9 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitElement(content, context)
   }
 
-  override func visit(emphasis: EmphasisExpr, _ context: Void) -> Array<String> {
-    _visitElement(emphasis, context)
-  }
+  //  override func visit(emphasis: EmphasisExpr, _ context: Void) -> Array<String> {
+  //    _visitElement(emphasis, context)
+  //  }
 
   override func visit(heading: HeadingExpr, _ context: Void) -> Array<String> {
     let description = "\(heading.type) level: \(heading.level)"
@@ -62,7 +62,8 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(strong: StrongExpr, _ context: Void) -> Array<String> {
-    _visitElement(strong, context)
+    let description = "\(strong.type) \(strong.subtype)"
+    return _visitElement(strong, context, [description])
   }
 
   // MARK: - Math

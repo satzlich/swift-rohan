@@ -196,20 +196,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     _visitChildren(children, context)
   }
 
-  override func visit(
-    emphasis: EmphasisNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .textMode)
-    let children = emphasis.childrenReadonly()
-    return visit(emphasis: emphasis, context, withChildren: children)
-  }
-
-  override func visit<T, S>(
-    emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
-    precondition(context == .textMode)
-    return _composeControlSeqCall(emphasis.command, children: children, context)
-  }
+//  override func visit(
+//    emphasis: EmphasisNode, _ context: LayoutMode
+//  ) -> SatzResult<StreamSyntax> {
+//    precondition(context == .textMode)
+//    let children = emphasis.childrenReadonly()
+//    return visit(emphasis: emphasis, context, withChildren: children)
+//  }
+//
+//  override func visit<T, S>(
+//    emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
+//  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
+//    precondition(context == .textMode)
+//    return _composeControlSeqCall(emphasis.command, children: children, context)
+//  }
 
   override func visit(
     heading: HeadingNode, _ context: LayoutMode

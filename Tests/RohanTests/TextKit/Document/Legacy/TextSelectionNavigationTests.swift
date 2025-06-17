@@ -13,7 +13,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   @Test
   func testMoveForwardBackward() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("A"), EmphasisNode([TextNode("b")])]),
+      HeadingNode(level: 1, [TextNode("A"), StrongNode(.emph, [TextNode("b")])]),
       ParagraphNode([
         TextNode("c"),
         EquationNode(
@@ -489,7 +489,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode("The quick "),
-        EmphasisNode([
+        StrongNode(.emph, [
           TextNode("brown fox jumps over ")
         ]),
         TextNode("the lazy dog."),
@@ -585,7 +585,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode("The quick "),
-        EmphasisNode([
+        StrongNode(.emph, [
           TextNode("brown fox jumps over ")
         ]),
         TextNode("the lazy dog."),

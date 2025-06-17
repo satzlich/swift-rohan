@@ -13,7 +13,7 @@ enum NodeSerdeUtils {
     .variable: VariableNode.self,
     // element
     .content: ContentNode.self,
-    .emphasis: EmphasisNode.self,
+//    .emphasis: EmphasisNode.self,
     .heading: HeadingNode.self,
     .paragraph: ParagraphNode.self,
     .root: RootNode.self,

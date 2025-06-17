@@ -72,9 +72,9 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitElementNode(content, context)
   }
 
-  override public func visit(emphasis: EmphasisNode, _ context: C) {
-    _visitElementNode(emphasis, context)
-  }
+//  override public func visit(emphasis: EmphasisNode, _ context: C) {
+//    _visitElementNode(emphasis, context)
+//  }
 
   override public func visit(heading: HeadingNode, _ context: C) {
     _visitElementNode(heading, context)

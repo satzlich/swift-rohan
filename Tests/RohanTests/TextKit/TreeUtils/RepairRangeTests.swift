@@ -12,7 +12,7 @@ struct RepairRangeTests {
       HeadingNode(
         level: 1,
         [
-          EmphasisNode([TextNode("Fibonacci")]),
+          StrongNode(.emph, [TextNode("Fibonacci")]),
           TextNode(" Sequence"),
         ]),
       ParagraphNode([
@@ -59,7 +59,7 @@ struct RepairRangeTests {
       HeadingNode(
         level: 1,
         [
-          EmphasisNode([TextNode("Fibonacci")]),
+          StrongNode(.emph, [TextNode("Fibonacci")]),
           TextNode(" Sequence"),
         ]),
       ParagraphNode([
@@ -223,7 +223,7 @@ struct RepairRangeTests {
     let rootNode = RootNode([
       ParagraphNode([
         TextNode("The quick brown "),
-        EmphasisNode([TextNode("fox ")]),
+        StrongNode(.emph, [TextNode("fox ")]),
         TextNode("jumps over the lazy dog."),
       ])
     ])

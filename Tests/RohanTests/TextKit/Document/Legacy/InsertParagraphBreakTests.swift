@@ -116,7 +116,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ParagraphNode(
           [
             TextNode("Hello, "),
-            EmphasisNode([TextNode("world")]),
+            StrongNode(.emph, [TextNode("world")]),
           ]),
         ParagraphNode([TextNode("Def")]),
       ])
@@ -211,7 +211,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ParagraphNode(
           [
             TextNode("The "),
-            EmphasisNode([TextNode("quick brown ")]),
+            StrongNode(.emph, [TextNode("quick brown ")]),
             TextNode("fox"),
           ])
       ])
@@ -326,7 +326,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("The "),
-            EmphasisNode([TextNode("quick brown ")]),
+            StrongNode(.emph, [TextNode("quick brown ")]),
             TextNode("fox"),
           ])
       ])

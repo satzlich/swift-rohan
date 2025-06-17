@@ -45,12 +45,12 @@ final class ExprNodeSyncTests {
       try testSerdeSync(content, ContentNode.self, json)
     }
     do {
-      let emphasis = EmphasisExpr([TextExpr("abc")])
+      let emphasis = StrongExpr(.emph, [TextExpr("abc")])
       let json =
         """
         {"children":[{"string":"abc","type":"text"}],"type":"emphasis"}
         """
-      try testSerdeSync(emphasis, EmphasisNode.self, json)
+      try testSerdeSync(emphasis, StrongNode.self, json)
     }
     do {
       let heading = HeadingExpr(level: 1, [TextExpr("abc")])
@@ -77,7 +77,7 @@ final class ExprNodeSyncTests {
       try testSerdeSync(root, RootNode.self, json)
     }
     do {
-      let strong = StrongExpr([TextExpr("abc")])
+      let strong = StrongExpr(.textbf, [TextExpr("abc")])
       let json =
         """
         {"children":[{"string":"abc","type":"text"}],"type":"strong"}

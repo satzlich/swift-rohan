@@ -1,78 +1,78 @@
-// Copyright 2024-2025 Lie Yan
-
-import DequeModule
-import Foundation
-
-final class EmphasisNode: ElementNode {
-  // MARK: - Node
-
-  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(emphasis: self, context)
-  }
-
-  final override class var type: NodeType { .emphasis }
-
-  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    func invertFontStyle(_ fontStyle: FontStyle) -> FontStyle {
-      switch fontStyle {
-      case .normal: .italic
-      case .italic: .normal
-      }
-    }
-
-    if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
-
-      let key = TextProperty.style
-      let value = key.resolveValue(current, styleSheet.defaultProperties).fontStyle()!
-      current[key] = .fontStyle(invertFontStyle(value))
-
-      _cachedProperties = current
-    }
-    return _cachedProperties!
-  }
-
-  // MARK: - Node(Storage)
-
-  final override class var storageTags: Array<String> { [uniqueTag] }
-
-  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
-    loadSelf(from: json).cast()
-  }
-
-  final override func store() -> JSONValue {
-    let children: Array<JSONValue> = childrenReadonly().map { $0.store() }
-    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
-    return json
-  }
-
-  // MARK: - ElementNode
-
-  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
-    _ visitor: V, _ context: C, withChildren children: S
-  ) -> R {
-    visitor.visit(emphasis: self, context, withChildren: children)
-  }
-
-  final override func cloneEmpty() -> Self { Self() }
-
-  // MARK: - Storage
-
-  final class func loadSelf(from json: JSONValue) -> NodeLoaded<EmphasisNode> {
-    guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
-    else { return .failure(UnknownNode(json)) }
-    let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
-    let result = Self(nodes)
-    return corrupted ? .corrupted(result) : .success(result)
-  }
-
-  // MARK: - EmphasisNode
-
-  private static let uniqueTag = "emph"
-
-  internal var command: String { Self.uniqueTag }
-
-}
+//// Copyright 2024-2025 Lie Yan
+//
+//import DequeModule
+//import Foundation
+//
+//final class EmphasisNode: ElementNode {
+//  // MARK: - Node
+//
+//  final override func deepCopy() -> Self { Self(deepCopyOf: self) }
+//
+//  final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+//  where V: NodeVisitor<R, C> {
+//    visitor.visit(emphasis: self, context)
+//  }
+//
+//  final override class var type: NodeType { .emphasis }
+//
+//  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+//    func invertFontStyle(_ fontStyle: FontStyle) -> FontStyle {
+//      switch fontStyle {
+//      case .normal: .italic
+//      case .italic: .normal
+//      }
+//    }
+//
+//    if _cachedProperties == nil {
+//      var current = super.getProperties(styleSheet)
+//
+//      let key = TextProperty.style
+//      let value = key.resolveValue(current, styleSheet.defaultProperties).fontStyle()!
+//      current[key] = .fontStyle(invertFontStyle(value))
+//
+//      _cachedProperties = current
+//    }
+//    return _cachedProperties!
+//  }
+//
+//  // MARK: - Node(Storage)
+//
+//  final override class var storageTags: Array<String> { [uniqueTag] }
+//
+//  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
+//    loadSelf(from: json).cast()
+//  }
+//
+//  final override func store() -> JSONValue {
+//    let children: Array<JSONValue> = childrenReadonly().map { $0.store() }
+//    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+//    return json
+//  }
+//
+//  // MARK: - ElementNode
+//
+//  final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
+//    _ visitor: V, _ context: C, withChildren children: S
+//  ) -> R {
+//    visitor.visit(emphasis: self, context, withChildren: children)
+//  }
+//
+//  final override func cloneEmpty() -> Self { Self() }
+//
+//  // MARK: - Storage
+//
+//  final class func loadSelf(from json: JSONValue) -> NodeLoaded<EmphasisNode> {
+//    guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
+//    else { return .failure(UnknownNode(json)) }
+//    let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
+//    let result = Self(nodes)
+//    return corrupted ? .corrupted(result) : .success(result)
+//  }
+//
+//  // MARK: - EmphasisNode
+//
+//  private static let uniqueTag = "emph"
+//
+//  internal var command: String { Self.uniqueTag }
+//
+//}

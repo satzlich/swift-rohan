@@ -114,10 +114,10 @@ public enum StyleSheets {
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(textSize),
       ],
-      // emphasis
-      EmphasisNode.selector(): [
-        TextProperty.foregroundColor: .color(emphasisColor)
-      ],
+//      // emphasis
+//      EmphasisNode.selector(): [
+//        TextProperty.foregroundColor: .color(emphasisColor)
+//      ],
       // strong
       StrongNode.selector(): [
         TextProperty.foregroundColor: .color(strongColor)

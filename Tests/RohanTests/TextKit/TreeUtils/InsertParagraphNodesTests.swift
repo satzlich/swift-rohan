@@ -85,7 +85,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("hello world. "),
-          EmphasisNode([TextNode("the quick brown fox")]),
+          StrongNode(.emph, [TextNode("the quick brown fox")]),
         ])
       ])
       return self.createDocumentManager(rootNode)
@@ -419,7 +419,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("Hello "),
-          EmphasisNode([TextNode("world")]),
+          StrongNode(.emph, [TextNode("world")]),
         ])
       ])
       return self.createDocumentManager(rootNode)
@@ -431,7 +431,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let documentManager = createDocumentManager()
       let content = [
         ParagraphNode([
-          EmphasisNode([TextNode("tout le monde ")])
+          StrongNode(.emph, [TextNode("tout le monde ")])
         ])
       ]
 
@@ -454,7 +454,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [EmphasisNode([TextNode("tout le monde")])])
+        HeadingNode(level: 1, [StrongNode(.emph, [TextNode("tout le monde")])])
       ]
       let range1 = "[↓0,↓0]:6..<[↓2]:0"
       let doc1 = """
@@ -482,7 +482,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("Hello "),
-          EmphasisNode([TextNode("world")]),
+          StrongNode(.emph, [TextNode("world")]),
           TextNode("!"),
         ])
       ])
