@@ -44,12 +44,12 @@ class MathLayoutTestsBase {
       Issue.record("Failed to create MathListLayoutFragment")
       return nil
     }
-    let list = MathListLayoutFragment(context)
-    list.beginEditing()
-    list.insert(contentsOf: fragments, at: 0)
-    list.endEditing()
-    list.fixLayout(context)
-    return list
+    let mathList = MathListLayoutFragment(context)
+    mathList.beginEditing()
+    mathList.insert(contentsOf: fragments, at: 0)
+    mathList.endEditing()
+    mathList.fixLayout(context)
+    return mathList
   }
 
   func createFractionFragment(
