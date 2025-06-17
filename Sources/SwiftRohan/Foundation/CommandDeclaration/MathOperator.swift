@@ -89,5 +89,4 @@ extension MathOperator {
   static let sup = MathOperator("sup", "sup", limits: true)
   static let tan = MathOperator("tan", "tan")
   static let tanh = MathOperator("tanh", "tanh")
-  static let tr = MathOperator("tr", "tr", source: .customExtension)
 }

@@ -55,9 +55,8 @@ enum Delimiter: Codable {
   }
 
   static func validate(_ character: Character) -> Bool {
-    if ["\u{23B0}", "\u{23B1}"].contains(character) {
-      return true  // Special cases for `⎰` and `⎱`
-    }
+    // Special cases for `⎰` and `⎱` (lmoustache and rmoustache)
+    if ["\u{23B0}", "\u{23B1}"].contains(character) { return true }
     let clazz = character.unicodeScalars.first!.mathClass
     return [.Opening, .Closing, .Fence].contains(clazz)
   }

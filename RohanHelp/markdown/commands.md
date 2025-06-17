@@ -214,7 +214,7 @@ We support 601 commands/environments.
 |   2 | `\Gamma`      | $\Gamma$                 |         |
 |   3 | `\gamma`      | $\gamma$                 |         |
 |   4 | `{gather*}`   | ![](images/gathered.svg) |         |
-|   5 | `{gathered}`  | ![](images/gathered.svg) |         |
+|   5 | `{gathered}` | ![](images/gathered.svg) |         |
 |   6 | `\gcd`        | $\gcd$                   |         |
 |   7 | `\ge`         | $\ge$                    |         |
 |   8 | `\geq`        | $\geq$                   |         |
@@ -394,7 +394,7 @@ We support 601 commands/environments.
 |  28 | `\mp`            | $\mp$                    |         |
 |  29 | `\mu`            | $\mu$                    |         |
 |  30 | `\multimap`      | $\multimap$              | AMS     |
-|  31 | `{multline}`     | ![](images/multline.svg) |         |
+|  31 | `{multline*}`    | ![](images/multline.svg) |         |
 
 ## N
 

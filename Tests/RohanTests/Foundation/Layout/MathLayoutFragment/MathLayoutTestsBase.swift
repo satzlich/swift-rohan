@@ -12,8 +12,8 @@ class MathLayoutTestsBase {
   internal let table: MathTable
   internal let context: MathContext
 
-  init() throws {
-    self.font = Font.createWithName("STIX Two Math", 10, isFlipped: true)
+  init(mathFont: String = "STIX Two Math") throws {
+    self.font = Font.createWithName(mathFont, 10, isFlipped: true)
     self.table = font.copyMathTable()!
     self.context = MathContext(font, .text, false, .black)!
     try TestUtils.touchDirectory(folderName)
@@ -44,12 +44,12 @@ class MathLayoutTestsBase {
       Issue.record("Failed to create MathListLayoutFragment")
       return nil
     }
-    let list = MathListLayoutFragment(context)
-    list.beginEditing()
-    list.insert(contentsOf: fragments, at: 0)
-    list.endEditing()
-    list.fixLayout(context)
-    return list
+    let mathList = MathListLayoutFragment(context)
+    mathList.beginEditing()
+    mathList.insert(contentsOf: fragments, at: 0)
+    mathList.endEditing()
+    mathList.fixLayout(context)
+    return mathList
   }
 
   func createFractionFragment(
