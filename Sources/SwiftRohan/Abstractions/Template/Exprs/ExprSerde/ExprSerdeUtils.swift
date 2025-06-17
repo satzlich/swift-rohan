@@ -13,11 +13,11 @@ enum ExprSerdeUtils {
     .variable: VariableExpr.self,
     // Element
     .content: ContentExpr.self,
-    .emphasis: EmphasisExpr.self,
+//    .emphasis: EmphasisExpr.self,
     .heading: HeadingExpr.self,
     .paragraph: ParagraphExpr.self,
     .root: RootExpr.self,
-    .strong: StrongExpr.self,
+    .textStyles: StrongExpr.self,
     // Math
     .accent: AccentExpr.self,
     .attach: AttachExpr.self,
@@ -95,9 +95,7 @@ struct WildcardExpr: Decodable {
       return
     }
     let exprType = ExprType(rawValue: rawValue) ?? .unknown
-    // get expr class
     let klass = ExprSerdeUtils.registeredExprs[exprType] ?? UnknownExpr.self
-    // decode expr
     expr = try klass.init(from: decoder)
   }
 }

@@ -28,10 +28,10 @@ struct ElementNodeTests {
       SubscriptNode([TextNode("abc")]),
       SuperscriptNode([TextNode("abc")]),
       //
-      EmphasisNode([TextNode("abc")]),
+      StrongNode(.emph, [TextNode("abc")]),
       HeadingNode(level: 1, [TextNode("abc")]),
       ParagraphNode([TextNode("abc")]),
-      StrongNode([TextNode("abc")]),
+      StrongNode(.textbf, [TextNode("abc")]),
     ]
   }
 
@@ -42,7 +42,7 @@ struct ElementNodeTests {
     let styleSheet = StyleSheetTests.testingStyleSheet()
 
     do {
-      let emphasis = EmphasisNode([TextNode("ab😀")])
+      let emphasis = StrongNode(.emph, [TextNode("ab😀")])
       let heading = HeadingNode(level: 1, [emphasis])
       do {
         let properties = heading.getProperties(styleSheet)
@@ -55,7 +55,7 @@ struct ElementNodeTests {
     }
 
     do {
-      let emphasis = EmphasisNode([TextNode("cd😀")])
+      let emphasis = StrongNode(.emph, [TextNode("cd😀")])
       let paragraph = ParagraphNode([emphasis])
       do {
         let properties = emphasis.getProperties(styleSheet)
@@ -71,10 +71,12 @@ struct ElementNodeTests {
 
   @Test
   func layoutLength() {
-    let emphasis = EmphasisNode([
-      TextNode("a😀b"),
-      EquationNode(.block, [TextNode("a+b")]),
-    ])
+    let emphasis = StrongNode(
+      .emph,
+      [
+        TextNode("a😀b"),
+        EquationNode(.block, [TextNode("a+b")]),
+      ])
     TestUtils.updateLayoutLength(emphasis)
     #expect(emphasis.layoutLength() == 6)
 

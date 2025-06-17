@@ -116,7 +116,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ParagraphNode(
           [
             TextNode("Hello, "),
-            EmphasisNode([TextNode("world")]),
+            StrongNode(.emph, [TextNode("world")]),
           ]),
         ParagraphNode([TextNode("Def")]),
       ])
@@ -138,7 +138,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         ├ paragraph
         │ ├ text "Hello, "
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "world"
         └ paragraph
           └ text "Def"
@@ -164,7 +164,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         │ └ text "Hello, "
         ├ paragraph
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "world"
         └ paragraph
           └ text "Def"
@@ -190,7 +190,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         │ └ text "Abc"
         ├ paragraph
         │ ├ text "Hello, "
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "world"
         ├ paragraph
         └ paragraph
@@ -211,7 +211,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ParagraphNode(
           [
             TextNode("The "),
-            EmphasisNode([TextNode("quick brown ")]),
+            StrongNode(.emph, [TextNode("quick brown ")]),
             TextNode("fox"),
           ])
       ])
@@ -230,7 +230,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         └ paragraph
           ├ text "The "
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "quick brown "
           └ text "fox"
         """
@@ -256,7 +256,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         │ └ text "Th"
         └ paragraph
           ├ text "e "
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "quick brown "
           └ text "fox"
         """
@@ -281,7 +281,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         │ └ text "The "
         └ paragraph
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "quick brown "
           └ text "fox"
         """
@@ -305,7 +305,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "The "
-        │ ├ emphasis
+        │ ├ textStyles(emph)
         │ │ └ text "quick brown "
         │ └ text "fox"
         └ paragraph
@@ -326,7 +326,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("The "),
-            EmphasisNode([TextNode("quick brown ")]),
+            StrongNode(.emph, [TextNode("quick brown ")]),
             TextNode("fox"),
           ])
       ])

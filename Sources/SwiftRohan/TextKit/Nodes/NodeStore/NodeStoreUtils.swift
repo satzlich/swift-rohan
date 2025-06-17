@@ -11,7 +11,7 @@ enum NodeStoreUtils {
     ApplyNode.self,
     // Element
     ContentNode.self,
-    EmphasisNode.self,
+//    EmphasisNode.self,
     HeadingNode.self,
     ParagraphNode.self,
     RootNode.self,

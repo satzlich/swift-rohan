@@ -12,9 +12,9 @@ final class VisualDelimiterTests: TextKitTestsBase {
   func treeUtils() {
     let tree = RootNode([
       ParagraphNode([
-        EmphasisNode([TextNode("Hello")]),
+        StrongNode(.emph, [TextNode("Hello")]),
         TextNode(" "),
-        StrongNode([]),
+        StrongNode(.textbf, []),
       ])
     ])
 
@@ -54,7 +54,7 @@ final class VisualDelimiterTests: TextKitTestsBase {
     }
 
     do {
-      // to strong (empty)
+      // to textStyles (empty)
       let location = TextLocation.parse("[↓0,↓2]:0")!
       let result = TreeUtils.visualDelimiterRange(for: location, tree, styleSheet)
       #expect(result == nil)
@@ -79,8 +79,9 @@ final class VisualDelimiterTests: TextKitTestsBase {
     ])
 
     let location = TextLocation.parse("[↓0,nuc,↓0,⇒0]:0")!
-    guard let (range, level)
-            = TreeUtils.visualDelimiterRange(for: location, rootNode, styleSheet)
+    guard
+      let (range, level) = TreeUtils.visualDelimiterRange(
+        for: location, rootNode, styleSheet)
     else {
       Issue.record("Failed to get visual delimiter range")
       return

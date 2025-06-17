@@ -251,7 +251,7 @@ final class TextSegmentTests: TextKitTestsBase {
       HeadingNode(level: 1, [TextNode("H1")]),
       HeadingNode(level: 2, []),
       HeadingNode(level: 3, [TextNode("H3")]),
-      HeadingNode(level: 4, [TextNode("H4"), EmphasisNode([])]),
+      HeadingNode(level: 4, [TextNode("H4"), StrongNode(.emph, [])]),
       HeadingNode(level: 5, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),

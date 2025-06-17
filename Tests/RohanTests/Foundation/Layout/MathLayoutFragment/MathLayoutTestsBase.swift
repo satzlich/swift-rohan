@@ -20,13 +20,18 @@ class MathLayoutTestsBase {
   }
 
   func createGlyphFragment(
-    _ char: Character, styled: Bool = true
+    _ char: Character, styled: Bool = true, context: MathContext? = nil
   ) -> MathGlyphLayoutFragment? {
     let newChar =
       styled
       ? MathUtils.styledChar(
         for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
       : char
+
+    let context = context ?? self.context
+    let font = context.getFont()
+    let table = context.table
+
     guard let glyph = MathGlyphLayoutFragment(char: newChar, font, table, char.length)
     else {
       Issue.record("Failed to create MathGlyphLayoutFragment")
@@ -39,7 +44,7 @@ class MathLayoutTestsBase {
     _ string: String, _ context: MathContext? = nil
   ) -> MathListLayoutFragment? {
     let context = context ?? self.context
-    let fragments = string.compactMap { createGlyphFragment($0) }
+    let fragments = string.compactMap { createGlyphFragment($0, context: context) }
     guard fragments.count == string.count else {
       Issue.record("Failed to create MathListLayoutFragment")
       return nil

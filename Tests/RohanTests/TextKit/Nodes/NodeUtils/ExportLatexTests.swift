@@ -24,9 +24,9 @@ final class ExportLatexTests: TextKitTestsBase {
         ]),
       ParagraphNode([
         TextNode("This is a paragraph with "),
-        EmphasisNode([TextNode("emphasis")]),
+        StrongNode(.emph, [TextNode("emphasis")]),
         TextNode(" and "),
-        StrongNode([TextNode("strong")]),
+        StrongNode(.textbf, [TextNode("strong")]),
         TextNode("."),
       ]),
       EquationNode(
@@ -93,7 +93,9 @@ final class ExportLatexTests: TextKitTestsBase {
         \setlength{\parskip}{0.5em}
 
         \begin{document}
+
         \section*{Heading 1\\ with a line break.[Unknown Node]}
+
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
         \[E=mc^2\]
         This is a paragraph with an inline equation: $f\colon X\rightarrow Y$. Newton's second law states that $a=\frac{F}{m}$.

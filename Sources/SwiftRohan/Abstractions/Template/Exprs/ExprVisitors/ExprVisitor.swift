@@ -46,9 +46,9 @@ class ExprVisitor<C, R> {
     visitExpr(content, context)
   }
 
-  func visit(emphasis: EmphasisExpr, _ context: C) -> R {
-    visitExpr(emphasis, context)
-  }
+//  func visit(emphasis: EmphasisExpr, _ context: C) -> R {
+//    visitExpr(emphasis, context)
+//  }
 
   func visit(heading: HeadingExpr, _ context: C) -> R {
     visitExpr(heading, context)

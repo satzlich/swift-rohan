@@ -13,11 +13,11 @@ struct CategoryTests {
       (UnknownNode(), .inlineContent),
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
-      (EmphasisNode([]), .inlineContent),
       (HeadingNode(level: 1, []), .blockNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), nil),
-      (StrongNode([]), .inlineContent),
+      (StrongNode(.emph, []), .inlineContent),
+      (StrongNode(.textbf, []), .inlineContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),

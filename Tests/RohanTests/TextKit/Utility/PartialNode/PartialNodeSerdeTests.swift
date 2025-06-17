@@ -18,7 +18,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
         level: 1,
         [
           TextNode("Hello, "),
-          EmphasisNode([TextNode("world!")]),
+          StrongNode(.emph, [TextNode("world!")]),
         ]),
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
     ])
@@ -36,8 +36,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
       let data = documentManager.jsonData(for: range)!
       #expect(
         String(data: data, encoding: .utf8) == """
-          [{"string":"lo, ","type":"text"},\
-          {"children":[{"string":"world","type":"text"}],"type":"emphasis"}]
+          [{"string":"lo, ","type":"text"},{"children":[{"string":"world","type":"text"}],"command":"emph","type":"textStyles"}]
           """)
 
       // deserialize
@@ -46,7 +45,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
         ContentNode(decodedNodes).prettyPrint() == """
           content
           ├ text "lo, "
-          └ emphasis
+          └ textStyles(emph)
             └ text "world"
           """)
     }
@@ -59,10 +58,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
 
       #expect(
         String(data: data, encoding: .utf8) == """
-          [{"children":[{"string":"lo, ","type":"text"},\
-          {"children":[{"string":"world!","type":"text"}],"type":"emphasis"}],\
-          "level":1,"type":"heading"},\
-          {"children":[{"string":"The quick","type":"text"}],"type":"paragraph"}]
+          [{"children":[{"string":"lo, ","type":"text"},{"children":[{"string":"world!","type":"text"}],"command":"emph","type":"textStyles"}],"level":1,"type":"heading"},{"children":[{"string":"The quick","type":"text"}],"type":"paragraph"}]
           """)
 
       // deserialize
@@ -72,7 +68,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "lo, "
-          │ └ emphasis
+          │ └ textStyles(emph)
           │   └ text "world!"
           └ paragraph
             └ text "The quick"

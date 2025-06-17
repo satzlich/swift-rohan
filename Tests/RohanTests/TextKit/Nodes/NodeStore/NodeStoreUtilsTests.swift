@@ -9,7 +9,7 @@ struct NodeStoreUtilsTests {
   @Test
   func classSet() {
     let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
-    #expect(classes.count == 24)
+    #expect(classes.count == 23)
     #expect(classes.count == NodeType.allCases.count - 4)
     #expect(NodeStoreUtils.registeredClasses.count == classes.count)
   }
@@ -94,12 +94,13 @@ struct NodeStoreUtilsTests {
       "sharp", "sigma", "sim", "simeq",
       "sin", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
-      "square", "stackrel", "star", "strong", "subset", "subseteq", "subseteqq",
+      "square", "stackrel", "star", "subset", "subseteq", "subseteqq",
       "subsetneq", "subsetneqq", "substack", "succ", "succapprox", "succcurlyeq",
       "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sup", "supset", "supseteq", "supseteqq",
       "supsetneq", "supsetneqq", "surd", "swarrow", "tan", "tanh", "tau", "tbinom",
-      "text", "textstyle", "tfrac", "therefore", "theta", "thickspace", "thinspace",
+      "text", "textbf", "textstyle", "tfrac", "therefore", "theta", "thickspace",
+      "thinspace",
       "tilde", "times", "to", "top", "triangle", "triangledown", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadrightarrow", "ulcorner", "underbrace", "underbracket",

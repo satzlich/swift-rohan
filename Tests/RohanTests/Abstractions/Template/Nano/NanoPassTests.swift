@@ -154,7 +154,8 @@ struct NanoPassTests {
     let B = Template(name: "B", body: [TextExpr("B"), ContentExpr([TextExpr("C")])])
     let C = Template(name: "C", body: [TextExpr("C")])
     let D = Template(
-      name: "D", body: [EmphasisExpr([TextExpr("D")]), EmphasisExpr([TextExpr("E")])])
+      name: "D",
+      body: [StrongExpr(.emph, [TextExpr("D")]), StrongExpr(.emph, [TextExpr("E")])])
 
     let input = [A, B, C, D]
     guard let output = Nano.UnnestContents.process(input).success() else {
@@ -198,7 +199,7 @@ struct NanoPassTests {
       #expect(expressions.count == 1)
       #expect(
         expressions[0].prettyPrint() == """
-          emphasis
+          textStyles(emph)
           └ text "DE"
           """)
     }
@@ -383,11 +384,11 @@ struct NanoPassTests {
       body: [
         LinebreakExpr(),
         UnknownExpr(.string("Hello")),
-        EmphasisExpr([TextExpr("World"), CompiledVariableExpr(0)]),
+        StrongExpr(.emph, [TextExpr("World"), CompiledVariableExpr(0)]),
         HeadingExpr(level: 1, [TextExpr("Heading"), CompiledVariableExpr(1)]),
         ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0)]),
         RootExpr([TextExpr("Root"), CompiledVariableExpr(1)]),
-        StrongExpr([TextExpr("Strong"), CompiledVariableExpr(0)]),
+        StrongExpr(.textbf, [TextExpr("Strong"), CompiledVariableExpr(0)]),
         //
       ])
     let t2 = Template(

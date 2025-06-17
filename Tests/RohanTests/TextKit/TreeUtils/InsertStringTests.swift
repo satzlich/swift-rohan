@@ -34,7 +34,7 @@ final class InsertStringTests: TextKitTestsBase {
   func test_insertString_TextNode() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [EmphasisNode([TextNode("Newton's😀")])])
+        HeadingNode(level: 1, [StrongNode(.emph, [TextNode("Newton's😀")])])
       ])
       return createDocumentManager(rootNode)
     }()
@@ -50,7 +50,7 @@ final class InsertStringTests: TextKitTestsBase {
     let doc1 = """
       root
       └ heading
-        └ emphasis
+        └ textStyles(emph)
           └ text "Newton's Second Law of Motion😀"
       """
     let range2 = "[↓0,↓0,↓0]:8"
@@ -64,7 +64,7 @@ final class InsertStringTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(level: 1, []),
-        ParagraphNode([EmphasisNode([TextNode("over ")])]),
+        ParagraphNode([StrongNode(.emph, [TextNode("over ")])]),
       ])
       return createDocumentManager(rootNode)
     }()
@@ -77,7 +77,7 @@ final class InsertStringTests: TextKitTestsBase {
       ├ heading
       └ paragraph
         ├ text "fox "
-        └ emphasis
+        └ textStyles(emph)
           └ text "over "
       """
     let range2 = "[↓1]:0"
@@ -93,7 +93,7 @@ final class InsertStringTests: TextKitTestsBase {
         HeadingNode(level: 1, []),
         ParagraphNode([
           TextNode("fox "),
-          EmphasisNode([TextNode("over ")]),
+          StrongNode(.emph, [TextNode("over ")]),
         ]),
       ])
       return createDocumentManager(rootNode)
@@ -107,7 +107,7 @@ final class InsertStringTests: TextKitTestsBase {
       ├ heading
       └ paragraph
         ├ text "the quick brown fox "
-        └ emphasis
+        └ textStyles(emph)
           └ text "over "
       """
     let range2 = "[↓1,↓0]:0"
@@ -123,7 +123,7 @@ final class InsertStringTests: TextKitTestsBase {
         HeadingNode(level: 1, []),
         ParagraphNode([
           TextNode("The quick brown fox "),
-          EmphasisNode([TextNode("over ")]),
+          StrongNode(.emph, [TextNode("over ")]),
         ]),
       ])
       return createDocumentManager(rootNode)
@@ -138,7 +138,7 @@ final class InsertStringTests: TextKitTestsBase {
       ├ heading
       ├ paragraph
       │ ├ text "The quick brown fox "
-      │ └ emphasis
+      │ └ textStyles(emph)
       │   └ text "over "
       └ paragraph
         └ text "the lazy dog."
@@ -283,7 +283,7 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("The "),
-          EmphasisNode([TextNode("brown ")]),
+          StrongNode(.emph, [TextNode("brown ")]),
           EquationNode(.inline, [TextNode("jumps ")]),
           TextNode("the lazy dog."),
         ])
@@ -307,7 +307,7 @@ final class InsertStringTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The "
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "brown "
           ├ equation
           │ └ nuc
@@ -328,7 +328,7 @@ final class InsertStringTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The "
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "brown "
           ├ text "fox "
           ├ equation
@@ -351,7 +351,7 @@ final class InsertStringTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The quick "
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "brown "
           ├ equation
           │ └ nuc
@@ -401,12 +401,12 @@ final class InsertStringTests: TextKitTestsBase {
             │     ├ variable #0
             │     │ └ text "foxpro"
             │     ├ text " and "
-            │     ├ emphasis
+            │     ├ textStyles(emph)
             │     │ └ variable #0
             │     │   └ text "foxpro"
             │     └ text "}"
             ├ text " and "
-            ├ emphasis
+            ├ textStyles(emph)
             │ └ variable #0
             │   └ template(doubleText)
             │     ├ argument #0 (x2)
@@ -415,7 +415,7 @@ final class InsertStringTests: TextKitTestsBase {
             │       ├ variable #0
             │       │ └ text "foxpro"
             │       ├ text " and "
-            │       ├ emphasis
+            │       ├ textStyles(emph)
             │       │ └ variable #0
             │       │   └ text "foxpro"
             │       └ text "}"

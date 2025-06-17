@@ -180,7 +180,7 @@ struct ElementOperationTests {
       ]),
       ParagraphNode([
         TextNode("2"),
-        EmphasisNode([
+        StrongNode(.emph, [
           TextNode("3")
         ]),
       ]),
@@ -195,11 +195,11 @@ struct ElementOperationTests {
       newParagraph.prettyPrint() == """
         paragraph
         ├ text "2"
-        └ emphasis
+        └ textStyles(emph)
           └ text "3"
         """)
 
-    (newParagraph.getChild(1) as! EmphasisNode)
+    (newParagraph.getChild(1) as! StrongNode)
       .insertChild(TextNode("X"), at: 1, inStorage: false)
 
     // check new paragraph
@@ -207,7 +207,7 @@ struct ElementOperationTests {
       newParagraph.prettyPrint() == """
         paragraph
         ├ text "2"
-        └ emphasis
+        └ textStyles(emph)
           ├ text "3"
           └ text "X"
         """)
@@ -221,13 +221,13 @@ struct ElementOperationTests {
         │ └ text "01"
         ├ paragraph
         │ ├ text "2"
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "3"
         ├ paragraph
         │ └ text "45"
         └ paragraph
           ├ text "2"
-          └ emphasis
+          └ textStyles(emph)
             ├ text "3"
             └ text "X"
         """)
@@ -238,10 +238,10 @@ struct ElementOperationTests {
     let paragraph = ParagraphNode([
       TextNode("0"),
       TextNode("1"),
-      EmphasisNode([TextNode("2")]),
+      StrongNode(.emph, [TextNode("2")]),
       TextNode("3"),
       TextNode("4"),
-      EmphasisNode([TextNode("5")]),
+      StrongNode(.emph, [TextNode("5")]),
       TextNode("6"),
     ])
     #expect(
@@ -249,11 +249,11 @@ struct ElementOperationTests {
         paragraph
         ├ text "0"
         ├ text "1"
-        ├ emphasis
+        ├ textStyles(emph)
         │ └ text "2"
         ├ text "3"
         ├ text "4"
-        ├ emphasis
+        ├ textStyles(emph)
         │ └ text "5"
         └ text "6"
         """)
@@ -265,11 +265,11 @@ struct ElementOperationTests {
         paragraph.prettyPrint() == """
           paragraph
           ├ text "01"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "2"
           ├ text "3"
           ├ text "4"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "5"
           └ text "6"
           """)
@@ -284,10 +284,10 @@ struct ElementOperationTests {
         paragraph.prettyPrint() == """
           paragraph
           ├ text "01"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "2"
           ├ text "34"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "5"
           └ text "6"
           """)
@@ -302,10 +302,10 @@ struct ElementOperationTests {
         paragraph.prettyPrint() == """
           paragraph
           ├ text "01"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "2"
           ├ text "34"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "5"
           └ text "6"
           """)
@@ -321,7 +321,7 @@ struct ElementOperationTests {
         level: 1,
         [
           TextNode("abc"),
-          EmphasisNode([TextNode("def😀")]),
+          StrongNode(.emph, [TextNode("def😀")]),
         ]
       ),
       ParagraphNode([
@@ -338,7 +338,7 @@ struct ElementOperationTests {
         root 16
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 6
           ├ text 4
@@ -350,7 +350,7 @@ struct ElementOperationTests {
         root 15
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 5
           ├ text 4
@@ -374,7 +374,7 @@ struct ElementOperationTests {
         root 16
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 6
           ├ text 4
@@ -387,7 +387,7 @@ struct ElementOperationTests {
         root 15
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 5
           ├ text 4

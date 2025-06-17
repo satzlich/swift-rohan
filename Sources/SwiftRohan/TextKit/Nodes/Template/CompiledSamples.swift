@@ -13,9 +13,11 @@ public enum CompiledSamples {
     let content = [
       CompiledVariableExpr(0),
       TextExpr(" is a good "),
-      EmphasisExpr([
-        CompiledVariableExpr(1)
-      ]),
+      StrongExpr(
+        .emph,
+        [
+          CompiledVariableExpr(1)
+        ]),
       TextExpr(", is "),
       CompiledVariableExpr(0),
       TextExpr("?"),
@@ -35,9 +37,7 @@ public enum CompiledSamples {
       TextExpr("{"),
       CompiledVariableExpr(0),
       TextExpr(" and "),
-      EmphasisExpr([
-        CompiledVariableExpr(0)
-      ]),
+      StrongExpr(.emph, [CompiledVariableExpr(0)]),
       TextExpr("}"),
     ]
     let argument0: VariablePaths = [

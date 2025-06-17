@@ -20,6 +20,7 @@ struct CommandPolicyTests {
     #expect(MathStyles.allCommands.count == 12)
     #expect(MathTemplate.allCommands.count == 5)
     #expect(NamedSymbol.allCommands.count == 458)
+    #expect(TextStyles.allCases.count == 2)
 
     let sum =
       MathAccent.allCommands.count + MathArray.allCommands.count
@@ -27,8 +28,9 @@ struct CommandPolicyTests {
       + MathGenFrac.allCommands.count + MathOperator.allCommands.count
       + MathSpreader.allCommands.count + MathStyles.allCommands.count
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
+      + TextStyles.allCommands.count
 
-    #expect(sum == 599)  // + 2 ("\sqrt", "\text").
+    #expect(sum == 601)  // + 2 ("\sqrt", "\text").
     #expect(CommandDeclaration.allCommands.count == sum)
     #expect(CommandRecords.allCases.count == 616)
   }

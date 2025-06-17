@@ -196,20 +196,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     _visitChildren(children, context)
   }
 
-  override func visit(
-    emphasis: EmphasisNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .textMode)
-    let children = emphasis.childrenReadonly()
-    return visit(emphasis: emphasis, context, withChildren: children)
-  }
-
-  override func visit<T, S>(
-    emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
-    precondition(context == .textMode)
-    return _composeControlSeqCall(emphasis.command, children: children, context)
-  }
+//  override func visit(
+//    emphasis: EmphasisNode, _ context: LayoutMode
+//  ) -> SatzResult<StreamSyntax> {
+//    precondition(context == .textMode)
+//    let children = emphasis.childrenReadonly()
+//    return visit(emphasis: emphasis, context, withChildren: children)
+//  }
+//
+//  override func visit<T, S>(
+//    emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
+//  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
+//    precondition(context == .textMode)
+//    return _composeControlSeqCall(emphasis.command, children: children, context)
+//  }
 
   override func visit(
     heading: HeadingNode, _ context: LayoutMode
@@ -224,7 +224,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     precondition(context == .textMode)
     guard let command = heading.command
     else { return .failure(SatzError(.ExportLatexFailure)) }
-    return _composeControlSeqCall(command, children: children, context)
+
+    let result = _composeControlSeqCall(command, children: children, context)
+
+    switch result {
+    case let .success(stream):
+      // add newline before and after the heading
+      var newStream = stream.stream
+      newStream.insert(.newline(NewlineSyntax()), at: 0)
+      newStream.append(.newline(NewlineSyntax()))
+      return .success(StreamSyntax(newStream))
+
+    case let .failure(error):
+      return .failure(error)
+    }
   }
 
   override func visit(
