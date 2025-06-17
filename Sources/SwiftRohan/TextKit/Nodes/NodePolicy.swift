@@ -17,6 +17,19 @@ enum NodePolicy {
     [.paragraph, .text].contains(nodeType)
   }
 
+  /// Returns true if a node of given kind is a block element.
+  @inline(__always)
+  static func isBlockElement(_ nodeType: NodeType) -> Bool {
+    [.heading, .paragraph].contains(nodeType)
+  }
+
+  /// Returns true if a node of given kind can be a top-level node in a document.
+  @inline(__always)
+  static func isBlockNode(_ node: Node) -> Bool {
+    [.heading, .paragraph, .multiline].contains(node.type)
+      || isEquationNode(node) && node.isBlock
+  }
+
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
   ///
   /// - Note: The function returns true when the layout offset used by its parent
@@ -45,12 +58,6 @@ enum NodePolicy {
       .textMode,
       .underOver,
     ].contains(nodeType)
-  }
-
-  /// Returns true if a node of given kind is a block element.
-  @inline(__always)
-  static func isBlockElement(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
   }
 
   @inline(__always)
@@ -122,13 +129,6 @@ enum NodePolicy {
   }
 
   // MARK: - Relations
-
-  /// Returns true if a node of given kind can be a top-level node in a document.
-  @inline(__always)
-  static func isBlockNode(_ node: Node) -> Bool {
-    [.heading, .paragraph, .multiline].contains(node.type)
-      || isEquationNode(node) && node.isBlock
-  }
 
   /// Returns true if two nodes of given kinds are elements that can be merged.
   @inline(__always)
