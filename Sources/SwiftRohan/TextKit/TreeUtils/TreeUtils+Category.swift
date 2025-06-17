@@ -126,8 +126,8 @@ extension TreeUtils {
         summary.inlineOther += 1
       }
 
-      if node.isBlock { summary.blockNodes += 1 }
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
+      if node.isBlock { summary.blockNodes += 1 }
       if NodePolicy.isMathOnlyContent(node) { summary.mathOnlyNodes += 1 }
     }
   }
