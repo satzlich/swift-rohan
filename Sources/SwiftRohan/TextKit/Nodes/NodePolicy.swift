@@ -65,7 +65,6 @@ enum NodePolicy {
     // must be element node
     [
       NodeType.content,
-      //      .emphasis,
       .heading,
       .textStyles,
       .variable,
@@ -83,7 +82,6 @@ enum NodePolicy {
   @inline(__always)
   static func isInlineOther(_ node: Node) -> Bool {
     [.linebreak, .textStyles, .unknown].contains(node.type)
-    //    [.emphasis, .linebreak, .strong, .unknown].contains(node.type)
   }
 
   /// Returns true if a node of given kind can be used as paragraph container.
@@ -112,7 +110,6 @@ enum NodePolicy {
     [
       .argument,
       .content,  // this covers most math node
-//      .emphasis,
       .heading,
       .textStyles,
     ].contains(nodeType)
@@ -125,7 +122,6 @@ enum NodePolicy {
     [
       .apply,  // proxy for `.argument`
       .content,  // this covers most math node
-//      .emphasis,
       .heading,
       .textStyles,
     ].contains(nodeType)
@@ -207,7 +203,6 @@ enum NodePolicy {
 
     // Element
     case .content: return nil
-//    case .emphasis: return .extendedTextContainer
     case .heading: return .inlineContentContainer
     case .paragraph: return nil
     case .root: return .blockContainer

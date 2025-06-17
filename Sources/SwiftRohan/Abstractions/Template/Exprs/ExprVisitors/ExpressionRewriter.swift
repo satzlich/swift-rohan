@@ -49,10 +49,6 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     _rewriteElement(content, context)
   }
 
-//  override func visit(emphasis: EmphasisExpr, _ context: C) -> R {
-//    _rewriteElement(emphasis, context)
-//  }
-
   override func visit(heading: HeadingExpr, _ context: C) -> R {
     _rewriteElement(heading, context)
   }

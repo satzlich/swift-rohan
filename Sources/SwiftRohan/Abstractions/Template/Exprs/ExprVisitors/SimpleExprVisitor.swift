@@ -40,10 +40,6 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitElement(content, context)
   }
 
-//  override func visit(emphasis: EmphasisExpr, _ context: C) -> Void {
-//    _visitElement(emphasis, context)
-//  }
-
   override func visit(heading: HeadingExpr, _ context: C) -> Void {
     _visitElement(heading, context)
   }

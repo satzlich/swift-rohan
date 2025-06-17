@@ -219,7 +219,7 @@ struct RepairRangeTests {
   }
 
   @Test
-  static func test_repairRange_EmphasisNode() {
+  static func test_repairRange_TextStyles() {
     let rootNode = RootNode([
       ParagraphNode([
         TextNode("The quick brown "),

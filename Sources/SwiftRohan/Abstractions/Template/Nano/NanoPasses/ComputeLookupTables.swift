@@ -81,10 +81,6 @@ extension Nano {
       _visitElement(content, context)
     }
 
-//    override func visit(emphasis: EmphasisExpr, _ context: Context) {
-//      _visitElement(emphasis, context)
-//    }
-
     override func visit(heading: HeadingExpr, _ context: Context) {
       _visitElement(heading, context)
     }
