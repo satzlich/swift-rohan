@@ -175,7 +175,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> EditResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
 
     do {
       let location = location.toTextLocationSlice()
@@ -197,7 +197,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> EditResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
 
     let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
@@ -275,7 +275,7 @@ extension TreeUtils {
     C.Element == Node, C.Index == Int
   {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
     precondition(parent.getChild(index) === textNode)
 
     // for single text node
@@ -357,7 +357,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, blockContainer container: ElementNode, index: Int
   ) -> EditResult<(Array<Int>, Array<Int>)> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
     precondition(index <= container.childCount)
 
     // if merge with index-th child is possible
@@ -385,7 +385,7 @@ extension TreeUtils {
     _ nodes: C, elementNode: ElementNode, index: Int
   ) -> (Array<Int>, Array<Int>)
   where C: BidirectionalCollection, C.Element == Node {
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
     precondition(index <= elementNode.childCount)
 
     // nodes is allowed to be empty here
@@ -436,7 +436,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
 
     // if the content is empty, return the original location
     guard !nodes.isEmpty else { return .success(RhTextRange(location)) }
@@ -460,7 +460,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
 
     let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
@@ -544,7 +544,7 @@ extension TreeUtils {
     _ paragraph: ParagraphNode, _ index: Int,
     _ grandParent: ElementNode, _ grandIndex: Int
   ) throws -> (Array<Int>, Array<Int>) {
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
     precondition(grandParent.isBlockContainer)
     precondition(grandParent.getChild(grandIndex) === paragraph)
     precondition(paragraph.getChild(index) === textNode)
@@ -614,7 +614,7 @@ extension TreeUtils {
   ) -> (Array<Int>, Array<Int>) {
     precondition(index <= container.childCount)
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
 
     // if last-to-insert and neighbouring node are mergeable
     if index < container.childCount,
@@ -642,7 +642,7 @@ extension TreeUtils {
     _ parent: ElementNode, _ index: Int
   ) throws -> (Array<Int>, Array<Int>) {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
     precondition(offset <= paragraph.childCount)
     precondition(parent.getChild(index) === paragraph)
 
@@ -708,7 +708,7 @@ extension TreeUtils {
     takeTailPart: () -> (ElementStore, Array<Int>)
   ) throws -> (Array<Int>, Array<Int>) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
     precondition(offset != 0)
 
     let first = nodes.first!

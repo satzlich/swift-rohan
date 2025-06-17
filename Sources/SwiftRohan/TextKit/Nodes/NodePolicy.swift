@@ -78,7 +78,7 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can be used as paragraph container.
   @inlinable @inline(__always)
-  static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
+  static func isBlockContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }
 
@@ -125,7 +125,7 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inline(__always)
-  static func canBeTopLevel(_ node: Node) -> Bool {
+  static func isBlockNode(_ node: Node) -> Bool {
     [.heading, .paragraph, .multiline].contains(node.type)
       || isEquationNode(node) && node.isBlock
   }
