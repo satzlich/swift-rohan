@@ -10,15 +10,15 @@ final class MathListLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
   let layoutFragment: MathListLayoutFragment
 
-  internal var mathContext: MathContext { fragmentFactory.mathContext }
-  private var fragmentFactory: FragmentFactory
+  internal var mathContext: MathContext { _fragmentFactory.mathContext }
+  private var _fragmentFactory: FragmentFactory
 
   init(
     _ styleSheet: StyleSheet, _ mathContext: MathContext,
     _ layoutFragment: MathListLayoutFragment
   ) {
     self.styleSheet = styleSheet
-    self.fragmentFactory = FragmentFactory(mathContext)
+    self._fragmentFactory = FragmentFactory(mathContext)
 
     self.layoutFragment = layoutFragment
     self.layoutCursor = layoutFragment.contentLayoutLength
@@ -100,7 +100,7 @@ final class MathListLayoutContext: LayoutContext {
     precondition(isEditing && layoutCursor >= 0)
     guard !text.isEmpty else { return }
     let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
-    let fragments = fragmentFactory.makeFragments(from: text, mathProperty)
+    let fragments = _fragmentFactory.makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
   }
 
@@ -108,7 +108,7 @@ final class MathListLayoutContext: LayoutContext {
     precondition(isEditing && layoutCursor >= 0)
     assertionFailure("newline is invalid")
     // newline is invalid; insert a replacement glyph instead
-    let glyph = fragmentFactory.replacementGlyph(1)
+    let glyph = _fragmentFactory.replacementGlyph(1)
     layoutFragment.insert(glyph, at: fragmentIndex)
   }
 
@@ -120,7 +120,7 @@ final class MathListLayoutContext: LayoutContext {
       layoutFragment.insert(fragment, at: fragmentIndex)
     }
     else {
-      let glyph = fragmentFactory.replacementGlyph(fragment.layoutLength)
+      let glyph = _fragmentFactory.replacementGlyph(fragment.layoutLength)
       layoutFragment.insert(glyph, at: fragmentIndex)
     }
   }
@@ -128,7 +128,7 @@ final class MathListLayoutContext: LayoutContext {
   /// Get math fragments for the given string.
   internal func getFragments(for string: String, _ source: Node) -> Array<MathFragment> {
     let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
-    return fragmentFactory.makeFragments(from: string, mathProperty)
+    return _fragmentFactory.makeFragments(from: string, mathProperty)
   }
 
   // MARK: - Query
