@@ -77,6 +77,7 @@ enum NodePolicy {
   }
 
   /// Returns true if a node of given kind can be used as paragraph container.
+  @inlinable @inline(__always)
   static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }

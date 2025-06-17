@@ -448,8 +448,6 @@ internal class ElementNode: Node {
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
 
-  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
-
   final func isMergeable(with other: ElementNode) -> Bool {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
@@ -793,8 +791,11 @@ internal class ElementNode: Node {
     return sum
   }
 
-  /// Refresh paragraph style for children that match the predicate. If the node
-  /// is **not** a paragraph container, this method does nothing.
+  /// Refresh paragraph style for those children that match the predicate and are not
+  /// themselves paragraph containers.
+  ///
+  /// If `self` is **not** a paragraph container, this method does nothing.
+  ///
   /// - Precondition: layout cursor is at the start of the node.
   /// - Postcondition: the cursor is unchanged.
   @inline(__always)
@@ -805,8 +806,12 @@ internal class ElementNode: Node {
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
-      let end = location + _children[i].layoutLength()
-      if predicate(i) { context.addParagraphStyle(_children[i], location..<end) }
+      let child = _children[i]
+      let end = location + child.layoutLength()
+      // paragraph container is dealt with by itself.
+      if child.isParagraphContainer == false && predicate(i) {
+        context.addParagraphStyle(child, location..<end)
+      }
       location = end + _newlines[i].intValue
     }
     if _newlines.last == true { context.addParagraphStyle(self, location - 1..<location) }
