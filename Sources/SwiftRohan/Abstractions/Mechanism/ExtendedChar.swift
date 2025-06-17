@@ -4,6 +4,7 @@ enum ExtendedChar: Equatable, Hashable, Comparable {
   case char(Character)
   case symbol(NamedSymbol)
 
+  @inlinable @inline(__always)
   static func < (lhs: ExtendedChar, rhs: ExtendedChar) -> Bool {
     switch (lhs, rhs) {
     case (.char(let l), .char(let r)):
