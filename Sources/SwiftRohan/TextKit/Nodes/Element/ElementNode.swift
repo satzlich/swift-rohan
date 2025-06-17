@@ -74,7 +74,7 @@ internal class ElementNode: Node {
   final override var isDirty: Bool { _isDirty }
 
   final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-    if isParagraphContainer {
+    if isBlockContainer {
       return _performLayout(context, fromScratch: fromScratch, isBlockContainer: true)
     }
     else {
@@ -614,13 +614,15 @@ internal class ElementNode: Node {
           context.skipBackwards(1)
           delta += 1
         }
-        delta += _children[i].performLayout(context, fromScratch: false)
+        let child = _children[i]
+        delta += child.performLayout(context, fromScratch: false)
         sum += delta
         i -= 1
 
+        // update paragraph style if needed
         if isBlockContainer {
           let begin = context.layoutCursor
-          context.addParagraphStyle(_children[i], begin..<begin + delta)
+          context.addParagraphStyle(child, begin..<begin + delta)
         }
       }
     }
@@ -815,14 +817,14 @@ internal class ElementNode: Node {
   private final func _refreshParagraphStyle(
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
-    precondition(self.isParagraphContainer)
+    precondition(self.isBlockContainer)
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let child = _children[i]
       let end = location + child.layoutLength() + _newlines[i].intValue
       // paragraph containers are styled by themselves, so we skip them.
-      if child.isParagraphContainer == false && predicate(i) {
+      if child.isBlockContainer == false && predicate(i) {
         context.addParagraphStyle(child, location..<end)
       }
       location = end

@@ -248,7 +248,7 @@ internal class Node: Codable {
 extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
-  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
+  final var isBlockContainer: Bool { NodePolicy.isParagraphContainer(type) }
 
   final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)

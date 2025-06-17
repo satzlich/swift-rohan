@@ -142,7 +142,7 @@ extension Trace {
     //            (lastNode, lastIndex) are paired.
     while true {
       switch lastNode {
-      case let container as ElementNode where container.isParagraphContainer:
+      case let container as ElementNode where container.isBlockContainer:
         if lastIndex < container.childCount,
           let child = container.getChild(lastIndex) as? ElementNode,
           child.isTransparent
