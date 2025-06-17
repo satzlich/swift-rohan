@@ -14,14 +14,14 @@ struct CategoryTests {
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
       (EmphasisNode([]), .inlineContent),
-      (HeadingNode(level: 1, []), .topLevelNodes),
+      (HeadingNode(level: 1, []), .blockNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), nil),
       (StrongNode([]), .inlineContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),
-      (EquationNode(.block, []), .topLevelNodes),
+      (EquationNode(.block, []), .blockNodes),
       (EquationNode(.inline, []), .extendedText),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
@@ -41,7 +41,7 @@ struct CategoryTests {
           [
             MultilineNode.Row([MultilineNode.Cell([TextNode("a")])])
           ]),
-        .topLevelNodes
+        .blockNodes
       ),
       (RadicalNode([], index: []), .mathContent),
       (TextModeNode([]), .mathContent),

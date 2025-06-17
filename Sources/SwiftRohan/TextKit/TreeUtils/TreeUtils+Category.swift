@@ -14,17 +14,16 @@ extension TreeUtils {
     if counts.total == 0 {
       return nil
     }
+    // universal
     else if counts.total == counts.textNodes {
       return .plaintext
     }
     else if counts.total == counts.universalTextCompatible {
       return .universalText
     }
+    // text layout
     else if counts.total == counts.textTextCompatible {
       return .textText
-    }
-    else if counts.total == counts.mathTextCompatible {
-      return .mathText
     }
     else if counts.total == counts.extendedTextCompatible {
       return .extendedText
@@ -32,16 +31,15 @@ extension TreeUtils {
     else if counts.total == counts.inlineContentCompatible {
       return .inlineContent
     }
-    else if counts.total == counts.containsBlockCompatible,
-      counts.topLevelNodes == 0
-    {
-      return .containsBlock
-    }
     else if counts.total == counts.paragraphNodes {
       return .paragraphNodes
     }
-    else if counts.total == counts.topLevelNodes {
-      return .topLevelNodes
+    else if counts.total == counts.blockNodes {
+      return .blockNodes
+    }
+    // math layout
+    else if counts.total == counts.mathTextCompatible {
+      return .mathText
     }
     else if counts.total == counts.mathContentCompatible {
       return .mathContent
@@ -55,35 +53,37 @@ extension TreeUtils {
     var textNodes: Int
     /// universal symbols
     var universalSymbols: Int
+
     /// text symbols
     var textSymbols: Int
-    /// math symbols
-    var mathSymbols: Int
     /// EquationNode where subtype=inline.
     var inlineMath: Int
     /// inline conetnt other than inline-math.
-    var inlineOther: Int
-    /// isBlock = true
-    var blockNodes: Int
+    var otherInline: Int
     /// paragraph node
     var paragraphNodes: Int
-    /// top level node
-    var topLevelNodes: Int
-    /// math-list only node
-    var mathOnlyNodes: Int
+    /// isBlock = true
+    var blockNodes: Int
 
-    static let zero: CountSummary = .init(
-      total: 0, textNodes: 0, universalSymbols: 0, textSymbols: 0, mathSymbols: 0,
-      inlineMath: 0, inlineOther: 0, blockNodes: 0, paragraphNodes: 0, topLevelNodes: 0,
-      mathOnlyNodes: 0)
+    /// math symbols
+    var mathSymbols: Int
+    /// math-list only node other than math symbols.
+    var otherMathOnly: Int
+
+    static let zero = CountSummary(
+      total: 0, textNodes: 0, universalSymbols: 0,
+      textSymbols: 0, inlineMath: 0, otherInline: 0, paragraphNodes: 0, blockNodes: 0,
+      mathSymbols: 0, otherMathOnly: 0)
 
     var universalTextCompatible: Int { textNodes + universalSymbols }
+    // text layout
     var textTextCompatible: Int { universalTextCompatible + textSymbols }
-    var mathTextCompatible: Int { universalTextCompatible + mathSymbols }
     var extendedTextCompatible: Int { textTextCompatible + inlineMath }
-    var inlineContentCompatible: Int { extendedTextCompatible + inlineOther }
-    var containsBlockCompatible: Int { inlineContentCompatible + blockNodes }
-    var mathContentCompatible: Int { universalTextCompatible + mathOnlyNodes }
+    var inlineContentCompatible: Int { extendedTextCompatible + otherInline }
+    var blockCompatible: Int { inlineContentCompatible + blockNodes }
+    // math layout
+    var mathTextCompatible: Int { universalTextCompatible + mathSymbols }
+    var mathContentCompatible: Int { mathTextCompatible + otherMathOnly }
   }
 
   private static func performCount<C: Collection<Node>>(
@@ -122,7 +122,6 @@ extension TreeUtils {
           return
         case .math:
           summary.mathSymbols += 1
-          summary.mathOnlyNodes += 1
           return
         }
       }
@@ -131,13 +130,12 @@ extension TreeUtils {
         summary.inlineMath += 1
       }
       else if NodePolicy.isInlineOther(node) {
-        summary.inlineOther += 1
+        summary.otherInline += 1
       }
 
-      if node.isBlock { summary.blockNodes += 1 }
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
-      if NodePolicy.isBlockNode(node) { summary.topLevelNodes += 1 }
-      if NodePolicy.isMathOnlyContent(node) { summary.mathOnlyNodes += 1 }
+      if node.isBlock { summary.blockNodes += 1 }
+      if NodePolicy.isMathOnlyContent(node) { summary.otherMathOnly += 1 }
     }
   }
 

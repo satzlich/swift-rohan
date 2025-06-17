@@ -91,9 +91,9 @@ enum MathCommands {
         (MathExpression.varprojlim, .image("varprojlim")),
       ]
 
-      let records = expressions.map { (expr, preview) in
-        CommandRecord(
-          expr.command, CommandBody.mathExpressionExpr(expr, preview: preview))
+      let records = expressions.map { (mathExpression, preview) in
+        let expr = CommandBody.mathExpressionExpr(mathExpression, preview: preview)
+        return CommandRecord(mathExpression.command, expr)
       }
       assert(records.count == MathExpression.allCommands.count)
 
@@ -102,16 +102,16 @@ enum MathCommands {
 
     // math operators
     do {
-      let records = MathOperator.allCommands.map { op in
-        CommandRecord(op.command, CommandBody.mathOperatorExpr(op))
+      let records = MathOperator.allCommands.map { mathOperator in
+        CommandRecord(mathOperator.command, CommandBody.mathOperatorExpr(mathOperator))
       }
       result.append(contentsOf: records)
     }
 
     // math variants
     do {
-      let records = MathStyles.allCommands.map { style in
-        CommandRecord(style.command, CommandBody.mathStylesExpr(style))
+      let records = MathStyles.allCommands.map { mathStyle in
+        CommandRecord(mathStyle.command, CommandBody.mathStylesExpr(mathStyle))
       }
       result.append(contentsOf: records)
     }
@@ -164,8 +164,9 @@ enum MathCommands {
         (MathTemplate.underset, .image("underset")),
       ]
       assert(commands.count == MathTemplate.allCommands.count)
-      let records = commands.map { (template, preview) in
-        CommandRecord(template.command, CommandBody.applyExpr(template, preview: preview))
+      let records = commands.map { (mathTemplate, preview) in
+        let expr = CommandBody.applyExpr(mathTemplate, preview: preview)
+        return CommandRecord(mathTemplate.command, expr)
       }
       result.append(contentsOf: records)
     }

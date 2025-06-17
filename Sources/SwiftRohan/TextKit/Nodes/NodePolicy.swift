@@ -17,6 +17,19 @@ enum NodePolicy {
     [.paragraph, .text].contains(nodeType)
   }
 
+  /// Returns true if a node of given kind is a block element.
+  @inline(__always)
+  static func isBlockElement(_ nodeType: NodeType) -> Bool {
+    [.heading, .paragraph].contains(nodeType)
+  }
+
+  /// Returns true if a node of given kind can be a top-level node in a document.
+  @inline(__always)
+  static func isBlockNode(_ node: Node) -> Bool {
+    [.heading, .paragraph, .multiline].contains(node.type)
+      || isEquationNode(node) && node.isBlock
+  }
+
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
   ///
   /// - Note: The function returns true when the layout offset used by its parent
@@ -47,12 +60,6 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
-  /// Returns true if a node of given kind is a block element.
-  @inline(__always)
-  static func isBlockElement(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
-  }
-
   @inline(__always)
   static func isPlaceholderEnabled(_ nodeType: NodeType) -> Bool {
     // must be element node
@@ -67,11 +74,13 @@ enum NodePolicy {
   }
 
   /// Returns true if the node is inline-math.
+  @inline(__always)
   static func isInlineMath(_ node: Node) -> Bool {
     isEquationNode(node) && node.isBlock == false
   }
 
   /// Returns true if the node is inline but not inline-math.
+  @inline(__always)
   static func isInlineOther(_ node: Node) -> Bool {
     [.emphasis, .linebreak, .strong, .unknown].contains(node.type)
   }
@@ -122,13 +131,6 @@ enum NodePolicy {
   }
 
   // MARK: - Relations
-
-  /// Returns true if a node of given kind can be a top-level node in a document.
-  @inline(__always)
-  static func isBlockNode(_ node: Node) -> Bool {
-    [.heading, .paragraph, .multiline].contains(node.type)
-      || isEquationNode(node) && node.isBlock
-  }
 
   /// Returns true if two nodes of given kinds are elements that can be merged.
   @inline(__always)
@@ -207,7 +209,7 @@ enum NodePolicy {
     case .emphasis: return .extendedTextContainer
     case .heading: return .inlineContentContainer
     case .paragraph: return nil
-    case .root: return .topLevelContainer
+    case .root: return .blockContainer
     case .strong: return .extendedTextContainer
 
     // Math

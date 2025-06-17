@@ -4,9 +4,9 @@ import Foundation
 import LatexParser
 
 public enum CommandRecords {
-  nonisolated(unsafe) public static let allCases: Array<CommandRecord> = _defaultCommands()
+  nonisolated(unsafe) public static let allCases: Array<CommandRecord> = _allCases()
 
-  private static func _defaultCommands() -> Array<CommandRecord> {
+  private static func _allCases() -> Array<CommandRecord> {
     var commands = Array<CommandRecord>()
 
     // nodes
