@@ -558,7 +558,7 @@ internal class ElementNode: Node {
       sum += node.performLayout(context, fromScratch: true)
     }
 
-    refreshParagraphStyle(context, { _ in true })
+    _refreshParagraphStyle(context, { _ in true })
 
     return sum
   }
@@ -616,9 +616,7 @@ internal class ElementNode: Node {
       }
     }
 
-    if self.isParagraphContainer {
-      refreshParagraphStyle(context, { dirtyNodes.contains($0) })
-    }
+    _refreshParagraphStyle(context, { dirtyNodes.contains($0) })
 
     return sum
   }
@@ -784,7 +782,7 @@ internal class ElementNode: Node {
     // add paragraph style forwards
     do {
       let vacuumRange = vacuumRange ?? 0..<0
-      refreshParagraphStyle(
+      _refreshParagraphStyle(
         context,
         { i in
           current[i].mark == .added || current[i].mark == .dirty
@@ -795,11 +793,12 @@ internal class ElementNode: Node {
     return sum
   }
 
-  /// Refresh paragraph style for children that match the predicate.
+  /// Refresh paragraph style for children that match the predicate. If the node
+  /// is **not** a paragraph container, this method does nothing.
   /// - Precondition: layout cursor is at the start of the node.
   /// - Postcondition: the cursor is unchanged.
   @inline(__always)
-  private final func refreshParagraphStyle(
+  private final func _refreshParagraphStyle(
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
     guard self.isParagraphContainer else { return }

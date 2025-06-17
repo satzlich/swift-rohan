@@ -105,7 +105,17 @@ final class HeadingNode: ElementNode {
     super.init(deepCopyOf: headingNode)
   }
 
-  var command: String? {
+  static func selector(level: Int? = nil) -> TargetSelector {
+    precondition(level == nil || HeadingExpr.validate(level: level!))
+    guard let level else { return TargetSelector(.heading) }
+    return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
+  }
+
+  // MARK: - Command
+
+  var command: String? { Self._command(forLevel: level) }
+
+  private static func _command(forLevel level: Int) -> String? {
     switch level {
     case 1: return "section*"
     case 2: return "subsection*"
@@ -116,9 +126,20 @@ final class HeadingNode: ElementNode {
     }
   }
 
-  static func selector(level: Int? = nil) -> TargetSelector {
-    precondition(level == nil || HeadingExpr.validate(level: level!))
-    guard let level else { return TargetSelector(.heading) }
-    return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
+  /// Returns a command body for the given heading level.
+  static func commandBody(forLevel: Int) -> CommandBody {
+    precondition(HeadingExpr.validate(level: forLevel))
+    return CommandBody(HeadingExpr(level: forLevel), 1)
+  }
+
+  /// Returns **all** command records emitted by this heading class.
+  static var commandRecords: Array<CommandRecord> {
+    var records: Array<CommandRecord> = []
+    records.reserveCapacity(5)
+    for level in 1...5 {
+      guard let command = _command(forLevel: level) else { continue }
+      records.append(CommandRecord(command, commandBody(forLevel: level)))
+    }
+    return records
   }
 }

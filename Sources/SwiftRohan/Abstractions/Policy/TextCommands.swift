@@ -9,16 +9,14 @@ enum TextCommands {
   private static func _allCases() -> Array<CommandRecord> {
     var result: Array<CommandRecord> =
       [
-        // sections
-        .init("h1", Snippets.header(level: 1)),
-        .init("h2", Snippets.header(level: 2)),
-        .init("h3", Snippets.header(level: 3)),
         // style
         .init("emph", Snippets.emphasis),
         .init("strong", Snippets.strong),
         // math
         .init("equation*", Snippets.equation),
       ]
+
+    result.append(contentsOf: HeadingNode.commandRecords)
 
     // multiline
     do {
