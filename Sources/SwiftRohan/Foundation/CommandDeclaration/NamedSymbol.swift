@@ -104,9 +104,7 @@ extension NamedSymbol {
   private static let _dictionary: Dictionary<String, NamedSymbol> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
-  static func lookup(_ command: String) -> NamedSymbol? {
-    _dictionary[command]
-  }
+  static func lookup(_ command: String) -> NamedSymbol? { _dictionary[command] }
 
   static let universalSymbols: Array<NamedSymbol> = LatexCommands.universalSymbols
 
