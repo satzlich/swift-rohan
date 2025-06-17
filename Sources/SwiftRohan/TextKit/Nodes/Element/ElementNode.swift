@@ -808,7 +808,7 @@ internal class ElementNode: Node {
     for i in 0..<_children.count {
       let child = _children[i]
       let end = location + child.layoutLength()
-      // paragraph container is dealt with by itself.
+      // paragraph containers are styled by themselves, so we skip them.
       if child.isParagraphContainer == false && predicate(i) {
         context.addParagraphStyle(child, location..<end)
       }
