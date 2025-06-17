@@ -15,6 +15,14 @@ final class StrongNode: ElementNode {
 
   final override class var type: NodeType { .strong }
 
+  final class func selector(command: String) -> TargetSelector {
+    TargetSelector(.strong, PropertyMatcher(.command, .string(command)))
+  }
+
+  final override func selector() -> TargetSelector {
+    Self.selector(command: subtype.command)
+  }
+
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     switch subtype {
     case .emph: return _getProperties(styleSheet, emph: ())
