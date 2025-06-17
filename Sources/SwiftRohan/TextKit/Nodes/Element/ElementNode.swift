@@ -807,14 +807,13 @@ internal class ElementNode: Node {
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let child = _children[i]
-      let end = location + child.layoutLength()
+      let end = location + child.layoutLength() + _newlines[i].intValue
       // paragraph containers are styled by themselves, so we skip them.
       if child.isParagraphContainer == false && predicate(i) {
         context.addParagraphStyle(child, location..<end)
       }
-      location = end + _newlines[i].intValue
+      location = end
     }
-    if _newlines.last == true { context.addParagraphStyle(self, location - 1..<location) }
   }
 
   private final func getLayoutOffset(_ index: Int) -> Int? {
