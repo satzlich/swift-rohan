@@ -195,7 +195,7 @@ struct ElementOperationTests {
       newParagraph.prettyPrint() == """
         paragraph
         ├ text "2"
-        └ emphasis
+        └ textStyles(emph)
           └ text "3"
         """)
 
@@ -207,7 +207,7 @@ struct ElementOperationTests {
       newParagraph.prettyPrint() == """
         paragraph
         ├ text "2"
-        └ emphasis
+        └ textStyles(emph)
           ├ text "3"
           └ text "X"
         """)
@@ -221,13 +221,13 @@ struct ElementOperationTests {
         │ └ text "01"
         ├ paragraph
         │ ├ text "2"
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "3"
         ├ paragraph
         │ └ text "45"
         └ paragraph
           ├ text "2"
-          └ emphasis
+          └ textStyles(emph)
             ├ text "3"
             └ text "X"
         """)
@@ -249,11 +249,11 @@ struct ElementOperationTests {
         paragraph
         ├ text "0"
         ├ text "1"
-        ├ emphasis
+        ├ textStyles(emph)
         │ └ text "2"
         ├ text "3"
         ├ text "4"
-        ├ emphasis
+        ├ textStyles(emph)
         │ └ text "5"
         └ text "6"
         """)
@@ -265,11 +265,11 @@ struct ElementOperationTests {
         paragraph.prettyPrint() == """
           paragraph
           ├ text "01"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "2"
           ├ text "3"
           ├ text "4"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "5"
           └ text "6"
           """)
@@ -284,10 +284,10 @@ struct ElementOperationTests {
         paragraph.prettyPrint() == """
           paragraph
           ├ text "01"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "2"
           ├ text "34"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "5"
           └ text "6"
           """)
@@ -302,10 +302,10 @@ struct ElementOperationTests {
         paragraph.prettyPrint() == """
           paragraph
           ├ text "01"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "2"
           ├ text "34"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "5"
           └ text "6"
           """)
@@ -338,7 +338,7 @@ struct ElementOperationTests {
         root 16
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 6
           ├ text 4
@@ -350,7 +350,7 @@ struct ElementOperationTests {
         root 15
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 5
           ├ text 4

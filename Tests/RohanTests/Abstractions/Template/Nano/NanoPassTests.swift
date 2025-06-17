@@ -199,7 +199,7 @@ struct NanoPassTests {
       #expect(expressions.count == 1)
       #expect(
         expressions[0].prettyPrint() == """
-          emphasis
+          textStyles(emph)
           └ text "DE"
           """)
     }
