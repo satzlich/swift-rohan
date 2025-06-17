@@ -374,7 +374,7 @@ struct ElementOperationTests {
         root 16
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 6
           ├ text 4
@@ -387,7 +387,7 @@ struct ElementOperationTests {
         root 15
         ├ heading 8
         │ ├ text 3
-        │ └ emphasis 5
+        │ └ textStyles(emph) 5
         │   └ text 5
         └ paragraph 5
           ├ text 4

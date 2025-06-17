@@ -105,7 +105,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The quick brown fox jumps over the"
-          ├ emphasis
+          ├ textStyles(emph)
           └ text " dog."
         """
       let range2 = "[↓0,↓1,↓0]:0..<[↓0,↓1,↓0]:5"
@@ -145,7 +145,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         root
         └ heading
           ├ text "Newton's"
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text " 2nd"
           └ text " Law of Motion"
         """
@@ -621,9 +621,9 @@ final class DeleteRangeTests: TextKitTestsBase {
     let doc1 = """
       root
       └ paragraph
-        ├ emphasis
+        ├ textStyles(emph)
         │ └ text "the quick "
-        └ emphasis
+        └ textStyles(emph)
           └ text "dog."
       """
     let range2 = "[↓0,↓1]:0..<[↓0,↓3]:9"
@@ -704,12 +704,12 @@ final class DeleteRangeTests: TextKitTestsBase {
             │     ├ variable #0
             │     │ └ text "fox"
             │     ├ text " and "
-            │     ├ emphasis
+            │     ├ textStyles(emph)
             │     │ └ variable #0
             │     │   └ text "fox"
             │     └ text "}"
             ├ text " and "
-            ├ emphasis
+            ├ textStyles(emph)
             │ └ variable #0
             │   └ template(doubleText)
             │     ├ argument #0 (x2)
@@ -718,7 +718,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             │       ├ variable #0
             │       │ └ text "fox"
             │       ├ text " and "
-            │       ├ emphasis
+            │       ├ textStyles(emph)
             │       │ └ variable #0
             │       │   └ text "fox"
             │       └ text "}"

@@ -9,7 +9,7 @@ struct NodeStoreUtilsTests {
   @Test
   func classSet() {
     let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
-    #expect(classes.count == 24)
+    #expect(classes.count == 23)
     #expect(classes.count == NodeType.allCases.count - 4)
     #expect(NodeStoreUtils.registeredClasses.count == classes.count)
   }

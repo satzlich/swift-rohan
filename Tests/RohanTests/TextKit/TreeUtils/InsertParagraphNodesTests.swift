@@ -108,7 +108,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "hello good and bad world. "
-          └ emphasis
+          └ textStyles(emph)
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -132,7 +132,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "nice "
         └ paragraph
           ├ text "world. "
-          └ emphasis
+          └ textStyles(emph)
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -163,7 +163,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "good "
         └ paragraph
           ├ text "world. "
-          └ emphasis
+          └ textStyles(emph)
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -191,7 +191,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "Guten Tag"
         └ paragraph
           ├ text "good world. "
-          └ emphasis
+          └ textStyles(emph)
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -219,7 +219,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "good "
         └ paragraph
           ├ text "world. "
-          └ emphasis
+          └ textStyles(emph)
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -245,7 +245,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "Guten Tag"
         └ paragraph
           ├ text "good world. "
-          └ emphasis
+          └ textStyles(emph)
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -440,9 +440,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "Hello "
-          ├ emphasis
+          ├ textStyles(emph)
           │ └ text "tout le monde "
-          └ emphasis
+          └ textStyles(emph)
             └ text "world"
         """
       let range2 = "[↓0,↓0]:6"
@@ -462,10 +462,10 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ├ paragraph
         │ └ text "Hello "
         ├ heading
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "tout le monde"
         └ paragraph
-          └ emphasis
+          └ textStyles(emph)
             └ text "world"
         """
       let range2 = "[↓0,↓0]:6"
@@ -504,7 +504,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "world"
         ├ heading
         │ └ text "nice "
@@ -531,7 +531,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ └ emphasis
+        │ └ textStyles(emph)
         │   └ text "world"
         ├ heading
         │ └ text "nice "
@@ -556,7 +556,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ ├ emphasis
+        │ ├ textStyles(emph)
         │ │ └ text "world"
         │ └ text "nice "
         ├ heading
@@ -582,7 +582,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ ├ emphasis
+        │ ├ textStyles(emph)
         │ │ └ text "world"
         │ └ text "nice "
         └ paragraph
