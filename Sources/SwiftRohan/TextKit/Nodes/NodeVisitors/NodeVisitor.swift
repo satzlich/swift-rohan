@@ -68,16 +68,6 @@ class NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 
-//  public func visit(emphasis: EmphasisNode, _ context: C) -> R {
-//    visitNode(emphasis, context)
-//  }
-//
-//  internal func visit<T: GenNode, S: Collection<T>>(
-//    emphasis: EmphasisNode, _ context: C, withChildren children: S
-//  ) -> R {
-//    preconditionFailure("overriding required")
-//  }
-
   public func visit(heading: HeadingNode, _ context: C) -> R {
     visitNode(heading, context)
   }
@@ -108,12 +98,12 @@ class NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 
-  public func visit(strong: StrongNode, _ context: C) -> R {
-    visitNode(strong, context)
+  public func visit(textStyles: TextStylesNode, _ context: C) -> R {
+    visitNode(textStyles, context)
   }
 
   internal func visit<T: GenNode, S: Collection<T>>(
-    strong: StrongNode, _ context: C, withChildren children: S
+    textStyles: TextStylesNode, _ context: C, withChildren children: S
   ) -> R {
     preconditionFailure("overriding required")
   }

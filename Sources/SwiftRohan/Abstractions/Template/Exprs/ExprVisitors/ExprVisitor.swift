@@ -46,10 +46,6 @@ class ExprVisitor<C, R> {
     visitExpr(content, context)
   }
 
-//  func visit(emphasis: EmphasisExpr, _ context: C) -> R {
-//    visitExpr(emphasis, context)
-//  }
-
   func visit(heading: HeadingExpr, _ context: C) -> R {
     visitExpr(heading, context)
   }
@@ -62,8 +58,8 @@ class ExprVisitor<C, R> {
     visitExpr(root, context)
   }
 
-  func visit(strong: StrongExpr, _ context: C) -> R {
-    visitExpr(strong, context)
+  func visit(textStyles: TextStylesExpr, _ context: C) -> R {
+    visitExpr(textStyles, context)
   }
 
   // MARK: - Math

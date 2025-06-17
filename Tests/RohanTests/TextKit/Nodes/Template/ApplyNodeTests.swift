@@ -56,7 +56,7 @@ struct ApplyNodeTests {
           ├ variable #0
           │ └ text "Philip"
           ├ text " is a good "
-          ├ textStyles(emph)
+          ├ emph
           │ └ variable #1
           │   └ text "fox"
           ├ text ", is "
@@ -100,12 +100,12 @@ struct ApplyNodeTests {
         │     ├ variable #0
         │     │ └ text "fox"
         │     ├ text " and "
-        │     ├ textStyles(emph)
+        │     ├ emph
         │     │ └ variable #0
         │     │   └ text "fox"
         │     └ text "}"
         ├ text " and "
-        ├ textStyles(emph)
+        ├ emph
         │ └ variable #0
         │   └ template(doubleText)
         │     ├ argument #0 (x2)
@@ -114,7 +114,7 @@ struct ApplyNodeTests {
         │       ├ variable #0
         │       │ └ text "fox"
         │       ├ text " and "
-        │       ├ textStyles(emph)
+        │       ├ emph
         │       │ └ variable #0
         │       │   └ text "fox"
         │       └ text "}"
@@ -213,7 +213,7 @@ struct ApplyNodeTests {
         ├ variable #0
         │ └ text "Philip"
         ├ text " is a good "
-        ├ textStyles(emph)
+        ├ emph
         │ └ variable #1
         │   └ text "fox"
         ├ text ", is "

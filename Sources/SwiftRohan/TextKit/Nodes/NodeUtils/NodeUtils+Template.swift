@@ -113,11 +113,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return HeadingNode(level: heading.level, children)
   }
 
-  //  override func visit(emphasis: EmphasisExpr, _ context: Void) -> EmphasisNode {
-  //    let children = _convertChildren(of: emphasis, context)
-  //    return EmphasisNode(children)
-  //  }
-
   override func visit(paragraph: ParagraphExpr, _ context: Void) -> ParagraphNode {
     let children = _convertChildren(of: paragraph, context)
     return ParagraphNode(children)
@@ -128,9 +123,9 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return RootNode(children)
   }
 
-  override func visit(strong: StrongExpr, _ context: Void) -> StrongNode {
-    let children = _convertChildren(of: strong, context)
-    return StrongNode(strong.subtype, children)
+  override func visit(textStyles: TextStylesExpr, _ context: Void) -> TextStylesNode {
+    let children = _convertChildren(of: textStyles, context)
+    return TextStylesNode(textStyles.subtype, children)
   }
 
   // MARK: - Math

@@ -13,11 +13,10 @@ enum ExprSerdeUtils {
     .variable: VariableExpr.self,
     // Element
     .content: ContentExpr.self,
-//    .emphasis: EmphasisExpr.self,
     .heading: HeadingExpr.self,
     .paragraph: ParagraphExpr.self,
     .root: RootExpr.self,
-    .textStyles: StrongExpr.self,
+    .textStyles: TextStylesExpr.self,
     // Math
     .accent: AccentExpr.self,
     .attach: AttachExpr.self,

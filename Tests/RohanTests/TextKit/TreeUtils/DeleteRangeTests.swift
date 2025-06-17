@@ -61,7 +61,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("The quick brown fox jumps over the"),
-          StrongNode(.emph, [TextNode(" lazy")]),
+          TextStylesNode(.emph, [TextNode(" lazy")]),
           TextNode(" dog."),
         ])
       ])
@@ -105,7 +105,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The quick brown fox jumps over the"
-          ├ textStyles(emph)
+          ├ emph
           └ text " dog."
         """
       let range2 = "[↓0,↓1,↓0]:0..<[↓0,↓1,↓0]:5"
@@ -123,7 +123,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("Newton's"),
-            StrongNode(.emph, [TextNode(" Second")]),
+            TextStylesNode(.emph, [TextNode(" Second")]),
             TextNode(" Law of Motion"),
           ])
       ])
@@ -145,7 +145,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         root
         └ heading
           ├ text "Newton's"
-          ├ textStyles(emph)
+          ├ emph
           │ └ text " 2nd"
           └ text " Law of Motion"
         """
@@ -186,7 +186,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("Newton's"),
-            StrongNode(.emph, [TextNode(" Second")]),
+            TextStylesNode(.emph, [TextNode(" Second")]),
             TextNode(" Law of Motion"),
           ]),
         ParagraphNode([
@@ -336,7 +336,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           TextNode("fox jumps over "),
         ])
       ])
@@ -368,7 +368,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           TextNode("fox jumps over "),
         ])
       ])
@@ -398,7 +398,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick "),
-          StrongNode(.emph, [TextNode("brown ")]),
+          TextStylesNode(.emph, [TextNode("brown ")]),
           TextNode("fox jumps over "),
         ])
       ])
@@ -601,11 +601,11 @@ final class DeleteRangeTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([
-          StrongNode(.emph, [TextNode("the quick ")]),
+          TextStylesNode(.emph, [TextNode("the quick ")]),
           TextNode("brown fox "),
-          StrongNode(.emph, [TextNode("jumps over ")]),
+          TextStylesNode(.emph, [TextNode("jumps over ")]),
           TextNode("the lazy "),
-          StrongNode(.emph, [TextNode("dog.")]),
+          TextStylesNode(.emph, [TextNode("dog.")]),
         ])
       ])
       return self.createDocumentManager(rootNode)
@@ -621,9 +621,9 @@ final class DeleteRangeTests: TextKitTestsBase {
     let doc1 = """
       root
       └ paragraph
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "the quick "
-        └ textStyles(emph)
+        └ emph
           └ text "dog."
       """
     let range2 = "[↓0,↓1]:0..<[↓0,↓3]:9"
@@ -639,7 +639,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("the quick brown "),  // text_1
-          StrongNode(.emph, [TextNode("fox ")]),
+          TextStylesNode(.emph, [TextNode("fox ")]),
         ]),
         ParagraphNode([
           TextNode("jumps over the lazy dog.")  // text_2
@@ -704,12 +704,12 @@ final class DeleteRangeTests: TextKitTestsBase {
             │     ├ variable #0
             │     │ └ text "fox"
             │     ├ text " and "
-            │     ├ textStyles(emph)
+            │     ├ emph
             │     │ └ variable #0
             │     │   └ text "fox"
             │     └ text "}"
             ├ text " and "
-            ├ textStyles(emph)
+            ├ emph
             │ └ variable #0
             │   └ template(doubleText)
             │     ├ argument #0 (x2)
@@ -718,7 +718,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             │       ├ variable #0
             │       │ └ text "fox"
             │       ├ text " and "
-            │       ├ textStyles(emph)
+            │       ├ emph
             │       │ └ variable #0
             │       │   └ text "fox"
             │       └ text "}"

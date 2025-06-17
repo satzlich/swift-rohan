@@ -20,7 +20,7 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
   static let textTextContainer = ContainerCategory(rawValue: 0b0000_0001)
 
   /// container for extended-text-compatible (for text layout)
-  /// Example: EmphasisNode
+  /// Example: TextStylesNode
   static let extendedTextContainer = ContainerCategory(rawValue: 0b0000_0011)
 
   /// container for inline-content-compatible (for text layout)

@@ -13,12 +13,10 @@ enum NodeSerdeUtils {
     .variable: VariableNode.self,
     // element
     .content: ContentNode.self,
-//    .emphasis: EmphasisNode.self,
     .heading: HeadingNode.self,
     .paragraph: ParagraphNode.self,
     .root: RootNode.self,
-    .textStyles: StrongNode.self,
-    .textMode: TextModeNode.self,
+    .textStyles: TextStylesNode.self,
     // math
     .accent: AccentNode.self,
     .attach: AttachNode.self,
@@ -33,6 +31,7 @@ enum NodeSerdeUtils {
     .matrix: MatrixNode.self,
     .multiline: MultilineNode.self,
     .radical: RadicalNode.self,
+    .textMode: TextModeNode.self,
     .underOver: UnderOverNode.self,
   ]
 

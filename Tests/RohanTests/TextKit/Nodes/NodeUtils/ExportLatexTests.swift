@@ -24,9 +24,9 @@ final class ExportLatexTests: TextKitTestsBase {
         ]),
       ParagraphNode([
         TextNode("This is a paragraph with "),
-        StrongNode(.emph, [TextNode("emphasis")]),
+        TextStylesNode(.emph, [TextNode("emphasis")]),
         TextNode(" and "),
-        StrongNode(.textbf, [TextNode("strong")]),
+        TextStylesNode(.textbf, [TextNode("strong")]),
         TextNode("."),
       ]),
       EquationNode(

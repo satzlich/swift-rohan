@@ -85,7 +85,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("hello world. "),
-          StrongNode(.emph, [TextNode("the quick brown fox")]),
+          TextStylesNode(.emph, [TextNode("the quick brown fox")]),
         ])
       ])
       return self.createDocumentManager(rootNode)
@@ -108,7 +108,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "hello good and bad world. "
-          └ textStyles(emph)
+          └ emph
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -132,7 +132,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "nice "
         └ paragraph
           ├ text "world. "
-          └ textStyles(emph)
+          └ emph
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -163,7 +163,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "good "
         └ paragraph
           ├ text "world. "
-          └ textStyles(emph)
+          └ emph
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -191,7 +191,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "Guten Tag"
         └ paragraph
           ├ text "good world. "
-          └ textStyles(emph)
+          └ emph
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -219,7 +219,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "good "
         └ paragraph
           ├ text "world. "
-          └ textStyles(emph)
+          └ emph
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -245,7 +245,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         │ └ text "Guten Tag"
         └ paragraph
           ├ text "good world. "
-          └ textStyles(emph)
+          └ emph
             └ text "the quick brown fox"
         """
       let range2 = "[↓0,↓0]:6"
@@ -419,7 +419,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("Hello "),
-          StrongNode(.emph, [TextNode("world")]),
+          TextStylesNode(.emph, [TextNode("world")]),
         ])
       ])
       return self.createDocumentManager(rootNode)
@@ -431,7 +431,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let documentManager = createDocumentManager()
       let content = [
         ParagraphNode([
-          StrongNode(.emph, [TextNode("tout le monde ")])
+          TextStylesNode(.emph, [TextNode("tout le monde ")])
         ])
       ]
 
@@ -440,9 +440,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "Hello "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "tout le monde "
-          └ textStyles(emph)
+          └ emph
             └ text "world"
         """
       let range2 = "[↓0,↓0]:6"
@@ -454,7 +454,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [StrongNode(.emph, [TextNode("tout le monde")])])
+        HeadingNode(level: 1, [TextStylesNode(.emph, [TextNode("tout le monde")])])
       ]
       let range1 = "[↓0,↓0]:6..<[↓2]:0"
       let doc1 = """
@@ -462,10 +462,10 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ├ paragraph
         │ └ text "Hello "
         ├ heading
-        │ └ textStyles(emph)
+        │ └ emph
         │   └ text "tout le monde"
         └ paragraph
-          └ textStyles(emph)
+          └ emph
             └ text "world"
         """
       let range2 = "[↓0,↓0]:6"
@@ -482,7 +482,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("Hello "),
-          StrongNode(.emph, [TextNode("world")]),
+          TextStylesNode(.emph, [TextNode("world")]),
           TextNode("!"),
         ])
       ])
@@ -504,7 +504,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ └ textStyles(emph)
+        │ └ emph
         │   └ text "world"
         ├ heading
         │ └ text "nice "
@@ -531,7 +531,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ └ textStyles(emph)
+        │ └ emph
         │   └ text "world"
         ├ heading
         │ └ text "nice "
@@ -556,7 +556,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ ├ textStyles(emph)
+        │ ├ emph
         │ │ └ text "world"
         │ └ text "nice "
         ├ heading
@@ -582,7 +582,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "Hello "
-        │ ├ textStyles(emph)
+        │ ├ emph
         │ │ └ text "world"
         │ └ text "nice "
         └ paragraph

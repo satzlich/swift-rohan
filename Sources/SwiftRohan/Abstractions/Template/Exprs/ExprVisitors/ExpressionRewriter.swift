@@ -49,10 +49,6 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     _rewriteElement(content, context)
   }
 
-//  override func visit(emphasis: EmphasisExpr, _ context: C) -> R {
-//    _rewriteElement(emphasis, context)
-//  }
-
   override func visit(heading: HeadingExpr, _ context: C) -> R {
     _rewriteElement(heading, context)
   }
@@ -65,8 +61,8 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     _rewriteElement(root, context)
   }
 
-  override func visit(strong: StrongExpr, _ context: C) -> R {
-    _rewriteElement(strong, context)
+  override func visit(textStyles: TextStylesExpr, _ context: C) -> R {
+    _rewriteElement(textStyles, context)
   }
 
   // MARK: - Math

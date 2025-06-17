@@ -16,8 +16,8 @@ struct CategoryTests {
       (HeadingNode(level: 1, []), .blockNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), nil),
-      (StrongNode(.emph, []), .inlineContent),
-      (StrongNode(.textbf, []), .inlineContent),
+      (TextStylesNode(.emph, []), .inlineContent),
+      (TextStylesNode(.textbf, []), .inlineContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),

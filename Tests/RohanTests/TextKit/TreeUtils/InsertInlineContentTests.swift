@@ -23,14 +23,14 @@ final class InsertInlineContentTests: TextKitTestsBase {
 
     let content = [
       TextNode("the "),
-      StrongNode(.emph, [TextNode("quick brown ")]),
+      TextStylesNode(.emph, [TextNode("quick brown ")]),
     ]
     let range1 = "[↓0,↓0]:0..<[↓0,↓2]:0"
     let doc1 = """
       root
       └ heading
         ├ text "the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "quick brown "
         └ text "fox the "
       """
@@ -53,7 +53,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let offset = "fox the ".length
     let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
     let content = [
-      StrongNode(.emph, [TextNode("lazy ")]),
+      TextStylesNode(.emph, [TextNode("lazy ")]),
       TextNode("dog"),
     ]
 
@@ -62,7 +62,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ heading
         ├ text "fox the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "lazy "
         └ text "dog"
       """
@@ -88,9 +88,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
     // (non-text, non-text)
     do {
       let content = [
-        StrongNode(.emph, [TextNode("jumps ")]),
+        TextStylesNode(.emph, [TextNode("jumps ")]),
         TextNode("gaily "),
-        StrongNode(.emph, [TextNode("over ")]),
+        TextStylesNode(.emph, [TextNode("over ")]),
       ]
       let documentManager = createDocumentManager()
 
@@ -99,10 +99,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps "
           ├ text "gaily "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
           └ text "the "
         """
@@ -116,7 +116,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     do {
       let content = [
         TextNode("jumps "),
-        StrongNode(.emph, [TextNode("over ")]),
+        TextStylesNode(.emph, [TextNode("over ")]),
       ]
       let documentManager = createDocumentManager()
       let range1 = "[↓0,↓0]:4..<[↓0,↓2]:0"
@@ -124,7 +124,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox jumps "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
           └ text "the "
         """
@@ -137,7 +137,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     // (non-text, text)
     do {
       let content = [
-        StrongNode(.emph, [TextNode("jumps ")]),
+        TextStylesNode(.emph, [TextNode("jumps ")]),
         TextNode("over "),
       ]
       let documentManager = createDocumentManager()
@@ -146,7 +146,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps "
           └ text "over the "
         """
@@ -160,7 +160,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     do {
       let content = [
         TextNode("jumps "),
-        StrongNode(.emph, [TextNode("gaily ")]),
+        TextStylesNode(.emph, [TextNode("gaily ")]),
         TextNode("over "),
       ]
       let documentManager = createDocumentManager()
@@ -169,7 +169,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox jumps "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "gaily "
           └ text "over the "
         """
@@ -190,14 +190,14 @@ final class InsertInlineContentTests: TextKitTestsBase {
 
     let range = RhTextRange.parse("[]:0")!
     let content = [
-      StrongNode(.emph, [TextNode("the quick brown ")]),
+      TextStylesNode(.emph, [TextNode("the quick brown ")]),
       TextNode("fox"),
     ]
     let range1 = "[↓0]:0..<[]:1"
     let doc1 = """
       root
       └ paragraph
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "the quick brown "
         └ text "fox"
       """
@@ -220,7 +220,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
 
     let range = RhTextRange.parse("[]:1")!
     let content = [
-      StrongNode(.emph, [TextNode("fox ")]),
+      TextStylesNode(.emph, [TextNode("fox ")]),
       TextNode("jumps over the lazy dog"),
     ]
     let range1 = "[↓1]:0..<[]:2"
@@ -229,7 +229,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       ├ paragraph
       │ └ text "the quick brown "
       └ paragraph
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "fox "
         └ text "jumps over the lazy dog"
       """
@@ -253,7 +253,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let range = RhTextRange.parse("[]:0")!
     let content = [
       TextNode("the "),
-      StrongNode(.emph, [TextNode("quick brown ")]),
+      TextStylesNode(.emph, [TextNode("quick brown ")]),
     ]
 
     let range1 = "[↓0,↓0]:0..<[↓0,↓2]:0"
@@ -261,7 +261,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ paragraph
         ├ text "the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "quick brown "
         └ text "fox over the lazy dog"
       """
@@ -285,7 +285,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let range = RhTextRange.parse("[↓0]:0")!
 
     let content = [
-      StrongNode(.emph, [TextNode("the quick brown ")]),
+      TextStylesNode(.emph, [TextNode("the quick brown ")]),
       TextNode("fox"),
     ]
 
@@ -293,7 +293,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let doc1 = """
       root
       └ heading
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "the quick brown "
         └ text "fox"
       """
@@ -319,7 +319,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        StrongNode(.emph, [TextNode("jumps over ")]),
+        TextStylesNode(.emph, [TextNode("jumps over ")]),
         TextNode("the lazy dog"),
       ]
 
@@ -328,7 +328,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "the quick brown "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps over "
           └ text "the lazy dog"
         """
@@ -342,7 +342,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let documentManager = createDocumentManager()
       let content = [
         TextNode("jumps over "),
-        StrongNode(.emph, [TextNode("the lazy dog")]),
+        TextStylesNode(.emph, [TextNode("the lazy dog")]),
       ]
 
       let range1 = "[↓0,↓0]:16..<[↓0]:2"
@@ -350,7 +350,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "the quick brown jumps over "
-          └ textStyles(emph)
+          └ emph
             └ text "the lazy dog"
         """
       let range2 = "[↓0,↓0]:16"
@@ -374,7 +374,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
 
     let content = [
       TextNode("the "),
-      StrongNode(.emph, [TextNode("quick brown ")]),
+      TextStylesNode(.emph, [TextNode("quick brown ")]),
       TextNode("fox "),
     ]
 
@@ -383,7 +383,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ heading
         ├ text "the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "quick brown "
         └ text "fox jumps over the lazy dog"
       """
@@ -402,7 +402,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
           level: 1,
           [
             TextNode("quick brown "),
-            StrongNode(.emph, [TextNode("over ")]),
+            TextStylesNode(.emph, [TextNode("over ")]),
             TextNode("dog"),
           ])
       ])
@@ -417,7 +417,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let range = RhTextRange.parse("[↓0]:1")!
       let content = [
         TextNode("fox "),
-        StrongNode(.emph, [TextNode("jumps ")]),
+        TextStylesNode(.emph, [TextNode("jumps ")]),
       ]
 
       let range1 = "[↓0,↓0]:12..<[↓0]:2"
@@ -425,9 +425,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "quick brown fox "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
           └ text "dog"
         """
@@ -442,7 +442,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       // heading -> <offset>
       let range = RhTextRange.parse("[↓0]:2")!
       let content = [
-        StrongNode(.emph, [TextNode("the ")]),
+        TextStylesNode(.emph, [TextNode("the ")]),
         TextNode("lazy "),
       ]
 
@@ -451,9 +451,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "quick brown "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "the "
           └ text "lazy dog"
         """
@@ -469,7 +469,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let range = RhTextRange.parse("[↓0]:2")!
 
       let content = [
-        StrongNode(.emph, [TextNode("the lazy ")])
+        TextStylesNode(.emph, [TextNode("the lazy ")])
       ]
 
       let range1 = "[↓0]:2..<[↓0,↓3]:0"
@@ -477,9 +477,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "quick brown "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "the lazy "
           └ text "dog"
         """
