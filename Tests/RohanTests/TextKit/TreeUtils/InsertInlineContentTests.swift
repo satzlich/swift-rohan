@@ -30,7 +30,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ heading
         ├ text "the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "quick brown "
         └ text "fox the "
       """
@@ -62,7 +62,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ heading
         ├ text "fox the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "lazy "
         └ text "dog"
       """
@@ -99,10 +99,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps "
           ├ text "gaily "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
           └ text "the "
         """
@@ -124,7 +124,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox jumps "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
           └ text "the "
         """
@@ -146,7 +146,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps "
           └ text "over the "
         """
@@ -169,7 +169,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "fox jumps "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "gaily "
           └ text "over the "
         """
@@ -197,7 +197,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let doc1 = """
       root
       └ paragraph
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "the quick brown "
         └ text "fox"
       """
@@ -229,7 +229,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       ├ paragraph
       │ └ text "the quick brown "
       └ paragraph
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "fox "
         └ text "jumps over the lazy dog"
       """
@@ -261,7 +261,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ paragraph
         ├ text "the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "quick brown "
         └ text "fox over the lazy dog"
       """
@@ -293,7 +293,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let doc1 = """
       root
       └ heading
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "the quick brown "
         └ text "fox"
       """
@@ -328,7 +328,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "the quick brown "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps over "
           └ text "the lazy dog"
         """
@@ -350,7 +350,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "the quick brown jumps over "
-          └ textStyles(emph)
+          └ emph
             └ text "the lazy dog"
         """
       let range2 = "[↓0,↓0]:16"
@@ -383,7 +383,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       root
       └ heading
         ├ text "the "
-        ├ textStyles(emph)
+        ├ emph
         │ └ text "quick brown "
         └ text "fox jumps over the lazy dog"
       """
@@ -425,9 +425,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "quick brown fox "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "jumps "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
           └ text "dog"
         """
@@ -451,9 +451,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "quick brown "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "the "
           └ text "lazy dog"
         """
@@ -477,9 +477,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         root
         └ heading
           ├ text "quick brown "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "over "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "the lazy "
           └ text "dog"
         """

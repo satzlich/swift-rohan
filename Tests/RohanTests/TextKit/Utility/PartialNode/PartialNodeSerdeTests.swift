@@ -45,7 +45,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
         ContentNode(decodedNodes).prettyPrint() == """
           content
           ├ text "lo, "
-          └ textStyles(emph)
+          └ emph
             └ text "world"
           """)
     }
@@ -68,7 +68,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "lo, "
-          │ └ textStyles(emph)
+          │ └ emph
           │   └ text "world!"
           └ paragraph
             └ text "The quick"

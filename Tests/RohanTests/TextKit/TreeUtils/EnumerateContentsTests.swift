@@ -143,7 +143,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ text "Hello, "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "world"
           └ text "!"
           """,
@@ -156,7 +156,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ text "lo, "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "world"
           └ text "!"
           """,
@@ -167,7 +167,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """,
           """
           content
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "world"
           └ text "!"
           """,
@@ -194,13 +194,13 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ text "Hello, "
-          └ textStyles(emph)
+          └ emph
             └ text "world"
           """,
           """
           content
           ├ text "Hello, "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "world"
           └ text "!"
           """,
@@ -208,12 +208,12 @@ final class EnumerateContentsTests: TextKitTestsBase {
         [
           """
           content
-          └ textStyles(emph)
+          └ emph
             └ text "world"
           """,
           """
           content
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "world"
           └ text "!"
           """,
@@ -291,22 +291,22 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal"
           """,
@@ -314,11 +314,11 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -328,22 +328,22 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "lo, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           │ ├ text "lo, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal"
           """,
@@ -351,11 +351,11 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "lo, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -364,32 +364,32 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal"
           """,
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -408,7 +408,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
@@ -417,22 +417,22 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -442,7 +442,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "lo, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
@@ -451,22 +451,22 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "lo, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           │ ├ text "lo, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -475,7 +475,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
@@ -483,21 +483,21 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -516,22 +516,22 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal"
           """,
@@ -539,11 +539,11 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -552,32 +552,32 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal"
           """,
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -587,14 +587,14 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal"
           """,
@@ -602,7 +602,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -621,7 +621,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
@@ -630,22 +630,22 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           │ ├ text "Hello, "
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -654,7 +654,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
@@ -662,21 +662,21 @@ final class EnumerateContentsTests: TextKitTestsBase {
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
-          │ ├ textStyles(emph)
+          │ ├ emph
           │ │ └ text "world"
           │ └ text "!"
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -691,14 +691,14 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ heading
           └ paragraph
-            └ textStyles(emph)
+            └ emph
               └ text "Emphasized text. "
           """,
           """
           content
           ├ heading
           └ paragraph
-            ├ textStyles(emph)
+            ├ emph
             │ └ text "Emphasized text. "
             └ text "Normal text."
           """,
@@ -757,7 +757,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
         content.prettyPrint() == """
           content
           ├ text "od "
-          └ textStyles(emph)
+          └ emph
             └ text "job"
           """)
     }
@@ -792,7 +792,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           │   ├ variable #0
           │   │ └ text "Sample"
           │   ├ text " and "
-          │   ├ textStyles(emph)
+          │   ├ emph
           │   │ └ variable #0
           │   │   └ text "Sample"
           │   └ text "}"

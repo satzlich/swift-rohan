@@ -138,7 +138,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         ├ paragraph
         │ ├ text "Hello, "
-        │ └ textStyles(emph)
+        │ └ emph
         │   └ text "world"
         └ paragraph
           └ text "Def"
@@ -164,7 +164,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         │ └ text "Hello, "
         ├ paragraph
-        │ └ textStyles(emph)
+        │ └ emph
         │   └ text "world"
         └ paragraph
           └ text "Def"
@@ -190,7 +190,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         │ └ text "Abc"
         ├ paragraph
         │ ├ text "Hello, "
-        │ └ textStyles(emph)
+        │ └ emph
         │   └ text "world"
         ├ paragraph
         └ paragraph
@@ -230,7 +230,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         └ paragraph
           ├ text "The "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "quick brown "
           └ text "fox"
         """
@@ -256,7 +256,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         │ └ text "Th"
         └ paragraph
           ├ text "e "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "quick brown "
           └ text "fox"
         """
@@ -281,7 +281,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         ├ paragraph
         │ └ text "The "
         └ paragraph
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "quick brown "
           └ text "fox"
         """
@@ -305,7 +305,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         root
         ├ paragraph
         │ ├ text "The "
-        │ ├ textStyles(emph)
+        │ ├ emph
         │ │ └ text "quick brown "
         │ └ text "fox"
         └ paragraph

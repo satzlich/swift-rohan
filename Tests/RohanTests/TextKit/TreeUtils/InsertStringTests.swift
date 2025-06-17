@@ -50,7 +50,7 @@ final class InsertStringTests: TextKitTestsBase {
     let doc1 = """
       root
       └ heading
-        └ textStyles(emph)
+        └ emph
           └ text "Newton's Second Law of Motion😀"
       """
     let range2 = "[↓0,↓0,↓0]:8"
@@ -77,7 +77,7 @@ final class InsertStringTests: TextKitTestsBase {
       ├ heading
       └ paragraph
         ├ text "fox "
-        └ textStyles(emph)
+        └ emph
           └ text "over "
       """
     let range2 = "[↓1]:0"
@@ -107,7 +107,7 @@ final class InsertStringTests: TextKitTestsBase {
       ├ heading
       └ paragraph
         ├ text "the quick brown fox "
-        └ textStyles(emph)
+        └ emph
           └ text "over "
       """
     let range2 = "[↓1,↓0]:0"
@@ -138,7 +138,7 @@ final class InsertStringTests: TextKitTestsBase {
       ├ heading
       ├ paragraph
       │ ├ text "The quick brown fox "
-      │ └ textStyles(emph)
+      │ └ emph
       │   └ text "over "
       └ paragraph
         └ text "the lazy dog."
@@ -307,7 +307,7 @@ final class InsertStringTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "brown "
           ├ equation
           │ └ nuc
@@ -328,7 +328,7 @@ final class InsertStringTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "brown "
           ├ text "fox "
           ├ equation
@@ -351,7 +351,7 @@ final class InsertStringTests: TextKitTestsBase {
         root
         └ paragraph
           ├ text "The quick "
-          ├ textStyles(emph)
+          ├ emph
           │ └ text "brown "
           ├ equation
           │ └ nuc
@@ -401,12 +401,12 @@ final class InsertStringTests: TextKitTestsBase {
             │     ├ variable #0
             │     │ └ text "foxpro"
             │     ├ text " and "
-            │     ├ textStyles(emph)
+            │     ├ emph
             │     │ └ variable #0
             │     │   └ text "foxpro"
             │     └ text "}"
             ├ text " and "
-            ├ textStyles(emph)
+            ├ emph
             │ └ variable #0
             │   └ template(doubleText)
             │     ├ argument #0 (x2)
@@ -415,7 +415,7 @@ final class InsertStringTests: TextKitTestsBase {
             │       ├ variable #0
             │       │ └ text "foxpro"
             │       ├ text " and "
-            │       ├ textStyles(emph)
+            │       ├ emph
             │       │ └ variable #0
             │       │   └ text "foxpro"
             │       └ text "}"
