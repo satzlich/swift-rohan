@@ -224,7 +224,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     precondition(context == .textMode)
     guard let command = heading.command
     else { return .failure(SatzError(.ExportLatexFailure)) }
-    return _composeControlSeqCall(command, children: children, context)
+
+    let result = _composeControlSeqCall(command, children: children, context)
+
+    switch result {
+    case let .success(stream):
+      // add newline before and after the heading
+      var newStream = stream.stream
+      newStream.insert(.newline(NewlineSyntax()), at: 0)
+      newStream.append(.newline(NewlineSyntax()))
+      return .success(StreamSyntax(newStream))
+
+    case let .failure(error):
+      return .failure(error)
+    }
   }
 
   override func visit(
