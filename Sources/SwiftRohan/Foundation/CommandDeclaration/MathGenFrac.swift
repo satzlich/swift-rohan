@@ -24,6 +24,10 @@ struct MathGenFrac: Codable, CommandDeclarationProtocol {
 }
 
 extension MathGenFrac {
+  var affixPosition: AffixPosition { command == "atop" ? .infix : .prefix }
+}
+
+extension MathGenFrac {
   static let allCommands: Array<MathGenFrac> = [
     frac,
     cfrac,

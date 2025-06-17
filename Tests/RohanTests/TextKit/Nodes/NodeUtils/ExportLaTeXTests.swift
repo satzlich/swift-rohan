@@ -171,26 +171,24 @@ final class ExportLatexTests: TextKitTestsBase {
   }
 
   @Test
-  func fraction() {
-    let content: ElementStore = [
+  func genFraction() {
+    let exported = _simpleExport([
       EquationNode(
         .block,
         [
           FractionNode(num: [TextNode("n")], denom: [TextNode("d")]),
           TextNode("+"),
           FractionNode(num: [TextNode("m")], denom: [TextNode("k")], genfrac: .binom),
+          TextNode("+"),
+          FractionNode(num: [TextNode("n")], denom: [TextNode("d")], genfrac: .atop),
         ])
-    ]
-
-    let documentManager = createDocumentManager(RootNode(content))
-    do {
-      let latex = documentManager.getLatexContent()
-      let expected =
-        #"""
-        \[\frac{n}{d}+\binom{m}{k}\]
-        """#
-      #expect(latex == expected)
-    }
+    ])
+    // Note that \atop is an infix command.
+    let expected =
+      #"""
+      \[\frac{n}{d}+\binom{m}{k}+{n\atop d}\]
+      """#
+    #expect(exported == expected)
   }
 
   @Test
