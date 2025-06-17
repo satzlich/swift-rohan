@@ -163,9 +163,12 @@ extension CommandBody {
     let columnCount = mathArray.isMultiColumnEnabled ? 2 : 1
     let count = rowCount * columnCount
 
-    let rows: Array<ArrayExpr.Row> = (0..<rowCount).map { _ in
-      let elements = (0..<columnCount).map { _ in MatrixExpr.Cell() }
-      return ArrayExpr.Row(elements)
+    typealias Cell = T.Cell
+    typealias Row = T.Row
+
+    let rows: Array<Row> = (0..<rowCount).map { _ in
+      let elements = (0..<columnCount).map { _ in Cell() }
+      return Row(elements)
     }
     let expr = arrayClass.init(mathArray, rows)
     return CommandBody(expr, count, preview: .image(image))

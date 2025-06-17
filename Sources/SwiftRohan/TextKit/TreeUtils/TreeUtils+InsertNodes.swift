@@ -71,10 +71,10 @@ extension TreeUtils {
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
       return EditResult.success(newRange)
 
-    case let container as ElementNode where container.isParagraphContainer:
+    case let elementNode as ElementNode where elementNode.isBlockContainer:
       let index = location.offset
-      guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
-      let newRange = insertString(string, paragraphContainer: container, index: index)
+      guard index <= elementNode.childCount else { throw SatzError(.InvalidTextLocation) }
+      let newRange = insertString(string, blockContainer: elementNode, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
 
@@ -115,14 +115,14 @@ extension TreeUtils {
   /// - Returns: the range of inserted content (starting from the depth of given
   ///     index, not offset).
   private static func insertString(
-    _ string: BigString, paragraphContainer container: ElementNode, index: Int
+    _ string: BigString, blockContainer elementNode: ElementNode, index: Int
   ) -> EditResult<(Array<Int>, Array<Int>)> {
-    precondition(container.isParagraphContainer)
-    precondition(index <= container.childCount)
+    precondition(elementNode.isBlockContainer)
+    precondition(index <= elementNode.childCount)
 
     // if insert into index-th child is possible
-    if index < container.childCount,
-      let child = container.getChild(index) as? ElementNode,
+    if index < elementNode.childCount,
+      let child = elementNode.getChild(index) as? ElementNode,
       child.isTransparent
     {
       let (from, to) = insertString(string, elementNode: child, index: 0)
@@ -131,7 +131,7 @@ extension TreeUtils {
     // otherwise, create a new paragraph node
     else {
       let paragraph = ParagraphNode([TextNode(string)])
-      container.insertChild(paragraph, at: index, inStorage: true)
+      elementNode.insertChild(paragraph, at: index, inStorage: true)
       return EditResult.paragraphInserted(([index, 0, 0], [index + 1]))
     }
   }
@@ -142,7 +142,7 @@ extension TreeUtils {
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
   ) -> (Array<Int>, Array<Int>) {
-    precondition(elementNode.isParagraphContainer == false)
+    precondition(elementNode.isBlockContainer == false)
     precondition(index <= elementNode.childCount)
 
     // if merge with index-th child is possible
@@ -175,7 +175,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> EditResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
 
     do {
       let location = location.toTextLocationSlice()
@@ -197,7 +197,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> EditResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
 
     let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
@@ -235,12 +235,12 @@ extension TreeUtils {
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
       return EditResult.success(newRange)
 
-    case let container as ElementNode where container.isParagraphContainer:
+    case let container as ElementNode where container.isBlockContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       let newRange =
-        insertInlineContent(nodes, paragraphContainer: container, index: index)
+        insertInlineContent(nodes, blockContainer: container, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
 
@@ -275,7 +275,7 @@ extension TreeUtils {
     C.Element == Node, C.Index == Int
   {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
     precondition(parent.getChild(index) === textNode)
 
     // for single text node
@@ -354,10 +354,10 @@ extension TreeUtils {
   /// Insert inline content into paragraph container at given index.
   /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertInlineContent(
-    _ nodes: Array<Node>, paragraphContainer container: ElementNode, index: Int
+    _ nodes: Array<Node>, blockContainer container: ElementNode, index: Int
   ) -> EditResult<(Array<Int>, Array<Int>)> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
     precondition(index <= container.childCount)
 
     // if merge with index-th child is possible
@@ -385,7 +385,7 @@ extension TreeUtils {
     _ nodes: C, elementNode: ElementNode, index: Int
   ) -> (Array<Int>, Array<Int>)
   where C: BidirectionalCollection, C.Element == Node {
-    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
+    precondition(nodes.allSatisfy { NodePolicy.isBlockNode($0) == false })
     precondition(index <= elementNode.childCount)
 
     // nodes is allowed to be empty here
@@ -436,7 +436,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
 
     // if the content is empty, return the original location
     guard !nodes.isEmpty else { return .success(RhTextRange(location)) }
@@ -460,7 +460,7 @@ extension TreeUtils {
     _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
 
     let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
@@ -486,7 +486,7 @@ extension TreeUtils {
         // get grand parent and index
         let thirdLast = trace.dropLast(2).last,
         let grandParent = thirdLast.node as? ElementNode,
-        grandParent.isParagraphContainer,
+        grandParent.isBlockContainer,
         let grandIndex = thirdLast.index.index(),
         // get parent and index
         let secondLast = trace.dropLast().last,
@@ -503,12 +503,12 @@ extension TreeUtils {
       let prefix = trace.dropLast(3).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
 
-    case let container as ElementNode where container.isParagraphContainer:
+    case let container as ElementNode where container.isBlockContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       let (from, to) =
-        insertParagraphNodes(nodes, paragraphContainer: container, index: index)
+        insertParagraphNodes(nodes, blockContainer: container, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
@@ -520,7 +520,7 @@ extension TreeUtils {
         let secondLast = trace.dropLast().last,
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
-        parent.isParagraphContainer,
+        parent.isBlockContainer,
         // check offset
         offset <= paragraph.childCount
       else { throw SatzError(.InvalidTextLocation) }
@@ -544,8 +544,8 @@ extension TreeUtils {
     _ paragraph: ParagraphNode, _ index: Int,
     _ grandParent: ElementNode, _ grandIndex: Int
   ) throws -> (Array<Int>, Array<Int>) {
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
-    precondition(grandParent.isParagraphContainer)
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
+    precondition(grandParent.isBlockContainer)
     precondition(grandParent.getChild(grandIndex) === paragraph)
     precondition(paragraph.getChild(index) === textNode)
 
@@ -610,11 +610,11 @@ extension TreeUtils {
   /// Insert paragraph nodes into paragraph container at given index.
   /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertParagraphNodes(
-    _ nodes: Array<Node>, paragraphContainer container: ElementNode, index: Int
+    _ nodes: Array<Node>, blockContainer container: ElementNode, index: Int
   ) -> (Array<Int>, Array<Int>) {
     precondition(index <= container.childCount)
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
 
     // if last-to-insert and neighbouring node are mergeable
     if index < container.childCount,
@@ -642,14 +642,14 @@ extension TreeUtils {
     _ parent: ElementNode, _ index: Int
   ) throws -> (Array<Int>, Array<Int>) {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
     precondition(offset <= paragraph.childCount)
     precondition(parent.getChild(index) === paragraph)
 
     // if offset is at the beginning of the paragraph node, forward to another
     // `insertParagraphNodes(...)`
     if offset == 0 {
-      return insertParagraphNodes(nodes, paragraphContainer: parent, index: index)
+      return insertParagraphNodes(nodes, blockContainer: parent, index: index)
     }
 
     // get the part of paragrpah node after offset and the location before
@@ -708,7 +708,7 @@ extension TreeUtils {
     takeTailPart: () -> (ElementStore, Array<Int>)
   ) throws -> (Array<Int>, Array<Int>) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
-    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.isBlockNode(_:)))
     precondition(offset != 0)
 
     let first = nodes.first!

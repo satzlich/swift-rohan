@@ -10,10 +10,6 @@ enum Snippets {
   static let equation = CommandBody(EquationExpr(.block), 1)
   static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 
-  static func header(level: Int) -> CommandBody {
-    CommandBody(HeadingExpr(level: level), 1)
-  }
-
   // math
 
   static func attachOrGotoMathComponent(_ index: MathIndex) -> CommandBody {

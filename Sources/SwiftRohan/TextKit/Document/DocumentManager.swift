@@ -311,7 +311,7 @@ public final class DocumentManager {
     let index = trace.last!.index
 
     if let node = node as? ElementNode,
-      node.isParagraphContainer,
+      node.isBlockContainer,
       let index = index.index()
     {
       if node.childCount == 0
