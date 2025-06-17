@@ -74,21 +74,12 @@ internal class ElementNode: Node {
   final override var isDirty: Bool { _isDirty }
 
   final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-
-    if fromScratch {
-      _layoutLength = _performLayoutFromScratch(context)
-      _snapshotRecords = nil
-    }
-    else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context)
+    if isParagraphContainer {
+      return _performLayout(context, fromScratch: fromScratch, isBlockContainer: true)
     }
     else {
-      _layoutLength = _performLayoutFull(context)
-      _snapshotRecords = nil
+      return _performLayout(context, fromScratch: fromScratch, isBlockContainer: false)
     }
-    _isDirty = false
-
-    return _layoutLength
   }
 
   // MARK: - Node(Codable)
@@ -531,8 +522,31 @@ internal class ElementNode: Node {
     }
   }
 
+  @inline(__always)
+  private final func _performLayout(
+    _ context: LayoutContext, fromScratch: Bool, isBlockContainer: Bool
+  ) -> Int {
+    if fromScratch {
+      _layoutLength =
+        _performLayoutFromScratch(context, isBlockContainer: isBlockContainer)
+      _snapshotRecords = nil
+    }
+    else if _snapshotRecords == nil {
+      _layoutLength = _performLayoutSimple(context, isBlockContainer: isBlockContainer)
+    }
+    else {
+      _layoutLength = _performLayoutFull(context, isBlockContainer: isBlockContainer)
+      _snapshotRecords = nil
+    }
+    _isDirty = false
+    return _layoutLength
+  }
+
   /// Perform layout for fromScratch=true.
-  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
+  @inline(__always)
+  private final func _performLayoutFromScratch(
+    _ context: LayoutContext, isBlockContainer: Bool
+  ) -> Int {
     precondition(_children.count == _newlines.count)
 
     if _children.isEmpty {
@@ -556,31 +570,22 @@ internal class ElementNode: Node {
       sum += node.performLayout(context, fromScratch: true)
     }
 
-    _refreshParagraphStyle(context, { _ in true })
+    if isBlockContainer {
+      _refreshParagraphStyle(context, { _ in true })
+    }
 
     return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
-  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
+  @inline(__always)
+  private final func _performLayoutSimple(
+    _ context: LayoutContext, isBlockContainer: Bool
+  ) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
-
-    // _performLayoutSimple() is called only when the node is marked dirty and
-    // the set of child nodes is not added/deleted, so we can safely assume that
-    // the children are not empty.
 
     assert(_children.isEmpty == false)
 
-    if _children.isEmpty {
-      assertionFailure("Unreachable code: _children is empty")
-      if self.isPlaceholderActive {
-        context.insertText("⬚", self)
-        return 1
-      }
-      return 0
-    }
-
-    var dirtyNodes: Set<Int> = []
     var sum = 0
     var i = _children.count - 1
 
@@ -604,23 +609,30 @@ internal class ElementNode: Node {
 
       // process dirty
       if i >= 0 {
-        dirtyNodes.insert(i)
+        var delta = 0
         if _newlines[i] {
           context.skipBackwards(1)
-          sum += 1
+          delta += 1
         }
-        sum += _children[i].performLayout(context, fromScratch: false)
+        delta += _children[i].performLayout(context, fromScratch: false)
+        sum += delta
         i -= 1
+
+        if isBlockContainer {
+          let begin = context.layoutCursor
+          context.addParagraphStyle(_children[i], begin..<begin + delta)
+        }
       }
     }
-
-    _refreshParagraphStyle(context, { dirtyNodes.contains($0) })
 
     return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
-  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
+  @inline(__always)
+  private final func _performLayoutFull(
+    _ context: LayoutContext, isBlockContainer: Bool
+  ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     if _children.isEmpty {
@@ -695,7 +707,7 @@ internal class ElementNode: Node {
     var j = original.count - 1
 
     func updateVacuumRange() {
-      guard self.isParagraphContainer else { return }
+      precondition(isBlockContainer)
 
       if j >= 0 && original[j].mark == .deleted {
         if i >= 0 {
@@ -729,7 +741,8 @@ internal class ElementNode: Node {
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
       do {
-        updateVacuumRange()
+        if isBlockContainer { updateVacuumRange() }
+
         while j >= 0 && original[j].mark == .deleted {
           if original[j].insertNewline { context.deleteBackwards(1) }
           context.deleteBackwards(original[j].layoutLength)
@@ -778,7 +791,7 @@ internal class ElementNode: Node {
     }
 
     // add paragraph style forwards
-    do {
+    if isBlockContainer {
       let vacuumRange = vacuumRange ?? 0..<0
       _refreshParagraphStyle(
         context,
@@ -802,7 +815,7 @@ internal class ElementNode: Node {
   private final func _refreshParagraphStyle(
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
-    guard self.isParagraphContainer else { return }
+    precondition(self.isParagraphContainer)
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
