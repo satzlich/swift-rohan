@@ -319,7 +319,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
 
   @Test
   func layoutFragmentWrapper() {
-    let attrString = NSMutableAttributedString(string: "Hello")
+    let attrString = NSMutableAttributedString(string: "Inverted")
     let ctLine = CTLineCreateWithAttributedString(attrString)
 
     var fragments: Array<MathLayoutFragment> = []
