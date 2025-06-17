@@ -26,7 +26,7 @@ final class StrongNode: ElementNode {
 
   // MARK: - Node(Storage)
 
-  private static let uniqueTag = "strong"
+  private static let uniqueTag = "textbf"
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 
