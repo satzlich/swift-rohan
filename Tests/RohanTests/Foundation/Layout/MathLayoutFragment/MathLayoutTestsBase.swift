@@ -12,8 +12,8 @@ class MathLayoutTestsBase {
   internal let table: MathTable
   internal let context: MathContext
 
-  init() throws {
-    self.font = Font.createWithName("STIX Two Math", 10, isFlipped: true)
+  init(mathFont: String = "STIX Two Math") throws {
+    self.font = Font.createWithName(mathFont, 10, isFlipped: true)
     self.table = font.copyMathTable()!
     self.context = MathContext(font, .text, false, .black)!
     try TestUtils.touchDirectory(folderName)
