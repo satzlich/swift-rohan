@@ -706,7 +706,7 @@ private enum AMSCommands {
 
   // total: 9 symbols
   private static let letterLikeSymbols: Array<NamedSymbol> = [
-    .init("Bbbk", "\u{1D542}"),
+    .init("Bbbk", "\u{1D55C}"),
     .init("circledR", "\u{00AE}"),  // ® (turned off in text mode)
     .init("circledS", "\u{24C8}"),  // Ⓢ
     .init("complement", "\u{2201}"),  // ∁
