@@ -17,19 +17,22 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
     }
 
     return ParagraphProperty(
-      textAlignment: resolved(textAlignment).textAlignment()!,
-      paragraphSpacing: resolved(paragraphSpacing).float()!)
+      listLevel: resolved(listLevel).integer()!,
+      paragraphSpacing: resolved(paragraphSpacing).float()!,
+      textAlignment: resolved(textAlignment).textAlignment()!)
   }
 
   public static let allKeys: Array<PropertyKey> = [
-    textAlignment,
+    listLevel,
     paragraphSpacing,
+    textAlignment,
   ]
 
   // MARK: - Implementation
 
-  public let textAlignment: NSTextAlignment
-  public let paragraphSpacing: CGFloat
+  internal let listLevel: Int  // "0" indicates not in an item list.
+  internal let paragraphSpacing: CGFloat
+  internal let textAlignment: NSTextAlignment
 
   private typealias _AttributesCache =
     ConcurrentCache<ParagraphProperty, Dictionary<NSAttributedString.Key, Any>>
@@ -46,6 +49,7 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
 
   // MARK: - Key
 
-  public static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
-  public static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
+  static let listLevel = PropertyKey(.itemList, .level)  // Int
+  static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
+  static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
 }

@@ -92,8 +92,9 @@ struct StyleSheetTests {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.textAlignment: .textAlignment(.left),
+        ParagraphProperty.listLevel: .integer(0),
         ParagraphProperty.paragraphSpacing: .float(0),
+        ParagraphProperty.textAlignment: .textAlignment(.left),
         // page (a4)
         PageProperty.width: .absLength(.mm(210)),
         PageProperty.height: .absLength(.mm(297)),

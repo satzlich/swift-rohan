@@ -17,7 +17,7 @@ public enum StyleSheets {
   }
 
   nonisolated(unsafe) public static let defaultRecord = allRecords[2]  // "New Computer Modern"
-  nonisolated(unsafe) public static let defaultTextSize = textSizes[2]  // 12pt
+  public static let defaultTextSize = textSizes[2]  // 12pt
   nonisolated(unsafe) public static let testingRecord =
     Record(
       "Testing",
@@ -159,8 +159,9 @@ public enum StyleSheets {
       MathProperty.style: .mathStyle(.display),
       MathProperty.variant: .mathVariant(.serif),
       // paragraph
-      ParagraphProperty.textAlignment: .textAlignment(.justified),
+      ParagraphProperty.listLevel: .integer(0),
       ParagraphProperty.paragraphSpacing: .float(0.5 * textSize.floatValue),
+      ParagraphProperty.textAlignment: .textAlignment(.justified),
       // page (a4)
       PageProperty.width: .absLength(.mm(210)),
       PageProperty.height: .absLength(.mm(297)),
