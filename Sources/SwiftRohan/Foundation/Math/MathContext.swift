@@ -63,25 +63,28 @@ extension MathUtils {
   internal static let previewMathFont: String = "NewComputerModernMath"
   internal static let fallbackMathFont: String = "STIX Two Math"
 
-  static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
-  {
+  nonisolated(unsafe) static func resolveMathContext(
+    for node: Node, _ styleSheet: StyleSheet
+  ) -> MathContext {
     let properties = node.getProperties(styleSheet)
     return resolveMathContext(properties, styleSheet)
   }
 
-  static func resolveMathContext(
+  nonisolated(unsafe) static func resolveMathContext(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> MathContext {
     let key = MathContextKey.resolveKey(properties, styleSheet)
-    return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
+    return _mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
 
-  static func fallbackMathContext(for mathContext: MathContext) -> MathContext {
+  nonisolated(unsafe) static func fallbackMathContext(
+    for mathContext: MathContext
+  ) -> MathContext {
     let textSize = FontSize(mathContext.getFontSize(for: .text))
     let key = MathContextKey(
       textSize: textSize, mathFont: fallbackMathFont, mathStyle: mathContext.mathStyle,
       cramped: mathContext.cramped, textColor: mathContext.textColor)
-    return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
+    return _mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
 
   // MARK: - Implementation
@@ -101,7 +104,7 @@ extension MathUtils {
 
   // MARK: - Cache
 
-  private static let mathContextCache = MathContextCache()
+  nonisolated(unsafe) private static let _mathContextCache = MathContextCache()
 
   private typealias MathContextCache = ConcurrentCache<MathContextKey, MathContext>
 

@@ -66,7 +66,8 @@ enum CommandDeclaration: CommandDeclarationProtocol {
 }
 
 extension CommandDeclaration {
-  static let allCommands: Array<CommandDeclaration> = _predefinedCases()
+  nonisolated(unsafe) static let allCommands: Array<CommandDeclaration> =
+    _predefinedCases()
 
   private static func _predefinedCases() -> Array<CommandDeclaration> {
     var cases: Array<CommandDeclaration> = []
@@ -84,8 +85,9 @@ extension CommandDeclaration {
     return cases
   }
 
-  private static let _dictionary: Dictionary<String, CommandDeclaration> =
-    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
+  nonisolated(unsafe) private static let _dictionary:
+    Dictionary<String, CommandDeclaration> =
+      Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> CommandDeclaration? {
     _dictionary[command]

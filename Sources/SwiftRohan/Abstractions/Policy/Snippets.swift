@@ -5,12 +5,12 @@ import Foundation
 enum Snippets {
   // text
 
-  static let emphasis = CommandBody(TextStylesExpr(.emph), 1)
-  static let strong = CommandBody(TextStylesExpr(.textbf), 1)
-  static let equation = CommandBody(EquationExpr(.block), 1)
-  static let inlineMath = CommandBody(EquationExpr(.inline), 1)
+  nonisolated(unsafe) static let emphasis = CommandBody(TextStylesExpr(.emph), 1)
+  nonisolated(unsafe) static let strong = CommandBody(TextStylesExpr(.textbf), 1)
+  nonisolated(unsafe) static let equation = CommandBody(EquationExpr(.block), 1)
+  nonisolated(unsafe) static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 
-  static let wordJoiner = CommandBody("\u{2060}", .textText)
+  nonisolated(unsafe) static let wordJoiner = CommandBody("\u{2060}", .textText)
 
   // math
 
@@ -18,11 +18,13 @@ enum Snippets {
     CommandBody(.attachOrGotoComponent(index))
   }
 
-  static let fraction =
+  nonisolated(unsafe) static let fraction =
     CommandBody(FractionExpr(num: [], denom: []), 2, preview: .image("frac"))
-  static let sqrt = CommandBody(RadicalExpr([]), 1, preview: .image("sqrt"))
-  static let root = CommandBody(RadicalExpr([], index: []), 2, preview: .image("root"))
-  static let textMode = CommandBody(TextModeExpr(), 1)
+  nonisolated(unsafe) static let sqrt = CommandBody(
+    RadicalExpr([]), 1, preview: .image("sqrt"))
+  nonisolated(unsafe) static let root = CommandBody(
+    RadicalExpr([], index: []), 2, preview: .image("root"))
+  nonisolated(unsafe) static let textMode = CommandBody(TextModeExpr(), 1)
 
   static func mathTextStyle(_ style: MathTextStyle, _ string: String) -> CommandBody {
     let expr = MathStylesExpr(MathStyles.mathTextStyle(style), [TextExpr(string)])
@@ -31,15 +33,15 @@ enum Snippets {
 
   // attachments
 
-  static let attachments =
+  nonisolated(unsafe) static let attachments =
     CommandBody(
       AttachExpr(nuc: [], lsub: [], lsup: [], sub: [], sup: []), 5,
       preview: .image("attachments"))
-  static let superscript =
+  nonisolated(unsafe) static let superscript =
     CommandBody(AttachExpr(nuc: [], sup: []), 2, preview: .image("rsup"))
-  static let subscript_ =
+  nonisolated(unsafe) static let subscript_ =
     CommandBody(AttachExpr(nuc: [], sub: []), 2, preview: .image("rsub"))
-  static let subsuperscript =
+  nonisolated(unsafe) static let subsuperscript =
     CommandBody(AttachExpr(nuc: [], sub: [], sup: []), 3, preview: .image("rsupsub"))
 
   // left-right

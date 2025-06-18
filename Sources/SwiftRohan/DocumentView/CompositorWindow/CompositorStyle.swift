@@ -8,24 +8,26 @@ enum CompositorStyle {
   static let iconSize: CGFloat = 18
   static let rowHeight: CGFloat = 24
 
-  static let textFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
+  nonisolated(unsafe) static let textFont =
+    NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
 
   // MARK: - Attributes
 
-  static let baseAttrs: Dictionary<NSAttributedString.Key, Any> = [.font: textFont]
+  nonisolated(unsafe) static let baseAttrs: Dictionary<NSAttributedString.Key, Any> =
+    [.font: textFont]
 
-  static let emphAttrs: Dictionary<NSAttributedString.Key, Any> =
+  nonisolated(unsafe) static let emphAttrs: Dictionary<NSAttributedString.Key, Any> =
     [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)]
 
   static func previewAttrs(mathMode: Bool) -> Dictionary<NSAttributedString.Key, Any> {
     mathMode ? mathPreviewAttrs : previewAttrs
   }
 
-  private static let mathPreviewAttrs: Dictionary<NSAttributedString.Key, Any> =
-    [.font: mathPreviewFont(iconSize)]
+  nonisolated(unsafe) private static let mathPreviewAttrs:
+    Dictionary<NSAttributedString.Key, Any> = [.font: mathPreviewFont(iconSize)]
 
-  private static let previewAttrs: Dictionary<NSAttributedString.Key, Any> =
-    [.font: NSFont.systemFont(ofSize: iconSize)]
+  nonisolated(unsafe) private static let previewAttrs:
+    Dictionary<NSAttributedString.Key, Any> = [.font: NSFont.systemFont(ofSize: iconSize)]
 
   private static func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {
     if let font = NSFont(name: MathUtils.previewMathFont, size: fontSize) {

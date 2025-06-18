@@ -3,6 +3,7 @@
 import AppKit
 import Foundation
 
+@MainActor
 final class InsertionIndicatorView: RohanView {
   private typealias InsertionIndicator =
     TextInsertionIndicator  // alternative: NSTextInsertionIndicator

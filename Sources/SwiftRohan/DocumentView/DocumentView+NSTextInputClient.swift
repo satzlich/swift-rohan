@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import _RopeModule
 
-extension DocumentView: NSTextInputClient {
+extension DocumentView: @preconcurrency NSTextInputClient {
 
   // MARK: - Insert Text
 

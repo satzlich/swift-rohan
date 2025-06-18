@@ -41,6 +41,7 @@ struct CompletionItem: Identifiable {
     static let previewSize: CGFloat = CompositorStyle.iconSize
   }
 
+  @MainActor
   var view: NSView {
     NSHostingView(
       rootView: VStack(alignment: .leading) {
@@ -78,7 +79,7 @@ struct CompletionItem: Identifiable {
         .lineLimit(1)
 
     case .image(let imageName):
-      if let image = imageCache.tryGetOrCreate(imageName, { tryLoadImage(imageName) }) {
+      if let image = _imageCache.tryGetOrCreate(imageName, { tryLoadImage(imageName) }) {
         Image(nsImage: image)
           .resizable()
           .aspectRatio(contentMode: .fit)
@@ -106,7 +107,7 @@ struct CompletionItem: Identifiable {
     }
   }
 
-  private static let imageCache = ConcurrentCache<String, NSImage>()
+  nonisolated(unsafe) private static let _imageCache = ConcurrentCache<String, NSImage>()
 
   private static func tryLoadImage(_ imageName: String) -> NSImage? {
     guard let path = Bundle.module.path(forResource: imageName, ofType: "pdf"),

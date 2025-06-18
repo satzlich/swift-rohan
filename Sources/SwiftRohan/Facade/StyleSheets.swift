@@ -16,9 +16,9 @@ public enum StyleSheets {
     }
   }
 
-  public static let defaultRecord = allRecords[2]  // "New Computer Modern"
-  public static let defaultTextSize = textSizes[2]  // 12pt
-  public static let testingRecord =
+  nonisolated(unsafe) public static let defaultRecord = allRecords[2]  // "New Computer Modern"
+  nonisolated(unsafe) public static let defaultTextSize = textSizes[2]  // 12pt
+  nonisolated(unsafe) public static let testingRecord =
     Record(
       "Testing",
       { textSize in
@@ -29,7 +29,7 @@ public enum StyleSheets {
       }
     )
 
-  public static let allRecords: Array<Record> =
+  nonisolated(unsafe) public static let allRecords: Array<Record> =
     [
       // (name, textFont, mathFont, headerFont)
       ("Concrete", "CMU Concrete", "Concrete Math", "NewComputerModern10"),

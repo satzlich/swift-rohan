@@ -1,9 +1,10 @@
 // Copyright 2024-2025 Lie Yan
 
 enum MathTemplateSamples {
-  static let newtonsLaw = MathTemplate(CompiledSamples.newtonsLaw)
-  static let bifun = MathTemplate(CompiledSamples.bifun)
-  static let complexFraction = MathTemplate(CompiledSamples.complexFraction)
-  static let philipFox = MathTemplate(CompiledSamples.philipFox)
-  static let doubleText = MathTemplate(CompiledSamples.doubleText)
+  nonisolated(unsafe) static let newtonsLaw = MathTemplate(CompiledSamples.newtonsLaw)
+  nonisolated(unsafe) static let bifun = MathTemplate(CompiledSamples.bifun)
+  nonisolated(unsafe) static let complexFraction =
+    MathTemplate(CompiledSamples.complexFraction)
+  nonisolated(unsafe) static let philipFox = MathTemplate(CompiledSamples.philipFox)
+  nonisolated(unsafe) static let doubleText = MathTemplate(CompiledSamples.doubleText)
 }
