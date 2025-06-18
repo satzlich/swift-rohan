@@ -10,6 +10,8 @@ enum Snippets {
   static let equation = CommandBody(EquationExpr(.block), 1)
   static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 
+  static let wordJoiner = CommandBody("\u{2060}", .textText)
+
   // math
 
   static func attachOrGotoMathComponent(_ index: MathIndex) -> CommandBody {
