@@ -147,8 +147,12 @@ extension DocumentView {
 
     // set insertion indicators
     let indicatorFrames = _insertionIndicatorFrames(for: selection)
-    assert(indicatorFrames != nil)
-    _setInserionIndicators(indicatorFrames)
+    if let indicatorFrames = indicatorFrames {
+      _setInserionIndicators(indicatorFrames)
+    }
+    else {
+      assertionFailure("Failed to get insertion indicator frames")
+    }
 
     return indicatorFrames
   }
@@ -181,7 +185,9 @@ extension DocumentView {
   }
 
   /// Set insertion indicators for the given frames.
-  private func _setInserionIndicators(_ frames: (primary: CGRect, secondary: Array<CGRect>)?) {
+  private func _setInserionIndicators(
+    _ frames: (primary: CGRect, secondary: Array<CGRect>)?
+  ) {
     guard let (primary, secondaries) = frames else {
       insertionIndicatorView.hidePrimaryIndicator()
       insertionIndicatorView.clearSecondaryIndicators()

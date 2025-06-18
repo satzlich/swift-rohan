@@ -45,7 +45,7 @@ final class ItemListNode: ElementNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.subtype = try container.decode(ItemListSubtype.self, forKey: .subtype)
-    self._textList = Self._textList(for: subtype)
+    self._textList = Self._textList(forSubtype: subtype)
     try super.init(from: decoder)
   }
 
@@ -110,24 +110,20 @@ final class ItemListNode: ElementNode {
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
-    self._textList = Self._textList(for: subtype)
+    self._textList = Self._textList(forSubtype: subtype)
     super.init(children)
   }
 
   private init(deepCopyOf node: ItemListNode) {
     self.subtype = node.subtype
-    self._textList = Self._textList(for: subtype)
+    self._textList = Self._textList(forSubtype: subtype)
     super.init(deepCopyOf: node)
   }
 
-  private func _itemMarker(for index: Int) -> String {
-    "\t\(_textList.marker(forItemNumber: index+1))\t"
-  }
-
-  private static func _textList(for subtype: ItemListSubtype) -> NSTextList {
+  private static func _textList(forSubtype subtype: ItemListSubtype) -> NSTextList {
     switch subtype {
     case .itemize:
-      return NSTextList(markerFormat: .circle, startingItemNumber: 1)
+      return NSTextList(markerFormat: .circle, options: 0)
     case .enumerate:
       return NSTextList(markerFormat: .decimal, startingItemNumber: 1)
     }
