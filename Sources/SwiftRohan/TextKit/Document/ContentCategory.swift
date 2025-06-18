@@ -65,8 +65,7 @@ private func isCompatible(
       .blockContainer)
 
   case .inlineContent:
-    return match(
-      container, .inlineContentContainer, .paragraphContainer, .blockContainer)
+    return match(container, .inlineContentContainer, .paragraphContainer, .blockContainer)
 
   case .paragraphNodes:
     return match(container, .paragraphContainer, .blockContainer)

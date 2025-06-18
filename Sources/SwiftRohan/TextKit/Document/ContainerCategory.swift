@@ -12,7 +12,7 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
     [
       .textTextContainer, .extendedTextContainer, .inlineContentContainer,
       .paragraphContainer, .blockContainer,
-      .mathPlaintextContainer, .mathTextContainer, .mathContainer,
+      .mathTextContainer, .mathContainer,
     ]
   }
 
@@ -35,9 +35,6 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
   /// Example: RootNode
   static let blockContainer = ContainerCategory(rawValue: 0b0001_1111)
 
-  /// container for plaintext (for math layout)
-  static let mathPlaintextContainer = ContainerCategory(rawValue: 0b0010_0000)
-
   /// container for math-text-compatible (for math layout)
   static let mathTextContainer = ContainerCategory(rawValue: 0b0110_0000)
 
@@ -56,8 +53,7 @@ extension ContainerCategory {
       .blockContainer:
       return .textMode
 
-    case .mathPlaintextContainer,
-      .mathTextContainer,
+    case .mathTextContainer,
       .mathContainer:
       return .mathMode
 
