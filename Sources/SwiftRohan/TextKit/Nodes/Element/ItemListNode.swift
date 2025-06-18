@@ -5,6 +5,8 @@ import AppKit
 enum ItemListSubtype: String, Codable, CaseIterable {
   case itemize
   case enumerate
+
+  var command: String { rawValue }
 }
 
 final class ItemListNode: ElementNode {
@@ -15,10 +17,6 @@ final class ItemListNode: ElementNode {
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(itemList: self, context)
-  }
-
-  final override func selector() -> TargetSelector {
-    Self.selector(isOrdered: subtype == .enumerate)
   }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -47,6 +45,7 @@ final class ItemListNode: ElementNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.subtype = try container.decode(ItemListSubtype.self, forKey: .subtype)
+    self._textList = Self._textList(for: subtype)
     try super.init(from: decoder)
   }
 
@@ -107,19 +106,37 @@ final class ItemListNode: ElementNode {
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
-  private var _textList: NSTextList? = nil
+  private var _textList: NSTextList
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
+    self._textList = Self._textList(for: subtype)
     super.init(children)
   }
 
   private init(deepCopyOf node: ItemListNode) {
     self.subtype = node.subtype
+    self._textList = Self._textList(for: subtype)
     super.init(deepCopyOf: node)
   }
 
-  static func selector(isOrdered: Bool) -> TargetSelector {
-    TargetSelector(.itemList, PropertyMatcher(.isOrdered, .bool(isOrdered)))
+  private func _itemMarker(for index: Int) -> String {
+    "\t\(_textList.marker(forItemNumber: index+1))\t"
+  }
+
+  private static func _textList(for subtype: ItemListSubtype) -> NSTextList {
+    switch subtype {
+    case .itemize:
+      return NSTextList(markerFormat: .circle, startingItemNumber: 1)
+    case .enumerate:
+      return NSTextList(markerFormat: .decimal, startingItemNumber: 1)
+    }
+  }
+
+  static var commandRecords: Array<CommandRecord> {
+    ItemListSubtype.allCases.map { subtype in
+      let expr = ItemListExpr(subtype)
+      return CommandRecord(subtype.command, CommandBody(expr, 1))
+    }
   }
 }

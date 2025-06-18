@@ -29,9 +29,6 @@ internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
   // heading
   case level
 
-  // itemList
-  case isOrdered
-
   // paragraph
   case textAlignment
   case paragraphSpacing

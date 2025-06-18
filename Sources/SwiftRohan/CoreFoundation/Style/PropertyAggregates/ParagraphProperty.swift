@@ -41,6 +41,10 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
     paragraphStyle.alignment = textAlignment
     paragraphStyle.paragraphSpacing = paragraphSpacing
     paragraphStyle.hyphenationFactor = 0.9
+
+    let textList = NSTextList(markerFormat: .decimal, options: [], startingItemNumber: 1)
+    paragraphStyle.textLists = [textList]
+
     return [.paragraphStyle: paragraphStyle]
   }
 
