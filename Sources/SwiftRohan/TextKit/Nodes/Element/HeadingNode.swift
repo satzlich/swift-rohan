@@ -5,6 +5,7 @@ import Foundation
 
 final class HeadingNode: ElementNode {
   // MARK: - Node
+  final override class var type: NodeType { .heading }
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
@@ -12,8 +13,6 @@ final class HeadingNode: ElementNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(heading: self, context)
   }
-
-  final override class var type: NodeType { .heading }
 
   final override func selector() -> TargetSelector {
     HeadingNode.selector(level: level)

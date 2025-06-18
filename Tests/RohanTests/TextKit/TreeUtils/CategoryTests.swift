@@ -14,6 +14,7 @@ struct CategoryTests {
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
       (HeadingNode(level: 1, []), .blockNodes),
+      (ItemListNode(.enumerate, []), .blockNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), nil),
       (TextStylesNode(.emph, []), .inlineContent),

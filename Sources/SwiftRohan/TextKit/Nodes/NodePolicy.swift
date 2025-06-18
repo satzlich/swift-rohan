@@ -20,14 +20,19 @@ enum NodePolicy {
   /// Returns true if a node of given kind is a block element.
   @inline(__always)
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
+    [
+      .heading,
+      .itemList,
+      .paragraph,
+    ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inline(__always)
   static func isBlockNode(_ node: Node) -> Bool {
-    [.heading, .paragraph, .multiline].contains(node.type)
-      || isEquationNode(node) && node.isBlock
+    isBlockElement(node.type)
+      || node.type == .multiline
+      || (node.type == .equation && node.isBlock)
   }
 
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
@@ -66,6 +71,7 @@ enum NodePolicy {
     [
       NodeType.content,
       .heading,
+      .itemList,
       .textStyles,
       .variable,
     ]
@@ -87,7 +93,10 @@ enum NodePolicy {
   /// Returns true if a node of given kind can be used as paragraph container.
   @inlinable @inline(__always)
   static func isBlockContainer(_ nodeType: NodeType) -> Bool {
-    [.root].contains(nodeType)
+    [
+      .root,
+      .itemList,
+    ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be empty.
@@ -111,6 +120,7 @@ enum NodePolicy {
       .argument,
       .content,  // this covers most math node
       .heading,
+      .itemList,
       .textStyles,
     ].contains(nodeType)
   }
@@ -123,6 +133,7 @@ enum NodePolicy {
       .apply,  // proxy for `.argument`
       .content,  // this covers most math node
       .heading,
+      .itemList,
       .textStyles,
     ].contains(nodeType)
   }
@@ -204,6 +215,7 @@ enum NodePolicy {
     // Element
     case .content: return nil
     case .heading: return .inlineContentContainer
+    case .itemList: return .paragraphContainer
     case .paragraph: return nil
     case .root: return .blockContainer
     case .textStyles: return .extendedTextContainer

@@ -9,7 +9,7 @@ extension TreeUtils {
   /// if the nodes are inconsistent so cannot be used as content.
   static func contentCategory<S: Collection<Node>>(of nodes: S) -> ContentCategory? {
     var counts = CountSummary.zero
-    performCount(&counts, nodes)
+    _performCount(&counts, nodes)
 
     if counts.total == 0 {
       return nil
@@ -86,24 +86,24 @@ extension TreeUtils {
     var mathContentCompatible: Int { mathTextCompatible + otherMathOnly }
   }
 
-  private static func performCount<C: Collection<Node>>(
+  private static func _performCount<C: Collection<Node>>(
     _ summary: inout CountSummary, _ nodes: C
   ) {
-    nodes.forEach { node in performCount(&summary, node) }
+    nodes.forEach { node in _performCount(&summary, node) }
   }
 
   /// Count the number of different kinds of nodes in the tree. For ApplyNode, it
   /// counts the children of its content node.
-  private static func performCount(_ summary: inout CountSummary, _ node: Node) {
+  private static func _performCount(_ summary: inout CountSummary, _ node: Node) {
     switch node {
     case let applyNode as ApplyNode:
-      performCount(&summary, applyNode.getContent().childrenReadonly())
+      _performCount(&summary, applyNode.getContent().childrenReadonly())
 
     case let variableNode as VariableNode:
-      performCount(&summary, variableNode.childrenReadonly())
+      _performCount(&summary, variableNode.childrenReadonly())
 
     case let contentNode as ContentNode:
-      performCount(&summary, contentNode.childrenReadonly())
+      _performCount(&summary, contentNode.childrenReadonly())
 
     default:
       summary.total += 1

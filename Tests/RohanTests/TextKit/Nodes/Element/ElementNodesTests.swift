@@ -28,9 +28,10 @@ struct ElementNodeTests {
       SubscriptNode([TextNode("abc")]),
       SuperscriptNode([TextNode("abc")]),
       //
-      TextStylesNode(.emph, [TextNode("abc")]),
       HeadingNode(level: 1, [TextNode("abc")]),
+      ItemListNode(.enumerate, [TextNode("abc")]),
       ParagraphNode([TextNode("abc")]),
+      TextStylesNode(.emph, [TextNode("abc")]),
       TextStylesNode(.textbf, [TextNode("abc")]),
     ]
   }

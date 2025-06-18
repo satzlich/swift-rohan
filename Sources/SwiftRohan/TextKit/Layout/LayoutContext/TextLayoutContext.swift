@@ -48,7 +48,8 @@ final class TextLayoutContext: LayoutContext {
     precondition(isEditing)
     let properties: ParagraphProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
-    textStorage.addAttributes(attributes, range: NSRange(range))
+    let nsRange = NSRange(range)
+    textStorage.addAttributes(attributes, range: nsRange)
   }
 
   func skipBackwards(_ n: Int) {

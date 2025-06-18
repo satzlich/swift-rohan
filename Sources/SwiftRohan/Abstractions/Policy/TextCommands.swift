@@ -9,8 +9,10 @@ enum TextCommands {
   private static func _allCases() -> Array<CommandRecord> {
     var result: Array<CommandRecord> = []
 
+    result.append(CommandRecord("wordjoiner", Snippets.wordJoiner))
     result.append(CommandRecord("equation*", Snippets.equation))
     result.append(contentsOf: HeadingNode.commandRecords)
+    //    result.append(contentsOf: ItemListNode.commandRecords)
 
     // textStyles
     do {

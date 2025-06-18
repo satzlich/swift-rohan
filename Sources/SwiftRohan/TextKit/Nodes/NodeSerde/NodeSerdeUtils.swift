@@ -14,6 +14,7 @@ enum NodeSerdeUtils {
     // element
     .content: ContentNode.self,
     .heading: HeadingNode.self,
+    .itemList: ItemListNode.self,
     .paragraph: ParagraphNode.self,
     .root: RootNode.self,
     .textStyles: TextStylesNode.self,

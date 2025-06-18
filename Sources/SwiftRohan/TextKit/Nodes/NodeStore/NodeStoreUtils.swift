@@ -12,6 +12,7 @@ enum NodeStoreUtils {
     // Element
     ContentNode.self,
     HeadingNode.self,
+    ItemListNode.self,
     ParagraphNode.self,
     RootNode.self,
     TextStylesNode.self,
