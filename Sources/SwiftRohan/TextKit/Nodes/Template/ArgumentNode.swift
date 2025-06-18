@@ -220,15 +220,15 @@ final class ArgumentNode: Node {
 
   /// Insert paragraph nodes at given location.
   /// - Returns: range of the inserted content.
-  func insertParagraphNodes(
+  func insertBlockNodes(
     _ nodes: Array<Node>, at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }
-      _ = try TreeUtils.insertParagraphNodes(nodesCopy, at: location, variableNode)
+      _ = try TreeUtils.insertBlockNodes(nodesCopy, at: location, variableNode)
     }
-    return try TreeUtils.insertParagraphNodes(nodes, at: location, variableNodes.first!)
+    return try TreeUtils.insertBlockNodes(nodes, at: location, variableNodes.first!)
   }
 
   /// Remove range from the argument node.

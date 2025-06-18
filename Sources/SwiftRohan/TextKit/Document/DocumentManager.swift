@@ -211,7 +211,7 @@ public final class DocumentManager {
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .blockNodes:
-      switch TreeUtils.insertParagraphNodes(nodes, at: location, rootNode) {
+      switch TreeUtils.insertBlockNodes(nodes, at: location, rootNode) {
       case let .success(range):
         result = .success(range)
       case let .failure(error):

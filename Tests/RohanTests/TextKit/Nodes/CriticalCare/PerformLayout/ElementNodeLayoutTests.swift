@@ -71,7 +71,7 @@ struct ElementNodeLayoutTests {
         HeadingNode(level: 1, [TextNode("def")]),
         ParagraphNode([TextNode("ghi")]),
       ]
-      let result = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
+      let result = TreeUtils.insertBlockNodes(nodes, at: location, rootNode)
       assert(result.isSuccess)
 
       //
@@ -104,7 +104,7 @@ struct ElementNodeLayoutTests {
       let location = TextLocation.parse("[]:4")!
 
       let nodes = [ParagraphNode([TextNode("cdef")])]
-      let result = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
+      let result = TreeUtils.insertBlockNodes(nodes, at: location, rootNode)
       assert(result.isSuccess)
 
       context.resetCursor()
