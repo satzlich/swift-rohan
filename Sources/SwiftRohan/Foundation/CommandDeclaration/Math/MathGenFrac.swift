@@ -42,9 +42,7 @@ extension MathGenFrac {
   private static let _dictionary: Dictionary<String, MathGenFrac> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
-  static func lookup(_ command: String) -> MathGenFrac? {
-    _dictionary[command]
-  }
+  static func lookup(_ command: String) -> MathGenFrac? { _dictionary[command] }
 
   static let frac = MathGenFrac("frac", DelimiterPair.NONE, true, nil)
   static let cfrac = MathGenFrac("cfrac", DelimiterPair.NONE, true, .display)
