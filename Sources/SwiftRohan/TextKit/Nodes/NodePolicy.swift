@@ -204,6 +204,7 @@ enum NodePolicy {
     // Element
     case .content: return nil
     case .heading: return .inlineContentContainer
+    case .itemList: return .paragraphContainer
     case .paragraph: return nil
     case .root: return .blockContainer
     case .textStyles: return .extendedTextContainer

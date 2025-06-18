@@ -226,6 +226,19 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
+    itemList: ItemListNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    return visit(itemList: itemList, context, withChildren: itemList.childrenReadonly())
+  }
+
+  override func visit<T: GenNode, S: Collection<T>>(
+    itemList: ItemListNode, _ context: LayoutMode, withChildren children: S
+  ) -> SatzResult<StreamSyntax> {
+    preconditionFailure("TODO: implement item list export")
+  }
+
+  override func visit(
     paragraph: ParagraphNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)

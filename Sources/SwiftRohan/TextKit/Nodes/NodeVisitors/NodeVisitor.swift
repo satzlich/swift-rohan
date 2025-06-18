@@ -78,6 +78,16 @@ class NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 
+  internal func visit(itemList: ItemListNode, _ context: C) -> R {
+    visitNode(itemList, context)
+  }
+
+  internal func visit<T: GenNode, S: Collection<T>>(
+    itemList: ItemListNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public func visit(paragraph: ParagraphNode, _ context: C) -> R {
     visitNode(paragraph, context)
   }
