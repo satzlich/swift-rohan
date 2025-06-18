@@ -48,5 +48,4 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
 
   public static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
   public static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
-
 }

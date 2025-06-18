@@ -72,7 +72,7 @@ class CompositorWindowController: NSWindowController {
   }
 }
 
-extension CompositorWindowController: CompositorViewDelegate {
+extension CompositorWindowController: @preconcurrency CompositorViewDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorViewController) {
     delegate?.commandDidChange(text, self)
   }

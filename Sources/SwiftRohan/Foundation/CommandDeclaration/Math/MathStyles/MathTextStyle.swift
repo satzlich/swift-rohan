@@ -61,7 +61,7 @@ enum MathTextStyle: String, Codable, CaseIterable, CommandDeclarationProtocol {
 }
 
 extension MathTextStyle {
-  static var allCommands: Array<MathTextStyle> = allCases
+  static var allCommands: Array<MathTextStyle> { allCases }
 
   static func lookup(_ command: String) -> MathTextStyle? {
     MathTextStyle(rawValue: command)

@@ -123,7 +123,7 @@ final class ItemListNode: ElementNode {
   private static func _textList(forSubtype subtype: ItemListSubtype) -> NSTextList {
     switch subtype {
     case .itemize:
-      return NSTextList(markerFormat: .circle, options: 0)
+      return NSTextList(markerFormat: .disc, options: 0)
     case .enumerate:
       return NSTextList(markerFormat: .decimal, startingItemNumber: 1)
     }
