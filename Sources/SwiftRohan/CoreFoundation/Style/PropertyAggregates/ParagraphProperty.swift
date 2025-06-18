@@ -34,7 +34,7 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
   private typealias _AttributesCache =
     ConcurrentCache<ParagraphProperty, Dictionary<NSAttributedString.Key, Any>>
 
-  private static let _attributesCache = _AttributesCache()
+  nonisolated(unsafe) private static let _attributesCache = _AttributesCache()
 
   private func _createAttributes() -> Dictionary<NSAttributedString.Key, Any> {
     let paragraphStyle = NSMutableParagraphStyle()
@@ -48,5 +48,4 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
 
   public static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
   public static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
-
 }

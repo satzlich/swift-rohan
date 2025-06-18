@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension DocumentView: ScrollViewDelegate {
+extension DocumentView: @preconcurrency ScrollViewDelegate {
   public func scrollView(_ scrollView: NSScrollView, didChangeMagnification: Void) {
     let magnification = scrollView.magnification
     insertionIndicatorView.indicatorWidth = Self.cursorWidth(for: magnification)

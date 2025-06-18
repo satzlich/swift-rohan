@@ -432,7 +432,7 @@ extension TreeUtils {
   /// Insert paragraph nodes into a tree at given location.
   /// (The method also applies to `blockNodes`.)
   /// - Returns: The range of inserted content.
-  static func insertParagraphNodes(
+  static func insertBlockNodes(
     _ nodes: Array<Node>, at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
@@ -443,7 +443,7 @@ extension TreeUtils {
 
     do {
       let location = location.toTextLocationSlice()
-      let range = try insertParagraphNodes(nodes, at: location, tree)
+      let range = try insertBlockNodes(nodes, at: location, tree)
       return .success(range)
     }
     catch let error as SatzError {
@@ -456,7 +456,7 @@ extension TreeUtils {
 
   /// Insert paragraph nodes into subtree at given location.
   /// - Returns: The range of inserted content
-  internal static func insertParagraphNodes(
+  internal static func insertBlockNodes(
     _ nodes: Array<Node>, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
@@ -470,7 +470,7 @@ extension TreeUtils {
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      let newRange = try argumentNode.insertParagraphNodes(nodes, at: newLocation)
+      let newRange = try argumentNode.insertBlockNodes(nodes, at: newLocation)
       return composeRange(trace.map(\.index), newRange)
     }
     assert(truthMaker == nil)
@@ -496,7 +496,7 @@ extension TreeUtils {
         offset <= textNode.length
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      let (from, to) = try insertParagraphNodes(
+      let (from, to) = try insertBlockNodes(
         nodes, textNode: textNode, offset: offset,
         parent, index, grandParent, grandIndex)
       // compose range
@@ -508,7 +508,7 @@ extension TreeUtils {
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       let (from, to) =
-        insertParagraphNodes(nodes, blockContainer: container, index: index)
+        insertBlockNodes(nodes, blockContainer: container, index: index)
       // compose range
       let prefix = trace.dropLast().map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
@@ -525,7 +525,7 @@ extension TreeUtils {
         offset <= paragraph.childCount
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      let (from, to) = try insertParagraphNodes(
+      let (from, to) = try insertBlockNodes(
         nodes, paragraphNode: paragraph, offset: offset, parent, index)
       // compose range
       let prefix = trace.dropLast(2).map(\.index)
@@ -539,7 +539,7 @@ extension TreeUtils {
   /// Insert paragraph nodes into text node at given offset.
   /// - Returns: The range of the inserted content (starting at the depth of
   ///     given grandIndex, not index or offset).
-  private static func insertParagraphNodes(
+  private static func insertBlockNodes(
     _ nodes: Array<Node>, textNode: TextNode, offset: Int,
     _ paragraph: ParagraphNode, _ index: Int,
     _ grandParent: ElementNode, _ grandIndex: Int
@@ -550,15 +550,15 @@ extension TreeUtils {
     precondition(paragraph.getChild(index) === textNode)
 
     // if offset is at the end of the text, forward to another
-    // `insertParagraphNodes(...)`
+    // `insertBlockNodes(...)`
     if offset == textNode.length {
-      return try insertParagraphNodes(
+      return try insertBlockNodes(
         nodes, paragraphNode: paragraph, offset: index + 1, grandParent, grandIndex)
     }
     // if offset is at the beginning of the text, forward to another
-    // `insertParagraphNodes(...)`
+    // `insertBlockNodes(...)`
     else if offset == 0 {
-      return try insertParagraphNodes(
+      return try insertBlockNodes(
         nodes, paragraphNode: paragraph, offset: index, grandParent, grandIndex)
     }
 
@@ -601,7 +601,7 @@ extension TreeUtils {
     }
     else {
       // pass `offset:= index+1` as we must insert after the node at `index`
-      return try insertParagraphNodes_helper(
+      return try insertBlockNodes_helper(
         nodes, paragraphNode: paragraph, offset: index + 1, grandParent, grandIndex,
         takeTailPart: takeTailPart)
     }
@@ -609,7 +609,7 @@ extension TreeUtils {
 
   /// Insert paragraph nodes into paragraph container at given index.
   /// - Returns: The range of inserted content (starting at the depth of given index)
-  private static func insertParagraphNodes(
+  private static func insertBlockNodes(
     _ nodes: Array<Node>, blockContainer container: ElementNode, index: Int
   ) -> (Array<Int>, Array<Int>) {
     precondition(index <= container.childCount)
@@ -637,7 +637,7 @@ extension TreeUtils {
   /// Insert paragraph nodes into `paragraphNode` at given offset.
   /// - Returns: The range of inserted content (starting at the depth of given index,
   ///    not offset).
-  private static func insertParagraphNodes(
+  private static func insertBlockNodes(
     _ nodes: Array<Node>, paragraphNode paragraph: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) throws -> (Array<Int>, Array<Int>) {
@@ -647,9 +647,9 @@ extension TreeUtils {
     precondition(parent.getChild(index) === paragraph)
 
     // if offset is at the beginning of the paragraph node, forward to another
-    // `insertParagraphNodes(...)`
+    // `insertBlockNodes(...)`
     if offset == 0 {
-      return insertParagraphNodes(nodes, blockContainer: parent, index: index)
+      return insertBlockNodes(nodes, blockContainer: parent, index: index)
     }
 
     // get the part of paragrpah node after offset and the location before
@@ -680,7 +680,7 @@ extension TreeUtils {
       }
     }
     else {
-      return try insertParagraphNodes_helper(
+      return try insertBlockNodes_helper(
         nodes, paragraphNode: paragraph, offset: offset, parent, index,
         takeTailPart: takeTailPart)
     }
@@ -702,7 +702,7 @@ extension TreeUtils {
    - Precondition: nodes contains more than one node.
    - Precondition: offset is not zero.
    */
-  private static func insertParagraphNodes_helper(
+  private static func insertBlockNodes_helper(
     _ nodes: Array<Node>, paragraphNode paragraph: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int,
     takeTailPart: () -> (ElementStore, Array<Int>)

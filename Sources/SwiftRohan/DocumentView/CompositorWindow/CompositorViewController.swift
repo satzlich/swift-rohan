@@ -34,7 +34,7 @@ class CompositorViewController: NSViewController {
   private var widthConstraint: NSLayoutConstraint!
 
   private enum Consts {
-    static let textFont: NSFont = CompositorStyle.textFont
+    nonisolated(unsafe) static let textFont: NSFont = CompositorStyle.textFont
     static let iconSize: CGFloat = CompositorStyle.iconSize
     static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
     static let trailingPadding: CGFloat = CompositorStyle.trailingPadding

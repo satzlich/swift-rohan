@@ -50,5 +50,4 @@ final class RootNode: ElementNode {
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
-
 }

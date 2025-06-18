@@ -4,6 +4,7 @@ import AppKit
 import Foundation
 import LatexParser
 
+@MainActor
 public final class DocumentView: NSView {
   /// Document content
   public private(set) var content: DocumentContent = DocumentContent()

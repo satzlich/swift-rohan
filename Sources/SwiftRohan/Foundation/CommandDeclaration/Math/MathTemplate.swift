@@ -49,7 +49,7 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
-  static let allCommands: Array<MathTemplate> = [
+  nonisolated(unsafe) static let allCommands: Array<MathTemplate> = [
     operatorname,
     overset,
     pmod,
@@ -57,7 +57,7 @@ extension MathTemplate {
     underset,
   ]
 
-  private static let _dictionary: Dictionary<String, MathTemplate> =
+  nonisolated(unsafe) private static let _dictionary: Dictionary<String, MathTemplate> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathTemplate? {
@@ -68,7 +68,7 @@ extension MathTemplate {
     lookup(tempalteName.identifier.name)
   }
 
-  static let operatorname: MathTemplate = {
+  nonisolated(unsafe) static let operatorname: MathTemplate = {
     let template = Template(
       name: "operatorname", parameters: ["content"],
       body: [
@@ -79,7 +79,7 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
-  static let overset: MathTemplate = {
+  nonisolated(unsafe) static let overset: MathTemplate = {
     let template = Template(
       name: "overset", parameters: ["top", "content"],
       body: [
@@ -91,7 +91,7 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
-  static let pmod: MathTemplate = {
+  nonisolated(unsafe) static let pmod: MathTemplate = {
     let template = Template(
       name: "pmod", parameters: ["content"],
       body: [
@@ -105,7 +105,7 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
-  static let stackrel: MathTemplate = {
+  nonisolated(unsafe) static let stackrel: MathTemplate = {
     let template = Template(
       name: "stackrel", parameters: ["top", "bottom"],
       body: [
@@ -117,7 +117,7 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
-  static let underset: MathTemplate = {
+  nonisolated(unsafe) static let underset: MathTemplate = {
     let template = Template(
       name: "underset", parameters: ["bottom", "content"],
       body: [

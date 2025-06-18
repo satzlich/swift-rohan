@@ -6,7 +6,7 @@ import Foundation
 @testable import SwiftRohan
 
 extension CaseIterable {
-  /// Returns a set of all cases not in the list.
+  /// Returns set difference `allCases - values`.
   static func complementSet<S: Sequence<Self>>(to values: S) -> Set<Self> {
     let allCases: Set<Self> = Set(Self.allCases)
     return allCases.subtracting(values)
@@ -15,8 +15,7 @@ extension CaseIterable {
 
 extension TextLocation {
   static func compose(_ indices: String, _ offset: Int) -> TextLocation? {
-    guard let indices = TextLocation.parseIndices(indices)
-    else { return nil }
+    guard let indices = TextLocation.parseIndices(indices) else { return nil }
     return TextLocation(indices, offset)
   }
 }

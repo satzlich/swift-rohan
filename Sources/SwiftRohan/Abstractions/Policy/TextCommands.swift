@@ -4,7 +4,7 @@ import Foundation
 
 /// Non-symbol text commands.
 enum TextCommands {
-  static let allCases: Array<CommandRecord> = _allCases()
+  nonisolated(unsafe) static let allCases: Array<CommandRecord> = _allCases()
 
   private static func _allCases() -> Array<CommandRecord> {
     var result: Array<CommandRecord> = []

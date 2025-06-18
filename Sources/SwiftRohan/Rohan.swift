@@ -16,7 +16,7 @@ internal enum Rohan {
 }
 
 extension Rohan {
-  static let latexRegistry: LatexRegistry = _latexRegistry()
+  nonisolated(unsafe) static let latexRegistry: LatexRegistry = _latexRegistry()
 
   private static func _latexRegistry() -> LatexRegistry {
     var registry = LatexRegistry()
