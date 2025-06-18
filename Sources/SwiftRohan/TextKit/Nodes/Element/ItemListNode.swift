@@ -31,13 +31,13 @@ final class ItemListNode: ElementNode {
   private final func _getProperties(
     _ styleSheet: StyleSheet, itemize: Void
   ) -> PropertyDictionary {
-    preconditionFailure()
+    super.getProperties(styleSheet)
   }
 
   private final func _getProperties(
     _ styleSheet: StyleSheet, enumerate: Void
   ) -> PropertyDictionary {
-    preconditionFailure()
+    super.getProperties(styleSheet)
   }
 
   // MARK: - Node(Codable)

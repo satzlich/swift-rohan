@@ -14,6 +14,7 @@ enum ExprSerdeUtils {
     // Element
     .content: ContentExpr.self,
     .heading: HeadingExpr.self,
+    .itemList: ItemListExpr.self,
     .paragraph: ParagraphExpr.self,
     .root: RootExpr.self,
     .textStyles: TextStylesExpr.self,

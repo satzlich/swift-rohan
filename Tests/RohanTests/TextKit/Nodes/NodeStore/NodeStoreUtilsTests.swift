@@ -9,7 +9,7 @@ struct NodeStoreUtilsTests {
   @Test
   func classSet() {
     let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
-    #expect(classes.count == 23)
+    #expect(classes.count == 24)
     #expect(classes.count == NodeType.allCases.count - 4)
     #expect(NodeStoreUtils.registeredClasses.count == classes.count)
   }
@@ -46,7 +46,8 @@ struct NodeStoreUtilsTests {
       "dot", "doteq", "doteqdot", "dotplus", "dotsb", "dotsc", "dotsi", "dotsm", "dotso",
       "doublebarwedge", "doublecap", "doublecup", "downarrow", "downdownarrows",
       "downharpoonleft", "downharpoonright", "dprime", "ell", "emph", "emptyset",
-      "enspace", "epsilon", "eqcirc", "eqsim", "eqslantgtr", "eqslantless", "equiv",
+      "enspace", "enumerate",
+      "epsilon", "eqcirc", "eqsim", "eqslantgtr", "eqslantless", "equiv",
       "eta", "eth", "exists", "exp", "fallingdotseq", "flat", "forall", "frac", "frown",
       "fullouterjoin", "gamma", "gather*", "gathered", "gcd", "ge", "geq", "geqq",
       "geqslant", "gets", "gg", "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq",
@@ -54,7 +55,8 @@ struct NodeStoreUtilsTests {
       "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hom",
       "hookleftarrow", "hookrightarrow", "hslash", "idotsint", "iff", "iiiint", "iiint",
       "iint", "imath", "impliedby", "implies", "in", "inf", "infty", "injlim",
-      "inlinemath", "int", "intercal", "intop", "iota", "jmath", "kappa", "ker", "lVert",
+      "inlinemath", "int", "intercal", "intop", "iota", "itemize",
+      "jmath", "kappa", "ker", "lVert",
       "lambda", "land", "langle", "lbrace", "lbrack", "lceil", "ldotp", "ldots", "le",
       "leadsto", "leftarrow", "leftarrowtail", "leftharpoondown", "leftharpoonup",
       "leftleftarrows", "leftouterjoin", "leftrightarrow", "leftrightarrows",
@@ -110,7 +112,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 616)
+    #expect(tags.count == 618)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

@@ -20,7 +20,11 @@ enum NodePolicy {
   /// Returns true if a node of given kind is a block element.
   @inline(__always)
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
+    [
+      .heading,
+      .itemList,
+      .paragraph,
+    ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be a top-level node in a document.

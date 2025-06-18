@@ -16,7 +16,7 @@ final class ItemListExpr: ElementExpr {
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
-    preconditionFailure()
+    visitor.visit(itemList: self, context)
   }
 
   // MARK: - Codable

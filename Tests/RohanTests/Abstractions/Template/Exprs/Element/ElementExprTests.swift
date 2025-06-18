@@ -22,6 +22,7 @@ struct ElementExprTests {
       ContentExpr(),
       TextStylesExpr(.emph),
       HeadingExpr(level: 1),
+      ItemListExpr(.enumerate),
       ParagraphExpr(),
       RootExpr(),
       TextStylesExpr(.textbf),

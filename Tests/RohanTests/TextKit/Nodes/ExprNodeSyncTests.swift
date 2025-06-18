@@ -45,20 +45,24 @@ final class ExprNodeSyncTests {
       try testSerdeSync(content, ContentNode.self, json)
     }
     do {
-      let emphasis = TextStylesExpr(.emph, [TextExpr("abc")])
-      let json =
-        """
-        {"children":[{"string":"abc","type":"text"}],"command":"emph","type":"textStyles"}
-        """
-      try testSerdeSync(emphasis, TextStylesNode.self, json)
-    }
-    do {
       let heading = HeadingExpr(level: 1, [TextExpr("abc")])
       let json =
         """
         {"children":[{"string":"abc","type":"text"}],"level":1,"type":"heading"}
         """
       try testSerdeSync(heading, HeadingNode.self, json)
+    }
+    do {
+      let itemList = ItemListExpr(
+        .enumerate,
+        [
+          ParagraphExpr([TextExpr("abc")]),
+          ParagraphExpr([TextExpr("def")]),
+        ])
+      let json = """
+        {"children":[{"children":[{"string":"abc","type":"text"}],"type":"paragraph"},{"children":[{"string":"def","type":"text"}],"type":"paragraph"}],"subtype":"enumerate","type":"itemList"}
+        """
+      try testSerdeSync(itemList, ItemListNode.self, json)
     }
     do {
       let paragraph = ParagraphExpr([TextExpr("abc")])
@@ -76,6 +80,16 @@ final class ExprNodeSyncTests {
         """
       try testSerdeSync(root, RootNode.self, json)
     }
+    // text styles (emph)
+    do {
+      let emphasis = TextStylesExpr(.emph, [TextExpr("abc")])
+      let json =
+        """
+        {"children":[{"string":"abc","type":"text"}],"command":"emph","type":"textStyles"}
+        """
+      try testSerdeSync(emphasis, TextStylesNode.self, json)
+    }
+    // text styles (textbf)
     do {
       let strong = TextStylesExpr(.textbf, [TextExpr("abc")])
       let json =
