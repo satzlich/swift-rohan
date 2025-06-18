@@ -113,6 +113,11 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return HeadingNode(level: heading.level, children)
   }
 
+  override func visit(itemList: ItemListExpr, _ context: Void) -> ItemListNode {
+    let children = _convertChildren(of: itemList, context)
+    return ItemListNode(itemList.subtype, children)
+  }
+
   override func visit(paragraph: ParagraphExpr, _ context: Void) -> ParagraphNode {
     let children = _convertChildren(of: paragraph, context)
     return ParagraphNode(children)

@@ -49,6 +49,11 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return _visitElement(heading, context, [description])
   }
 
+  override func visit(itemList: ItemListExpr, _ context: Void) -> Array<String> {
+    let description = "\(itemList.subtype)"
+    return _visitElement(itemList, context, [description])
+  }
+
   override func visit(paragraph: ParagraphExpr, _ context: Void) -> Array<String> {
     _visitElement(paragraph, context)
   }

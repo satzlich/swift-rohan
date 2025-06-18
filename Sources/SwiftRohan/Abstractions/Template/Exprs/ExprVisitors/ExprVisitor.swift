@@ -50,6 +50,10 @@ class ExprVisitor<C, R> {
     visitExpr(heading, context)
   }
 
+  func visit(itemList: ItemListExpr, _ context: C) -> R {
+    visitExpr(itemList, context)
+  }
+
   func visit(paragraph: ParagraphExpr, _ context: C) -> R {
     visitExpr(paragraph, context)
   }
