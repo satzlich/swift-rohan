@@ -22,4 +22,8 @@ enum RhTextList {
       return formatted
     }
   }
+
+  func marker(forIndex index: Int) -> String {
+    marker(forItemNumber: index + 1)
+  }
 }

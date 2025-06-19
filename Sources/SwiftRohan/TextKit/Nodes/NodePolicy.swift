@@ -71,7 +71,7 @@ enum NodePolicy {
     [
       NodeType.content,
       .heading,
-      .itemList,
+//      .itemList,
       .textStyles,
       .variable,
     ]

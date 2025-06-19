@@ -53,7 +53,9 @@ final class ItemListNode: ElementNode {
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
-    guard 0..._layoutLength ~= layoutOffset else {
+    guard 0..._layoutLength ~= layoutOffset,
+      let textList = _textList
+    else {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
 
@@ -63,12 +65,14 @@ final class ItemListNode: ElementNode {
     assert(isPlaceholderActive == false)
 
     var (k, s) = (0, 0)
-    // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
+    // notations: ell(i):= layout length contributed by "marker + child + newline"
     // invariant: s(k) = sum:i∈[0,k):ell(i)
     //            s(k) ≤ layoutOffset
     //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
     while k < _children.count {
-      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
+      let ss =
+        s + textList.marker(forIndex: k).length + _children[k].layoutLength()
+        + _newlines[k].intValue
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
@@ -206,6 +210,8 @@ final class ItemListNode: ElementNode {
   ) -> Int {
     precondition(_children.count == _newlines.count)
 
+    self._setupTextList(context.styleSheet)
+
     if _children.isEmpty {
       if self.isPlaceholderActive {
         context.insertText("⬚", self)
@@ -215,13 +221,17 @@ final class ItemListNode: ElementNode {
     }
 
     assert(_children.isEmpty == false)
+    assert(_textList != nil)
+
+    let textList = _textList!
 
     var sum = 0
-
     // insert content backwards
     for i in (0..<_children.count).reversed() {
       sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
       sum += NodeReconciler.insert(new: _children[i], context: context)
+      let marker = textList.marker(forIndex: i)
+      sum += StringReconciler.insert(new: marker, context: context, self)
     }
 
     if isBlockContainer {
@@ -239,6 +249,9 @@ final class ItemListNode: ElementNode {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
 
     assert(_children.isEmpty == false)
+    assert(_textList != nil)
+
+    let textList = _textList!
 
     var sum = 0
 
@@ -247,6 +260,9 @@ final class ItemListNode: ElementNode {
       if _children[i].isDirty == false {
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
+
+        let marker = textList.marker(forIndex: i)
+        sum += StringReconciler.skip(current: marker, context: context)
       }
       // process dirty.
       else {
@@ -254,6 +270,9 @@ final class ItemListNode: ElementNode {
         n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         let child = _children[i]
         n += NodeReconciler.reconcile(dirty: child, context: context)
+        let marker = textList.marker(forIndex: i)
+        n += StringReconciler.skip(current: marker, context: context)
+
         sum += n
 
         // update paragraph style if needed
@@ -286,6 +305,9 @@ final class ItemListNode: ElementNode {
     }
 
     assert(_children.isEmpty == false)
+    assert(_textList != nil)
+
+    let textList = _textList!
 
     var sum = 0
 
@@ -367,6 +389,7 @@ final class ItemListNode: ElementNode {
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          StringReconciler.delete(old: textList.marker(forIndex: j), context: context)
           j -= 1
         }
         assert(j < 0 || [.none, .dirty].contains(original[j].mark))
@@ -375,7 +398,11 @@ final class ItemListNode: ElementNode {
       while i >= 0 && current[i].mark == .added {
         let newline = current[i].insertNewline
         sum += NewlineReconciler.insert(new: newline, context: context, self)
+        //
         sum += NodeReconciler.insert(new: _children[i], context: context)
+        //
+        let marker = textList.marker(forIndex: i)
+        sum += StringReconciler.insert(new: marker, context: context, self)
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
@@ -388,7 +415,11 @@ final class ItemListNode: ElementNode {
 
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+        //
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
+        //
+        let markers = (textList.marker(forIndex: j), textList.marker(forIndex: i))
+        sum += StringReconciler.reconcile(dirty: markers, context: context, self)
 
         i -= 1
         j -= 1
@@ -407,7 +438,12 @@ final class ItemListNode: ElementNode {
 
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+        //
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+        //
+        let markers = (textList.marker(forIndex: j), textList.marker(forIndex: i))
+        sum += StringReconciler.reconcile(dirty: markers, context: context, self)
+
         i -= 1
         j -= 1
       }
@@ -439,11 +475,17 @@ final class ItemListNode: ElementNode {
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
     precondition(self.isBlockContainer)
+    guard let textList = _textList else {
+      assertionFailure("_textList should be non-nil")
+      return
+    }
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let child = _children[i]
-      let end = location + child.layoutLength() + _newlines[i].intValue
+      let end =
+        location + textList.marker(forIndex: i).length + child.layoutLength()
+        + _newlines[i].intValue
       // paragraph containers are styled by themselves, so we skip them.
       if child.isBlockContainer == false && predicate(i) {
         context.addParagraphStyle(child, location..<end)
@@ -453,8 +495,9 @@ final class ItemListNode: ElementNode {
   }
 
   final override func getLayoutOffset(_ index: Int) -> Int? {
-    guard index <= childCount else { return nil }
-    let range = 0..<index
+    guard index <= childCount,
+      let textList = _textList
+    else { return nil }
 
     if _children.isEmpty {
       // "0" whether placeholder is active or not.
@@ -462,9 +505,12 @@ final class ItemListNode: ElementNode {
     }
     else {
       assert(isPlaceholderActive == false)
+      let range = 0..<index
+      let s0 = range.lazy.map { textList.marker(forIndex: $0).length }.reduce(0, +)
       let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-      return s1 + s2
+      let sum = s0 + s1 + s2
+      return index < childCount ? sum + textList.marker(forIndex: index).length : sum
     }
   }
 
@@ -481,6 +527,19 @@ final class ItemListNode: ElementNode {
   private init(deepCopyOf node: ItemListNode) {
     self.subtype = node.subtype
     super.init(deepCopyOf: node)
+  }
+
+  private func _setupTextList(_ styleSheet: StyleSheet) -> RhTextList {
+    let listLevel = self._getListLevel(styleSheet)
+    let textList = self.subtype.textList(forLevel: listLevel)
+    self._textList = textList
+    return textList
+  }
+
+  private func _getListLevel(_ styleSheet: StyleSheet) -> Int {
+    let key = ParagraphProperty.listLevel
+    let properties = self.getProperties(styleSheet)
+    return key.resolveValue(properties, styleSheet).integer()!
   }
 
   static var commandRecords: Array<CommandRecord> {
