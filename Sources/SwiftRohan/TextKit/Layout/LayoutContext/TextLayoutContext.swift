@@ -52,6 +52,15 @@ final class TextLayoutContext: LayoutContext {
     textStorage.addAttributes(attributes, range: nsRange)
   }
 
+  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>) {
+    precondition(isEditing)
+    let attributes: Dictionary<NSAttributedString.Key, Any> = [
+      .paragraphStyle: paragraphStyle
+    ]
+    let nsRange = NSRange(range)
+    textStorage.addAttributes(attributes, range: nsRange)
+  }
+
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
     layoutCursor -= n

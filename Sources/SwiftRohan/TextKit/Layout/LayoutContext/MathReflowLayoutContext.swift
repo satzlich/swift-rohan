@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import AppKit
 import Foundation
 import SatzAlgorithms
 
@@ -53,6 +54,10 @@ final class MathReflowLayoutContext: LayoutContext {
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     mathLayoutContext.addParagraphStyle(source, range)
+  }
+
+  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>) {
+    mathLayoutContext.addParagraphStyle(paragraphStyle, range)
   }
 
   func skipBackwards(_ n: Int) {

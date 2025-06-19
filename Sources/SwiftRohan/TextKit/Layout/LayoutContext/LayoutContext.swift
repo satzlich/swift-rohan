@@ -18,10 +18,14 @@ protocol LayoutContext {
   func beginEditing()
   func endEditing()
 
-  // MARK: - Operations
+  // MARK: - Paragraph Style
 
   /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
+
+  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>)
+
+  // MARK: - Operations
 
   /// Place cursor at `layoutCursor - n`
   func skipBackwards(_ n: Int)
@@ -102,6 +106,11 @@ protocol LayoutContext {
 
 extension LayoutContext {
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
+    precondition(isEditing)
+    // defeault implementation does nothing.
+  }
+
+  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>) {
     precondition(isEditing)
     // defeault implementation does nothing.
   }
