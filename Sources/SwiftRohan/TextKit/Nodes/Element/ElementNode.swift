@@ -28,8 +28,13 @@ internal class ElementNode: Node {
     return _children[index]
   }
 
-  final override func firstIndex() -> RohanIndex? { .index(0) }
-  final override func lastIndex() -> RohanIndex? { .index(_children.count) }
+  internal override func firstIndex() -> RohanIndex? {
+    preconditionFailure("overriding required")
+  }
+
+  internal override func lastIndex() -> RohanIndex? {
+    preconditionFailure("overriding required")
+  }
 
   internal override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")

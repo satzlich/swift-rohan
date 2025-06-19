@@ -47,6 +47,12 @@ final class ItemListNode: ElementNode {
 
   // MARK: - Node(Positioning)
 
+  final override func firstIndex() -> RohanIndex? { .index(0) }
+
+  final override func lastIndex() -> RohanIndex? {
+    _children.isEmpty ? .index(0) : .index(_children.count - 1)
+  }
+
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
