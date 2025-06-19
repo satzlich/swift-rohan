@@ -2,7 +2,7 @@
 
 import AppKit
 
-final class ItemListNode: ElementNodeImpl {
+final class ItemListNode: ElementNode {
   final override class var type: NodeType { .itemList }
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -95,6 +95,21 @@ final class ItemListNode: ElementNodeImpl {
     return corrupted ? .corrupted(result) : .success(result)
   }
 
+  // MARK: - Layout Impl.
+
+  private final var _snapshotRecords: Array<SnapshotRecord>? = nil
+
+  final override func snapshotDescription() -> Array<String>? {
+    if let snapshotRecords = _snapshotRecords {
+      return snapshotRecords.map(\.description)
+    }
+    return nil
+  }
+
+  final override func makeSnapshotOnce() {
+    preconditionFailure("TODO: create snapshot records")
+  }
+
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
@@ -147,7 +162,7 @@ final class ItemListNode: ElementNodeImpl {
     return Em(2.5 + 2 * Double(level - 1))
   }
 
-  private struct SnapshotRecord {
+  private struct SnapshotRecord: CustomStringConvertible {
     /// Node id of the child.
     let nodeId: NodeIdentifier
     /// Child index in the children array.
@@ -157,5 +172,7 @@ final class ItemListNode: ElementNodeImpl {
       self.nodeId = nodeId
       self.index = index
     }
+
+    var description: String { "snapshotRecord" }
   }
 }
