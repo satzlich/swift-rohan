@@ -65,10 +65,7 @@ final class ItemListNode: ElementNode {
     assert(isPlaceholderActive == false)
 
     var (k, s) = (0, 0)
-    // notations: ell(i):= layout length contributed by "marker + child + newline"
-    // invariant: s(k) = sum:i∈[0,k):ell(i)
-    //            s(k) ≤ layoutOffset
-    //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
+    /// determine the child whose node content
     while k < _children.count {
       let ss =
         s + _formattedMarker(forIndex: k, textList).length + _children[k].layoutLength()
@@ -76,9 +73,16 @@ final class ItemListNode: ElementNode {
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
-    return k == _children.count
-      ? .terminal(value: .index(k), target: s)
-      : .halfway(value: .index(k), consumed: s)
+
+    if k == _children.count {
+      return .terminal(value: .index(k), target: s)
+    }
+    else {
+      return .halfway(
+        value: .index(k),
+        // consume the item marker as well.
+        consumed: s + _formattedMarker(forIndex: k, textList).length)
+    }
   }
 
   // MARK: - Node(Layout)
