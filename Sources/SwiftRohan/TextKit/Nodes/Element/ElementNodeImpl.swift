@@ -47,7 +47,6 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Layout Impl.
 
-  /// lossy snapshot of original children
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   final override func snapshotDescription() -> Array<String>? {
@@ -58,7 +57,7 @@ internal class ElementNodeImpl: ElementNode {
   }
 
   /// Make snapshot once if not already made
-  /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
+  /// - Invariant: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
   final override func makeSnapshotOnce() {
     guard _snapshotRecords == nil else { return }
     assert(_children.count == _newlines.count)
@@ -363,7 +362,7 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Facilities for Layout
 
-  private struct SnapshotRecord: CustomStringConvertible {
+  internal struct SnapshotRecord: CustomStringConvertible {
     let nodeId: NodeIdentifier
     let insertNewline: Bool
     let layoutLength: Int
@@ -390,9 +389,7 @@ internal class ElementNodeImpl: ElementNode {
     }
   }
 
-  private enum LayoutMark { case none; case dirty; case deleted; case added }
-
-  private struct ExtendedRecord {
+  internal struct ExtendedRecord {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
     let insertNewline: Bool
