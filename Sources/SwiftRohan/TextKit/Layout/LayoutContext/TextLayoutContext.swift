@@ -49,6 +49,7 @@ final class TextLayoutContext: LayoutContext {
     let properties: ParagraphProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     let nsRange = NSRange(range)
+    textStorage.removeAttribute(.paragraphStyle, range: nsRange)
     textStorage.addAttributes(attributes, range: nsRange)
   }
 
@@ -58,6 +59,7 @@ final class TextLayoutContext: LayoutContext {
       .paragraphStyle: paragraphStyle
     ]
     let nsRange = NSRange(range)
+    textStorage.removeAttribute(.paragraphStyle, range: nsRange)
     textStorage.addAttributes(attributes, range: nsRange)
   }
 

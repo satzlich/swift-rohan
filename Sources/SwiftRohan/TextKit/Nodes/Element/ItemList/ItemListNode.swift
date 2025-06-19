@@ -98,12 +98,8 @@ final class ItemListNode: ElementNode {
   // MARK: - Node(Layout)
 
   final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-    if isBlockContainer {
-      return _performLayout(context, fromScratch: fromScratch, isBlockContainer: true)
-    }
-    else {
-      return _performLayout(context, fromScratch: fromScratch, isBlockContainer: false)
-    }
+    assert(self.isBlockContainer)
+    return _performLayout(context, fromScratch: fromScratch)
   }
 
   // MARK: - Node(Codable)
@@ -198,19 +194,16 @@ final class ItemListNode: ElementNode {
   }
 
   @inline(__always)
-  private final func _performLayout(
-    _ context: LayoutContext, fromScratch: Bool, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
     if fromScratch {
-      _layoutLength =
-        _performLayoutFromScratch(context, isBlockContainer: isBlockContainer)
+      _layoutLength = _performLayoutFromScratch(context)
       _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context, isBlockContainer: isBlockContainer)
+      _layoutLength = _performLayoutSimple(context)
     }
     else {
-      _layoutLength = _performLayoutFull(context, isBlockContainer: isBlockContainer)
+      _layoutLength = _performLayoutFull(context)
       _snapshotRecords = nil
     }
     _isDirty = false
@@ -219,9 +212,7 @@ final class ItemListNode: ElementNode {
 
   /// Perform layout for fromScratch=true.
   @inline(__always)
-  private final func _performLayoutFromScratch(
-    _ context: LayoutContext, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
     self._setupTextList(context.styleSheet)
@@ -244,27 +235,22 @@ final class ItemListNode: ElementNode {
       sum += StringReconciler.insert(new: marker, context: context, self)
     }
 
-    if isBlockContainer {
-      _refreshParagraphStyle(context, { _ in true })
-    }
+    // add paragraph style forwards
+    _refreshParagraphStyle(context, { _ in true })
 
     return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
   @inline(__always)
-  private final func _performLayoutSimple(
-    _ context: LayoutContext, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
-
     assert(_children.isEmpty == false)
     assert(_textList != nil)
-
     let textList = _textList!
+    let paragraphStyle = _bakeParagraphStyle(context.styleSheet)
 
     var sum = 0
-
     for i in (0..<_children.count).reversed() {
       // skip clean.
       if _children[i].isDirty == false {
@@ -276,19 +262,16 @@ final class ItemListNode: ElementNode {
       }
       // process dirty.
       else {
-        var n = 0
-        n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        let child = _children[i]
-        n += NodeReconciler.reconcile(dirty: child, context: context)
+        let sum0 = sum
+        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
+        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         let marker = _formattedMarker(forIndex: i, textList)
-        n += StringReconciler.skip(current: marker, context: context)
+        sum += StringReconciler.skip(current: marker, context: context)
 
-        sum += n
-
-        // update paragraph style if needed
-        if isBlockContainer {
+        do {
+          let n = sum - sum0
           let begin = context.layoutCursor
-          context.addParagraphStyle(child, begin..<begin + n)
+          context.addParagraphStyle(paragraphStyle, begin..<begin + n)
         }
       }
     }
@@ -329,9 +312,7 @@ final class ItemListNode: ElementNode {
 
   /// Perform layout for fromScratch=false when snapshot has been made.
   @inline(__always)
-  private final func _performLayoutFull(
-    _ context: LayoutContext, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
     assert(_textList != nil)
     let textList = _textList!
@@ -351,10 +332,11 @@ final class ItemListNode: ElementNode {
     }
 
     var sum = 0
-    // current range that covers deleted nodes which should be vacuumed.
-    var vacuumRange: Range<Int>?
     var i = current.count - 1
     var j = original.count - 1
+
+    // current range that covers deleted nodes which should be vacuumed
+    var vacuumRange: Range<Int>?
 
     func updateVacuumRange() {
       precondition(isBlockContainer)
@@ -391,8 +373,7 @@ final class ItemListNode: ElementNode {
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
       do {
-        if isBlockContainer { updateVacuumRange() }
-
+        updateVacuumRange()
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
@@ -461,8 +442,7 @@ final class ItemListNode: ElementNode {
       }
     }
 
-    // add paragraph style forwards
-    if isBlockContainer {
+    do {
       let vacuumRange = vacuumRange ?? 0..<0
       _refreshParagraphStyle(
         context,
@@ -487,20 +467,18 @@ final class ItemListNode: ElementNode {
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
     precondition(self.isBlockContainer)
-    guard let textList = _textList else {
-      assertionFailure("_textList should be non-nil")
-      return
-    }
+    assert(_textList != nil)
+    let textList = _textList!
+    let paragraphStyle = _bakeParagraphStyle(context.styleSheet)
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let child = _children[i]
+      let itemMarker = _formattedMarker(forIndex: i, textList)
       let end =
-        location + _formattedMarker(forIndex: i, textList).length + child.layoutLength()
-        + _newlines[i].intValue
-      // paragraph containers are styled by themselves, so we skip them.
-      if child.isBlockContainer == false && predicate(i) {
-        context.addParagraphStyle(child, location..<end)
+        location + itemMarker.length + child.layoutLength() + _newlines[i].intValue
+      if predicate(i) {
+        context.addParagraphStyle(paragraphStyle, location..<end)
       }
       location = end
     }
@@ -560,7 +538,19 @@ final class ItemListNode: ElementNode {
   }
 
   private func _formattedMarker(forIndex index: Int, _ textList: RhTextList) -> String {
-    textList.marker(forIndex: index) + "\u{2000}"
+    "\u{2000}" + textList.marker(forIndex: index) + "\t"
+  }
+
+  private func _bakeParagraphStyle(_ styleSheet: StyleSheet) -> NSParagraphStyle {
+    let properties: ParagraphProperty = self.resolveAggregate(styleSheet)
+    let paragraphStyle =
+      properties.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+    //    paragraphStyle.firstLineHeadIndent = 12
+    //    paragraphStyle.headIndent = 36
+    //    paragraphStyle.tabStops = [
+    //      NSTextTab(textAlignment: .natural, location: 36)
+    //    ]
+    return paragraphStyle
   }
 
   static var commandRecords: Array<CommandRecord> {
@@ -573,7 +563,7 @@ final class ItemListNode: ElementNode {
   /// Distance from text container edge to paragraph beginning for given list
   /// level (1-based).
   /// - Note: There is a 0.5em gap between item marker and paragraph beginning.
-  internal static func indentation(forLevel level: Int) -> Em {
+  internal static func indent(forLevel level: Int) -> Em {
     precondition(level >= 1)
     return Em(2.5 + 2 * Double(level - 1))
   }

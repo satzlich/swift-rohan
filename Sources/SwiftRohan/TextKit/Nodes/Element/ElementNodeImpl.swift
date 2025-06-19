@@ -162,6 +162,37 @@ internal class ElementNodeImpl: ElementNode {
     return sum
   }
 
+  @inline(__always)
+  private final func _computeExtendedRecords() -> (
+    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
+  ) {
+    // ID's of current children
+    let currentIds = Set(_children.map(\.id))
+    // ID's of the dirty part of current children
+    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
+    // ID's of original children
+    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
+
+    let current =
+      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+        let mark: LayoutMark =
+          !originalIds.contains(node.id)
+          ? .added
+          : (node.isDirty ? .dirty : .none)
+        return ExtendedRecord(mark, node, insertNewline)
+      }
+
+    let original =
+      _snapshotRecords!.map { record in
+        !currentIds.contains(record.nodeId)
+          ? ExtendedRecord(.deleted, record)
+          : dirtyIds.contains(record.nodeId)
+            ? ExtendedRecord(.dirty, record)
+            : ExtendedRecord(.none, record)
+      }
+    return (current, original)
+  }
+
   /// Perform layout for fromScratch=false when snapshot has been made.
   @inline(__always)
   private final func _performLayoutFull(
@@ -182,45 +213,14 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
+    let (current, original) = _computeExtendedRecords()
+
     var sum = 0
-
-    // records of current children
-    let current: Array<ExtendedRecord>
-    // records of original children
-    let original: Array<ExtendedRecord>
-
-    do {
-      // ID's of current children
-      let currentIds = Set(_children.map(\.id))
-      // ID's of the dirty part of current children
-      let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-      // ID's of original children
-      let originalIds = Set(_snapshotRecords!.map(\.nodeId))
-
-      current =
-        zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
-          let mark: LayoutMark =
-            !originalIds.contains(node.id)
-            ? .added
-            : (node.isDirty ? .dirty : .none)
-          return ExtendedRecord(mark, node, insertNewline)
-        }
-
-      original =
-        _snapshotRecords!.map { record in
-          !currentIds.contains(record.nodeId)
-            ? ExtendedRecord(.deleted, record)
-            : dirtyIds.contains(record.nodeId)
-              ? ExtendedRecord(.dirty, record)
-              : ExtendedRecord(.none, record)
-        }
-    }
+    var i = current.count - 1
+    var j = original.count - 1
 
     // current range that covers deleted nodes which should be vacuumed
     var vacuumRange: Range<Int>?
-
-    var i = current.count - 1
-    var j = original.count - 1
 
     func updateVacuumRange() {
       precondition(isBlockContainer)

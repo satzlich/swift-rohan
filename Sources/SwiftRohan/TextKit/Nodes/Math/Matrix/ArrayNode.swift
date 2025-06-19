@@ -20,19 +20,21 @@ class ArrayNode: Node {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
 
-      let key = MathProperty.style
-      let value = key.resolveValue(current, styleSheet).mathStyle()!
-      let mathStyle =
-        switch subtype.subtype {
-        case .aligned: MathUtils.alignedStyle(for: value)
-        case .gathered: MathUtils.gatheredStyle(for: value)
-        case .multline: MathUtils.multlineStyle(for: value)
+      do {
+        let key = MathProperty.style
+        let value = key.resolveValue(current, styleSheet).mathStyle()!
+        let mathStyle =
+          switch subtype.subtype {
+          case .aligned: MathUtils.alignedStyle(for: value)
+          case .gathered: MathUtils.gatheredStyle(for: value)
+          case .multline: MathUtils.multlineStyle(for: value)
 
-        case .cases: MathUtils.matrixStyle(for: value)
-        case .matrix: MathUtils.matrixStyle(for: value)
-        case .substack: MathUtils.matrixStyle(for: value)
-        }
-      current[key] = .mathStyle(mathStyle)
+          case .cases: MathUtils.matrixStyle(for: value)
+          case .matrix: MathUtils.matrixStyle(for: value)
+          case .substack: MathUtils.matrixStyle(for: value)
+          }
+        current[key] = .mathStyle(mathStyle)
+      }
 
       _cachedProperties = current
     }

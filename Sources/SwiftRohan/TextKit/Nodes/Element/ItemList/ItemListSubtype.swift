@@ -19,14 +19,14 @@ enum ItemListSubtype: String, Codable, CaseIterable {
         case 2: "\u{2014}"  // em-dash
         case _: "\u{2217}"  // asterisk
         }
-      return .itemize(marker: marker)
+      return .itemize(level: level, marker: marker)
 
     case .enumerate:
       let formats: Array<NSTextList.MarkerFormat> =
         [.decimal, .lowercaseLatin, .lowercaseRoman]
       let format = formats[(level - 1) % 3]
       let textList = NSTextList(markerFormat: format, options: 0)
-      return .enumerate(textList)
+      return .enumerate(level: level, textList: textList)
     }
   }
 }
