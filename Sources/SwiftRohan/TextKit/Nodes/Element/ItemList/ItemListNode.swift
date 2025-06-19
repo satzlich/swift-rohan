@@ -146,4 +146,16 @@ final class ItemListNode: ElementNode {
     precondition(level >= 1)
     return Em(2.5 + 2 * Double(level - 1))
   }
+
+  private struct SnapshotRecord {
+    /// Node id of the child.
+    let nodeId: NodeIdentifier
+    /// Child index in the children array.
+    let index: Int
+
+    init(_ nodeId: NodeIdentifier, _ index: Int) {
+      self.nodeId = nodeId
+      self.index = index
+    }
+  }
 }
