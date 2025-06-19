@@ -84,10 +84,14 @@ final class ItemListNode: ElementNode {
       return .terminal(value: .index(k), target: s)
     }
     else {
-      return .halfway(
-        value: .index(k),
-        // consume the item marker as well.
-        consumed: s + _formattedMarker(forIndex: k, textList).length)
+      // consume the item marker as well.
+      let corrected = s + _formattedMarker(forIndex: k, textList).length
+      if corrected >= layoutOffset {
+        return .terminal(value: .index(k), target: corrected)
+      }
+      else {
+        return .halfway(value: .index(k), consumed: corrected)
+      }
     }
   }
 

@@ -267,8 +267,8 @@ internal class ElementNode: Node {
               return true
             }
             else {
-              assertionFailure("unexpected node type: \(Swift.type(of: child))")
-              return false
+              trace.append(contentsOf: value)
+              return true
             }
           }
 
