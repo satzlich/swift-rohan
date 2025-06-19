@@ -562,12 +562,12 @@ internal class ElementNode: Node {
     var sum = 0
 
     // reconcile content backwards
-    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
-      if insertNewline {
+    for i in (0..<_children.count).reversed() {
+      if _newlines[i] {
         context.insertNewline(self)
         sum += 1
       }
-      sum += node.performLayout(context, fromScratch: true)
+      sum += _children[i].performLayout(context, fromScratch: true)
     }
 
     if isBlockContainer {
@@ -587,42 +587,33 @@ internal class ElementNode: Node {
     assert(_children.isEmpty == false)
 
     var sum = 0
-    var i = _children.count - 1
 
-    while true {
-      if i < 0 { break }
-
-      // skip clean
-      while i >= 0 && !_children[i].isDirty {
+    for i in (0..<_children.count).reversed() {
+      // skip clean.
+      if _children[i].isDirty == false {
         if _newlines[i] {
           context.skipBackwards(1)
           sum += 1
         }
-        do {
-          let length = _children[i].layoutLength()
-          context.skipBackwards(length)
-          sum += length
-        }
-        i -= 1
+        let length = _children[i].layoutLength()
+        context.skipBackwards(length)
+        sum += length
       }
-      assert(i < 0 || _children[i].isDirty)
-
-      // process dirty
-      if i >= 0 {
-        var delta = 0
+      // process dirty.
+      else {
+        var n = 0
         if _newlines[i] {
           context.skipBackwards(1)
-          delta += 1
+          n += 1
         }
         let child = _children[i]
-        delta += child.performLayout(context, fromScratch: false)
-        sum += delta
-        i -= 1
+        n += child.performLayout(context, fromScratch: false)
+        sum += n
 
         // update paragraph style if needed
         if isBlockContainer {
           let begin = context.layoutCursor
-          context.addParagraphStyle(child, begin..<begin + delta)
+          context.addParagraphStyle(child, begin..<begin + n)
         }
       }
     }
