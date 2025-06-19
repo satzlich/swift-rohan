@@ -71,7 +71,7 @@ final class ItemListNode: ElementNode {
     //      goal: find k st. s(k) ≤ layoutOffset < s(k) + ell(k)
     while k < _children.count {
       let ss =
-        s + textList.marker(forIndex: k).length + _children[k].layoutLength()
+        s + _formattedMarker(forIndex: k, textList).length + _children[k].layoutLength()
         + _newlines[k].intValue
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
@@ -489,7 +489,7 @@ final class ItemListNode: ElementNode {
     for i in 0..<_children.count {
       let child = _children[i]
       let end =
-        location + textList.marker(forIndex: i).length + child.layoutLength()
+        location + _formattedMarker(forIndex: i, textList).length + child.layoutLength()
         + _newlines[i].intValue
       // paragraph containers are styled by themselves, so we skip them.
       if child.isBlockContainer == false && predicate(i) {
@@ -511,11 +511,15 @@ final class ItemListNode: ElementNode {
     else {
       assert(isPlaceholderActive == false)
       let range = 0..<index
-      let s0 = range.lazy.map { textList.marker(forIndex: $0).length }.reduce(0, +)
+      let s0 = range.lazy
+        .map { self._formattedMarker(forIndex: $0, textList).length }
+        .reduce(0, +)
       let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
       let sum = s0 + s1 + s2
-      return index < childCount ? sum + textList.marker(forIndex: index).length : sum
+      return index < childCount
+        ? sum + _formattedMarker(forIndex: index, textList).length
+        : sum
     }
   }
 
