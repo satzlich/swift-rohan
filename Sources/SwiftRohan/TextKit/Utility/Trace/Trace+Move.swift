@@ -111,6 +111,12 @@ extension Trace {
         if isTextNode(node.getChild(index)) {
           moveForward()
         }
+        // For a class of block containers, the end position cannot be placed at.
+        else if index + 1 == node.childCount,
+          isItemListNode(node)
+        {
+          moveForward()
+        }
       }
 
     case let mathNode as MathNode:
@@ -315,6 +321,19 @@ extension Trace {
 
     } while NodePolicy.isCursorAllowed(in: node) == false
 
+    if _shouldMoveBackAgain(node, index) { moveBackward() }
+
     return ()
+
+    /// Returns true if given index is unavaiable for cursor, though the node
+    /// allows cursor placement.
+    func _shouldMoveBackAgain(_ node: Node, _ index: RohanIndex) -> Bool {
+      precondition(NodePolicy.isCursorAllowed(in: node))
+
+      guard let itemListNode = node as? ItemListNode,
+        let index = index.index()
+      else { return false }
+      return itemListNode.childCount > 0 && index == itemListNode.childCount
+    }
   }
 }
