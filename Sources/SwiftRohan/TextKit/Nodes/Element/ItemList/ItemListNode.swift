@@ -574,7 +574,9 @@ final class ItemListNode: ElementNode {
   /// level (1-based).
   /// - Note: There is a 0.5em gap between item marker and paragraph beginning.
   internal static func indentation(forLevel level: Int) -> Em {
-    precondition(level >= 1)
-    return Em(2.5 + 2 * Double(level - 1))
+    precondition(level >= 0)
+    return level == 0
+      ? Em.zero
+      : Em(2.5 + 2 * Double(level - 1))
   }
 }
