@@ -22,13 +22,27 @@ final class ItemListNode: ElementNode {
   private final func _getProperties(
     _ styleSheet: StyleSheet, itemize: Void
   ) -> PropertyDictionary {
-    super.getProperties(styleSheet)
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+      let key = ParagraphProperty.listLevel
+      let level = key.resolveValue(current, styleSheet).integer()!
+      current[key] = .integer(level + 1)
+      _cachedProperties = current
+    }
+    return _cachedProperties!
   }
 
   private final func _getProperties(
     _ styleSheet: StyleSheet, enumerate: Void
   ) -> PropertyDictionary {
-    super.getProperties(styleSheet)
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+      let key = ParagraphProperty.listLevel
+      let level = key.resolveValue(current, styleSheet).integer()!
+      current[key] = .integer(level + 1)
+      _cachedProperties = current
+    }
+    return _cachedProperties!
   }
 
   // MARK: - Node(Codable)
@@ -113,7 +127,7 @@ final class ItemListNode: ElementNode {
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
-  private var _textList: Optional<NSTextList> = nil
+  private var _textList: RhTextList?
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
@@ -129,28 +143,6 @@ final class ItemListNode: ElementNode {
     ItemListSubtype.allCases.map { subtype in
       let expr = ItemListExpr(subtype)
       return CommandRecord(subtype.command, CommandBody(expr, 1))
-    }
-  }
-
-  /// Compose item marker for given index, including non-stretchable trailing spaces.
-  /// Item index is 0-based.
-  private func _itemMarker(forIndex index: Int) -> String? {
-    precondition(index >= 0)
-    guard let textList = _textList else { return nil }
-
-    switch subtype {
-    case .itemize:
-      let marker = textList.marker(forItemNumber: index + 1)
-      return marker + "\u{2000}"
-
-    case .enumerate:
-      let marker = textList.marker(forItemNumber: index + 1)
-      let formatted: String =
-        switch textList.markerFormat {
-        case .lowercaseLatin, .uppercaseLatin: "(\(marker))"
-        case _: "\(marker)."
-        }
-      return formatted + "\u{2000}"
     }
   }
 
