@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-final class ParagraphNode: ElementNode {
+final class ParagraphNode: ElementNodeImpl {
   // MARK: - Node
 
   final override public func deepCopy() -> Self { Self(deepCopyOf: self) }

@@ -2,14 +2,7 @@
 
 import AppKit
 
-enum ItemListSubtype: String, Codable, CaseIterable {
-  case itemize
-  case enumerate
-
-  var command: String { rawValue }
-}
-
-final class ItemListNode: ElementNode {
+final class ItemListNode: ElementNodeImpl {
   final override class var type: NodeType { .itemList }
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -45,7 +38,6 @@ final class ItemListNode: ElementNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.subtype = try container.decode(ItemListSubtype.self, forKey: .subtype)
-    self._textList = Self._textList(forSubtype: subtype)
     try super.init(from: decoder)
   }
 
@@ -106,33 +98,64 @@ final class ItemListNode: ElementNode {
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
-  private var _textList: NSTextList
+  private var _textList: Optional<NSTextList> = nil
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
-    self._textList = Self._textList(forSubtype: subtype)
     super.init(children)
   }
 
   private init(deepCopyOf node: ItemListNode) {
     self.subtype = node.subtype
-    self._textList = Self._textList(forSubtype: subtype)
     super.init(deepCopyOf: node)
-  }
-
-  private static func _textList(forSubtype subtype: ItemListSubtype) -> NSTextList {
-    switch subtype {
-    case .itemize:
-      return NSTextList(markerFormat: .disc, options: 0)
-    case .enumerate:
-      return NSTextList(markerFormat: .decimal, startingItemNumber: 1)
-    }
   }
 
   static var commandRecords: Array<CommandRecord> {
     ItemListSubtype.allCases.map { subtype in
       let expr = ItemListExpr(subtype)
       return CommandRecord(subtype.command, CommandBody(expr, 1))
+    }
+  }
+
+  /// Compose item marker for given index, including non-stretchable trailing spaces.
+  /// Item index is 0-based.
+  private func _itemMarker(forIndex index: Int) -> String? {
+    precondition(index >= 0)
+    guard let textList = _textList else { return nil }
+
+    switch subtype {
+    case .itemize:
+      let marker = textList.marker(forItemNumber: index + 1)
+      return marker + "\u{2000}"
+
+    case .enumerate:
+      let marker = textList.marker(forItemNumber: index + 1)
+      let formatted: String =
+        switch textList.markerFormat {
+        case .lowercaseLatin, .uppercaseLatin: "(\(marker))"
+        case _: "\(marker)."
+        }
+      return formatted + "\u{2000}"
+    }
+  }
+
+  /// Distance from text container edge to paragraph beginning for given list
+  /// level (1-based).
+  /// - Note: There is a 0.5em gap between item marker and paragraph beginning.
+  internal static func indentation(forLevel level: Int) -> Em {
+    precondition(level >= 1)
+    return Em(2.5 + 2 * Double(level - 1))
+  }
+
+  private struct SnapshotRecord {
+    /// Node id of the child.
+    let nodeId: NodeIdentifier
+    /// Child index in the children array.
+    let index: Int
+
+    init(_ nodeId: NodeIdentifier, _ index: Int) {
+      self.nodeId = nodeId
+      self.index = index
     }
   }
 }

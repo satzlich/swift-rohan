@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-class ContentNode: ElementNode {
+class ContentNode: ElementNodeImpl {
   // MARK: - Node
 
   required override init() {

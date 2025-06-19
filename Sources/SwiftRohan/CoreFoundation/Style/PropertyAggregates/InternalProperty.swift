@@ -15,9 +15,7 @@ internal struct InternalProperty: PropertyAggregate {
     return InternalProperty(nestedLevel: resolved(nestedLevel).integer()!)
   }
 
-  public static let allKeys: Array<PropertyKey> = [
-    nestedLevel
-  ]
+  public static let allKeys: Array<PropertyKey> = [nestedLevel]
 
   // MARK: - Implementation
 

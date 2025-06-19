@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-final class TextStylesNode: ElementNode {
+final class TextStylesNode: ElementNodeImpl {
   // MARK: - Node
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
