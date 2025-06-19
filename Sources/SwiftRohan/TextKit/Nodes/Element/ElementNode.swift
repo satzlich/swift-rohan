@@ -561,13 +561,10 @@ internal class ElementNode: Node {
 
     var sum = 0
 
-    // reconcile content backwards
+    // insert content backwards
     for i in (0..<_children.count).reversed() {
-      if _newlines[i] {
-        context.insertNewline(self)
-        sum += 1
-      }
-      sum += _children[i].performLayout(context, fromScratch: true)
+      sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
+      sum += NodeReconciler.insert(new: _children[i], context: context)
     }
 
     if isBlockContainer {
@@ -591,23 +588,15 @@ internal class ElementNode: Node {
     for i in (0..<_children.count).reversed() {
       // skip clean.
       if _children[i].isDirty == false {
-        if _newlines[i] {
-          context.skipBackwards(1)
-          sum += 1
-        }
-        let length = _children[i].layoutLength()
-        context.skipBackwards(length)
-        sum += length
+        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
+        sum += NodeReconciler.skip(current: _children[i], context: context)
       }
       // process dirty.
       else {
         var n = 0
-        if _newlines[i] {
-          context.skipBackwards(1)
-          n += 1
-        }
+        n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         let child = _children[i]
-        n += child.performLayout(context, fromScratch: false)
+        n += NodeReconciler.reconcile(dirty: child, context: context)
         sum += n
 
         // update paragraph style if needed
@@ -675,24 +664,6 @@ internal class ElementNode: Node {
         }
     }
 
-    func processNewline(
-      _ original: ExtendedRecord, _ current: ExtendedRecord, _ sum: inout Int
-    ) {
-      precondition(original.nodeId == current.nodeId)
-      switch (original.insertNewline, current.insertNewline) {
-      case (false, false):
-        break  // no-op
-      case (false, true):
-        context.insertNewline(self)
-        sum += 1
-      case (true, false):
-        context.deleteBackwards(1)
-      case (true, true):
-        context.skipBackwards(1)
-        sum += 1
-      }
-    }
-
     // current range that covers deleted nodes which should be vacuumed
     var vacuumRange: Range<Int>?
 
@@ -737,19 +708,17 @@ internal class ElementNode: Node {
         if isBlockContainer { updateVacuumRange() }
 
         while j >= 0 && original[j].mark == .deleted {
-          if original[j].insertNewline { context.deleteBackwards(1) }
-          context.deleteBackwards(original[j].layoutLength)
+          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
+          NodeReconciler.delete(old: original[j].layoutLength, context: context)
           j -= 1
         }
         assert(j < 0 || [.none, .dirty].contains(original[j].mark))
       }
 
       while i >= 0 && current[i].mark == .added {
-        if current[i].insertNewline {
-          context.insertNewline(self)
-          sum += 1
-        }
-        sum += _children[i].performLayout(context, fromScratch: true)
+        let newline = current[i].insertNewline
+        sum += NewlineReconciler.insert(new: newline, context: context, self)
+        sum += NodeReconciler.insert(new: _children[i], context: context)
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
@@ -759,9 +728,11 @@ internal class ElementNode: Node {
         j >= 0 && original[j].mark == .none
       {
         assert(current[i].nodeId == original[j].nodeId)
-        processNewline(original[j], current[i], &sum)
-        context.skipBackwards(current[i].layoutLength)
-        sum += current[i].layoutLength
+
+        let newlines = (original[j].insertNewline, current[i].insertNewline)
+        sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+        sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
+
         i -= 1
         j -= 1
       }
@@ -776,8 +747,10 @@ internal class ElementNode: Node {
       if i >= 0 {
         assert(j >= 0 && current[i].nodeId == original[j].nodeId)
         assert(current[i].mark == .dirty && original[j].mark == .dirty)
-        processNewline(original[j], current[i], &sum)
-        sum += _children[i].performLayout(context, fromScratch: false)
+
+        let newlines = (original[j].insertNewline, current[i].insertNewline)
+        sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         i -= 1
         j -= 1
       }

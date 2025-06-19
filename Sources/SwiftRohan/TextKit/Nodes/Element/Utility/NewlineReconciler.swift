@@ -12,13 +12,13 @@ enum NewlineReconciler {
     }
   }
 
+  /// Insert newline according to the state of `new`.
+  /// - Parameters:
+  ///   - container: the node containing the `new` variable.
   @inline(__always)
-  static func insert<C: LayoutContext>(new: Bool, context: (layout: C, node: Node)) -> Int
-  {
-    let (layoutContext, contextNode) = context
-
+  static func insert<C: LayoutContext>(new: Bool, context: C, _ container: Node) -> Int {
     if new {
-      layoutContext.insertNewline(contextNode)
+      context.insertNewline(container)
       return 1
     }
     else {
@@ -26,22 +26,24 @@ enum NewlineReconciler {
     }
   }
 
+  /// Reconcile newline according to the state change described by `dirty`.
+  /// - Parameters:
+  ///   - container: the node containing the `old` and `new` variables.
   @inline(__always)
   static func reconcile<C: LayoutContext>(
-    dirty: (old: Bool, new: Bool), context: (layout: C, node: Node)
+    dirty: (old: Bool, new: Bool), context: C, _ container: Node
   ) -> Int {
-    let (layoutContext, contextNode) = context
     switch dirty {
     case (false, false):
       return 0
     case (false, true):
-      layoutContext.insertNewline(contextNode)
+      context.insertNewline(container)
       return 1
     case (true, false):
-      layoutContext.deleteBackwards(1)
+      context.deleteBackwards(1)
       return 0
     case (true, true):
-      layoutContext.skipBackwards(1)
+      context.skipBackwards(1)
       return 1
     }
   }

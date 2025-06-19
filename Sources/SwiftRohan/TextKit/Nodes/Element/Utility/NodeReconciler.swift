@@ -9,6 +9,12 @@ enum NodeReconciler {
   }
 
   @inline(__always)
+  static func skip<C: LayoutContext>(current: Int, context: C) -> Int {
+    context.skipBackwards(current)
+    return current
+  }
+
+  @inline(__always)
   static func insert<C: LayoutContext>(new: Node, context: C) -> Int {
     new.performLayout(context, fromScratch: true)
   }
