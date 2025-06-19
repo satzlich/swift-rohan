@@ -1064,14 +1064,14 @@ public final class DocumentManager {
             return nil
           }
           else if offset < node.childCount {
-            let node = node.getChild(offset)
-            if let textNode = node as? TextNode {
+            let child = node.getChild(offset)
+            if let textNode = child as? TextNode {
               trace.emplaceBack(textNode, .index(0))
               continue
             }
             else {
               trace.moveTo(.index(offset + 1))
-              return .nonTextNode(node, trace.toRawLocation()!)
+              return .nonTextNode(child, trace.toRawLocation()!)
             }
           }
           else {
@@ -1115,17 +1115,21 @@ public final class DocumentManager {
       case let node as GenElementNode:
         assert(isElementNode(node) || isArgumentNode(node))
         if offset > 0 {
-          let node = node.getChild(offset - 1)
-          if let textNode = node as? TextNode {
+          let child = node.getChild(offset - 1)
+          if let textNode = child as? TextNode {
             trace.emplaceBack(textNode, .index(textNode.length))
             continue
           }
+          else if child.isBlock {
+            return .blockBoundary
+          }
           else {
             trace.moveTo(.index(offset - 1))
-            return .nonTextNode(node, trace.toRawLocation()!)
+            return .nonTextNode(child, trace.toRawLocation()!)
           }
         }
         else {
+          // for offset == 0 and node is block, blockBoundary is a safe default.
           if node.isBlock {
             return .blockBoundary
           }

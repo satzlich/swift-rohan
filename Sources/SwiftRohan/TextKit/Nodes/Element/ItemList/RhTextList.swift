@@ -7,7 +7,7 @@ enum RhTextList {
   case itemize(marker: String)
   case enumerate(NSTextList)
 
-  func marker(forItemNumber itemNumber: Int) -> String {
+  private func _marker(forItemNumber itemNumber: Int) -> String {
     switch self {
     case let .itemize(marker):
       return marker
@@ -24,6 +24,6 @@ enum RhTextList {
   }
 
   func marker(forIndex index: Int) -> String {
-    marker(forItemNumber: index + 1)
+    _marker(forItemNumber: index + 1)
   }
 }
