@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-final class HeadingNode: ElementNode {
+final class HeadingNode: ElementNodeImpl {
   // MARK: - Node
   final override class var type: NodeType { .heading }
 

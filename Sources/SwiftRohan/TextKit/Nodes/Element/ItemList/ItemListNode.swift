@@ -2,7 +2,7 @@
 
 import AppKit
 
-final class ItemListNode: ElementNode {
+final class ItemListNode: ElementNodeImpl {
   final override class var type: NodeType { .itemList }
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
