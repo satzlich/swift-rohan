@@ -33,7 +33,7 @@ internal class ElementNode: Node {
 
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
-    return getLayoutOffset(index)
+    return _getLayoutOffset(index)
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
@@ -158,7 +158,7 @@ internal class ElementNode: Node {
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
       guard index < self.childCount,
-        let offset = getLayoutOffset(index)
+        let offset = _getLayoutOffset(index)
       else { assertionFailure("Invalid path"); return false }
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context: context,
@@ -364,7 +364,7 @@ internal class ElementNode: Node {
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard let index = path.first?.index(),
-      let localOffset = getLayoutOffset(index)
+      let localOffset = _getLayoutOffset(index)
     else { return nil }
 
     if path.count == 1 {
@@ -831,7 +831,7 @@ internal class ElementNode: Node {
     }
   }
 
-  private final func getLayoutOffset(_ index: Int) -> Int? {
+  private final func _getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
 
