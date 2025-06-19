@@ -55,8 +55,6 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func addParagraphStyle(_ source: Node, _ range: Range<Int>) { /* no-op */  }
-
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 

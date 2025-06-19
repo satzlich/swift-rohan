@@ -53,11 +53,6 @@ internal class CTLineLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
-    precondition(isEditing)
-    // no-op as we don't have paragraph style
-  }
-
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
     layoutCursor -= n

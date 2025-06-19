@@ -99,3 +99,10 @@ protocol LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame?
 }
+
+extension LayoutContext {
+  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
+    precondition(isEditing)
+    // defeault implementation does nothing.
+  }
+}
