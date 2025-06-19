@@ -235,7 +235,9 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit<T: GenNode, S: Collection<T>>(
     itemList: ItemListNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> {
-    preconditionFailure("TODO: implement item list export")
+    precondition(context == .textMode)
+    // TODO: improve the export format.
+    return _visitChildren(children, context)
   }
 
   override func visit(

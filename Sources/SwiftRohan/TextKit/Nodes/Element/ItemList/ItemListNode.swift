@@ -59,10 +59,12 @@ final class ItemListNode: ElementNode {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
 
-    if _children.isEmpty {
-      return .terminal(value: .index(0), target: 0)
-    }
     assert(isPlaceholderActive == false)
+
+    if _children.isEmpty {
+      let target = textList.marker(forIndex: 0).length
+      return .terminal(value: .index(0), target: target)
+    }
 
     var (k, s) = (0, 0)
     /// determine the child whose node content
@@ -215,19 +217,15 @@ final class ItemListNode: ElementNode {
     precondition(_children.count == _newlines.count)
 
     self._setupTextList(context.styleSheet)
+    assert(_textList != nil)
+    let textList = _textList!
 
     if _children.isEmpty {
-      if self.isPlaceholderActive {
-        context.insertText("⬚", self)
-        return 1
-      }
-      return 0
+      let marker = _formattedMarker(forIndex: 0, textList)
+      return StringReconciler.insert(new: marker, context: context, self)
     }
 
     assert(_children.isEmpty == false)
-    assert(_textList != nil)
-
-    let textList = _textList!
 
     var sum = 0
     // insert content backwards
@@ -290,66 +288,63 @@ final class ItemListNode: ElementNode {
     return sum
   }
 
+  @inline(__always)
+  private final func _computeExtendedRecords() -> (
+    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
+  ) {
+    // ID's of current children
+    let currentIds = Set(_children.map(\.id))
+    // ID's of the dirty part of current children
+    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
+    // ID's of original children
+    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
+
+    let current =
+      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+        let mark: LayoutMark =
+          !originalIds.contains(node.id)
+          ? .added
+          : (node.isDirty ? .dirty : .none)
+        return ExtendedRecord(mark, node, insertNewline)
+      }
+
+    let original =
+      _snapshotRecords!.map { record in
+        !currentIds.contains(record.nodeId)
+          ? ExtendedRecord(.deleted, record)
+          : dirtyIds.contains(record.nodeId)
+            ? ExtendedRecord(.dirty, record)
+            : ExtendedRecord(.none, record)
+      }
+    return (current, original)
+  }
+
   /// Perform layout for fromScratch=false when snapshot has been made.
   @inline(__always)
   private final func _performLayoutFull(
     _ context: LayoutContext, isBlockContainer: Bool
   ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
+    assert(_textList != nil)
+    let textList = _textList!
 
     if _children.isEmpty {
       // remove previous layout
       context.deleteBackwards(_layoutLength)
-      // insert placeholder if needed
-      if self.isPlaceholderActive {
-        context.insertText("⬚", self)
-        return 1
-      }
-      return 0
+      let marker = _formattedMarker(forIndex: 0, textList)
+      return StringReconciler.insert(new: marker, context: context, self)
     }
-
     assert(_children.isEmpty == false)
-    assert(_textList != nil)
 
-    let textList = _textList!
+    let (current, original) = _computeExtendedRecords()
+    if original.isEmpty {
+      // remove previous layout
+      context.deleteBackwards(_layoutLength)
+    }
 
     var sum = 0
-
-    // records of current children
-    let current: Array<ExtendedRecord>
-    // records of original children
-    let original: Array<ExtendedRecord>
-
-    do {
-      // ID's of current children
-      let currentIds = Set(_children.map(\.id))
-      // ID's of the dirty part of current children
-      let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-      // ID's of original children
-      let originalIds = Set(_snapshotRecords!.map(\.nodeId))
-
-      current =
-        zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
-          let mark: LayoutMark =
-            !originalIds.contains(node.id)
-            ? .added
-            : (node.isDirty ? .dirty : .none)
-          return ExtendedRecord(mark, node, insertNewline)
-        }
-
-      original =
-        _snapshotRecords!.map { record in
-          !currentIds.contains(record.nodeId)
-            ? ExtendedRecord(.deleted, record)
-            : dirtyIds.contains(record.nodeId)
-              ? ExtendedRecord(.dirty, record)
-              : ExtendedRecord(.none, record)
-        }
-    }
-
-    // current range that covers deleted nodes which should be vacuumed
+    // current range that covers deleted nodes which should be vacuumed.
     var vacuumRange: Range<Int>?
-
     var i = current.count - 1
     var j = original.count - 1
 
@@ -509,8 +504,7 @@ final class ItemListNode: ElementNode {
     else { return nil }
 
     if _children.isEmpty {
-      // "0" whether placeholder is active or not.
-      return 0
+      return _formattedMarker(forIndex: 0, textList).length
     }
     else {
       assert(isPlaceholderActive == false)
