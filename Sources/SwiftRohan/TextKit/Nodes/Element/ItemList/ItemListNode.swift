@@ -230,7 +230,7 @@ final class ItemListNode: ElementNode {
     for i in (0..<_children.count).reversed() {
       sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
       sum += NodeReconciler.insert(new: _children[i], context: context)
-      let marker = textList.marker(forIndex: i)
+      let marker = _formattedMarker(forIndex: i, textList)
       sum += StringReconciler.insert(new: marker, context: context, self)
     }
 
@@ -261,7 +261,7 @@ final class ItemListNode: ElementNode {
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
 
-        let marker = textList.marker(forIndex: i)
+        let marker = _formattedMarker(forIndex: i, textList)
         sum += StringReconciler.skip(current: marker, context: context)
       }
       // process dirty.
@@ -270,7 +270,7 @@ final class ItemListNode: ElementNode {
         n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         let child = _children[i]
         n += NodeReconciler.reconcile(dirty: child, context: context)
-        let marker = textList.marker(forIndex: i)
+        let marker = _formattedMarker(forIndex: i, textList)
         n += StringReconciler.skip(current: marker, context: context)
 
         sum += n
@@ -389,7 +389,8 @@ final class ItemListNode: ElementNode {
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          StringReconciler.delete(old: textList.marker(forIndex: j), context: context)
+          let marker = _formattedMarker(forIndex: j, textList)
+          StringReconciler.delete(old: marker, context: context)
           j -= 1
         }
         assert(j < 0 || [.none, .dirty].contains(original[j].mark))
@@ -401,7 +402,7 @@ final class ItemListNode: ElementNode {
         //
         sum += NodeReconciler.insert(new: _children[i], context: context)
         //
-        let marker = textList.marker(forIndex: i)
+        let marker = _formattedMarker(forIndex: i, textList)
         sum += StringReconciler.insert(new: marker, context: context, self)
         i -= 1
       }
@@ -418,7 +419,9 @@ final class ItemListNode: ElementNode {
         //
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
         //
-        let markers = (textList.marker(forIndex: j), textList.marker(forIndex: i))
+        let oldMarker = _formattedMarker(forIndex: j, textList)
+        let newMarker = _formattedMarker(forIndex: i, textList)
+        let markers = (oldMarker, newMarker)
         sum += StringReconciler.reconcile(dirty: markers, context: context, self)
 
         i -= 1
@@ -441,7 +444,9 @@ final class ItemListNode: ElementNode {
         //
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         //
-        let markers = (textList.marker(forIndex: j), textList.marker(forIndex: i))
+        let oldMarker = _formattedMarker(forIndex: j, textList)
+        let newMarker = _formattedMarker(forIndex: i, textList)
+        let markers = (oldMarker, newMarker)
         sum += StringReconciler.reconcile(dirty: markers, context: context, self)
 
         i -= 1
@@ -529,6 +534,14 @@ final class ItemListNode: ElementNode {
     super.init(deepCopyOf: node)
   }
 
+  /// Compute list level of this list node.
+  private func _getListLevel(_ styleSheet: StyleSheet) -> Int {
+    let key = ParagraphProperty.listLevel
+    let properties = self.getProperties(styleSheet)
+    return key.resolveValue(properties, styleSheet).integer()!
+  }
+
+  /// Set up `self._textList`.
   private func _setupTextList(_ styleSheet: StyleSheet) -> RhTextList {
     let listLevel = self._getListLevel(styleSheet)
     let textList = self.subtype.textList(forLevel: listLevel)
@@ -536,10 +549,8 @@ final class ItemListNode: ElementNode {
     return textList
   }
 
-  private func _getListLevel(_ styleSheet: StyleSheet) -> Int {
-    let key = ParagraphProperty.listLevel
-    let properties = self.getProperties(styleSheet)
-    return key.resolveValue(properties, styleSheet).integer()!
+  private func _formattedMarker(forIndex index: Int, _ textList: RhTextList) -> String {
+    textList.marker(forIndex: index) + "\u{2000}"
   }
 
   static var commandRecords: Array<CommandRecord> {
