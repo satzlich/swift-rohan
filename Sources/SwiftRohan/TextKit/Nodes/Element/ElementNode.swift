@@ -47,6 +47,7 @@ internal class ElementNode: Node {
   // MARK: - Node(Layout)
 
   final override func contentDidChange() {
+    guard _isDirty == false else { return }
     _isDirty = true
     parent?.contentDidChange()
   }
