@@ -19,6 +19,16 @@ final class MultilineNode: ArrayNode {
     MultilineNode.selector(isMultline: _isMultline())
   }
 
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var current = super.getProperties(styleSheet)
+      current[ParagraphProperty.textAlignment] =
+        self._isMultline() ? .textAlignment(.right) : .textAlignment(.center)
+      _cachedProperties = current
+    }
+    return _cachedProperties!
+  }
+
   // MARK: - Node(Layout)
 
   final override var isBlock: Bool { true }

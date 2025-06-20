@@ -14,16 +14,6 @@ enum RhTextList {
     }
   }
 
-  var nsTextList: NSTextList {
-    switch self {
-    case .itemize(_, let marker):
-      return NSTextList(markerFormat: .disc, options: 0)
-
-    case .enumerate(_, let textList):
-      return textList
-    }
-  }
-
   private func _marker(forItemNumber itemNumber: Int) -> String {
     switch self {
     case let .itemize(_, marker):

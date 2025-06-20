@@ -47,5 +47,13 @@
 <ul>
 <li>Select any options of the <code>Theme</code> menu to refresh the layout.</li>
 </ul>
+<h2 id="itemize-and-enumerate-lists"><code>{itemize}</code> and <code>{enumerate}</code> Lists</h2>
+<p>The layout of lists using <code>{itemize}</code> and <code>{enumerate}</code> are not yet fully supported. This means that:</p>
+<ul>
+<li>The indentation of second and subsequent lines in a list item doesn’t match the first line.</li>
+<li>The numbering of list items may not align correctly.</li>
+</ul>
+<p>Current situation is due to the limitations of the underlying layout engine, which is able to present the desired layout from scratch but cannot maintain the appearance consistently when the document is edited or reformatted. So we fallback to a simpler layout that does not preserve the intended formatting.</p>
+<p>We are aware of this limitation and are working on a solution to ensure proper list formatting in future releases.</p>
 </body>
 </html>
