@@ -138,16 +138,15 @@ internal class ElementNodeImpl: ElementNode {
     var sum = 0
     var forceParagraphStyle = false
     for i in (0..<_children.count).reversed() {
-      let child = _children[i]
       // skip clean.
-      if child.isDirty == false {
+      if _children[i].isDirty == false {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.skip(current: child, context: context)
+        sum += NodeReconciler.skip(current: _children[i], context: context)
         if isBlockContainer && forceParagraphStyle {
           let begin = context.layoutCursor
           let n = sum - sum0
-          context.addParagraphStyle(child, begin..<begin + n)
+          context.addParagraphStyle(_children[i], begin..<begin + n)
           forceParagraphStyle = false
         }
       }
@@ -155,12 +154,12 @@ internal class ElementNodeImpl: ElementNode {
       else {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.reconcile(dirty: child, context: context)
+        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         // update paragraph style if needed
         if isBlockContainer {
           let begin = context.layoutCursor
           let n = sum - sum0
-          context.addParagraphStyle(child, begin..<begin + n)
+          context.addParagraphStyle(_children[i], begin..<begin + n)
           forceParagraphStyle = true
         }
       }

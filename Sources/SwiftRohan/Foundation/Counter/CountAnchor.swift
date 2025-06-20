@@ -10,10 +10,10 @@ final class CountAnchor {
   /// The next anchor in the linked list.
   private(set) var next: CountAnchor?
 
-  /// The previous active anchor.
-  private(set) weak var previousActive: CountAnchor?
-  /// The next active anchor.
-  private(set) var nextActive: CountAnchor?
+  /// The previous proxy.
+  private(set) weak var previousProxy: CountAnchor?
+  /// The next proxy.
+  private(set) var nextProxy: CountAnchor?
 
   init() {
     preconditionFailure()
