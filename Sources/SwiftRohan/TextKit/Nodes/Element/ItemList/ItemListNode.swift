@@ -250,14 +250,23 @@ final class ItemListNode: ElementNode {
     let paragraphStyle = _bakeParagraphStyle(context.styleSheet)
 
     var sum = 0
+    var forceParagraphStyle = false
     for i in (0..<_children.count).reversed() {
       // skip clean.
       if _children[i].isDirty == false {
+        let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
 
         let marker = _formattedMarker(forIndex: i, textList)
         sum += StringReconciler.skip(current: marker, context: context)
+
+        if forceParagraphStyle {
+          let n = sum - sum0
+          let begin = context.layoutCursor
+          context.addParagraphStyle(paragraphStyle, begin..<begin + n)
+          forceParagraphStyle = false
+        }
       }
       // process dirty.
       else {
@@ -271,6 +280,7 @@ final class ItemListNode: ElementNode {
           let n = sum - sum0
           let begin = context.layoutCursor
           context.addParagraphStyle(paragraphStyle, begin..<begin + n)
+          forceParagraphStyle = true
         }
       }
     }
