@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 final class CountAnchor {
-  let name: CounterName
+  internal let name: CounterName
   private(set) var value: Int
   private(set) var isActive: Bool
 
@@ -16,6 +16,12 @@ final class CountAnchor {
   private(set) var nextActive: CountAnchor?
 
   init() {
+    preconditionFailure()
+  }
+
+  // MARK: - Query
+
+  internal func value(forName name: CounterName) -> Int {
     preconditionFailure()
   }
 }

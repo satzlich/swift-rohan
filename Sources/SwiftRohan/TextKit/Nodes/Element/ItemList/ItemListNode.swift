@@ -252,11 +252,12 @@ final class ItemListNode: ElementNode {
     var sum = 0
     var forceParagraphStyle = false
     for i in (0..<_children.count).reversed() {
+      let child = _children[i]
       // skip clean.
-      if _children[i].isDirty == false {
+      if child.isDirty == false {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.skip(current: _children[i], context: context)
+        sum += NodeReconciler.skip(current: child, context: context)
 
         let marker = _formattedMarker(forIndex: i, textList)
         sum += StringReconciler.skip(current: marker, context: context)
@@ -272,7 +273,7 @@ final class ItemListNode: ElementNode {
       else {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+        sum += NodeReconciler.reconcile(dirty: child, context: context)
         let marker = _formattedMarker(forIndex: i, textList)
         sum += StringReconciler.skip(current: marker, context: context)
 
