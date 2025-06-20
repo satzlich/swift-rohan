@@ -16,7 +16,7 @@ class ArrayNode: Node {
     }
   }
 
-  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  internal override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
 

@@ -126,13 +126,6 @@ public enum StyleSheets {
       EquationNode.selector(isBlock: true): [
         ParagraphProperty.textAlignment: .textAlignment(.center)
       ],
-      // multiline
-      MultilineNode.selector(isMultline: true): [
-        ParagraphProperty.textAlignment: .textAlignment(.right)
-      ],
-      MultilineNode.selector(isMultline: false): [
-        ParagraphProperty.textAlignment: .textAlignment(.center)
-      ],
     ]
 
     return styleRules
