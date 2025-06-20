@@ -215,9 +215,8 @@ final class ItemListNode: ElementNode {
   private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
-    self._setupTextList(context.styleSheet)
+    let textList = self._setupTextList(context.styleSheet)
     assert(_textList != nil)
-    let textList = _textList!
 
     if _children.isEmpty {
       let marker = _formattedMarker(forIndex: 0, textList)

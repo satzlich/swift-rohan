@@ -30,6 +30,7 @@ struct ElementNodeTests {
       //
       HeadingNode(level: 1, [TextNode("abc")]),
       ItemListNode(.enumerate, [TextNode("abc")]),
+      ItemListNode(.itemize, [TextNode("abc")]),
       ParagraphNode([TextNode("abc")]),
       TextStylesNode(.emph, [TextNode("abc")]),
       TextStylesNode(.textbf, [TextNode("abc")]),
