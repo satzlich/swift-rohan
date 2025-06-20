@@ -178,8 +178,9 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> {
     let goodChildren = children.map { $0.accept(self, context) }
       .compactMap { $0.success() }
-    guard goodChildren.count == children.count
-    else { return .failure(SatzError(.ExportLatexFailure)) }
+    guard goodChildren.count == children.count else {
+      return .failure(SatzError(.ExportLatexFailure))
+    }
     let stream = goodChildren.flatMap(\.stream)
     return .success(StreamSyntax(stream))
   }
@@ -236,8 +237,28 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     itemList: ItemListNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .textMode)
-    // TODO: improve the export format.
-    return _visitChildren(children, context)
+    guard let envName = NameToken(itemList.subtype.command) else {
+      return .failure(SatzError(.ExportLatexFailure))
+    }
+    let itemCommand = ControlWordSyntax(command: ControlWordToken.item)
+
+    var streamlets: Array<StreamletSyntax> = []
+    for (i, child) in children.enumerated() {
+      guard let childSyntax = child.accept(self, context).success() else {
+        return .failure(SatzError(.ExportLatexFailure))
+      }
+      // prepend with `\item`.
+      streamlets.append(.controlWord(itemCommand))
+      streamlets.append(contentsOf: childSyntax.stream)
+      // append with a newline.
+      if i < children.count - 1 {
+        streamlets.append(.newline(NewlineSyntax("\n")))
+      }
+    }
+
+    let streamSyntax: StreamSyntax = StreamSyntax(streamlets)
+    let envSyntax = EnvironmentSyntax(name: envName, wrapped: streamSyntax)
+    return .success(StreamSyntax([.environment(envSyntax)]))
   }
 
   override func visit(
@@ -388,8 +409,9 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     precondition(context == .mathMode)
 
     let envName = node.subtype.command
-    guard let name = NameToken(envName)
-    else { return .failure(SatzError(.ExportLatexFailure)) }
+    guard let name = NameToken(envName) else {
+      return .failure(SatzError(.ExportLatexFailure))
+    }
 
     var resultRows: Array<ArraySyntax.Row> = []
     resultRows.reserveCapacity(node.rowCount)
