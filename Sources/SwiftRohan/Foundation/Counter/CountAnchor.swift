@@ -10,10 +10,10 @@ final class CountAnchor {
   /// The next anchor in the linked list.
   private(set) var next: CountAnchor?
 
-  /// The previous proxy.
-  private(set) weak var previousProxy: CountAnchor?
-  /// The next proxy.
-  private(set) var nextProxy: CountAnchor?
+  /// The previous active anchor.
+  private(set) weak var previousActive: CountAnchor?
+  /// The next active anchor.
+  private(set) var nextActive: CountAnchor?
 
   init() {
     preconditionFailure()
@@ -23,5 +23,17 @@ final class CountAnchor {
 
   internal func value(forName name: CounterName) -> Int {
     preconditionFailure()
+  }
+
+  static func insert(_ anchor: CountAnchor, after previous: CountAnchor) {
+    precondition(anchor.previous == nil && anchor.next == nil)
+  }
+
+  static func insert(_ anchor: CountAnchor, before next: CountAnchor) {
+    precondition(anchor.previous == nil && anchor.next == nil)
+  }
+
+  static func remove(_ anchor: CountAnchor) {
+    precondition(anchor.previous != nil || anchor.next != nil)
   }
 }
