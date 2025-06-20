@@ -6,7 +6,12 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
   // MARK: - PropertyAggregate
 
   public func getAttributes() -> Dictionary<NSAttributedString.Key, Any> {
-    Self._attributesCache.getOrCreate(self, self._createAttributes)
+    let paragraphStyle = self.getParagraphStyle()
+    return [.paragraphStyle: paragraphStyle]
+  }
+
+  internal func getParagraphStyle() -> NSParagraphStyle {
+    Self._cache.getOrCreate(self, self._createParagraphStyle)
   }
 
   public static func resolveAggregate(
@@ -34,17 +39,16 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
   internal let paragraphSpacing: CGFloat
   internal let textAlignment: NSTextAlignment
 
-  private typealias _AttributesCache =
-    ConcurrentCache<ParagraphProperty, Dictionary<NSAttributedString.Key, Any>>
+  private typealias _Cache = ConcurrentCache<ParagraphProperty, NSMutableParagraphStyle>
 
-  nonisolated(unsafe) private static let _attributesCache = _AttributesCache()
+  nonisolated(unsafe) private static let _cache = _Cache()
 
-  private func _createAttributes() -> Dictionary<NSAttributedString.Key, Any> {
+  private func _createParagraphStyle() -> NSMutableParagraphStyle {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = textAlignment
     paragraphStyle.paragraphSpacing = paragraphSpacing
     paragraphStyle.hyphenationFactor = 0.9
-    return [.paragraphStyle: paragraphStyle]
+    return paragraphStyle
   }
 
   // MARK: - Key

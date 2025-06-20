@@ -20,7 +20,7 @@ public struct _EnvironmentSyntax<T: SyntaxProtocol>: SyntaxProtocol {
   }
 
   public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
-    var tokens: [any TokenProtocol] = []
+    var tokens: Array<any TokenProtocol> = []
 
     tokens.append(contentsOf: beginClause.deparse(context))
     tokens.append(NewlineToken())

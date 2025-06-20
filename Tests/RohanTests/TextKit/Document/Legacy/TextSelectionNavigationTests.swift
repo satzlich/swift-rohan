@@ -97,7 +97,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       for (i, location) in locations.enumerated() {
         // print("\"\(location.description)\",")
         #expect(location.value.description == expected[i], "i=\(i)")
-        if [1, 6, 18].contains(i) {  // paragraph beginning.
+        if [1, 6, 16, 18, 31].contains(i) {  // paragraph beginning.
           #expect(location.affinity == .downstream, "i=\(i)")
         }
         else {
@@ -489,9 +489,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode("The quick "),
-        TextStylesNode(.emph, [
-          TextNode("brown fox jumps over ")
-        ]),
+        TextStylesNode(
+          .emph,
+          [
+            TextNode("brown fox jumps over ")
+          ]),
         TextNode("the lazy dog."),
       ]),
     ])
@@ -585,9 +587,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode("The quick "),
-        TextStylesNode(.emph, [
-          TextNode("brown fox jumps over ")
-        ]),
+        TextStylesNode(
+          .emph,
+          [
+            TextNode("brown fox jumps over ")
+          ]),
         TextNode("the lazy dog."),
       ]),
     ])

@@ -4,6 +4,9 @@
 internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Positioning)
 
+  final override func firstIndex() -> RohanIndex? { .index(0) }
+  final override func lastIndex() -> RohanIndex? { .index(_children.count) }
+
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
@@ -47,7 +50,6 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Layout Impl.
 
-  /// lossy snapshot of original children
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   final override func snapshotDescription() -> Array<String>? {
@@ -58,7 +60,7 @@ internal class ElementNodeImpl: ElementNode {
   }
 
   /// Make snapshot once if not already made
-  /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
+  /// - Invariant: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
   final override func makeSnapshotOnce() {
     guard _snapshotRecords == nil else { return }
     assert(_children.count == _newlines.count)
@@ -160,6 +162,37 @@ internal class ElementNodeImpl: ElementNode {
     return sum
   }
 
+  @inline(__always)
+  private final func _computeExtendedRecords() -> (
+    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
+  ) {
+    // ID's of current children
+    let currentIds = Set(_children.map(\.id))
+    // ID's of the dirty part of current children
+    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
+    // ID's of original children
+    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
+
+    let current =
+      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+        let mark: LayoutMark =
+          !originalIds.contains(node.id)
+          ? .added
+          : (node.isDirty ? .dirty : .none)
+        return ExtendedRecord(mark, node, insertNewline)
+      }
+
+    let original =
+      _snapshotRecords!.map { record in
+        !currentIds.contains(record.nodeId)
+          ? ExtendedRecord(.deleted, record)
+          : dirtyIds.contains(record.nodeId)
+            ? ExtendedRecord(.dirty, record)
+            : ExtendedRecord(.none, record)
+      }
+    return (current, original)
+  }
+
   /// Perform layout for fromScratch=false when snapshot has been made.
   @inline(__always)
   private final func _performLayoutFull(
@@ -180,45 +213,14 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
+    let (current, original) = _computeExtendedRecords()
+
     var sum = 0
-
-    // records of current children
-    let current: Array<ExtendedRecord>
-    // records of original children
-    let original: Array<ExtendedRecord>
-
-    do {
-      // ID's of current children
-      let currentIds = Set(_children.map(\.id))
-      // ID's of the dirty part of current children
-      let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-      // ID's of original children
-      let originalIds = Set(_snapshotRecords!.map(\.nodeId))
-
-      current =
-        zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
-          let mark: LayoutMark =
-            !originalIds.contains(node.id)
-            ? .added
-            : (node.isDirty ? .dirty : .none)
-          return ExtendedRecord(mark, node, insertNewline)
-        }
-
-      original =
-        _snapshotRecords!.map { record in
-          !currentIds.contains(record.nodeId)
-            ? ExtendedRecord(.deleted, record)
-            : dirtyIds.contains(record.nodeId)
-              ? ExtendedRecord(.dirty, record)
-              : ExtendedRecord(.none, record)
-        }
-    }
+    var i = current.count - 1
+    var j = original.count - 1
 
     // current range that covers deleted nodes which should be vacuumed
     var vacuumRange: Range<Int>?
-
-    var i = current.count - 1
-    var j = original.count - 1
 
     func updateVacuumRange() {
       precondition(isBlockContainer)
@@ -363,7 +365,7 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Facilities for Layout
 
-  private struct SnapshotRecord: CustomStringConvertible {
+  internal struct SnapshotRecord: CustomStringConvertible {
     let nodeId: NodeIdentifier
     let insertNewline: Bool
     let layoutLength: Int
@@ -390,9 +392,7 @@ internal class ElementNodeImpl: ElementNode {
     }
   }
 
-  private enum LayoutMark { case none; case dirty; case deleted; case added }
-
-  private struct ExtendedRecord {
+  internal struct ExtendedRecord {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
     let insertNewline: Bool

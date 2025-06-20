@@ -49,6 +49,17 @@ final class TextLayoutContext: LayoutContext {
     let properties: ParagraphProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
     let nsRange = NSRange(range)
+    textStorage.removeAttribute(.paragraphStyle, range: nsRange)
+    textStorage.addAttributes(attributes, range: nsRange)
+  }
+
+  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>) {
+    precondition(isEditing)
+    let attributes: Dictionary<NSAttributedString.Key, Any> = [
+      .paragraphStyle: paragraphStyle
+    ]
+    let nsRange = NSRange(range)
+    textStorage.removeAttribute(.paragraphStyle, range: nsRange)
     textStorage.addAttributes(attributes, range: nsRange)
   }
 

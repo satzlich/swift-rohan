@@ -71,7 +71,6 @@ enum NodePolicy {
     [
       NodeType.content,
       .heading,
-      .itemList,
       .textStyles,
       .variable,
     ]
@@ -120,7 +119,6 @@ enum NodePolicy {
       .argument,
       .content,  // this covers most math node
       .heading,
-      .itemList,
       .textStyles,
     ].contains(nodeType)
   }
@@ -133,7 +131,6 @@ enum NodePolicy {
       .apply,  // proxy for `.argument`
       .content,  // this covers most math node
       .heading,
-      .itemList,
       .textStyles,
     ].contains(nodeType)
   }

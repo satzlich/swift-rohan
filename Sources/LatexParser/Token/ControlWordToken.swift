@@ -32,6 +32,7 @@ extension ControlWordToken {
   public static let nolimits = ControlWordToken("\\nolimits")!
   public static let backslash = ControlWordToken("\\backslash")!
   public static let textbackslash = ControlWordToken("\\textbackslash")!
+  public static let item = ControlWordToken("\\item")!
 }
 
 extension ControlWordToken {
