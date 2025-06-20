@@ -16,6 +16,7 @@ final class AttachNode: MathNode {
   final override class var type: NodeType { .attach }
 
   final override func contentDidChange() {
+    guard _isDirty == false else { return }
     _isDirty = true
     super.contentDidChange()
   }

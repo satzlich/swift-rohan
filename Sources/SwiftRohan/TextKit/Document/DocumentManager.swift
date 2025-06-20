@@ -714,15 +714,12 @@ public final class DocumentManager {
         if position.y < 0 {
           return AffineLocation(documentRange.location, .downstream)
         }
-        else if position.y > usageBoundsForTextContainer.height {
-          return AffineLocation(documentRange.endLocation, .downstream)
-        }
         else {
           return resolveTextLocation(with: position)
         }
       }
       else {
-        if position.y < 0 || position.y > usageBoundsForTextContainer.height {
+        if position.y < 0 {
           return location  // unchanged
         }
         else {
