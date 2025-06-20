@@ -148,10 +148,6 @@ public struct TextSelectionNavigation {
     bounds: CGRect
   ) -> RhTextSelection? {
 
-    // clamp point to bounds
-    let bounds = documentManager.usageBoundsForTextContainer
-    let point = point.with(y: point.y.clamped(bounds.minY, bounds.maxY))
-
     // not in a drag session
     if !selecting || anchors == nil {
       guard let location = documentManager.resolveTextLocation(with: point)
