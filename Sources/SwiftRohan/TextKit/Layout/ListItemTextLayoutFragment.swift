@@ -14,7 +14,7 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
     return bounds
   }
 
-  override func draw(at point: CGPoint, in context: CGContext) {
+  final override func draw(at point: CGPoint, in context: CGContext) {
     let itemPosition: CGPoint
     do {
       let x = renderingSurfaceBounds.origin.x + (indent - itemMarker.size().width)

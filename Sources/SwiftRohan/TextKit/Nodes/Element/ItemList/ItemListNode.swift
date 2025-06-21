@@ -2,7 +2,7 @@
 
 import AppKit
 
-private let PLACEHOLDER = String(Chars.dottedSquare)
+private let ZWSP = "\u{200B}"  // Zero Width Space
 
 final class ItemListNode: ElementNode {
   final override class var type: NodeType { .itemList }
@@ -62,14 +62,14 @@ final class ItemListNode: ElementNode {
     assert(isPlaceholderActive == false)
 
     if _children.isEmpty {
-      let target = PLACEHOLDER.length
+      let target = ZWSP.length
       return .terminal(value: .index(0), target: target)
     }
 
     var (k, s) = (0, 0)
     /// determine the child whose node content
     while k < _children.count {
-      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
+      let ss = s + ZWSP.length + _children[k].layoutLength() + _newlines[k].intValue
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
@@ -78,7 +78,10 @@ final class ItemListNode: ElementNode {
       return .terminal(value: .index(k), target: s)
     }
     else {
-      return .halfway(value: .index(k), consumed: s)
+      let consumed = s + ZWSP.length
+      return consumed < layoutOffset
+        ? .halfway(value: .index(k), consumed: consumed)
+        : .terminal(value: .index(k), target: consumed)
     }
   }
 
@@ -202,11 +205,10 @@ final class ItemListNode: ElementNode {
   private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
+    // set up properties before layout.
     self._setupProperties(context.styleSheet)
 
-    if _children.isEmpty {
-      return StringReconciler.insert(new: PLACEHOLDER, context: context, self)
-    }
+    if _children.isEmpty { return _performLayoutEmpty(context) }
 
     assert(_children.isEmpty == false)
 
@@ -215,6 +217,7 @@ final class ItemListNode: ElementNode {
     for i in (0..<_children.count).reversed() {
       sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
       sum += NodeReconciler.insert(new: _children[i], context: context)
+      sum += StringReconciler.insert(new: ZWSP, context: context, self)
     }
 
     // add paragraph style forwards
@@ -231,76 +234,30 @@ final class ItemListNode: ElementNode {
     let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
 
     var sum = 0
-    var forceParagraphStyle = false
+    //    var forceParagraphStyle = false
     for i in (0..<_children.count).reversed() {
       // skip clean.
       if _children[i].isDirty == false {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
-
-        if forceParagraphStyle {
-          let itemMarker = _attributedMarker(forIndex: i)
-          _addParagraphAttributes(paragraphAttributes, itemMarker, sum - sum0)
-          forceParagraphStyle = false
-        }
+        sum += StringReconciler.skip(current: ZWSP, context: context)
       }
       // process dirty.
       else {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+        sum += StringReconciler.skip(current: ZWSP, context: context)
 
         let itemMarker = _attributedMarker(forIndex: i)
-        _addParagraphAttributes(paragraphAttributes, itemMarker, sum - sum0)
-        forceParagraphStyle = true
+        let location = context.layoutCursor
+        let end = location + sum - sum0
+        _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
     }
 
     return sum
-
-    // Helper
-    func _addParagraphAttributes(
-      _ paragraphAttributes: Dictionary<NSAttributedString.Key, Any>,
-      _ itemMarker: NSAttributedString, _ rangeSize: Int
-    ) {
-      var paragraphAttributesCopy = paragraphAttributes
-      paragraphAttributesCopy[.itemMarker] = itemMarker
-
-      let begin = context.layoutCursor
-      context.addParagraphAttributes(paragraphAttributesCopy, begin..<begin + rangeSize)
-    }
-  }
-
-  @inline(__always)
-  private final func _computeExtendedRecords() -> (
-    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
-  ) {
-    // ID's of current children
-    let currentIds = Set(_children.map(\.id))
-    // ID's of the dirty part of current children
-    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-    // ID's of original children
-    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
-
-    let current =
-      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
-        let mark: LayoutMark =
-          !originalIds.contains(node.id)
-          ? .added
-          : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline)
-      }
-
-    let original =
-      _snapshotRecords!.map { record in
-        !currentIds.contains(record.nodeId)
-          ? ExtendedRecord(.deleted, record)
-          : dirtyIds.contains(record.nodeId)
-            ? ExtendedRecord(.dirty, record)
-            : ExtendedRecord(.none, record)
-      }
-    return (current, original)
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
@@ -311,7 +268,7 @@ final class ItemListNode: ElementNode {
     if _children.isEmpty {
       // remove previous layout
       context.deleteBackwards(_layoutLength)
-      return StringReconciler.insert(new: PLACEHOLDER, context: context, self)
+      return _performLayoutEmpty(context)
     }
     assert(_children.isEmpty == false)
 
@@ -367,6 +324,7 @@ final class ItemListNode: ElementNode {
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          StringReconciler.delete(old: ZWSP, context: context)
           j -= 1
         }
         assert(j < 0 || [.none, .dirty].contains(original[j].mark))
@@ -375,8 +333,8 @@ final class ItemListNode: ElementNode {
       while i >= 0 && current[i].mark == .added {
         let newline = current[i].insertNewline
         sum += NewlineReconciler.insert(new: newline, context: context, self)
-        //
         sum += NodeReconciler.insert(new: _children[i], context: context)
+        sum += StringReconciler.insert(new: ZWSP, context: context, self)
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
@@ -389,9 +347,8 @@ final class ItemListNode: ElementNode {
 
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-        //
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-
+        sum += _reconcileZWSP(j, i, context)
         i -= 1
         j -= 1
       }
@@ -409,8 +366,8 @@ final class ItemListNode: ElementNode {
 
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-        //
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+        sum += _reconcileZWSP(j, i, context)
 
         i -= 1
         j -= 1
@@ -430,6 +387,73 @@ final class ItemListNode: ElementNode {
     return sum
   }
 
+  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
+    precondition(_children.isEmpty)
+    let sum = StringReconciler.insert(new: ZWSP, context: context, self)
+    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
+    let itemMarker = _attributedMarker(forIndex: 0)
+    let location = context.layoutCursor
+    let end = location + sum
+    _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
+    return sum
+  }
+
+  private final func _reconcileZWSP(
+    _ oldIndex: Int, _ newIndex: Int, _ context: LayoutContext
+  ) -> Int {
+    let old = _attributedMarker(forIndex: oldIndex).string
+    let new = _attributedMarker(forIndex: newIndex).string
+    if old == new {
+      context.skipBackwards(ZWSP.length)
+    }
+    else {
+      context.invalidateBackwards(ZWSP.length)
+    }
+    return ZWSP.length
+  }
+
+  @inline(__always)
+  private final func _computeExtendedRecords() -> (
+    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
+  ) {
+    // ID's of current children
+    let currentIds = Set(_children.map(\.id))
+    // ID's of the dirty part of current children
+    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
+    // ID's of original children
+    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
+
+    let current =
+      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+        let mark: LayoutMark =
+          !originalIds.contains(node.id)
+          ? .added
+          : (node.isDirty ? .dirty : .none)
+        return ExtendedRecord(mark, node, insertNewline)
+      }
+
+    let original =
+      _snapshotRecords!.map { record in
+        !currentIds.contains(record.nodeId)
+          ? ExtendedRecord(.deleted, record)
+          : dirtyIds.contains(record.nodeId)
+            ? ExtendedRecord(.dirty, record)
+            : ExtendedRecord(.none, record)
+      }
+    return (current, original)
+  }
+
+  @inline(__always)
+  private final func _addParagraphAttributes(
+    _ context: LayoutContext,
+    _ paragraphAttributes: Dictionary<NSAttributedString.Key, Any>,
+    _ itemMarker: NSAttributedString, _ range: Range<Int>
+  ) {
+    var paragraphAttributesCopy = paragraphAttributes
+    paragraphAttributesCopy[.itemMarker] = itemMarker
+    context.addParagraphAttributes(paragraphAttributesCopy, range)
+  }
+
   /// Refresh paragraph style for those children that match the predicate and are not
   /// themselves paragraph containers.
   ///
@@ -446,13 +470,11 @@ final class ItemListNode: ElementNode {
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
-      let child = _children[i]
       let itemMarker = _attributedMarker(forIndex: i)
-      let end = location + child.layoutLength() + _newlines[i].intValue
+      let end =
+        location + ZWSP.length + _children[i].layoutLength() + _newlines[i].intValue
       if predicate(i) {
-        var paragraphAttributesCopy = paragraphAttributes
-        paragraphAttributesCopy[.itemMarker] = itemMarker
-        context.addParagraphAttributes(paragraphAttributesCopy, location..<end)
+        _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
       location = end
     }
@@ -462,15 +484,16 @@ final class ItemListNode: ElementNode {
     guard index <= childCount else { return nil }
 
     if _children.isEmpty {
-      return PLACEHOLDER.length
+      return ZWSP.length
     }
     else {
       assert(isPlaceholderActive == false)
       let range = 0..<index
+      let s0 = range.count * ZWSP.length
       let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-      let sum = s1 + s2
-      return sum
+      let sum = s0 + s1 + s2
+      return index < _children.count ? sum + ZWSP.length : sum
     }
   }
 
@@ -533,7 +556,8 @@ final class ItemListNode: ElementNode {
 
   static var commandRecords: Array<CommandRecord> {
     ItemListSubtype.allCases.map { subtype in
-      let expr = ItemListExpr(subtype, [ParagraphExpr()])
+      //      let expr = ItemListExpr(subtype, [ParagraphExpr()])
+      let expr = ItemListExpr(subtype, [])
       return CommandRecord(subtype.command, CommandBody(expr, 1))
     }
   }
