@@ -548,19 +548,24 @@ final class ItemListNode: ElementNode {
 
   private func _bakeParagraphStyle(
     _ styleSheet: StyleSheet, _ textList: RhTextList
-  ) -> NSParagraphStyle {
+  ) -> Dictionary<NSAttributedString.Key, Any> {
     let properties = getProperties(styleSheet)
-    let paragraphProperty = ParagraphProperty.resolveAggregate(properties, styleSheet)
 
+    // prepare paragraph style
+    let paragraphProperty = ParagraphProperty.resolveAggregate(properties, styleSheet)
     let paragraphStyle =
       paragraphProperty.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-
     let fontSize = TextProperty.size.resolveValue(properties, styleSheet).fontSize()!
     let indent = Self.indent(forLevel: textList.level).floatValue * fontSize.floatValue
-
     paragraphStyle.firstLineHeadIndent = indent
     paragraphStyle.headIndent = indent
-    return paragraphStyle
+
+    // add list level as well.
+    let attributes: Dictionary<NSAttributedString.Key, Any> = [
+      .paragraphStyle: paragraphStyle,
+      .listLevel: textList.level,
+    ]
+    return attributes
   }
 
   static var commandRecords: Array<CommandRecord> {

@@ -63,10 +63,12 @@ final class MathLineLayoutContext: LayoutContext {
     layoutContext.addParagraphStyle(source, resolvedRange)
   }
 
-  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>) {
+  func addParagraphStyle(
+    _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
+  ) {
     precondition(isEditing)
     let resolvedRange = resolvedString.resolvedRange(for: range)
-    layoutContext.addParagraphStyle(paragraphStyle, resolvedRange)
+    layoutContext.addParagraphStyle(attributes, resolvedRange)
   }
 
   func skipBackwards(_ n: Int) {
