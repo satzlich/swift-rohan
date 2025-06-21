@@ -9,23 +9,21 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
 
   final override var renderingSurfaceBounds: CGRect {
     var bounds = super.renderingSurfaceBounds
-    bounds.origin.x -= indent
+    bounds.origin.x = -indent
     bounds.size.width += indent
     return bounds
   }
 
   override func draw(at point: CGPoint, in context: CGContext) {
-    let itemRect: CGRect
+    let itemPosition: CGPoint
     do {
-      let size = itemMarker.size()
-      let renderingOrigin = renderingSurfaceBounds.origin
-      let x = renderingOrigin.x + (indent - size.width)
-      let y = renderingOrigin.y
-      itemRect = CGRect(origin: CGPoint(x: x, y: y), size: size)
+      let x = renderingSurfaceBounds.origin.x + (indent - itemMarker.size().width)
+      let y = 0.0
+      itemPosition = CGPoint(x: x, y: y)
     }
 
     context.saveGState()
-    itemMarker.draw(in: itemRect)
+    itemMarker.draw(at: itemPosition)
     context.restoreGState()
 
     super.draw(at: point, in: context)
