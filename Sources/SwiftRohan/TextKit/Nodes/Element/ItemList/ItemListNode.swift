@@ -47,10 +47,6 @@ final class ItemListNode: ElementNode {
 
   // MARK: - Node(Positioning)
 
-  final override func firstIndex() -> RohanIndex? { .index(0) }
-
-  final override func lastIndex() -> RohanIndex? { .index(_children.count) }
-
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
