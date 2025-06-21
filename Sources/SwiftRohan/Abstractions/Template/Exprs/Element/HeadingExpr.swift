@@ -3,41 +3,10 @@
 final class HeadingExpr: ElementExpr {
   class override var type: ExprType { .heading }
 
-  enum Subtype: String, Codable, CaseIterable {
-    case sectionAst
-    case subsectionAst
-    case subsubsectionAst
-
-    var level: Int {
-      switch self {
-      case .sectionAst: return 1
-      case .subsectionAst: return 2
-      case .subsubsectionAst: return 3
-      }
-    }
-
-    var command: String {
-      switch self {
-      case .sectionAst: return "section*"
-      case .subsectionAst: return "subsection*"
-      case .subsubsectionAst: return "subsubsection*"
-      }
-    }
-
-    static func fromCommand(_ command: String) -> Subtype? {
-      switch command {
-      case "section*": return .sectionAst
-      case "subsection*": return .subsectionAst
-      case "subsubsection*": return .subsubsectionAst
-      default: return nil
-      }
-    }
-  }
-
   var level: Int { subtype.level }
-  var subtype: Subtype
+  var subtype: HeadingSubtype
 
-  init(_ subtype: Subtype, _ expressions: Array<Expr> = []) {
+  init(_ subtype: HeadingSubtype, _ expressions: Array<Expr> = []) {
     self.subtype = subtype
     super.init(expressions)
   }
@@ -61,7 +30,7 @@ final class HeadingExpr: ElementExpr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+    self.subtype = try container.decode(HeadingSubtype.self, forKey: .subtype)
     try super.init(from: decoder)
   }
 
