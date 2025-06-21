@@ -24,7 +24,7 @@ final class HeadingNode: ElementNodeImpl {
 
   internal required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+    self.subtype = try container.decode(HeadingSubtype.self, forKey: .subtype)
     try super.init(from: decoder)
   }
 
@@ -36,7 +36,9 @@ final class HeadingNode: ElementNodeImpl {
 
   // MARK: - Node(Storage)
 
-  final override class var storageTags: Array<String> { Subtype.allCases.map(\.command) }
+  final override class var storageTags: Array<String> {
+    HeadingSubtype.allCases.map(\.command)
+  }
 
   final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
@@ -77,7 +79,7 @@ final class HeadingNode: ElementNodeImpl {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
-      let subtype = Subtype.fromCommand(tag),
+      let subtype = HeadingSubtype.fromCommand(tag),
       case let .array(children) = array[1]
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
@@ -87,12 +89,10 @@ final class HeadingNode: ElementNodeImpl {
 
   // MARK: - HeadingNode
 
-  typealias Subtype = HeadingExpr.Subtype
-
   var level: Int { subtype.level }
-  let subtype: Subtype
+  let subtype: HeadingSubtype
 
-  init(_ subtype: Subtype, _ children: ElementStore) {
+  init(_ subtype: HeadingSubtype, _ children: ElementStore) {
     self.subtype = subtype
     super.init(children)
   }
@@ -111,7 +111,7 @@ final class HeadingNode: ElementNodeImpl {
 
   var command: String { Self._command(forSubtype: subtype) }
 
-  private static func _command(forSubtype subtype: Subtype) -> String {
+  private static func _command(forSubtype subtype: HeadingSubtype) -> String {
     switch subtype {
     case .sectionAst: return "section*"
     case .subsectionAst: return "subsection*"
@@ -120,15 +120,15 @@ final class HeadingNode: ElementNodeImpl {
   }
 
   /// Returns a command body for the given heading level.
-  static func commandBody(forSubtype subtype: Subtype) -> CommandBody {
+  static func commandBody(forSubtype subtype: HeadingSubtype) -> CommandBody {
     return CommandBody(HeadingExpr(subtype), 1)
   }
 
   /// Returns **all** command records emitted by this heading class.
   static var commandRecords: Array<CommandRecord> {
     var records: Array<CommandRecord> = []
-    records.reserveCapacity(Subtype.allCases.count)
-    for subtype in Subtype.allCases {
+    records.reserveCapacity(HeadingSubtype.allCases.count)
+    for subtype in HeadingSubtype.allCases {
       let command = _command(forSubtype: subtype)
       records.append(CommandRecord(command, commandBody(forSubtype: subtype)))
     }
