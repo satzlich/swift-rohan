@@ -27,6 +27,19 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
       textAlignment: resolved(textAlignment).textAlignment()!)
   }
 
+  static func resolveAggregate(
+    _ properties: PropertyDictionary, _ styleSheet: StyleSheet
+  ) -> ParagraphProperty {
+    func resolved(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, styleSheet.defaultProperties)
+    }
+
+    return ParagraphProperty(
+      listLevel: resolved(listLevel).integer()!,
+      paragraphSpacing: resolved(paragraphSpacing).float()!,
+      textAlignment: resolved(textAlignment).textAlignment()!)
+  }
+
   public static let allKeys: Array<PropertyKey> = [
     listLevel,
     paragraphSpacing,

@@ -156,7 +156,9 @@ internal class ElementNodeImpl: ElementNode {
         if isBlockContainer {
           let begin = context.layoutCursor
           let n = sum - sum0
-          context.addParagraphStyle(_children[i], begin..<begin + n)
+          if _children[i].isBlockContainer == false {
+            context.addParagraphStyle(_children[i], begin..<begin + n)
+          }
           forceParagraphStyle = true
         }
       }

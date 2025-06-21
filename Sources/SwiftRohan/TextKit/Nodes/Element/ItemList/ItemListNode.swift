@@ -243,7 +243,7 @@ final class ItemListNode: ElementNode {
     assert(_children.isEmpty == false)
     assert(_textList != nil)
     let textList = _textList!
-    let paragraphStyle = _bakeParagraphStyle(context.styleSheet)
+    let paragraphStyle = _bakeParagraphStyle(context.styleSheet, textList)
 
     var sum = 0
     var forceParagraphStyle = false
@@ -474,7 +474,7 @@ final class ItemListNode: ElementNode {
     precondition(self.isBlockContainer)
     assert(_textList != nil)
     let textList = _textList!
-    let paragraphStyle = _bakeParagraphStyle(context.styleSheet)
+    let paragraphStyle = _bakeParagraphStyle(context.styleSheet, textList)
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
@@ -543,18 +543,24 @@ final class ItemListNode: ElementNode {
   }
 
   private func _formattedMarker(forIndex index: Int, _ textList: RhTextList) -> String {
-    "\u{2000}" + textList.marker(forIndex: index) + "\t"
+    ""  // "\u{2000}" + textList.marker(forIndex: index) + "\t"
   }
 
-  private func _bakeParagraphStyle(_ styleSheet: StyleSheet) -> NSParagraphStyle {
-    let properties: ParagraphProperty = self.resolveAggregate(styleSheet)
+  private func _bakeParagraphStyle(
+    _ styleSheet: StyleSheet, _ textList: RhTextList
+  ) -> NSParagraphStyle {
+    let properties = getProperties(styleSheet)
+
+    let paragraphProperty = ParagraphProperty.resolveAggregate(properties, styleSheet)
     let paragraphStyle =
-      properties.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-    //    paragraphStyle.firstLineHeadIndent = 12
-    //    paragraphStyle.headIndent = 36
-    //    paragraphStyle.tabStops = [
-    //      NSTextTab(textAlignment: .natural, location: 36)
-    //    ]
+      paragraphProperty.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+
+    let fontSize = TextProperty.size.resolveValue(properties, styleSheet).fontSize()!
+    let indent = Self.indent(forLevel: textList.level).floatValue * fontSize.floatValue
+
+    paragraphStyle.firstLineHeadIndent = indent
+    paragraphStyle.headIndent = indent
+
     return paragraphStyle
   }
 
