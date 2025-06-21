@@ -2,6 +2,8 @@
 
 import AppKit
 
+private let PLACEHOLDER = String(Chars.dottedSquare)
+
 final class ItemListNode: ElementNode {
   final override class var type: NodeType { .itemList }
 
@@ -60,16 +62,14 @@ final class ItemListNode: ElementNode {
     assert(isPlaceholderActive == false)
 
     if _children.isEmpty {
-      let target = _textList.marker(forIndex: 0).length
+      let target = PLACEHOLDER.length
       return .terminal(value: .index(0), target: target)
     }
 
     var (k, s) = (0, 0)
     /// determine the child whose node content
     while k < _children.count {
-      let ss =
-        s + _formattedMarker(forIndex: k).length + _children[k].layoutLength()
-        + _newlines[k].intValue
+      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
@@ -78,14 +78,7 @@ final class ItemListNode: ElementNode {
       return .terminal(value: .index(k), target: s)
     }
     else {
-      // consume the item marker as well.
-      let corrected = s + _formattedMarker(forIndex: k).length
-      if corrected >= layoutOffset {
-        return .terminal(value: .index(k), target: corrected)
-      }
-      else {
-        return .halfway(value: .index(k), consumed: corrected)
-      }
+      return .halfway(value: .index(k), consumed: s)
     }
   }
 
@@ -212,8 +205,7 @@ final class ItemListNode: ElementNode {
     self._setupProperties(context.styleSheet)
 
     if _children.isEmpty {
-      let marker = _formattedMarker(forIndex: 0)
-      return StringReconciler.insert(new: marker, context: context, self)
+      return StringReconciler.insert(new: PLACEHOLDER, context: context, self)
     }
 
     assert(_children.isEmpty == false)
@@ -223,8 +215,6 @@ final class ItemListNode: ElementNode {
     for i in (0..<_children.count).reversed() {
       sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
       sum += NodeReconciler.insert(new: _children[i], context: context)
-      let marker = _formattedMarker(forIndex: i)
-      sum += StringReconciler.insert(new: marker, context: context, self)
     }
 
     // add paragraph style forwards
@@ -249,11 +239,9 @@ final class ItemListNode: ElementNode {
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
 
-        let marker = _attributedMarker(forIndex: i)
-        sum += StringReconciler.skip(current: marker.string, context: context)
-
         if forceParagraphStyle {
-          _addParagraphAttributes(paragraphAttributes, marker, sum - sum0)
+          let itemMarker = _attributedMarker(forIndex: i)
+          _addParagraphAttributes(paragraphAttributes, itemMarker, sum - sum0)
           forceParagraphStyle = false
         }
       }
@@ -262,10 +250,9 @@ final class ItemListNode: ElementNode {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        let marker = _attributedMarker(forIndex: i)
-        sum += StringReconciler.skip(current: marker.string, context: context)
 
-        _addParagraphAttributes(paragraphAttributes, marker, sum - sum0)
+        let itemMarker = _attributedMarker(forIndex: i)
+        _addParagraphAttributes(paragraphAttributes, itemMarker, sum - sum0)
         forceParagraphStyle = true
       }
     }
@@ -324,8 +311,7 @@ final class ItemListNode: ElementNode {
     if _children.isEmpty {
       // remove previous layout
       context.deleteBackwards(_layoutLength)
-      let marker = _formattedMarker(forIndex: 0)
-      return StringReconciler.insert(new: marker, context: context, self)
+      return StringReconciler.insert(new: PLACEHOLDER, context: context, self)
     }
     assert(_children.isEmpty == false)
 
@@ -381,8 +367,6 @@ final class ItemListNode: ElementNode {
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          let marker = _formattedMarker(forIndex: j)
-          StringReconciler.delete(old: marker, context: context)
           j -= 1
         }
         assert(j < 0 || [.none, .dirty].contains(original[j].mark))
@@ -393,9 +377,6 @@ final class ItemListNode: ElementNode {
         sum += NewlineReconciler.insert(new: newline, context: context, self)
         //
         sum += NodeReconciler.insert(new: _children[i], context: context)
-        //
-        let marker = _formattedMarker(forIndex: i)
-        sum += StringReconciler.insert(new: marker, context: context, self)
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
@@ -410,11 +391,6 @@ final class ItemListNode: ElementNode {
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
         //
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-        //
-        let oldMarker = _formattedMarker(forIndex: j)
-        let newMarker = _formattedMarker(forIndex: i)
-        let markers = (oldMarker, newMarker)
-        sum += StringReconciler.reconcile(dirty: markers, context: context, self)
 
         i -= 1
         j -= 1
@@ -435,11 +411,6 @@ final class ItemListNode: ElementNode {
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
         //
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        //
-        let oldMarker = _formattedMarker(forIndex: j)
-        let newMarker = _formattedMarker(forIndex: i)
-        let markers = (oldMarker, newMarker)
-        sum += StringReconciler.reconcile(dirty: markers, context: context, self)
 
         i -= 1
         j -= 1
@@ -477,8 +448,7 @@ final class ItemListNode: ElementNode {
     for i in 0..<_children.count {
       let child = _children[i]
       let itemMarker = _attributedMarker(forIndex: i)
-      let end =
-        location + itemMarker.length + child.layoutLength() + _newlines[i].intValue
+      let end = location + child.layoutLength() + _newlines[i].intValue
       if predicate(i) {
         var paragraphAttributesCopy = paragraphAttributes
         paragraphAttributesCopy[.itemMarker] = itemMarker
@@ -492,27 +462,22 @@ final class ItemListNode: ElementNode {
     guard index <= childCount else { return nil }
 
     if _children.isEmpty {
-      return _formattedMarker(forIndex: 0).length
+      return PLACEHOLDER.length
     }
     else {
       assert(isPlaceholderActive == false)
       let range = 0..<index
-      let s0 = range.lazy
-        .map { self._formattedMarker(forIndex: $0).length }
-        .reduce(0, +)
       let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-      let sum = s0 + s1 + s2
-      return index < childCount
-        ? sum + _formattedMarker(forIndex: index).length
-        : sum
+      let sum = s1 + s2
+      return sum
     }
   }
 
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
-  private var _textList: RhTextList = RhTextList.itemize(level: 0, marker: "•")
+  private var _textList: RhTextList = RhTextList.itemize(level: 1, marker: "•")
   private var _textAttributes: Dictionary<NSAttributedString.Key, Any> = [:]
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
@@ -537,10 +502,6 @@ final class ItemListNode: ElementNode {
     self._textAttributes = textProperty.getAttributes()
   }
 
-  private func _formattedMarker(forIndex index: Int) -> String {
-    _textList.marker(forIndex: index) + "\u{2000}"
-  }
-
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {
     let marker = _textList.marker(forIndex: index) + "\u{2000}"
     return NSAttributedString(string: marker, attributes: _textAttributes)
@@ -562,7 +523,6 @@ final class ItemListNode: ElementNode {
     paragraphStyle.firstLineHeadIndent = indent
     paragraphStyle.headIndent = indent
 
-    // add list level as well.
     let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .paragraphStyle: paragraphStyle,
       .listLevel: listLevel,
@@ -573,7 +533,7 @@ final class ItemListNode: ElementNode {
 
   static var commandRecords: Array<CommandRecord> {
     ItemListSubtype.allCases.map { subtype in
-      let expr = ItemListExpr(subtype)
+      let expr = ItemListExpr(subtype, [ParagraphExpr()])
       return CommandRecord(subtype.command, CommandBody(expr, 1))
     }
   }
