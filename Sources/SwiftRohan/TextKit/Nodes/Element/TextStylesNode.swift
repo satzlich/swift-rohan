@@ -67,7 +67,7 @@ final class TextStylesNode: ElementNodeImpl {
       var current = super.getProperties(styleSheet)
 
       let key = TextProperty.style
-      let value = key.resolveValue(current, styleSheet.defaultProperties).fontStyle()!
+      let value = key.resolveValue(current, styleSheet).fontStyle()!
       current[key] = .fontStyle(invertFontStyle(value))
 
       _cachedProperties = current

@@ -11,13 +11,6 @@ internal struct PropertyKey: Equatable, Hashable, Codable, Sendable {
     self.propertyName = propertyName
   }
 
-  @inlinable @inline(__always)
-  internal func resolveValue(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
-  ) -> PropertyValue {
-    properties[self] ?? fallback[self]
-  }
-
   internal func resolveValue(
     _ properties: PropertyDictionary, _ stylesheet: StyleSheet
   ) -> PropertyValue {

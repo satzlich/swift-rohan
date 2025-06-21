@@ -543,7 +543,7 @@ final class ItemListNode: ElementNode {
   }
 
   private func _formattedMarker(forIndex index: Int, _ textList: RhTextList) -> String {
-    ""  // "\u{2000}" + textList.marker(forIndex: index) + "\t"
+    "\u{2000}" + textList.marker(forIndex: index) + "\t"
   }
 
   private func _bakeParagraphStyle(
@@ -555,11 +555,11 @@ final class ItemListNode: ElementNode {
     let paragraphStyle =
       paragraphProperty.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
 
-    let fontSize = TextProperty.size.resolveValue(properties, styleSheet).fontSize()!
-    let indent = Self.indent(forLevel: textList.level).floatValue * fontSize.floatValue
-
-    paragraphStyle.firstLineHeadIndent = indent
-    paragraphStyle.headIndent = indent
+    //    let fontSize = TextProperty.size.resolveValue(properties, styleSheet).fontSize()!
+    //    let indent = Self.indent(forLevel: textList.level).floatValue * fontSize.floatValue
+    //
+    //    paragraphStyle.firstLineHeadIndent = indent
+    //    paragraphStyle.headIndent = indent
 
     return paragraphStyle
   }

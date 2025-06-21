@@ -14,24 +14,11 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
     Self._cache.getOrCreate(self, self._createParagraphStyle)
   }
 
-  public static func resolveAggregate(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
-  ) -> ParagraphProperty {
-    func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
-    }
-
-    return ParagraphProperty(
-      listLevel: resolved(listLevel).integer()!,
-      paragraphSpacing: resolved(paragraphSpacing).float()!,
-      textAlignment: resolved(textAlignment).textAlignment()!)
-  }
-
   static func resolveAggregate(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> ParagraphProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, styleSheet.defaultProperties)
+      key.resolveValue(properties, styleSheet)
     }
 
     return ParagraphProperty(

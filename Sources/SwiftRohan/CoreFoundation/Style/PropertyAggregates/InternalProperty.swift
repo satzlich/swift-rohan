@@ -6,10 +6,10 @@ internal struct InternalProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
   public static func resolveAggregate(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+    _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> InternalProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
+      key.resolveValue(properties, styleSheet)
     }
 
     return InternalProperty(nestedLevel: resolved(nestedLevel).integer()!)
