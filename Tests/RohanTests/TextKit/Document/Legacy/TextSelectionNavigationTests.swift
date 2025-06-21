@@ -13,7 +13,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   @Test
   func testMoveForwardBackward() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("A"), TextStylesNode(.emph, [TextNode("b")])]),
+      HeadingNode(.sectionAst, [TextNode("A"), TextStylesNode(.emph, [TextNode("b")])]),
       ParagraphNode([
         TextNode("c"),
         EquationNode(
@@ -174,7 +174,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   @Test
   func testMoveUpDown() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      HeadingNode(.sectionAst, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode(
           """
@@ -440,7 +440,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   @Test
   func testMoveFromRange() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      HeadingNode(.sectionAst, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode(
           """
@@ -486,7 +486,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   @Test
   func testMoveByWord() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      HeadingNode(.sectionAst, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode("The quick "),
         TextStylesNode(
@@ -584,7 +584,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   @Test
   func testDeletionRange() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      HeadingNode(.sectionAst, [TextNode("The quick brown fox jumps")]),
       ParagraphNode([
         TextNode("The quick "),
         TextStylesNode(
@@ -722,7 +722,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
   func enclosingTextRange() {
     let documentManager = createDocumentManager(
       RootNode([
-        HeadingNode(level: 1, [TextNode("The quick brown fox jumps")])
+        HeadingNode(.sectionAst, [TextNode("The quick brown fox jumps")])
       ]))
     let location = TextLocation.parse("[↓0,↓0]:4")!
     let selection = RhTextSelection(location, affinity: .downstream)

@@ -208,11 +208,8 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     heading: HeadingNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-    guard let command = heading.command
-    else { return .failure(SatzError(.ExportLatexFailure)) }
 
-    let result = _composeControlSeqCall(command, children: children, context)
-
+    let result = _composeControlSeqCall(heading.command, children: children, context)
     switch result {
     case let .success(stream):
       // add newline before and after the heading

@@ -40,7 +40,7 @@ struct DocumentViewTests {
     }
     do {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("Heading")]),
+        HeadingNode(.sectionAst, [TextNode("Heading")]),
         ParagraphNode([TextNode("This is a paragraph.")]),
       ])
       documentView.setContent(DocumentContent(rootNode))
@@ -97,7 +97,7 @@ struct DocumentViewTests {
     let documentView = DocumentView()
     do {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("HelloW")])
+        HeadingNode(.sectionAst, [TextNode("HelloW")])
       ])
       documentView.setContent(DocumentContent(rootNode))
     }
@@ -171,7 +171,7 @@ struct DocumentViewTests {
     let documentView = DocumentView()
     do {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("HelloW")]),
+        HeadingNode(.sectionAst, [TextNode("HelloW")]),
         ParagraphNode([TextNode("Hellorld")]),
       ])
       documentView.setContent(DocumentContent(rootNode))
@@ -314,7 +314,7 @@ struct DocumentViewTests {
     let documentView = DocumentView()
     do {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("The quick brown fox")])
+        HeadingNode(.sectionAst, [TextNode("The quick brown fox")])
       ])
       documentView.setContent(DocumentContent(rootNode))
     }
@@ -362,7 +362,7 @@ struct DocumentViewTests {
     let documentView = DocumentView()
     do {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("The quick brown fox")]),
+        HeadingNode(.sectionAst, [TextNode("The quick brown fox")]),
         ParagraphNode([TextNode("jumps over the lazy dog.")]),
       ])
       documentView.setContent(DocumentContent(rootNode))
@@ -503,7 +503,7 @@ struct DocumentViewTests {
     let documentView = Self.bakedDocumentView()
     do {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("text ..")]),
+        HeadingNode(.sectionAst, [TextNode("text ..")]),
         EquationNode(
           .block,
           [

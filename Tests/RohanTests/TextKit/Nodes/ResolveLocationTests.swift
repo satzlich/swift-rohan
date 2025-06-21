@@ -19,7 +19,7 @@ struct ResolveLocationTests {
 
     do {
       let elementNodes = [
-        HeadingNode(level: 1, []),
+        HeadingNode(.sectionAst, []),
         ParagraphNode([]),
       ]
       for node in elementNodes {
@@ -50,7 +50,7 @@ struct ResolveLocationTests {
     do {
       let elementNodes = [
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("Hello"),
             LinebreakNode(),

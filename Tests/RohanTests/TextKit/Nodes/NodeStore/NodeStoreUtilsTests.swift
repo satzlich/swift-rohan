@@ -52,7 +52,7 @@ struct NodeStoreUtilsTests {
       "fullouterjoin", "gamma", "gather*", "gathered", "gcd", "ge", "geq", "geqq",
       "geqslant", "gets", "gg", "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq",
       "gnsim", "grave", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless",
-      "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hom",
+      "gtrsim", "hat", "hbar", "heartsuit", "hom",
       "hookleftarrow", "hookrightarrow", "hslash", "idotsint", "iff", "iiiint", "iiint",
       "iint", "imath", "impliedby", "implies", "in", "inf", "infty", "injlim",
       "inlinemath", "int", "intercal", "intop", "iota", "itemize",
@@ -87,11 +87,13 @@ struct NodeStoreUtilsTests {
       "rightarrowtail", "rightharpoondown", "rightharpoonup", "rightleftarrows",
       "rightleftharpoons", "rightouterjoin", "rightrightarrows", "rightsquigarrow",
       "rightthreetimes", "risingdotseq", "rmoustache", "rtimes", "rvert",
-      "scriptscriptstyle", "scriptstyle", "searrow", "sec", "setminus", "sharp", "sigma",
+      "scriptscriptstyle", "scriptstyle", "searrow", "sec", "section*",
+      "setminus", "sharp", "sigma",
       "sim", "simeq", "sin", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
-      "square", "stackrel", "star", "subset", "subseteq", "subseteqq", "subsetneq",
-      "subsetneqq", "substack", "succ", "succapprox", "succcurlyeq", "succeq",
+      "square", "stackrel", "star", "subsection*", "subset", "subseteq", "subseteqq",
+      "subsetneq", "subsetneqq", "substack", "subsubsection*", "succ", "succapprox",
+      "succcurlyeq", "succeq",
       "succnapprox", "succneqq", "succnsim", "succsim", "sum", "sup", "supset",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
       "tanh", "tau", "tbinom", "text", "textbf", "textit", "textstyle", "tfrac",
@@ -112,7 +114,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 618)
+    #expect(tags.count == 616)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

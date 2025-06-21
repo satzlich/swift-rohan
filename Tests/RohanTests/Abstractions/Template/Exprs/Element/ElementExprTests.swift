@@ -21,19 +21,11 @@ struct ElementExprTests {
     [
       ContentExpr(),
       TextStylesExpr(.emph),
-      HeadingExpr(level: 1),
+      HeadingExpr(.sectionAst),
       ItemListExpr(.enumerate),
       ParagraphExpr(),
       RootExpr(),
       TextStylesExpr(.textbf),
     ]
-  }
-
-  @Test
-  func headingExpr() {
-    for i in 1...5 {
-      let expr = HeadingExpr(level: i)
-      _ = expr.subtype
-    }
   }
 }

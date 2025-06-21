@@ -19,9 +19,9 @@ public enum ReplacementRules {
     // dots
     .init("...", CommandBody("…", .textText)),  // ... -> U+2026
     // headers
-    spaceTriggered("#", HeadingNode.commandBody(forLevel: 1)),
-    spaceTriggered("##", HeadingNode.commandBody(forLevel: 2)),
-    spaceTriggered("###", HeadingNode.commandBody(forLevel: 3)),
+    spaceTriggered("#", HeadingNode.commandBody(forSubtype: .sectionAst)),
+    spaceTriggered("##", HeadingNode.commandBody(forSubtype: .subsectionAst)),
+    spaceTriggered("###", HeadingNode.commandBody(forSubtype: .subsubsectionAst)),
     // emph, strong
     spaceTriggered("*", Snippets.emphasis),
     spaceTriggered("**", Snippets.strong),

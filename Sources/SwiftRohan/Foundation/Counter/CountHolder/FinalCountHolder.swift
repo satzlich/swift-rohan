@@ -3,9 +3,14 @@
 /// Final count holder which is placed at the end of the linked list.
 final class FinalCountHolder: CountHolder {
 
-  final override var isActive: Bool { true }
+  final override var isDirty: Bool { previous?.isDirty ?? false }
+
+  override func propagateDirty() {
+    assert(next == nil)
+    /* no-op */
+  }
 
   final override func value(forName name: CounterName) -> Int {
-    previousActive?.value(forName: name) ?? 0
+    previous?.value(forName: name) ?? 0
   }
 }

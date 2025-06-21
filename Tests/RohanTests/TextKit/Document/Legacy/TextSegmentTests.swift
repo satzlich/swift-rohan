@@ -18,7 +18,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
       // #1 heading: test math nodes
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Alpha "),
           EquationNode(
@@ -38,7 +38,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
       // #4 heading: test nested math nodes
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Alpha "),
           EquationNode(
@@ -167,7 +167,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ]),
       // #3
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           EquationNode(
             .inline,
@@ -248,11 +248,11 @@ final class TextSegmentTests: TextKitTestsBase {
   @Test
   func testPlacerholder() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("H1")]),
-      HeadingNode(level: 2, []),
-      HeadingNode(level: 3, [TextNode("H3")]),
-      HeadingNode(level: 4, [TextNode("H4"), TextStylesNode(.emph, [])]),
-      HeadingNode(level: 5, [TextNode("H5")]),
+      HeadingNode(.sectionAst, [TextNode("H1")]),
+      HeadingNode(.subsectionAst, []),
+      HeadingNode(.subsubsectionAst, [TextNode("H3")]),
+      HeadingNode(.subsubsectionAst, [TextNode("H4"), TextStylesNode(.emph, [])]),
+      HeadingNode(.subsubsectionAst, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(.inline, []),
@@ -296,21 +296,21 @@ final class TextSegmentTests: TextKitTestsBase {
     let frames = pointsAndFrames.map { $0.1 }
     let expectedPoints: Array<String> = [
       "(14.00, 29.00, 0.00, 27.00)",
-      "(28.91, 79.00, 0.00, 20.00)",
-      "(102.61, 122.33, 0.00, 12.55)",
-      "(102.08, 136.49, 0.00, 8.79)",
-      "(102.08, 146.37, 0.00, 8.79)",
-      "(133.49, 136.49, 0.00, 8.79)",
-      "(133.49, 146.37, 0.00, 8.79)",
+      "(32.33, 79.00, 0.00, 23.00)",
+      "(102.61, 129.33, 0.00, 12.55)",
+      "(102.08, 143.49, 0.00, 8.79)",
+      "(102.08, 153.37, 0.00, 8.79)",
+      "(133.49, 143.49, 0.00, 8.79)",
+      "(133.49, 153.37, 0.00, 8.79)",
     ]
     let expectedFrames: Array<String> = [
       "[(14.00, 29.00, 0.00, 27.00)]",
-      "[(28.91, 79.00, 0.00, 20.00)]",
-      "[(102.61, 122.33, 0.00, 12.55)]",
-      "[(102.08, 136.49, 0.00, 8.79)]",
-      "[(102.08, 146.37, 0.00, 8.79)]",
-      "[(133.49, 136.49, 0.00, 8.79)]",
-      "[(133.49, 146.37, 0.00, 8.79)]",
+      "[(32.33, 79.00, 0.00, 23.00)]",
+      "[(102.61, 129.33, 0.00, 12.55)]",
+      "[(102.08, 143.49, 0.00, 8.79)]",
+      "[(102.08, 153.37, 0.00, 8.79)]",
+      "[(133.49, 143.49, 0.00, 8.79)]",
+      "[(133.49, 153.37, 0.00, 8.79)]",
     ]
 
     for (i, point) in points.enumerated() {
@@ -349,12 +349,12 @@ final class TextSegmentTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
     let range = RhTextRange.parse("[↓0,nuc,↓0,(0,1),↓0]:0..<[↓0,nuc,↓0,(0,1),↓0]:3")!
-    
+
     var frames: Array<CGRect> = []
     documentManager.enumerateTextSegments(in: range, type: .standard) {
       (_, segmentFrame, _) in
       frames.append(segmentFrame)
-      return true // continue
+      return true  // continue
     }
     #expect(frames.count == 1)
   }

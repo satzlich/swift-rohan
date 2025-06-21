@@ -18,7 +18,7 @@ final class MousePickTests: TextKitTestsBase {
           TextNode("The quick brown fox jumps over the lazy dog. ")
         ]),
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("H1 "),
             EquationNode(
@@ -108,7 +108,7 @@ final class MousePickTests: TextKitTestsBase {
         ]),
         // #3
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             EquationNode(
               .inline,

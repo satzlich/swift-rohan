@@ -13,7 +13,7 @@ struct CategoryTests {
       (UnknownNode(), .inlineContent),
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
-      (HeadingNode(level: 1, []), .blockNodes),
+      (HeadingNode(.sectionAst, []), .blockNodes),
       (ItemListNode(.enumerate, []), .blockNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), nil),

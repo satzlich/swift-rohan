@@ -323,7 +323,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("The "),
             TextStylesNode(.emph, [TextNode("quick brown ")]),

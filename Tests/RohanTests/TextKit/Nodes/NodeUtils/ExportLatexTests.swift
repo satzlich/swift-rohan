@@ -15,7 +15,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func coverage() {
     let content: ElementStore = [
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Heading 1"),
           LinebreakNode(),

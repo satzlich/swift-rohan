@@ -28,7 +28,7 @@ struct ElementNodeTests {
       SubscriptNode([TextNode("abc")]),
       SuperscriptNode([TextNode("abc")]),
       //
-      HeadingNode(level: 1, [TextNode("abc")]),
+      HeadingNode(.sectionAst, [TextNode("abc")]),
       ItemListNode(.enumerate, [TextNode("abc")]),
       ItemListNode(.itemize, [TextNode("abc")]),
       ParagraphNode([TextNode("abc")]),
@@ -45,7 +45,7 @@ struct ElementNodeTests {
 
     do {
       let emphasis = TextStylesNode(.emph, [TextNode("ab😀")])
-      let heading = HeadingNode(level: 1, [emphasis])
+      let heading = HeadingNode(.sectionAst, [emphasis])
       do {
         let properties = heading.getProperties(styleSheet)
         #expect(properties[TextProperty.style] == nil)
@@ -83,7 +83,7 @@ struct ElementNodeTests {
     #expect(emphasis.layoutLength() == 6)
 
     let heading = HeadingNode(
-      level: 1,
+      .sectionAst,
       [
         TextNode("a😀b"),
         EquationNode(.block, [TextNode("a+b")]),
@@ -120,7 +120,7 @@ struct ElementNodeTests {
   @Test
   func getLayoutOffset() {
     let root = RootNode([
-      HeadingNode(level: 1, [TextNode("abc😀")]),
+      HeadingNode(.sectionAst, [TextNode("abc😀")]),
       ParagraphNode([TextNode("def")]),
     ])
 

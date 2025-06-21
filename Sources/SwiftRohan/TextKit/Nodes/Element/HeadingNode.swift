@@ -20,23 +20,23 @@ final class HeadingNode: ElementNodeImpl {
 
   // MARK: - Node(Codable)
 
-  private enum CodingKeys: CodingKey { case level }
+  private enum CodingKeys: CodingKey { case subtype }
 
   internal required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.level = try container.decode(Int.self, forKey: .level)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
     try super.init(from: decoder)
   }
 
   final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(self.level, forKey: .level)
+    try container.encode(self.subtype, forKey: .subtype)
     try super.encode(to: encoder)
   }
 
   // MARK: - Node(Storage)
 
-  final override class var storageTags: Array<String> { (1...5).map { "h\($0)" } }
+  final override class var storageTags: Array<String> { Subtype.allCases.map(\.command) }
 
   final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
     loadSelf(from: json).cast()
@@ -44,7 +44,7 @@ final class HeadingNode: ElementNodeImpl {
 
   final override func store() -> JSONValue {
     let children: Array<JSONValue> = childrenReadonly().map { $0.store() }
-    let json = JSONValue.array([.string("h\(level)"), .array(children)])
+    let json = JSONValue.array([.string(subtype.command), .array(children)])
     return json
   }
 
@@ -61,13 +61,13 @@ final class HeadingNode: ElementNodeImpl {
     ParagraphNode()
   }
 
-  final override func cloneEmpty() -> Self { Self(level: level, []) }
+  final override func cloneEmpty() -> Self { Self(subtype, []) }
 
   final override func encode<S: Collection<PartialNode> & Encodable>(
     to encoder: any Encoder, withChildren children: S
   ) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(level, forKey: .level)
+    try container.encode(subtype, forKey: .subtype)
     try super.encode(to: encoder, withChildren: children)
   }
 
@@ -77,12 +77,11 @@ final class HeadingNode: ElementNodeImpl {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
-      (try? #/h([1-5])/#.wholeMatch(in: tag)) != nil,
-      let level = Int(tag.dropFirst()),
+      let subtype = Subtype.fromCommand(tag),
       case let .array(children) = array[1]
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
-    let result = Self(level: level, nodes)
+    let result = Self(subtype, nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
 
@@ -90,54 +89,48 @@ final class HeadingNode: ElementNodeImpl {
 
   typealias Subtype = HeadingExpr.Subtype
 
-  let level: Int
-  var subtype: Subtype { Subtype(level: level) }
+  var level: Int { subtype.level }
+  let subtype: Subtype
 
-  init(level: Int, _ children: ElementStore) {
-    precondition(HeadingExpr.validate(level: level))
-    self.level = level
+  init(_ subtype: Subtype, _ children: ElementStore) {
+    self.subtype = subtype
     super.init(children)
   }
 
   private init(deepCopyOf headingNode: HeadingNode) {
-    self.level = headingNode.level
+    self.subtype = headingNode.subtype
     super.init(deepCopyOf: headingNode)
   }
 
   static func selector(level: Int? = nil) -> TargetSelector {
-    precondition(level == nil || HeadingExpr.validate(level: level!))
     guard let level else { return TargetSelector(.heading) }
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
   }
 
   // MARK: - Command
 
-  var command: String? { Self._command(forLevel: level) }
+  var command: String { Self._command(forSubtype: subtype) }
 
-  private static func _command(forLevel level: Int) -> String? {
-    switch level {
-    case 1: return "section*"
-    case 2: return "subsection*"
-    case 3: return "subsubsection*"
-    case 4: return nil
-    case 5: return nil
-    default: return nil
+  private static func _command(forSubtype subtype: Subtype) -> String {
+    switch subtype {
+    case .sectionAst: return "section*"
+    case .subsectionAst: return "subsection*"
+    case .subsubsectionAst: return "subsubsection*"
     }
   }
 
   /// Returns a command body for the given heading level.
-  static func commandBody(forLevel: Int) -> CommandBody {
-    precondition(HeadingExpr.validate(level: forLevel))
-    return CommandBody(HeadingExpr(level: forLevel), 1)
+  static func commandBody(forSubtype subtype: Subtype) -> CommandBody {
+    return CommandBody(HeadingExpr(subtype), 1)
   }
 
   /// Returns **all** command records emitted by this heading class.
   static var commandRecords: Array<CommandRecord> {
     var records: Array<CommandRecord> = []
-    records.reserveCapacity(5)
-    for level in 1...5 {
-      guard let command = _command(forLevel: level) else { continue }
-      records.append(CommandRecord(command, commandBody(forLevel: level)))
+    records.reserveCapacity(Subtype.allCases.count)
+    for subtype in Subtype.allCases {
+      let command = _command(forSubtype: subtype)
+      records.append(CommandRecord(command, commandBody(forSubtype: subtype)))
     }
     return records
   }

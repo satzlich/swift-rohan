@@ -591,7 +591,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func crossedObjectAt() {
 
     let documentManager = _createDocumentManager([
-      HeadingNode(level: 1, [TextNode("Hello")]),
+      HeadingNode(.sectionAst, [TextNode("Hello")]),
       EquationNode(.block, [FractionNode(num: [], denom: [])]),
     ])
 

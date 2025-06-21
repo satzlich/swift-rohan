@@ -17,7 +17,7 @@ final class LayoutTests: TextKitTestsBase {
     // insert content
     let content = [
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Alpha "),
           TextStylesNode(.emph, [TextNode("Bravo Charlie")]),
@@ -93,7 +93,7 @@ final class LayoutTests: TextKitTestsBase {
     // set up content
     let content = [
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Alpha "),
           EquationNode(
@@ -538,11 +538,9 @@ final class LayoutTests: TextKitTestsBase {
   @Test
   func testEmptyElement() throws {
     let content = [
-      HeadingNode(level: 1, [TextNode("H1")]),
-      HeadingNode(level: 2, []),
-      HeadingNode(level: 3, [TextNode("H3")]),
-      HeadingNode(level: 4, [TextNode("H4"), TextStylesNode(.emph, [])]),
-      HeadingNode(level: 5, [TextNode("H5")]),
+      HeadingNode(.sectionAst, [TextNode("H1")]),
+      HeadingNode(.subsectionAst, []),
+      HeadingNode(.subsubsectionAst, [TextNode("H3"), TextStylesNode(.emph, [])]),
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(.inline, []),
@@ -623,7 +621,7 @@ final class LayoutTests: TextKitTestsBase {
           ])!,
       ]),
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           EquationNode(
             .inline,

@@ -8,49 +8,78 @@ internal class CountHolder {
   /// The next holder in the linked list.
   private(set) var next: CountHolder?
 
-  /// The previous active holder.
-  private(set) weak var previousActive: CountHolder?
-  /// The next active holder.
-  private(set) var nextActive: CountHolder?
+  /// True if the state of this holder is out-of-date and needs to be updated.
+  internal var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /// Returns true if this count holder may produce or change count values.
-  internal var isActive: Bool { preconditionFailure("overriding required") }
+  /// Mark this holder as dirty if applicable, and propagate the message to the
+  /// next holder in the linked list.
+  /// - Postcondition: All count holders after this one for which "mark dirty"
+  ///     action is applicable become dirty.
+  internal func propagateDirty() { preconditionFailure("overriding required") }
 
-  // MARK: - Query
-
-  internal func value(forName name: CounterName) -> Int {
-    preconditionFailure("overriding required")
+  /// Initialize the linked list with an initial and final count holder.
+  static func initList() -> (initial: InitialCountHolder, final: FinalCountHolder) {
+    let initial = InitialCountHolder()
+    let final = FinalCountHolder()
+    initial.next = final
+    final.previous = initial
+    return (initial, final)
   }
 
-  // MARK: - Manipulation
+  static func insert(_ holder: CountHolder, before next: CountHolder) {
+    precondition(next.previous != nil)
+    let p = next.previous!
 
-  static func insert(_ anchor: CountHolder, after previous: CountHolder) {
-    precondition(anchor.previous == nil && anchor.next == nil)
+    holder.previous = p
+    p.next = holder
+    next.previous = holder
+    holder.next = next
   }
 
-  static func insert(_ anchor: CountHolder, before next: CountHolder) {
-    precondition(anchor.previous == nil && anchor.next == nil)
-  }
-
-  static func insert<C: Collection<CountHolder>>(
-    contentsOf anchors: C, after previous: CountHolder
+  static func insert(
+    contentsOf holders: some Collection<CountHolder>, before next: CountHolder
   ) {
-    precondition(anchors.allSatisfy { $0.previous == nil && $0.next == nil })
+    precondition(next.previous != nil)
+    guard holders.isEmpty == false else { return }
+
+    var p = next.previous!
+
+    for holder in holders {
+      holder.previous = p
+      p.next = holder
+      p = holder
+    }
+
+    next.previous = p
+    p.next = next
   }
 
-  static func insert<C: Collection<CountHolder>>(
-    contentsOf anchors: C, before next: CountHolder
-  ) {
-    precondition(anchors.allSatisfy { $0.previous == nil && $0.next == nil })
+  static func remove(_ holder: CountHolder) {
+    precondition(holder.previous != nil)
+
+    let p = holder.previous!
+
+    p.next = holder.next
+    holder.next?.previous = p
+    holder.previous = nil
+    holder.next = nil
   }
 
-  static func remove(_ anchor: CountHolder) {
-    precondition(anchor.previous != nil || anchor.next != nil)
-  }
-
-  /// - Precondition: `begin` must precede `end` in the linked list.
+  /// Remove the count holders in the half-open range `[begin, end)`.
   static func removeSubrange(_ begin: CountHolder, _ end: CountHolder) {
     precondition(begin.previous != nil)
-    precondition(begin.next != nil && end.previous != nil)
+
+    guard begin !== end else { return }
+
+    begin.previous?.next = end
+    end.previous?.next = nil
+    end.previous = begin.previous
+    begin.previous = nil
+  }
+
+  /// Returns the value for the given counter name.
+  /// - Postcondition: Call to this method clears the dirty state of the holder.
+  internal func value(forName name: CounterName) -> Int {
+    preconditionFailure("overriding required")
   }
 }
