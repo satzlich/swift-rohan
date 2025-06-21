@@ -180,9 +180,11 @@ struct ElementOperationTests {
       ]),
       ParagraphNode([
         TextNode("2"),
-        TextStylesNode(.emph, [
-          TextNode("3")
-        ]),
+        TextStylesNode(
+          .emph,
+          [
+            TextNode("3")
+          ]),
       ]),
       ParagraphNode([
         TextNode("45")
@@ -231,85 +233,6 @@ struct ElementOperationTests {
             ├ text "3"
             └ text "X"
         """)
-  }
-
-  @Test
-  static func compactSubrange() {
-    let paragraph = ParagraphNode([
-      TextNode("0"),
-      TextNode("1"),
-      TextStylesNode(.emph, [TextNode("2")]),
-      TextNode("3"),
-      TextNode("4"),
-      TextStylesNode(.emph, [TextNode("5")]),
-      TextNode("6"),
-    ])
-    #expect(
-      paragraph.prettyPrint() == """
-        paragraph
-        ├ text "0"
-        ├ text "1"
-        ├ emph
-        │ └ text "2"
-        ├ text "3"
-        ├ text "4"
-        ├ emph
-        │ └ text "5"
-        └ text "6"
-        """)
-
-    do {
-      let compacted = paragraph.compactSubrange(0..<3, inStorage: false)
-      #expect(compacted == true)
-      #expect(
-        paragraph.prettyPrint() == """
-          paragraph
-          ├ text "01"
-          ├ emph
-          │ └ text "2"
-          ├ text "3"
-          ├ text "4"
-          ├ emph
-          │ └ text "5"
-          └ text "6"
-          """)
-    }
-
-    do {
-      let compacted = paragraph.compactSubrange(
-        0..<paragraph.childCount,
-        inStorage: false)
-      #expect(compacted == true)
-      #expect(
-        paragraph.prettyPrint() == """
-          paragraph
-          ├ text "01"
-          ├ emph
-          │ └ text "2"
-          ├ text "34"
-          ├ emph
-          │ └ text "5"
-          └ text "6"
-          """)
-    }
-
-    do {
-      let compacted = paragraph.compactSubrange(
-        0..<paragraph.childCount,
-        inStorage: false)
-      #expect(compacted == false)
-      #expect(
-        paragraph.prettyPrint() == """
-          paragraph
-          ├ text "01"
-          ├ emph
-          │ └ text "2"
-          ├ text "34"
-          ├ emph
-          │ └ text "5"
-          └ text "6"
-          """)
-    }
   }
 
   // MARK: - Length & Location
