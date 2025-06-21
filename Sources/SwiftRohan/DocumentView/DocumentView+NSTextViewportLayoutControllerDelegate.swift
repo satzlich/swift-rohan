@@ -67,11 +67,14 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
 
     // 2) propagate text container height to view
     let page: PageProperty = documentManager.styleSheet.resolveDefault()
-    let usageHeight =
-      documentManager.usageBoundsForTextContainer.height + page.topMargin.ptValue
-      + page.bottomMargin.ptValue
-    let padding = page.height.ptValue / 4
-    frame.size.height = max(usageHeight + padding, page.height.ptValue)
+    let usageBasedHeight: Double
+    do {
+      let height = documentManager.usageBoundsForTextContainer.height
+      let margins = page.topMargin.ptValue + page.bottomMargin.ptValue
+      let padding = page.height.ptValue / 4
+      usageBasedHeight = height + margins + padding
+    }
+    frame.size.height = max(usageBasedHeight, page.height.ptValue)
 
     // 3) request update of selection
     setNeedsUpdate(selection: true)
