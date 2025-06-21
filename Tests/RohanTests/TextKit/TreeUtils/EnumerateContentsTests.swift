@@ -25,7 +25,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
   @Test
   func testSimpleSelection() throws {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("Hello, world!")]),
+      HeadingNode(.sectionAst, [TextNode("Hello, world!")]),
       ParagraphNode([TextNode("This is a paragraph.")]),
       ParagraphNode([
         EquationNode(
@@ -110,7 +110,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
   func testMixedSelection() throws {
     let rootNode = RootNode([
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Hello, "),
           TextStylesNode(.emph, [TextNode("world")]),
@@ -240,7 +240,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
   func testComplexSelection() throws {
     let rootNode = RootNode([
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Hello, "),
           TextStylesNode(.emph, [TextNode("world")]),

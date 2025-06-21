@@ -45,10 +45,10 @@ final class ExprNodeSyncTests {
       try testSerdeSync(content, ContentNode.self, json)
     }
     do {
-      let heading = HeadingExpr(level: 1, [TextExpr("abc")])
+      let heading = HeadingExpr(.sectionAst, [TextExpr("abc")])
       let json =
         """
-        {"children":[{"string":"abc","type":"text"}],"level":1,"type":"heading"}
+        {"children":[{"string":"abc","type":"text"}],"subtype":"sectionAst","type":"heading"}
         """
       try testSerdeSync(heading, HeadingNode.self, json)
     }

@@ -34,7 +34,7 @@ final class InsertStringTests: TextKitTestsBase {
   func test_insertString_TextNode() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextStylesNode(.emph, [TextNode("Newton's😀")])])
+        HeadingNode(.sectionAst, [TextStylesNode(.emph, [TextNode("Newton's😀")])])
       ])
       return createDocumentManager(rootNode)
     }()
@@ -63,7 +63,7 @@ final class InsertStringTests: TextKitTestsBase {
   func test_insertString_RootNode_1() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, []),
+        HeadingNode(.sectionAst, []),
         ParagraphNode([TextStylesNode(.emph, [TextNode("over ")])]),
       ])
       return createDocumentManager(rootNode)
@@ -90,7 +90,7 @@ final class InsertStringTests: TextKitTestsBase {
   func test_insertString_RootNode_2() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, []),
+        HeadingNode(.sectionAst, []),
         ParagraphNode([
           TextNode("fox "),
           TextStylesNode(.emph, [TextNode("over ")]),
@@ -120,7 +120,7 @@ final class InsertStringTests: TextKitTestsBase {
   func test_insertString_RootNode_3() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, []),
+        HeadingNode(.sectionAst, []),
         ParagraphNode([
           TextNode("The quick brown fox "),
           TextStylesNode(.emph, [TextNode("over ")]),
@@ -155,7 +155,7 @@ final class InsertStringTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([TextNode("hello world")]),
-        HeadingNode(level: 1, [TextNode("Bonjour")]),
+        HeadingNode(.sectionAst, [TextNode("Bonjour")]),
       ])
       return createDocumentManager(rootNode)
     }()
@@ -432,7 +432,7 @@ final class InsertStringTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             EquationNode(
               .inline,

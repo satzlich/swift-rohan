@@ -15,7 +15,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
     // create document manager
     let rootNode = RootNode([
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Hello, "),
           TextStylesNode(.emph, [TextNode("world!")]),
@@ -58,7 +58,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
 
       #expect(
         String(data: data, encoding: .utf8) == """
-          [{"children":[{"string":"lo, ","type":"text"},{"children":[{"string":"world!","type":"text"}],"command":"emph","type":"textStyles"}],"level":1,"type":"heading"},{"children":[{"string":"The quick","type":"text"}],"type":"paragraph"}]
+          [{"children":[{"string":"lo, ","type":"text"},{"children":[{"string":"world!","type":"text"}],"command":"emph","type":"textStyles"}],"subtype":"sectionAst","type":"heading"},{"children":[{"string":"The quick","type":"text"}],"type":"paragraph"}]
           """)
 
       // deserialize

@@ -16,7 +16,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([TextNode("hello ")]),
-        HeadingNode(level: 1, [TextNode("the quick brown ")]),
+        HeadingNode(.sectionAst, [TextNode("the quick brown ")]),
       ])
       return self.createDocumentManager(rootNode)
     }()
@@ -50,7 +50,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([TextNode("world")]),
-        HeadingNode(level: 1, [TextNode("the quick brown ")]),
+        HeadingNode(.sectionAst, [TextNode("the quick brown ")]),
       ])
       return createDocumentManager(rootNode)
     }()
@@ -121,7 +121,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextNode("nice ")])
+        HeadingNode(.sectionAst, [TextNode("nice ")])
       ]
       let range1 = "[↓0,↓0]:6..<[↓2,↓0]:0"
       let doc1 = """
@@ -145,9 +145,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextNode("nice ")]),
+        HeadingNode(.sectionAst, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
-        HeadingNode(level: 1, [TextNode("good ")]),
+        HeadingNode(.sectionAst, [TextNode("good ")]),
       ]
 
       let range1 = "[↓0,↓0]:6..<[↓4,↓0]:0"
@@ -176,7 +176,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextNode("nice ")]),
+        HeadingNode(.sectionAst, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
         ParagraphNode([TextNode("good ")]),
       ]
@@ -206,7 +206,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let content = [
         ParagraphNode([TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
-        HeadingNode(level: 1, [TextNode("good ")]),
+        HeadingNode(.sectionAst, [TextNode("good ")]),
       ]
       let range1 = "[↓0,↓0]:6..<[↓3,↓0]:0"
       let doc1 = """
@@ -288,7 +288,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
   func test_insertParagraphNodes_paragraphContainer_end() throws {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("hello world")]),
+        HeadingNode(.sectionAst, [TextNode("hello world")]),
         ParagraphNode([TextNode("bonjour ")]),
       ])
       return self.createDocumentManager(rootNode)
@@ -321,7 +321,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextNode("Monsieur")])
+        HeadingNode(.sectionAst, [TextNode("Monsieur")])
       ]
       let range1 = "[]:2..<[]:3"
       let doc1 = """
@@ -348,7 +348,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = {
         let rootNode = RootNode([
-          HeadingNode(level: 1, [TextNode("world")]),
+          HeadingNode(.sectionAst, [TextNode("world")]),
           ParagraphNode([TextNode("Monsieur")]),
         ])
         return createDocumentManager(rootNode)
@@ -356,7 +356,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
 
       let range = RhTextRange.parse("[]:1")!
       let content = [
-        HeadingNode(level: 1, [TextNode("Guten Tag")]),
+        HeadingNode(.sectionAst, [TextNode("Guten Tag")]),
         ParagraphNode([TextNode("hello ")]),
       ]
 
@@ -381,7 +381,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = {
         let rootNode = RootNode([
-          HeadingNode(level: 1, [TextNode("world")]),
+          HeadingNode(.sectionAst, [TextNode("world")]),
           ParagraphNode([TextNode("Monsieur")]),
         ])
         return createDocumentManager(rootNode)
@@ -389,7 +389,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
 
       let range = RhTextRange.parse("[]:0")!
       let content = [
-        HeadingNode(level: 1, [TextNode("Guten Tag")]),
+        HeadingNode(.sectionAst, [TextNode("Guten Tag")]),
         ParagraphNode([TextNode("hello ")]),
       ]
 
@@ -454,7 +454,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextStylesNode(.emph, [TextNode("tout le monde")])])
+        HeadingNode(.sectionAst, [TextStylesNode(.emph, [TextNode("tout le monde")])])
       ]
       let range1 = "[↓0,↓0]:6..<[↓2]:0"
       let doc1 = """
@@ -496,8 +496,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextNode("nice ")]),
-        HeadingNode(level: 1, [TextNode("Guten Tag")]),
+        HeadingNode(.sectionAst, [TextNode("nice ")]),
+        HeadingNode(.sectionAst, [TextNode("Guten Tag")]),
       ]
       let range1 = "[↓0]:2..<[↓3,↓0]:0"
       let doc1 = """
@@ -523,7 +523,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     do {
       let documentManager = createDocumentManager()
       let content = [
-        HeadingNode(level: 1, [TextNode("nice ")]),
+        HeadingNode(.sectionAst, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
       ]
       let range1 = "[↓0]:2..<[↓2,↓0]:9"
@@ -549,7 +549,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let documentManager = createDocumentManager()
       let content = [
         ParagraphNode([TextNode("nice ")]),
-        HeadingNode(level: 1, [TextNode("Guten Tag")]),
+        HeadingNode(.sectionAst, [TextNode("Guten Tag")]),
       ]
       let range1 = "[↓0,↓2]:0..<[↓2,↓0]:0"
       let doc1 = """

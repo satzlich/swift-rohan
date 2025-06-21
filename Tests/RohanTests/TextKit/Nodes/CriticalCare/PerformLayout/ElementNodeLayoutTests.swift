@@ -27,7 +27,7 @@ struct ElementNodeLayoutTests {
   private func elementNodesSample() -> (RootNode, TextLayoutContext) {
     let rootNode = RootNode([
       ParagraphNode([TextNode("Hello, world!")]),
-      HeadingNode(level: 1, [TextNode("Mary has a little lamb.")]),
+      HeadingNode(.sectionAst, [TextNode("Mary has a little lamb.")]),
       ParagraphNode([TextNode("All I want is freedom, a world with no more night")]),
       ParagraphNode([TextNode("Veni. Vedi. Veci.")]),
     ])
@@ -68,7 +68,7 @@ struct ElementNodeLayoutTests {
       let location = TextLocation.parse("[↓0,↓0]:6")!
       let nodes = [
         ParagraphNode([TextNode("abc")]),
-        HeadingNode(level: 1, [TextNode("def")]),
+        HeadingNode(.sectionAst, [TextNode("def")]),
         ParagraphNode([TextNode("ghi")]),
       ]
       let result = TreeUtils.insertBlockNodes(nodes, at: location, rootNode)

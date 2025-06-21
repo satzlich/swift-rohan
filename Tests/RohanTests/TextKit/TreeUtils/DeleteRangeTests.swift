@@ -120,7 +120,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("Newton's"),
             TextStylesNode(.emph, [TextNode(" Second")]),
@@ -183,7 +183,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("Newton's"),
             TextStylesNode(.emph, [TextNode(" Second")]),
@@ -427,7 +427,7 @@ final class DeleteRangeTests: TextKitTestsBase {
   func testRemainderMergeable() throws {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("Hello Wolrd")]),
+        HeadingNode(.sectionAst, [TextNode("Hello Wolrd")]),
         ParagraphNode([
           TextNode("Mary has a little lamb.")
         ]),
@@ -735,7 +735,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             EquationNode(
               .inline,
@@ -864,7 +864,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("Alpha "),
             EquationNode(

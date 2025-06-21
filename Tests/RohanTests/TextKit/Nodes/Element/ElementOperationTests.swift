@@ -318,7 +318,7 @@ struct ElementOperationTests {
   static func layoutLength() {
     let root = RootNode([
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("abc"),
           TextStylesNode(.emph, [TextNode("def😀")]),

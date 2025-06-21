@@ -18,7 +18,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
       // #1 heading: test math nodes
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Alpha "),
           EquationNode(
@@ -38,7 +38,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
       // #4 heading: test nested math nodes
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextNode("Alpha "),
           EquationNode(
@@ -167,7 +167,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ]),
       // #3
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           EquationNode(
             .inline,
@@ -248,11 +248,11 @@ final class TextSegmentTests: TextKitTestsBase {
   @Test
   func testPlacerholder() {
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("H1")]),
-      HeadingNode(level: 2, []),
-      HeadingNode(level: 3, [TextNode("H3")]),
-      HeadingNode(level: 4, [TextNode("H4"), TextStylesNode(.emph, [])]),
-      HeadingNode(level: 5, [TextNode("H5")]),
+      HeadingNode(.sectionAst, [TextNode("H1")]),
+      HeadingNode(.subsectionAst, []),
+      HeadingNode(.subsubsectionAst, [TextNode("H3")]),
+      HeadingNode(.subsubsectionAst, [TextNode("H4"), TextStylesNode(.emph, [])]),
+      HeadingNode(.subsubsectionAst, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(.inline, []),
@@ -349,12 +349,12 @@ final class TextSegmentTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
     let range = RhTextRange.parse("[↓0,nuc,↓0,(0,1),↓0]:0..<[↓0,nuc,↓0,(0,1),↓0]:3")!
-    
+
     var frames: Array<CGRect> = []
     documentManager.enumerateTextSegments(in: range, type: .standard) {
       (_, segmentFrame, _) in
       frames.append(segmentFrame)
-      return true // continue
+      return true  // continue
     }
     #expect(frames.count == 1)
   }

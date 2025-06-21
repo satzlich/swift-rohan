@@ -10,7 +10,7 @@ struct RepairRangeTests {
   static func test_validateInsertionPoint() {
     let rootNode = RootNode([
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextStylesNode(.emph, [TextNode("Fibonacci")]),
           TextNode(" Sequence"),
@@ -57,7 +57,7 @@ struct RepairRangeTests {
   static func test_validateSelectionRange_repairSelectionRange() {
     let rootNode = RootNode([
       HeadingNode(
-        level: 1,
+        .sectionAst,
         [
           TextStylesNode(.emph, [TextNode("Fibonacci")]),
           TextNode(" Sequence"),

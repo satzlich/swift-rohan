@@ -3,33 +3,47 @@
 final class HeadingExpr: ElementExpr {
   class override var type: ExprType { .heading }
 
-  enum Subtype: String, Codable {
-    case h1, h2, h3, h4, h5
+  enum Subtype: String, Codable, CaseIterable {
+    case sectionAst
+    case subsectionAst
+    case subsubsectionAst
 
-    init(level: Int) {
-      precondition(HeadingExpr.validate(level: level))
-      switch level {
-      case 1: self = .h1
-      case 2: self = .h2
-      case 3: self = .h3
-      case 4: self = .h4
-      case 5: self = .h5
-      default: preconditionFailure("Invalid heading level")
+    var level: Int {
+      switch self {
+      case .sectionAst: return 1
+      case .subsectionAst: return 2
+      case .subsubsectionAst: return 3
+      }
+    }
+
+    var command: String {
+      switch self {
+      case .sectionAst: return "section*"
+      case .subsectionAst: return "subsection*"
+      case .subsubsectionAst: return "subsubsection*"
+      }
+    }
+
+    static func fromCommand(_ command: String) -> Subtype? {
+      switch command {
+      case "section*": return .sectionAst
+      case "subsection*": return .subsectionAst
+      case "subsubsection*": return .subsubsectionAst
+      default: return nil
       }
     }
   }
 
-  let level: Int
-  var subtype: Subtype { Subtype(level: level) }
+  var level: Int { subtype.level }
+  var subtype: Subtype
 
-  init(level: Int, _ expressions: Array<Expr> = []) {
-    precondition(HeadingExpr.validate(level: level))
-    self.level = level
+  init(_ subtype: Subtype, _ expressions: Array<Expr> = []) {
+    self.subtype = subtype
     super.init(expressions)
   }
 
   override func with(children: Array<Expr>) -> Self {
-    Self(level: level, children)
+    Self(subtype, children)
   }
 
   static func validate(level: Int) -> Bool {
@@ -43,17 +57,17 @@ final class HeadingExpr: ElementExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case level }
+  private enum CodingKeys: CodingKey { case subtype }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    level = try container.decode(Int.self, forKey: .level)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(level, forKey: .level)
+    try container.encode(subtype, forKey: .subtype)
     try super.encode(to: encoder)
   }
 }

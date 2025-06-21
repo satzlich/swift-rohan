@@ -14,7 +14,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
   @Test
   func test_insertInlineContent_textNode_beginning() throws {
     let documentManager = {
-      let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
+      let rootNode = RootNode([HeadingNode(.sectionAst, [TextNode("fox the ")])])
       return createDocumentManager(rootNode)
     }()
 
@@ -43,7 +43,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
   @Test
   func test_insertInlineContent_textNode_end() throws {
     let documentManager = {
-      let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
+      let rootNode = RootNode([HeadingNode(.sectionAst, [TextNode("fox the ")])])
       return createDocumentManager(rootNode)
     }()
 
@@ -75,7 +75,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
   @Test
   func test_insertInlineContent_textNode_mid() throws {
     func createDocumentManager() -> DocumentManager {
-      let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
+      let rootNode = RootNode([HeadingNode(.sectionAst, [TextNode("fox the ")])])
       return self.createDocumentManager(rootNode)
     }
 
@@ -277,7 +277,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
   @Test
   func test_insertInlineContent_elementNode_empty() throws {
     let documentManager = {
-      let rootNode = RootNode([HeadingNode(level: 1, [])])
+      let rootNode = RootNode([HeadingNode(.sectionAst, [])])
       return self.createDocumentManager(rootNode)
     }()
 
@@ -308,7 +308,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
   func test_insertInlineContent_elementNode_end() throws {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("the quick brown ")])
+        HeadingNode(.sectionAst, [TextNode("the quick brown ")])
       ])
       return self.createDocumentManager(rootNode)
     }
@@ -364,7 +364,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
   func test_insertInlineContent_elementNode_beginning() throws {
     let documentManager = {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("jumps over the lazy dog")])
+        HeadingNode(.sectionAst, [TextNode("jumps over the lazy dog")])
       ])
       return self.createDocumentManager(rootNode)
     }()
@@ -399,7 +399,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(
-          level: 1,
+          .sectionAst,
           [
             TextNode("quick brown "),
             TextStylesNode(.emph, [TextNode("over ")]),
