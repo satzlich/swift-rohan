@@ -53,7 +53,7 @@ final class TextLayoutContext: LayoutContext {
     textStorage.addAttributes(attributes, range: nsRange)
   }
 
-  func addParagraphStyle(
+  func addParagraphAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {
     precondition(isEditing)

@@ -23,7 +23,8 @@ protocol LayoutContext {
   /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
 
-  func addParagraphStyle(
+  /// Add attributes to the given range which should delimit a paragraph.
+  func addParagraphAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>)
 
   // MARK: - Operations
@@ -111,7 +112,7 @@ extension LayoutContext {
     // defeault implementation does nothing.
   }
 
-  func addParagraphStyle(
+  func addParagraphAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {
     precondition(isEditing)

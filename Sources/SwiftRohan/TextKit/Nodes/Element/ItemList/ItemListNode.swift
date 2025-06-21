@@ -243,7 +243,7 @@ final class ItemListNode: ElementNode {
     assert(_children.isEmpty == false)
     assert(_textList != nil)
     let textList = _textList!
-    let paragraphStyle = _bakeParagraphStyle(context.styleSheet, textList)
+    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet, textList)
 
     var sum = 0
     var forceParagraphStyle = false
@@ -258,9 +258,7 @@ final class ItemListNode: ElementNode {
         sum += StringReconciler.skip(current: marker, context: context)
 
         if forceParagraphStyle {
-          let n = sum - sum0
-          let begin = context.layoutCursor
-          context.addParagraphStyle(paragraphStyle, begin..<begin + n)
+          _addParagraphAttributes(paragraphAttributes, marker, sum - sum0)
           forceParagraphStyle = false
         }
       }
@@ -272,16 +270,25 @@ final class ItemListNode: ElementNode {
         let marker = _formattedMarker(forIndex: i, textList)
         sum += StringReconciler.skip(current: marker, context: context)
 
-        do {
-          let n = sum - sum0
-          let begin = context.layoutCursor
-          context.addParagraphStyle(paragraphStyle, begin..<begin + n)
-          forceParagraphStyle = true
-        }
+        _addParagraphAttributes(paragraphAttributes, marker, sum - sum0)
+        forceParagraphStyle = true
       }
     }
 
     return sum
+
+    // Helper
+    func _addParagraphAttributes(
+      _ paragraphAttributes: Dictionary<NSAttributedString.Key, Any>,
+      _ itemMarker: String, _ rangeSize: Int
+    ) {
+      var paragraphAttributesCopy = paragraphAttributes
+      let itemMarker = NSAttributedString(string: itemMarker)
+      paragraphAttributesCopy[.itemMarker] = itemMarker
+
+      let begin = context.layoutCursor
+      context.addParagraphAttributes(paragraphAttributesCopy, begin..<begin + rangeSize)
+    }
   }
 
   @inline(__always)
@@ -474,7 +481,7 @@ final class ItemListNode: ElementNode {
     precondition(self.isBlockContainer)
     assert(_textList != nil)
     let textList = _textList!
-    let paragraphStyle = _bakeParagraphStyle(context.styleSheet, textList)
+    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet, textList)
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
@@ -483,7 +490,10 @@ final class ItemListNode: ElementNode {
       let end =
         location + itemMarker.length + child.layoutLength() + _newlines[i].intValue
       if predicate(i) {
-        context.addParagraphStyle(paragraphStyle, location..<end)
+        var paragraphAttributesCopy = paragraphAttributes
+        let itemMarker = NSAttributedString(string: itemMarker)
+        paragraphAttributesCopy[.itemMarker] = itemMarker
+        context.addParagraphAttributes(paragraphAttributesCopy, location..<end)
       }
       location = end
     }
@@ -546,7 +556,7 @@ final class ItemListNode: ElementNode {
     textList.marker(forIndex: index) + "\u{2000}"
   }
 
-  private func _bakeParagraphStyle(
+  private func _bakeParagraphAttributes(
     _ styleSheet: StyleSheet, _ textList: RhTextList
   ) -> Dictionary<NSAttributedString.Key, Any> {
     let properties = getProperties(styleSheet)
@@ -564,6 +574,7 @@ final class ItemListNode: ElementNode {
     let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .paragraphStyle: paragraphStyle,
       .listLevel: textList.level,
+      .listIndent: indent,
     ]
     return attributes
   }
