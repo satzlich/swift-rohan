@@ -28,13 +28,9 @@ internal class ElementNode: Node {
     return _children[index]
   }
 
-  internal override func firstIndex() -> RohanIndex? {
-    preconditionFailure("overriding required")
-  }
+  final override func firstIndex() -> RohanIndex? { .index(0) }
 
-  internal override func lastIndex() -> RohanIndex? {
-    preconditionFailure("overriding required")
-  }
+  final override func lastIndex() -> RohanIndex? { .index(_children.count) }
 
   internal override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
@@ -575,86 +571,5 @@ internal class ElementNode: Node {
     _newlines.setValue(isBlock: node.isBlock, at: index)
 
     if inStorage { contentDidChange() }
-  }
-
-  /// Compact mergeable nodes in a range.
-  /// - Returns: true if compacted
-  final func compactSubrange(_ range: Range<Int>, inStorage: Bool) -> Bool {
-    guard range.count > 1 else { return false }
-
-    if inStorage { makeSnapshotOnce() }
-
-    // perform compact
-    guard let newRange = ElementNode.compactSubrange(&_children, range, self)
-    else { return false }
-    assert(range.lowerBound == newRange.lowerBound)
-
-    // update newlines
-    _newlines.replaceSubrange(range, with: _children[newRange].lazy.map(\.isBlock))
-
-    if inStorage { contentDidChange() }
-    return true
-  }
-
-  /// Compact nodes in a range so that there are no neighbouring mergeable nodes.
-  /// - Note: Each merged node is set with parent.
-  /// - Returns: the range of compacted nodes, or nil if no compact
-  private static func compactSubrange(
-    _ nodes: inout ElementStore, _ range: Range<Int>, _ parent: Node
-  ) -> Range<Int>? {
-    precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
-
-    func isCandidate(_ i: Int) -> Bool { nodes[i].type == .text }
-
-    func isMergeable(_ i: Int, _ j: Int) -> Bool {
-      nodes[i].type == .text && nodes[j].type == .text
-    }
-
-    func mergeSubrange(_ range: Range<Int>) -> Node {
-      let string: BigString = nodes[range]
-        .lazy.map { ($0 as! TextNode).string }
-        .reduce(into: BigString(), +=)
-      let node = TextNode(string)
-      node.setParent(parent)
-      return node
-    }
-
-    var i = range.lowerBound
-    var j = i
-    // invariant:
-    //  (a) j <= upperBound;
-    //  (b) i <= j;
-    //  (c) current[..< i] is the compact result of original[..< j];
-    //  (d) current[i ..< j] is vacuum.
-    while j < range.upperBound {
-      if !isCandidate(j) {
-        if i != j { nodes[i] = nodes[j] }
-        i += 1
-        j += 1
-      }
-      else {
-        // merge as much as possible
-        var k = j + 1
-        // invariant: [j, k) is mergeable
-        while k < range.upperBound && isMergeable(j, k) {
-          k += 1
-        }
-        if j + 1 == k {  // only one node
-          if i != j { nodes[i] = nodes[j] }
-          i += 1
-          j = k
-        }
-        else {  // multiple nodes
-          nodes[i] = mergeSubrange(j..<k)
-          i += 1
-          j = k
-        }
-      }
-    }
-    assert(j == range.upperBound)
-    // remove vacuum
-    guard i != j else { return nil }
-    nodes.removeSubrange(i..<j)
-    return range.lowerBound..<i
   }
 }
