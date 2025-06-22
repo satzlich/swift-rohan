@@ -9,7 +9,7 @@ struct EditResultTests {
   func coverage() {
     let results: Array<EditResult<Int>> = [
       .success(9),
-      .paragraphInserted(10),
+      .extraParagraph(10),
       .failure(SatzError(.InsertStringFailure)),
     ]
 

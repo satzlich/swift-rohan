@@ -144,11 +144,7 @@ final class ItemListNode: ElementNode {
 
   // MARK: - Node(Tree API)
 
-  final override func correctLeadingCursor(_ segmentFrame: SegmentFrame) -> SegmentFrame {
-    var segmentFrame = segmentFrame
-    segmentFrame.frame.origin.x -= _listIndent
-    return segmentFrame
-  }
+  final override func leadingCursorCorrection() -> Double { -_listIndent }
 
   // MARK: - Storage
 

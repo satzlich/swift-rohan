@@ -1,10 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
 enum EditResult<T> {
-  /// insertion is successful.
+  /// insertion is successful, no special handling is required.
   case success(T)
   /// insertion is successful with a new paragraph created holding the inserted content.
-  case paragraphInserted(T)
+  case extraParagraph(T)
+  /// insertion of block nodes is successful.
+  case blockInserted(T)
 
   case failure(SatzError)
 
@@ -12,8 +14,10 @@ enum EditResult<T> {
     switch self {
     case .success(let value):
       return .success(try transform(value))
-    case .paragraphInserted(let value):
-      return .paragraphInserted(try transform(value))
+    case .extraParagraph(let value):
+      return .extraParagraph(try transform(value))
+    case .blockInserted(let value):
+      return .blockInserted(try transform(value))
     case .failure(let error):
       return .failure(error)
     }
@@ -21,10 +25,10 @@ enum EditResult<T> {
 
   var isSuccess: Bool {
     switch self {
-    case .success, .paragraphInserted:
-      return true
-    case .failure:
-      return false
+    case .success: return true
+    case .extraParagraph: return true
+    case .blockInserted: return true
+    case .failure: return false
     }
   }
 
@@ -34,12 +38,10 @@ enum EditResult<T> {
 
   func success() -> T? {
     switch self {
-    case .success(let value):
-      return value
-    case .paragraphInserted(let value):
-      return value
-    case .failure:
-      return nil
+    case .success(let value): return value
+    case .extraParagraph(let value): return value
+    case .blockInserted(let value): return value
+    case .failure: return nil
     }
   }
 

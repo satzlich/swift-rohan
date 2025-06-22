@@ -211,11 +211,9 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /// Correct the position of a cursor that is placed immediately before the node.
-  internal func correctLeadingCursor(_ segmentFrame: SegmentFrame) -> SegmentFrame {
-    // default implementation does nothing
-    segmentFrame
-  }
+  /// Horizontal cursor correction applied to a cursor position when the cursor is
+  /// at the leading edge of the node.
+  internal func leadingCursorCorrection() -> Double { 0 }
 
   /// Resolve the text location for the given point within the node.
   /// - Parameters:

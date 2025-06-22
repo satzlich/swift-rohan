@@ -113,10 +113,9 @@ internal class ElementNode: Node {
       _ baselinePosition: CGFloat
     ) -> Bool {
       precondition(node.needsLeadingCursorCorrection)
-      var originCorrected = segmentFrame.offsetBy(originCorrection)
-      let segmentFrame = SegmentFrame(originCorrected, baselinePosition)
-      let nodeCorrected = node.correctLeadingCursor(segmentFrame)
-      return block(nil, nodeCorrected.frame, nodeCorrected.baselinePosition)
+      var correctedFrame = segmentFrame.offsetBy(originCorrection)
+      correctedFrame.origin.x += node.leadingCursorCorrection()
+      return block(nil, correctedFrame, baselinePosition)
     }
 
     guard let index = path.first?.index(),
@@ -382,6 +381,11 @@ internal class ElementNode: Node {
         if let segmentFrame = context.getSegmentFrame(layoutOffset + 1, .upstream) {
           result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
         }
+      }
+      else if index < self._children.count,
+        _children[index].needsLeadingCursorCorrection
+      {
+        result.position.x += _children[index].leadingCursorCorrection()
       }
 
       return LayoutUtils.relayRayshoot(
