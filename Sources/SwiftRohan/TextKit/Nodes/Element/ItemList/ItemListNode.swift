@@ -142,6 +142,14 @@ final class ItemListNode: ElementNode {
     try super.encode(to: encoder, withChildren: children)
   }
 
+  // MARK: - Node(Tree API)
+
+  final override func correctLeadingCursor(_ segmentFrame: SegmentFrame) -> SegmentFrame {
+    var segmentFrame = segmentFrame
+    segmentFrame.frame.origin.x -= _listIndent
+    return segmentFrame
+  }
+
   // MARK: - Storage
 
   final class func loadSelf(from json: JSONValue) -> NodeLoaded<ItemListNode> {
@@ -487,8 +495,13 @@ final class ItemListNode: ElementNode {
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
+
+  /// Text list used for this item list.
   private var _textList: RhTextList = RhTextList.itemize(level: 1, marker: "•")
+  /// Text attributes used for item markers.
   private var _textAttributes: Dictionary<NSAttributedString.Key, Any> = [:]
+  /// Indent for item text.
+  private var _listIndent: CGFloat = 0.0
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
@@ -510,6 +523,9 @@ final class ItemListNode: ElementNode {
     // prepare text attributes
     let textProperty = TextProperty.resolveAggregate(properties, styleSheet)
     self._textAttributes = textProperty.getAttributes()
+    // resolve indent
+    self._listIndent =
+      Self.indent(forLevel: listLevel).floatValue * textProperty.size.floatValue
   }
 
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {
@@ -529,15 +545,13 @@ final class ItemListNode: ElementNode {
     let paragraphProperty = ParagraphProperty.resolveAggregate(properties, styleSheet)
     let paragraphStyle =
       paragraphProperty.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-    let fontSize = TextProperty.size.resolveValue(properties, styleSheet).fontSize()!
-    let indent = Self.indent(forLevel: listLevel).floatValue * fontSize.floatValue
-    paragraphStyle.firstLineHeadIndent = indent
-    paragraphStyle.headIndent = indent
+    paragraphStyle.firstLineHeadIndent = _listIndent
+    paragraphStyle.headIndent = _listIndent
 
     let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .paragraphStyle: paragraphStyle,
       .listLevel: listLevel,
-      .listIndent: indent,
+      .listIndent: _listIndent,
     ]
     return attributes
   }

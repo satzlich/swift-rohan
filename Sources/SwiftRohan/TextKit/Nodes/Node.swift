@@ -211,6 +211,12 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Correct the position of a cursor that is placed immediately before the node.
+  internal func correctLeadingCursor(_ segmentFrame: SegmentFrame) -> SegmentFrame {
+    // default implementation does nothing
+    segmentFrame
+  }
+
   /// Resolve the text location for the given point within the node.
   /// - Parameters:
   ///   - point: the point to resolve, given relative to the **top-left corner**
@@ -249,6 +255,10 @@ extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
   final var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
+
+  final var needsLeadingCursorCorrection: Bool {
+    NodePolicy.needsLeadingCursorCorrection(type)
+  }
 
   final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet)

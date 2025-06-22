@@ -108,6 +108,17 @@ internal class ElementNode: Node {
       return block(nil, correctedFrame, baselinePosition)
     }
 
+    func leadingCursorBlock(
+      _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
+      _ baselinePosition: CGFloat
+    ) -> Bool {
+      precondition(node.needsLeadingCursorCorrection)
+      var originCorrected = segmentFrame.offsetBy(originCorrection)
+      let segmentFrame = SegmentFrame(originCorrected, baselinePosition)
+      let nodeCorrected = node.correctLeadingCursor(segmentFrame)
+      return block(nil, nodeCorrected.frame, nodeCorrected.baselinePosition)
+    }
+
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
     else { assertionFailure("Invalid path"); return false }
@@ -120,6 +131,18 @@ internal class ElementNode: Node {
         layoutRange, type: type, options: options,
         // use placeholderBlock
         using: placeholderBlock(_:_:_:))
+    }
+    else if path.count == 1 && endPath.count == 1 && index == endIndex,
+      index < _children.count && _children[index].needsLeadingCursorCorrection
+    {
+      guard let offset = TreeUtils.computeLayoutOffset(for: path, self)
+      else { assertionFailure("Invalid path"); return false }
+      let newLayoutOffset = layoutOffset + offset
+      let layoutRange = newLayoutOffset..<newLayoutOffset
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options,
+        // use leadingCursorBlock
+        using: { leadingCursorBlock(_children[index], $0, $1, $2) })
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
