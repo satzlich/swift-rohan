@@ -59,6 +59,11 @@ internal struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     self.foregroundColor = foregroundColor
   }
 
+  /// Get attributes for the text property.
+  /// - Parameter isFlipped: Whether the font is flipped.
+  /// - Note: Rule of thumb: If the text is typeset and drawn with TextKit, this
+  ///     should be `false`. If the text is typeset anddrawn with CoreText, this
+  ///     should be `true`.
   internal func getAttributes(isFlipped: Bool) -> Dictionary<NSAttributedString.Key, Any>
   {
     let key = _AttributesKey(self, isFlipped)
