@@ -25,9 +25,8 @@ public enum DrawUtils {
     else { return false }
 
     // switch context
-    // NOTE: pass "flipped = false" whether `isFlipped` is true or false
     let previousContext = NSGraphicsContext.current
-    NSGraphicsContext.current = .init(cgContext: pdfContext, flipped: false)
+    NSGraphicsContext.current = .init(cgContext: pdfContext, flipped: isFlipped)
     // restore context on exit
     defer { NSGraphicsContext.current = previousContext }
 
