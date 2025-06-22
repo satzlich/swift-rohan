@@ -282,33 +282,8 @@ final class ItemListNode: ElementNode {
     var i = current.count - 1
     var j = original.count - 1
 
-    // current range that covers deleted nodes which should be vacuumed
-    var vacuumRange: Range<Int>?
-
-    func updateVacuumRange() {
-      precondition(isBlockContainer)
-
-      if j >= 0 && original[j].mark == .deleted {
-        if i >= 0 {
-          vacuumRange =
-            if let range = vacuumRange {
-              max(0, i - 1)..<range.upperBound
-            }
-            else {
-              max(0, i - 1)..<min(childCount, i + 2)
-            }
-        }
-        else {
-          vacuumRange =
-            if let range = vacuumRange {
-              0..<range.upperBound
-            }
-            else {
-              0..<1
-            }
-        }
-      }
-    }
+    // first index where item marker changed
+    var startIndex: Int = _children.count
 
     // reconcile content backwards
     // Invariant:
@@ -320,7 +295,7 @@ final class ItemListNode: ElementNode {
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
       do {
-        updateVacuumRange()
+        startIndex = i
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
@@ -335,6 +310,7 @@ final class ItemListNode: ElementNode {
         sum += NewlineReconciler.insert(new: newline, context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
         sum += StringReconciler.insert(new: ZWSP, context: context, self)
+        startIndex = i
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
@@ -348,7 +324,7 @@ final class ItemListNode: ElementNode {
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-        sum += _reconcileZWSP(j, i, context)
+        sum += StringReconciler.skip(current: ZWSP, context: context)
         i -= 1
         j -= 1
       }
@@ -367,21 +343,21 @@ final class ItemListNode: ElementNode {
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        sum += _reconcileZWSP(j, i, context)
+        sum += StringReconciler.skip(current: ZWSP, context: context)
 
         i -= 1
         j -= 1
       }
     }
 
-    do {
-      let vacuumRange = vacuumRange ?? 0..<0
+    if subtype.isMarkerConstant {
       _refreshParagraphStyle(
-        context,
-        { i in
-          current[i].mark == .added || current[i].mark == .dirty
-            || vacuumRange.contains(i)
-        })
+        context, { i in current[i].mark == .added || current[i].mark == .dirty })
+    }
+    else {
+      let refreshRange = startIndex..<_children.count
+      _refreshParagraphStyle(
+        context, { i in current[i].mark == .dirty || refreshRange.contains(i) })
     }
 
     return sum
@@ -396,20 +372,6 @@ final class ItemListNode: ElementNode {
     let end = location + sum
     _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
     return sum
-  }
-
-  private final func _reconcileZWSP(
-    _ oldIndex: Int, _ newIndex: Int, _ context: LayoutContext
-  ) -> Int {
-    let old = _attributedMarker(forIndex: oldIndex).string
-    let new = _attributedMarker(forIndex: newIndex).string
-    if old == new {
-      context.skipBackwards(ZWSP.length)
-    }
-    else {
-      context.invalidateBackwards(ZWSP.length)
-    }
-    return ZWSP.length
   }
 
   @inline(__always)
