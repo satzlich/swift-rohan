@@ -9,10 +9,10 @@ internal struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   }
 
   public static func resolveAggregate(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+    _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> TextProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
+      key.resolveValue(properties, styleSheet)
     }
 
     return TextProperty(

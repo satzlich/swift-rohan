@@ -6,10 +6,10 @@ internal struct PageProperty: PropertyAggregate {
   // MARK: - PropertyAggregate
 
   public static func resolveAggregate(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+    _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> PageProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
+      key.resolveValue(properties, styleSheet)
     }
 
     return PageProperty(

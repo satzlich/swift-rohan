@@ -87,7 +87,7 @@ final class LeftRightNode: MathNode {
 
   // MARK: - Node(Storage)
 
-  private static let uniqueTag = "lrdelim"
+  private static let uniqueTag = "leftright"
 
   final override class var storageTags: Array<String> { [uniqueTag] }
 

@@ -56,8 +56,10 @@ final class MathReflowLayoutContext: LayoutContext {
     mathLayoutContext.addParagraphStyle(source, range)
   }
 
-  func addParagraphStyle(_ paragraphStyle: NSParagraphStyle, _ range: Range<Int>) {
-    mathLayoutContext.addParagraphStyle(paragraphStyle, range)
+  func addParagraphAttributes(
+    _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
+  ) {
+    mathLayoutContext.addParagraphAttributes(attributes, range)
   }
 
   func skipBackwards(_ n: Int) {

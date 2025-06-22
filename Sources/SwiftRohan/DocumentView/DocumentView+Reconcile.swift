@@ -28,8 +28,8 @@ extension DocumentView {
     //  behavior, eg., `firstRect(...)` may return wrong rect
     documentManager.reconcileLayout(scope: layoutScope)
     // request updates
-    needsLayout = true
-    setNeedsUpdate(selection: true, scroll: true)
+    needsLayout = true  // which calls `setNeedsUpdate(selection: true)`
+    setNeedsUpdate(scroll: true)
 
     // post notification
     if notifyChange {
@@ -39,9 +39,8 @@ extension DocumentView {
 
   internal func documentStyleDidChange() {
     documentManager.reconcileLayout(scope: .document)
-
-    needsLayout = true
-    setNeedsUpdate(selection: true, scroll: true)
+    needsLayout = true  // which calls `setNeedsUpdate(selection: true)`
+    setNeedsUpdate(scroll: true)
   }
 
   internal func documentSelectionDidChange(scroll: Bool = false) {
@@ -60,10 +59,10 @@ extension DocumentView {
     if selection { _pendingSelectionUpdate = true }
     if scroll { _pendingScrollUpdate = true }
 
-    guard !_isUpdateEnqueued else { return }
+    guard _isUpdateEnqueued == false else { return }
     _isUpdateEnqueued = true
 
-    DispatchQueue.main.async {
+    RunLoop.current.perform(inModes: [.default, .eventTracking]) {
       self.performPendingUpdates()
     }
   }

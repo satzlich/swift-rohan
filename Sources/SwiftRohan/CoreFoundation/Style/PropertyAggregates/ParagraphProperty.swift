@@ -14,11 +14,11 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
     Self._cache.getOrCreate(self, self._createParagraphStyle)
   }
 
-  public static func resolveAggregate(
-    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+  static func resolveAggregate(
+    _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> ParagraphProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, fallback)
+      key.resolveValue(properties, styleSheet)
     }
 
     return ParagraphProperty(

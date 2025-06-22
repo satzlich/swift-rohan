@@ -251,11 +251,11 @@ extension Node {
   final var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
 
   final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
-    T.resolveAggregate(getProperties(styleSheet), styleSheet.defaultProperties)
+    T.resolveAggregate(getProperties(styleSheet), styleSheet)
   }
 
   /// Resolve the value of property for given key.
   final func resolveValue(_ key: PropertyKey, _ styleSheet: StyleSheet) -> PropertyValue {
-    key.resolveValue(getProperties(styleSheet), styleSheet.defaultProperties)
+    key.resolveValue(getProperties(styleSheet), styleSheet)
   }
 }
