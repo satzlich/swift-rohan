@@ -87,6 +87,7 @@ public final class DocumentManager: NSObject {
     textLayoutManager.textContainer = NSTextContainer()
 
     // set up delegate
+    textContentStorage.delegate = self
     textLayoutManager.delegate = self
   }
 
