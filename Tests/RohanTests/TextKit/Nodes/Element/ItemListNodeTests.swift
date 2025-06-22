@@ -98,17 +98,17 @@ final class ItemListNodeTests: TextKitTestsBase {
     do {
       let location1 = documentManager.resolveTextLocation(with: CGPoint(x: 10, y: 5))
       #expect("\(location1!.value)" == "[↓0,↓0,↓0]:0")
-      let location2 = documentManager.resolveTextLocation(with: CGPoint(x: 40, y: 5))
+      let location2 = documentManager.resolveTextLocation(with: CGPoint(x: 43, y: 5))
       #expect("\(location2!.value)" == "[↓0,↓0,↓0]:1")
-      let location3 = documentManager.resolveTextLocation(with: CGPoint(x: 50, y: 5))
+      let location3 = documentManager.resolveTextLocation(with: CGPoint(x: 65, y: 5))
       #expect("\(location3!.value)" == "[↓0,↓0,↓0]:3")
     }
     do {
-      let location1 = documentManager.resolveTextLocation(with: CGPoint(x: 40, y: 20))
+      let location1 = documentManager.resolveTextLocation(with: CGPoint(x: 43, y: 20))
       #expect("\(location1!.value)" == "[↓0,↓1,↓0]:1")
     }
     do {
-      let location1 = documentManager.resolveTextLocation(with: CGPoint(x: 40, y: 70))
+      let location1 = documentManager.resolveTextLocation(with: CGPoint(x: 45, y: 70))
       #expect("\(location1!.value)" == "[↓2]:0")
     }
   }
@@ -127,6 +127,6 @@ final class ItemListNodeTests: TextKitTestsBase {
       return false
     }
 
-    #expect(rect.formatted(2) == "(33.00, 0.00, 18.34, 17.00)")
+    #expect(rect.formatted(2) == "(35.00, 0.00, 18.34, 17.00)")
   }
 }
