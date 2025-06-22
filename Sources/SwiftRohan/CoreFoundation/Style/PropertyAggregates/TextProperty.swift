@@ -94,6 +94,7 @@ internal struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     if let font = font {
       return [.font: font, .foregroundColor: foregroundColor.nsColor]
     }
+    Rohan.logger.debug("Failed to create font with font \(font) and size \(size).")
     // fallback
     return [.foregroundColor: foregroundColor.nsColor]
   }
