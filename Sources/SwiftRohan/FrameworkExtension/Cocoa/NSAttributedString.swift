@@ -3,7 +3,7 @@
 import AppKit
 
 extension NSAttributedString.Key {
-  static let listLevel = NSAttributedString.Key("listLevel")  // Int
-  static let listIndent = NSAttributedString.Key("listIndent")  // CGFloat
-  static let itemMarker = NSAttributedString.Key("itemMarker")  // NSAttributedString
+  static let rhListLevel = NSAttributedString.Key("rhListLevel")  // Int
+  static let rhListIndent = NSAttributedString.Key("rhListIndent")  // CGFloat
+  static let rhItemMarker = NSAttributedString.Key("rhItemMarker")  // NSAttributedString
 }

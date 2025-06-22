@@ -116,17 +116,49 @@ final class ItemListNodeTests: TextKitTestsBase {
   @Test
   func enumerateTextSegments() {
     let documentManager = _testingExample()
-    let location = TextLocation.parse("[↓0]:0")!
-    let end = TextLocation.parse("[↓0]:1")!
-    let range = RhTextRange(location, end)!
 
-    var rect = CGRect.zero
-    documentManager.enumerateTextSegments(in: range, type: .standard) {
-      (_, frame, baseline) in
-      rect = frame
-      return false
+    do {
+      let location = TextLocation.parse("[↓0]:0")!
+      let end = TextLocation.parse("[↓0]:1")!
+      let range = RhTextRange(location, end)!
+
+      var rect = CGRect.zero
+      documentManager.enumerateTextSegments(in: range, type: .standard) {
+        (_, frame, baseline) in
+        rect = frame
+        return false
+      }
+
+      #expect(rect.formatted(2) == "(35.00, 0.00, 18.34, 17.00)")
     }
 
-    #expect(rect.formatted(2) == "(35.00, 0.00, 18.34, 17.00)")
+    // trigger leading cursor correction
+    do {
+      let location = TextLocation.parse("[]:0")!
+      let end = TextLocation.parse("[]:1")!
+      let range = RhTextRange(location, end)!
+
+      var rect = CGRect.zero
+      documentManager.enumerateTextSegments(in: range, type: .standard) {
+        (_, frame, baseline) in
+        rect = frame
+        return false
+      }
+      #expect(rect.formatted(2) == "(5.00, 0.00, 48.34, 17.00)")
+    }
+  }
+
+  @Test
+  func rayshoot() {
+    let documentManager = _testingExample()
+
+    // trigger leading cursor correction
+    do {
+      let location = TextLocation.parse("[]:0")!
+      let selection = RhTextSelection(location, affinity: .downstream)
+      let result = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .down, destination: .character, extending: false)
+      #expect(result != nil)
+    }
   }
 }

@@ -151,7 +151,6 @@ public final class DocumentView: NSView {
 
     // set NSTextViewportLayoutControllerDelegate
     documentManager.textViewportLayoutController.delegate = self
-    documentManager.textLayoutManager.delegate = self
   }
 
   private func _setPageConstraints(_ page: PageProperty) {
