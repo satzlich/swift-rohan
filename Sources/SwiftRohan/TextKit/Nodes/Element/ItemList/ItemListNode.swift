@@ -243,7 +243,6 @@ final class ItemListNode: ElementNode {
     for i in (0..<_children.count).reversed() {
       // skip clean.
       if _children[i].isDirty == false {
-        let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
 

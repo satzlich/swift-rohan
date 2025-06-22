@@ -9,6 +9,7 @@ import Testing
 @testable import SwiftRohan
 
 final class MathListLayoutFragmentTests: MathLayoutTestsBase {
+
   @Test
   func emptyMathList() {
     let mathList = MathListLayoutFragment(context)

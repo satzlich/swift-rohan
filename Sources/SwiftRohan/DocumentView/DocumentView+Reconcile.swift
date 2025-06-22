@@ -201,7 +201,12 @@ extension DocumentView {
 
   /// Add highlight frames for the given text range
   private func _addHighlightFrames(for textRange: RhTextRange, type: HighlightType) {
-    documentManager.enumerateTextSegments(in: textRange, type: .selection) {
+    let segmentType: DocumentManager.SegmentType =
+      switch type {
+      case .selection: .selection
+      case .delimiter: .standard
+      }
+    documentManager.enumerateTextSegments(in: textRange, type: segmentType) {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame, type: type)
       return true  // continue

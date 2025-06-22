@@ -56,7 +56,7 @@ let package = Package(
         // .define("DECORATE_CONTENT_VIEW"),
         // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
         // .define("LOG_MARKED_TEXT"),
-        .define("LOG_TEXT_SELECTION")
+        .define("LOG_TEXT_SELECTION"),
         // .define("LOG_PICKING_POINT"),
         // .define("SIMULATE_COMPLETION_DELAY"),
       ],

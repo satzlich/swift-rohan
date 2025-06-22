@@ -9,6 +9,11 @@ import Testing
 @testable import SwiftRohan
 
 final class MathLayoutFragmentsTests: MathLayoutTestsBase {
+
+  init() throws {
+    try super.init(createFolder: true)
+  }
+
   @Test
   func accent() {
     var fragments: Array<MathLayoutFragment> = []
@@ -207,8 +212,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
       }
       let multline = MathArrayLayoutFragment(
         rowCount: 2, columnCount: 1, subtype: .multlineAst, context,
-        // 300 is arbitrary
-        300)
+        // 60 is small enough for testing.
+        60)
       multline.setElement(0, 0, a)
       multline.setElement(1, 0, b)
       multline.fixLayout(context)
@@ -322,7 +327,7 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
     let textProperty = TextProperty(
       font: "Latin Modern Roman", size: 10, stretch: .normal, style: .normal,
       weight: .regular, foregroundColor: .black)
-    let attributes = textProperty.getAttributes(isFlipped: true) // flipped for CTLine.
+    let attributes = textProperty.getAttributes(isFlipped: true)  // flipped for CTLine.
     let attrString = NSMutableAttributedString(string: "Inverted", attributes: attributes)
     let ctLine = CTLineCreateWithAttributedString(attrString)
 

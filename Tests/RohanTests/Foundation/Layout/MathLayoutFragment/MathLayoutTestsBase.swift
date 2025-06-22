@@ -12,11 +12,13 @@ class MathLayoutTestsBase {
   internal let table: MathTable
   internal let context: MathContext
 
-  init(mathFont: String = "STIX Two Math") throws {
+  init(mathFont: String = "STIX Two Math", createFolder: Bool = false) throws {
     self.font = Font.createWithName(mathFont, 10, isFlipped: true)
     self.table = font.copyMathTable()!
     self.context = MathContext(font, .text, false, .black)!
-    try TestUtils.touchDirectory(folderName)
+    if createFolder {
+      try TestUtils.touchDirectory(folderName)
+    }
   }
 
   func createGlyphFragment(
