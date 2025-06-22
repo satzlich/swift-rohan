@@ -15,15 +15,14 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
   }
 
   final override func draw(at point: CGPoint, in context: CGContext) {
-    let itemPosition: CGPoint
-    do {
-      let x = point.x - itemMarker.size().width
-      let y = point.y
-      itemPosition = CGPoint(x: x, y: y)
-    }
+    // compute the position of item marker
+    let x = point.x - itemMarker.size().width
+    let y = point.y
+    let markerPosition = CGPoint(x: x, y: y)
 
+    // draw the item marker
     context.saveGState()
-    itemMarker.draw(at: itemPosition)
+    itemMarker.draw(at: markerPosition)
     context.restoreGState()
 
     super.draw(at: point, in: context)

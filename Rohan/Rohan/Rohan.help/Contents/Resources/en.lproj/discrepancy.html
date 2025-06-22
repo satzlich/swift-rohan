@@ -116,18 +116,21 @@
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\newcommand</span>{<span class="ex">\trprime</span>}{<span class="ss">\ensuremath{&#39;&#39;&#39;}</span>}</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\newcommand</span>{<span class="ex">\qprime</span>}{<span class="ss">\ensuremath{&#39;&#39;&#39;&#39;}</span>}</span></code></pre></div>
 </blockquote>
-<h2 id="limits-and-nolimits"><code>\limits</code> and <code>\nolimits</code></h2>
+<h2 id="command-limits-and-nolimits">Command <code>\limits</code> and <code>\nolimits</code></h2>
 <ul>
-<li><strong>Syntax Structure</strong>
+<li><p><strong>Syntax Structure</strong></p>
 <ul>
 <li><strong>LaTeX</strong>: Postfix notation (e.g., <code>\sum\nolimits</code>)</li>
-<li><strong>App</strong>: Command-call notation — insert <code>\limits</code> or <code>\nolimits</code> before typing the operator</li>
+<li><strong>App</strong>: Function call notation — insert <code>\limits</code> or <code>\nolimits</code> before typing the operator</li>
 </ul></li>
-<li><strong>Export Behavior</strong>
+<li><p><strong>Export Behavior</strong></p>
 <ul>
 <li>The app auto-corrects positioning during LaTeX export</li>
 <li>Avoid edge cases like <code>\sum\nolimits\limits</code>; results may deviate from expectations in subtle ways. Besides, it’s a bad practice to consciously introduce redundant commands whether in LaTeX or the app.</li>
 </ul></li>
 </ul>
+<h2 id="environment-itemize-and-enumerate">Environment <code>{itemize}</code> and <code>{enumerate}</code></h2>
+<p>Currently we don’t support nested lists in the app. One-level lists are most commonly used in academic writing, so we focus on that.</p>
+<p>We will go back to this later and add support for nested lists.</p>
 </body>
 </html>
