@@ -4,18 +4,18 @@ import Foundation
 
 extension DocumentView {
   public override func deleteForward(_ sender: Any?) {
-    performDelete(.forward, destination: .character)
+    _performDelete(.forward, destination: .character)
   }
 
   public override func deleteBackward(_ sender: Any?) {
-    performDelete(.backward, destination: .character)
+    _performDelete(.backward, destination: .character)
   }
 
   public override func deleteWordBackward(_ sender: Any?) {
-    performDelete(.backward, destination: .word)
+    _performDelete(.backward, destination: .word)
   }
 
-  private func performDelete(
+  private func _performDelete(
     _ direction: TextSelectionNavigation.Direction,
     destination: TextSelectionNavigation.Destination
   ) {

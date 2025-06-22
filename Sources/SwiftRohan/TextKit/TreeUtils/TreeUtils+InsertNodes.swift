@@ -132,7 +132,7 @@ extension TreeUtils {
     else {
       let paragraph = ParagraphNode([TextNode(string)])
       elementNode.insertChild(paragraph, at: index, inStorage: true)
-      return EditResult.paragraphInserted(([index, 0, 0], [index + 1]))
+      return EditResult.extraParagraph(([index, 0, 0], [index + 1]))
     }
   }
 
@@ -372,7 +372,7 @@ extension TreeUtils {
     else {
       let paragraph = ParagraphNode(ElementStore(nodes))
       container.insertChild(paragraph, at: index, inStorage: true)
-      return EditResult.paragraphInserted(([index, 0], [index + 1]))
+      return EditResult.extraParagraph(([index, 0], [index + 1]))
     }
   }
 

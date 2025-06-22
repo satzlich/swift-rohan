@@ -213,29 +213,18 @@ public final class DocumentManager {
     case .paragraphNodes, .blockNodes:
       switch TreeUtils.insertBlockNodes(nodes, at: location, rootNode) {
       case let .success(range):
-        result = .success(range)
+        result = .blockInserted(range)
       case let .failure(error):
         return .failure(error)
       }
     }
 
-    switch result {
-    case .success(let range):
+    return result.map { range in
       if let normalised = range.normalised(for: rootNode) {
-        return .success(normalised)
+        return normalised
       }
       assertionFailure("Normalisation failed")
-      return .success(range)
-
-    case .paragraphInserted(let range):
-      if let normalised = range.normalised(for: rootNode) {
-        return .paragraphInserted(normalised)
-      }
-      assertionFailure("Normalisation failed")
-      return .paragraphInserted(range)
-
-    case .failure(let satzError):
-      return .failure(satzError)
+      return range
     }
   }
 
@@ -277,23 +266,12 @@ public final class DocumentManager {
     }
     // perform insertion
     let result = TreeUtils.insertString(string, at: location, rootNode)
-    switch result {
-    case let .success(range):
+    return result.map { range in
       if let normalised = range.normalised(for: rootNode) {
-        return .success(normalised)
+        return normalised
       }
       assertionFailure("Normalisation failed")
-      return .success(range)
-
-    case let .paragraphInserted(range):
-      if let normalised = range.normalised(for: rootNode) {
-        return .paragraphInserted(normalised)
-      }
-      assertionFailure("Normalisation failed")
-      return .paragraphInserted(range)
-
-    case let .failure(error):
-      return .failure(error)
+      return range
     }
   }
 
@@ -404,8 +382,9 @@ public final class DocumentManager {
           return .failure(SatzError(.InvalidTextRange))
         }
 
-      case .paragraphInserted:
-        assertionFailure("Invalid paragraph insertion")
+      case .extraParagraph,
+        .blockInserted:
+        assertionFailure("Unexpected result")
         return .failure(SatzError(.ModifyMathFailure))
 
       case let .failure(error):

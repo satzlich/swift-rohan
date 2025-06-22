@@ -211,6 +211,10 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Horizontal cursor correction applied to a cursor position when the cursor is
+  /// at the leading edge of the node.
+  internal func leadingCursorCorrection() -> Double { 0 }
+
   /// Resolve the text location for the given point within the node.
   /// - Parameters:
   ///   - point: the point to resolve, given relative to the **top-left corner**
@@ -249,6 +253,10 @@ extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
   final var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
+
+  final var needsLeadingCursorCorrection: Bool {
+    NodePolicy.needsLeadingCursorCorrection(type)
+  }
 
   final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet)

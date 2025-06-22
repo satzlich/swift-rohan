@@ -66,10 +66,9 @@ extension DocumentView {
     // register undo action is required below
 
     // copy contents to be replaced
-    let contentsCopy: Array<Node>? = documentManager.mapContents(
-      in: range, { $0.deepCopy() })
-    guard let contentsCopy
-    else {
+    let contentsCopy: Array<Node>? =
+      documentManager.mapContents(in: range, { $0.deepCopy() })
+    guard let contentsCopy else {
       assertionFailure("contentsCopy should not be nil")
       return .failure(SatzError(.ReplaceContentsFailure))
     }
@@ -77,8 +76,9 @@ extension DocumentView {
     // perform replacement
     let result = replacementHandler(range)
     switch result {
-    case .success(let range),
-      .paragraphInserted(let range):
+    case let .success(range),
+      let .extraParagraph(range),
+      let .blockInserted(range):
 
       // register undo action
       registerUndoReplaceContents(for: range, with: contentsCopy, undoManager)
@@ -350,10 +350,14 @@ extension DocumentView {
       documentManager.textSelection =
         RhTextSelection(range.endLocation, affinity: .upstream)
 
-    case let .paragraphInserted(range):
+    case let .extraParagraph(range):
       documentManager.textSelection =
         RhTextSelection(range.endLocation, affinity: .upstream)
       moveBackward(nil)  // move backward to the end of the new paragraph
+
+    case let .blockInserted(range):
+      documentManager.textSelection =
+        RhTextSelection(range.endLocation, affinity: .downstream)
 
     case let .failure(error):
       if error.code.type == .UserError {

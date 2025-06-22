@@ -2,8 +2,6 @@
 
 import AppKit
 
-private let ZWSP = "\u{200B}"  // Zero Width Space
-
 final class ItemListNode: ElementNode {
   final override class var type: NodeType { .itemList }
 
@@ -62,14 +60,16 @@ final class ItemListNode: ElementNode {
     assert(isPlaceholderActive == false)
 
     if _children.isEmpty {
-      let target = ZWSP.length
+      let target = _leadingString(forIndex: 0).length
       return .terminal(value: .index(0), target: target)
     }
 
     var (k, s) = (0, 0)
     /// determine the child whose node content
     while k < _children.count {
-      let ss = s + ZWSP.length + _children[k].layoutLength() + _newlines[k].intValue
+      let ss =
+        s + _leadingString(forIndex: k).length + _children[k].layoutLength()
+        + _newlines[k].intValue
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
@@ -78,7 +78,7 @@ final class ItemListNode: ElementNode {
       return .terminal(value: .index(k), target: s)
     }
     else {
-      let consumed = s + ZWSP.length
+      let consumed = s + _leadingString(forIndex: k).length
       return consumed < layoutOffset
         ? .halfway(value: .index(k), consumed: consumed)
         : .terminal(value: .index(k), target: consumed)
@@ -141,6 +141,10 @@ final class ItemListNode: ElementNode {
     try container.encode(subtype, forKey: .subtype)
     try super.encode(to: encoder, withChildren: children)
   }
+
+  // MARK: - Node(Tree API)
+
+  final override func leadingCursorCorrection() -> Double { -_listIndent }
 
   // MARK: - Storage
 
@@ -217,7 +221,8 @@ final class ItemListNode: ElementNode {
     for i in (0..<_children.count).reversed() {
       sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
       sum += NodeReconciler.insert(new: _children[i], context: context)
-      sum += StringReconciler.insert(new: ZWSP, context: context, self)
+      let leadingString = _leadingString(forIndex: i)
+      sum += StringReconciler.insert(new: leadingString, context: context, self)
     }
 
     // add paragraph style forwards
@@ -241,18 +246,22 @@ final class ItemListNode: ElementNode {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
-        sum += StringReconciler.skip(current: ZWSP, context: context)
+
+        let leadingString = _leadingString(forIndex: i)
+        sum += StringReconciler.skip(current: leadingString, context: context)
       }
       // process dirty.
       else {
         let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        sum += StringReconciler.skip(current: ZWSP, context: context)
 
-        let itemMarker = _attributedMarker(forIndex: i)
+        let leadingString = _leadingString(forIndex: i)
+        sum += StringReconciler.skip(current: leadingString, context: context)
+
         let location = context.layoutCursor
         let end = location + sum - sum0
+        let itemMarker = _attributedMarker(forIndex: i)
         _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
     }
@@ -299,7 +308,9 @@ final class ItemListNode: ElementNode {
         while j >= 0 && original[j].mark == .deleted {
           NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          StringReconciler.delete(old: ZWSP, context: context)
+
+          let leadingString = _leadingString(forIndex: j)
+          StringReconciler.delete(old: leadingString, context: context)
           j -= 1
         }
         assert(j < 0 || [.none, .dirty].contains(original[j].mark))
@@ -309,7 +320,9 @@ final class ItemListNode: ElementNode {
         let newline = current[i].insertNewline
         sum += NewlineReconciler.insert(new: newline, context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
-        sum += StringReconciler.insert(new: ZWSP, context: context, self)
+
+        let leadingString = _leadingString(forIndex: i)
+        sum += StringReconciler.insert(new: leadingString, context: context, self)
         startIndex = i
         i -= 1
       }
@@ -324,7 +337,12 @@ final class ItemListNode: ElementNode {
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-        sum += StringReconciler.skip(current: ZWSP, context: context)
+
+        let oldLeading = _leadingString(forIndex: j)
+        let newLeading = _leadingString(forIndex: i)
+        let leadingStrings = (oldLeading, newLeading)
+
+        sum += StringReconciler.reconcile(dirty: leadingStrings, context: context, self)
         i -= 1
         j -= 1
       }
@@ -343,7 +361,11 @@ final class ItemListNode: ElementNode {
         let newlines = (original[j].insertNewline, current[i].insertNewline)
         sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        sum += StringReconciler.skip(current: ZWSP, context: context)
+
+        let oldLeading = _leadingString(forIndex: j)
+        let newLeading = _leadingString(forIndex: i)
+        let leadingStrings = (oldLeading, newLeading)
+        sum += StringReconciler.reconcile(dirty: leadingStrings, context: context, self)
 
         i -= 1
         j -= 1
@@ -365,11 +387,14 @@ final class ItemListNode: ElementNode {
 
   private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
     precondition(_children.isEmpty)
-    let sum = StringReconciler.insert(new: ZWSP, context: context, self)
     let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
-    let itemMarker = _attributedMarker(forIndex: 0)
+
+    let leadingString = _leadingString(forIndex: 0)
+    let sum = StringReconciler.insert(new: leadingString, context: context, self)
     let location = context.layoutCursor
     let end = location + sum
+
+    let itemMarker = _attributedMarker(forIndex: 0)
     _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
     return sum
   }
@@ -432,10 +457,12 @@ final class ItemListNode: ElementNode {
 
     var location = context.layoutCursor
     for i in 0..<_children.count {
-      let itemMarker = _attributedMarker(forIndex: i)
+      let leadingString = _leadingString(forIndex: i)
       let end =
-        location + ZWSP.length + _children[i].layoutLength() + _newlines[i].intValue
+        location + leadingString.length + _children[i].layoutLength()
+        + _newlines[i].intValue
       if predicate(i) {
+        let itemMarker = _attributedMarker(forIndex: i)
         _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
       location = end
@@ -446,24 +473,31 @@ final class ItemListNode: ElementNode {
     guard index <= childCount else { return nil }
 
     if _children.isEmpty {
-      return ZWSP.length
+      return _leadingString(forIndex: 0).length
     }
     else {
       assert(isPlaceholderActive == false)
       let range = 0..<index
-      let s0 = range.count * ZWSP.length
+      let s0 = range.lazy.map { self._leadingString(forIndex: $0).length }.reduce(0, +)
       let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
       let sum = s0 + s1 + s2
-      return index < _children.count ? sum + ZWSP.length : sum
+      return index < _children.count
+        ? sum + _leadingString(forIndex: index).length
+        : sum
     }
   }
 
   // MARK: - ItemListNode
 
   let subtype: ItemListSubtype
+
+  /// Text list used for this item list.
   private var _textList: RhTextList = RhTextList.itemize(level: 1, marker: "•")
+  /// Text attributes used for item markers.
   private var _textAttributes: Dictionary<NSAttributedString.Key, Any> = [:]
+  /// Indent for item text.
+  private var _listIndent: CGFloat = 0.0
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
@@ -485,12 +519,16 @@ final class ItemListNode: ElementNode {
     // prepare text attributes
     let textProperty = TextProperty.resolveAggregate(properties, styleSheet)
     self._textAttributes = textProperty.getAttributes()
+    // resolve indent
+    self._listIndent =
+      Self.indent(forLevel: listLevel).floatValue * textProperty.size.floatValue
   }
 
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {
     let marker = _textList.marker(forIndex: index) + "\u{2000}"
     return NSAttributedString(string: marker, attributes: _textAttributes)
   }
+  private func _leadingString(forIndex index: Int) -> String { "\u{200B}" }
 
   private func _bakeParagraphAttributes(
     _ styleSheet: StyleSheet
@@ -503,15 +541,13 @@ final class ItemListNode: ElementNode {
     let paragraphProperty = ParagraphProperty.resolveAggregate(properties, styleSheet)
     let paragraphStyle =
       paragraphProperty.getParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-    let fontSize = TextProperty.size.resolveValue(properties, styleSheet).fontSize()!
-    let indent = Self.indent(forLevel: listLevel).floatValue * fontSize.floatValue
-    paragraphStyle.firstLineHeadIndent = indent
-    paragraphStyle.headIndent = indent
+    paragraphStyle.firstLineHeadIndent = _listIndent
+    paragraphStyle.headIndent = _listIndent
 
     let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .paragraphStyle: paragraphStyle,
       .listLevel: listLevel,
-      .listIndent: indent,
+      .listIndent: _listIndent,
     ]
     return attributes
   }

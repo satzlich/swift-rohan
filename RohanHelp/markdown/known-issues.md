@@ -29,16 +29,3 @@ In some cases, particularly after magnification, the area near the bottom of who
 This is a known issue that can occur after zooming in or out. If you encounter this:
 
 - Select any options of the `Theme` menu to refresh the layout.
-
-## `{itemize}` and `{enumerate}` Lists
-
-The layout of lists using `{itemize}` and `{enumerate}` are not yet fully supported. This means that:
-
-- The indentation of second and subsequent lines in a list item doesn't match the first line.
-- The numbering of list items may not align correctly.
-
-Current situation is due to the limitations of the underlying layout engine, which is able to present the
-desired layout from scratch but cannot maintain the appearance consistently when the document is edited or reformatted.
-So we fallback to a simpler layout that does not preserve the intended formatting.
-
-We are aware of this limitation and are working on a solution to ensure proper list formatting in future releases.

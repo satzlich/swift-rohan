@@ -23,8 +23,10 @@ enum RhTextList {
       let marker = textList.marker(forItemNumber: itemNumber)
       let formatted: String =
         switch textList.markerFormat {
-        case .decimal: "(\(marker))"
-        case _: "\(marker)."
+        case .lowercaseLatin, .lowercaseLatin, .uppercaseAlpha, .uppercaseLatin:
+          "(\(marker))"
+        case _:
+          "\(marker)."
         }
       return formatted
     }
