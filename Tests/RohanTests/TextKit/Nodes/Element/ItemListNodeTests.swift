@@ -39,56 +39,61 @@ final class ItemListNodeTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
-  func performLayout() {  // Simple and Full variant.
+  @Test("performLayout", arguments: [0, 1])
+  func performLayout(_ k: Int) {  // Simple and Full variant.
     let documentManager = _testingExample()
+
+    let prefix = #function.prefix(while: { $0.isLetter })
+    func fileName(_ n: Int) -> String {
+      "\(prefix)_\(k)_\(n)"
+    }
 
     // make an item dirty
     do {
-      let location = TextLocation.parse("[↓0,↓1,↓0]:2")!
+      let location = TextLocation.parse("[↓\(k),↓1,↓0]:2")!
       let range = RhTextRange(location)
       let result = documentManager.replaceCharacters(in: range, with: "2")
       #expect(result.isSuccess)
       documentManager.reconcileLayout(scope: .document)
-      outputPDF(#function + "_1", documentManager)
+      outputPDF(fileName(1), documentManager)
     }
     // delete portion of item list
     do {
-      let location = TextLocation.parse("[↓0,↓0,↓0]:3")!
-      let end = TextLocation.parse("[↓0,↓1,↓0]:3")!
+      let location = TextLocation.parse("[↓\(k),↓0,↓0]:3")!
+      let end = TextLocation.parse("[↓\(k),↓1,↓0]:3")!
       let range = RhTextRange(location, end)!
       let result = documentManager.replaceCharacters(in: range, with: "3")
       #expect(result.isSuccess)
       documentManager.reconcileLayout(scope: .document)
-      outputPDF(#function + "_2", documentManager)
+      outputPDF(fileName(2), documentManager)
     }
     // add paragraph
     do {
-      let location = TextLocation.parse("[↓0]:1")!
+      let location = TextLocation.parse("[↓\(k)]:1")!
       let range = RhTextRange(location)
       let result = documentManager.replaceCharacters(in: range, with: "4")
       #expect(result.isSuccess)
       documentManager.reconcileLayout(scope: .document)
-      outputPDF(#function + "_3", documentManager)
+      outputPDF(fileName(3), documentManager)
     }
     // remove all items
     do {
-      let location = TextLocation.parse("[↓0]:0")!
-      let end = TextLocation.parse("[↓0]:2")!
+      let location = TextLocation.parse("[↓\(k)]:0")!
+      let end = TextLocation.parse("[↓\(k)]:2")!
       let range = RhTextRange(location, end)!
       let result = documentManager.replaceCharacters(in: range, with: "")
       #expect(result.isSuccess)
       documentManager.reconcileLayout(scope: .document)
-      outputPDF(#function + "_4", documentManager)
+      outputPDF(fileName(4), documentManager)
     }
     // insert into an empty item list
     do {
-      let location = TextLocation.parse("[↓0]:0")!
+      let location = TextLocation.parse("[↓\(k)]:0")!
       let range = RhTextRange(location)
       let result = documentManager.replaceCharacters(in: range, with: "5")
       #expect(result.isSuccess)
       documentManager.reconcileLayout(scope: .document)
-      outputPDF(#function + "_5", documentManager)
+      outputPDF(fileName(5), documentManager)
     }
   }
 

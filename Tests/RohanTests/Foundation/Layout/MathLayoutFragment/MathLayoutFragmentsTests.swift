@@ -212,8 +212,8 @@ final class MathLayoutFragmentsTests: MathLayoutTestsBase {
       }
       let multline = MathArrayLayoutFragment(
         rowCount: 2, columnCount: 1, subtype: .multlineAst, context,
-        // 300 is arbitrary
-        300)
+        // 60 is small enough for testing.
+        60)
       multline.setElement(0, 0, a)
       multline.setElement(1, 0, b)
       multline.fixLayout(context)
