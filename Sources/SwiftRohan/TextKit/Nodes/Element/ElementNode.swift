@@ -108,16 +108,6 @@ internal class ElementNode: Node {
       return block(nil, correctedFrame, baselinePosition)
     }
 
-    func leadingCursorBlock(
-      _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
-      _ baselinePosition: CGFloat
-    ) -> Bool {
-      precondition(node.needsLeadingCursorCorrection)
-      var correctedFrame = segmentFrame.offsetBy(originCorrection)
-      correctedFrame.origin.x += node.leadingCursorCorrection()
-      return block(nil, correctedFrame, baselinePosition)
-    }
-
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
     else { assertionFailure("Invalid path"); return false }
@@ -131,13 +121,34 @@ internal class ElementNode: Node {
         // use placeholderBlock
         using: placeholderBlock(_:_:_:))
     }
-    else if path.count == 1 && endPath.count == 1 && index == endIndex,
-      index < _children.count && _children[index].needsLeadingCursorCorrection
+    else if path.count == 1,
+      index < _children.count,
+      _children[index].needsLeadingCursorCorrection
     {
-      guard let offset = TreeUtils.computeLayoutOffset(for: path, self)
+      guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
+        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { assertionFailure("Invalid path"); return false }
-      let newLayoutOffset = layoutOffset + offset
-      let layoutRange = newLayoutOffset..<newLayoutOffset
+      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
+
+      // construct leading cursor block.
+      var isFirstProcessed = false
+      func leadingCursorBlock(
+        _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
+        _ baselinePosition: CGFloat
+      ) -> Bool {
+        precondition(node.needsLeadingCursorCorrection)
+        var correctedFrame = segmentFrame.offsetBy(originCorrection)
+        if !isFirstProcessed {
+          let cursorCorrection = node.leadingCursorCorrection()
+          correctedFrame.origin.x += cursorCorrection
+          if correctedFrame.size.width != 0 {
+            correctedFrame.size.width -= cursorCorrection
+          }
+          isFirstProcessed = true
+        }
+        return block(nil, correctedFrame, baselinePosition)
+      }
+
       return context.enumerateTextSegments(
         layoutRange, type: type, options: options,
         // use leadingCursorBlock
