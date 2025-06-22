@@ -12,9 +12,9 @@ extension DocumentView: @preconcurrency NSTextLayoutManagerDelegate {
       let attrString = textElement.attributedString
       let attributes = attrString.attributes(at: 0, effectiveRange: nil)
 
-      if let _ = attributes[.listLevel] as? Int,
-        let indent = attributes[.listIndent] as? CGFloat,
-        let itemMarker = attributes[.itemMarker] as? NSAttributedString
+      if let _ = attributes[.rhListLevel] as? Int,
+        let indent = attributes[.rhListIndent] as? CGFloat,
+        let itemMarker = attributes[.rhItemMarker] as? NSAttributedString
       {
         let fragment = ListItemTextLayoutFragment(
           textElement: textElement, range: textElement.elementRange,

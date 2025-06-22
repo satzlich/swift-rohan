@@ -437,7 +437,7 @@ final class ItemListNode: ElementNode {
     _ itemMarker: NSAttributedString, _ range: Range<Int>
   ) {
     var paragraphAttributesCopy = paragraphAttributes
-    paragraphAttributesCopy[.itemMarker] = itemMarker
+    paragraphAttributesCopy[.rhItemMarker] = itemMarker
     context.addParagraphAttributes(paragraphAttributesCopy, range)
   }
 
@@ -546,8 +546,8 @@ final class ItemListNode: ElementNode {
 
     let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .paragraphStyle: paragraphStyle,
-      .listLevel: listLevel,
-      .listIndent: _listIndent,
+      .rhListLevel: listLevel,
+      .rhListIndent: _listIndent,
     ]
     return attributes
   }
