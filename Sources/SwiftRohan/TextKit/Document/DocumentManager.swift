@@ -6,7 +6,7 @@ import Foundation
 import LatexParser
 import _RopeModule
 
-public final class DocumentManager {
+public final class DocumentManager: NSObject {
   typealias SegmentType = NSTextLayoutManager.SegmentType
   typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
   typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
@@ -77,12 +77,17 @@ public final class DocumentManager {
     self.textLayoutManager = NSTextLayoutManager()
     self.textSelection = nil
 
+    super.init()
+
     // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
 
     // set up default text container
     textLayoutManager.textContainer = NSTextContainer()
+
+    // set up delegate
+    textLayoutManager.delegate = self
   }
 
   internal func setContent(_ content: DocumentContent, with styleSheet: StyleSheet) {
