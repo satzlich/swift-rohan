@@ -262,15 +262,14 @@ final class ItemListNode: ElementNode {
       }
       // process dirty.
       else {
-        let sum0 = sum
-        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-
+        let n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
+        let n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
         let leadingString = _leadingString(forIndex: i)
-        sum += StringReconciler.skip(current: leadingString, context: context)
+        let n2 = StringReconciler.skip(current: leadingString, context: context)
+        sum += n0 + n1 + n2
 
         let location = context.layoutCursor
-        let end = location + sum - sum0
+        let end = location + n1 + n2
         let itemMarker = _attributedMarker(forIndex: i)
         _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
@@ -442,14 +441,12 @@ final class ItemListNode: ElementNode {
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let leadingString = _leadingString(forIndex: i)
-      let end =
-        location + leadingString.length + _children[i].layoutLength()
-        + _newlines[i].intValue
+      let end = location + leadingString.length + _children[i].layoutLength()
       if predicate(i) {
         let itemMarker = _attributedMarker(forIndex: i)
         _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
-      location = end
+      location = end + _newlines[i].intValue
     }
   }
 

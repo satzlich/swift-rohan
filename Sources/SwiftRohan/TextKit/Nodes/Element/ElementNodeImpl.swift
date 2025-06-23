@@ -126,15 +126,15 @@ internal class ElementNodeImpl: ElementNode {
           context.addParagraphStyle(forSegment: segment, self)
           segment = 0
         }
-        var n = NewlineReconciler.insert(new: _newlines[i], context: context, self)
-        n += NodeReconciler.insert(new: _children[i], context: context)
-        sum += n
+        let n0 = NewlineReconciler.insert(new: _newlines[i], context: context, self)
+        let n1 = NodeReconciler.insert(new: _children[i], context: context)
+        sum += n0 + n1
 
         if _children[i].isBlock {
           segment = 0
         }
         else {
-          segment += n
+          segment += n1
         }
       }
       if segment > 0 { context.addParagraphStyle(forSegment: segment, self) }
@@ -170,23 +170,24 @@ internal class ElementNodeImpl: ElementNode {
           segment = 0
           dirty = false
         }
-        var n: Int = 0
+        let n0: Int
+        let n1: Int
         if _children[i].isDirty == false {
-          n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-          n += NodeReconciler.skip(current: _children[i], context: context)
+          n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
+          n1 = NodeReconciler.skip(current: _children[i], context: context)
         }
         else {
-          n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-          n += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
+          n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
           dirty = true
         }
-        sum += n
+        sum += n0 + n1
         if _children[i].isBlock {
           segment = 0
           dirty = false  // block nodes take care of their own paragraph style.
         }
         else {
-          segment += n
+          segment += n1
         }
       }
       if segment > 0 && dirty {
@@ -242,11 +243,12 @@ internal class ElementNodeImpl: ElementNode {
         }
 
         // process added.
-        var n: Int = 0
+        let n0: Int
+        let n1: Int
         if current[i].mark == .added {
           let newline = current[i].insertNewline
-          n += NewlineReconciler.insert(new: newline, context: context, self)
-          n += NodeReconciler.insert(new: _children[i], context: context)
+          n0 = NewlineReconciler.insert(new: newline, context: context, self)
+          n1 = NodeReconciler.insert(new: _children[i], context: context)
           dirty = true
         }
         // skip none.
@@ -255,8 +257,8 @@ internal class ElementNodeImpl: ElementNode {
         {
           assert(current[i].nodeId == original[j].nodeId)
           let newlines = (original[j].insertNewline, current[i].insertNewline)
-          n += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          n += NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          n1 = NodeReconciler.skip(current: current[i].layoutLength, context: context)
           j -= 1
         }
         // process dirty.
@@ -265,18 +267,18 @@ internal class ElementNodeImpl: ElementNode {
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
 
           let newlines = (original[j].insertNewline, current[i].insertNewline)
-          n += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          n += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
           dirty = true
           j -= 1
         }
-        sum += n
+        sum += n0 + n1
         if _children[i].isBlock {
           segment = 0
           dirty = false  // block nodes take care of their own paragraph style.
         }
         else {
-          segment += n
+          segment += n1
         }
       }
       // process deleted in a batch if any.
