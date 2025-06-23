@@ -110,7 +110,7 @@ class ArrayNode: Node {
       context.insertFragment(nodeFragment, self)
 
       if self.isBlock {
-        context.addParagraphStyle(forSegment: layoutLength(), self)
+        context.addParagraphStyle(forSegment: 1, self)
       }
     }
     else {
@@ -153,9 +153,6 @@ class ArrayNode: Node {
         nodeFragment.fixLayout(mathContext)
         if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(1)
-//          if self.isBlock {
-//            context.addParagraphStyle(forSegment: layoutLength(), self)
-//          }
         }
         else {
           context.skipBackwards(1)
