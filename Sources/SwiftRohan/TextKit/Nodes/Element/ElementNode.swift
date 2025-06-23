@@ -68,7 +68,8 @@ internal class ElementNode: Node {
 
     // children and newlines
     self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
-    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
+    self._newlines = NewlineArray(
+      _children.lazy.map(\.isBlock), mask: Self.newlineArrayMask())
 
     self._layoutLength = 0
     self._isDirty = false
