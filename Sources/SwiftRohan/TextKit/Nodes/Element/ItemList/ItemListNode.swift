@@ -226,23 +226,21 @@ final class ItemListNode: ElementNode {
     // set up properties before layout.
     self._setupProperties(context.styleSheet)
 
-    if _children.isEmpty { return _performLayoutEmpty(context) }
+    switch _children.isEmpty {
+    case true:
+      return _performLayoutEmpty(context)
 
-    assert(_children.isEmpty == false)
-
-    var sum = 0
-    // insert content backwards
-    for i in (0..<_children.count).reversed() {
-      sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
-      sum += NodeReconciler.insert(new: _children[i], context: context)
-      let leadingString = _leadingString(forIndex: i)
-      sum += StringReconciler.insert(new: leadingString, context: context, self)
+    case false:
+      var sum = 0
+      for i in _children.indices.reversed() {
+        sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
+        sum += NodeReconciler.insert(new: _children[i], context: context)
+        let leadingString = _leadingString(forIndex: i)
+        sum += StringReconciler.insert(new: leadingString, context: context, self)
+      }
+      _refreshParagraphStyle(context, { _ in true })
+      return sum
     }
-
-    // add paragraph style forwards
-    _refreshParagraphStyle(context, { _ in true })
-
-    return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -253,8 +251,7 @@ final class ItemListNode: ElementNode {
     let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
 
     var sum = 0
-    //    var forceParagraphStyle = false
-    for i in (0..<_children.count).reversed() {
+    for i in _children.indices.reversed() {
       // skip clean.
       if _children[i].isDirty == false {
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
