@@ -82,11 +82,17 @@ enum NodePolicy {
     isEquationNode(node) && node.isBlock == false
   }
 
-  /// Returns true if the node is inline but not inline-math.
+  /// Returns true if the node is paragraph content other than inline math compatible.
   @inline(__always)
-  static func isInlineOther(_ node: Node) -> Bool {
-    [.itemList, .linebreak, .textStyles, .unknown].contains(node.type)
-      || (isEquationNode(node) && node.isBlock)
+  static func isOtherParagraphContent(_ node: Node) -> Bool {
+    [
+      .itemList,
+      .linebreak,
+      .multiline,  // block, but inline content.
+      .textStyles,
+      .unknown,
+    ].contains(node.type)
+      || (isEquationNode(node) && node.isBlock)  // block math
   }
 
   /// Returns true if a node of given kind can be used as a container for

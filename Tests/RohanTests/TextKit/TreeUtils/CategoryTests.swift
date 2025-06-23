@@ -8,17 +8,17 @@ struct CategoryTests {
   @Test
   static func contentCategory() {
     let testCases: [(Node, ContentCategory?)] = [
-      (LinebreakNode(), .inlineContent),
+      (LinebreakNode(), .paragraphContent),
       (TextNode("Hello"), .plaintext),
-      (UnknownNode(), .inlineContent),
+      (UnknownNode(), .paragraphContent),
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
       (HeadingNode(.sectionAst, []), .topLevelNodes),
       (ItemListNode(.enumerate, []), .topLevelNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), .topLevelNodes),
-      (TextStylesNode(.emph, []), .inlineContent),
-      (TextStylesNode(.textbf, []), .inlineContent),
+      (TextStylesNode(.emph, []), .paragraphContent),
+      (TextStylesNode(.textbf, []), .paragraphContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),

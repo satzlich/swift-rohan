@@ -213,7 +213,7 @@ public final class DocumentManager: NSObject {
       return .failure(SatzError(.UnreachableCodePath))
 
     case .universalText, .textText, .mathText, .extendedText,
-      .inlineContent, .mathContent:
+      .paragraphContent, .mathContent:
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
