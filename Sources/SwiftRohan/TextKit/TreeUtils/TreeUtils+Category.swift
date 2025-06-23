@@ -34,7 +34,7 @@ extension TreeUtils {
     else if counts.total == counts.paragraphNodes {
       return .paragraphNodes
     }
-    else if counts.total == counts.blockNodes {
+    else if counts.total == counts.topLevelNodes {
       return .blockNodes
     }
     // math layout
@@ -62,8 +62,8 @@ extension TreeUtils {
     var otherInline: Int
     /// paragraph node
     var paragraphNodes: Int
-    /// isBlock = true
-    var blockNodes: Int
+    /// top-level node
+    var topLevelNodes: Int
 
     /// math symbols
     var mathSymbols: Int
@@ -72,7 +72,8 @@ extension TreeUtils {
 
     static let zero = CountSummary(
       total: 0, textNodes: 0, universalSymbols: 0,
-      textSymbols: 0, inlineMath: 0, otherInline: 0, paragraphNodes: 0, blockNodes: 0,
+      textSymbols: 0, inlineMath: 0, otherInline: 0,
+      paragraphNodes: 0, topLevelNodes: 0,
       mathSymbols: 0, otherMathOnly: 0)
 
     var universalTextCompatible: Int { textNodes + universalSymbols }
@@ -80,7 +81,7 @@ extension TreeUtils {
     var textTextCompatible: Int { universalTextCompatible + textSymbols }
     var extendedTextCompatible: Int { textTextCompatible + inlineMath }
     var inlineContentCompatible: Int { extendedTextCompatible + otherInline }
-    var blockCompatible: Int { inlineContentCompatible + blockNodes }
+    var topLevelCompatible: Int { inlineContentCompatible + topLevelNodes }
     // math layout
     var mathTextCompatible: Int { universalTextCompatible + mathSymbols }
     var mathContentCompatible: Int { mathTextCompatible + otherMathOnly }
@@ -134,7 +135,7 @@ extension TreeUtils {
       }
 
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
-      if node.isBlock { summary.blockNodes += 1 }
+      if node.isBlock { summary.topLevelNodes += 1 }
       if NodePolicy.isMathOnlyContent(node) { summary.otherMathOnly += 1 }
     }
   }

@@ -30,10 +30,8 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inline(__always)
-  static func isBlockNode(_ node: Node) -> Bool {
-    isBlockElement(node.type)
-      || node.type == .multiline
-      || (node.type == .equation && node.isBlock)
+  static func isTopLevelNode(_ node: Node) -> Bool {
+    [NodeType.heading, .paragraph].contains(node.type)
   }
 
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
