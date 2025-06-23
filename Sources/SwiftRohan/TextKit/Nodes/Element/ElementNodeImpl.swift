@@ -111,15 +111,30 @@ internal class ElementNodeImpl: ElementNode {
     assert(_children.isEmpty == false)
 
     var sum = 0
+    var segment = 0  // accumulated segment whose paragraph style is to be refreshed.
 
     // insert content backwards
     for i in (0..<_children.count).reversed() {
-      sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
-      sum += NodeReconciler.insert(new: _children[i], context: context)
+      if _newlines[i] && segment > 0 {
+        context.addParagraphStyle(forSegment: segment, self)
+        segment = 0
+      }
+
+      let n0 = NewlineReconciler.insert(new: _newlines[i], context: context, self)
+      let n1 = NodeReconciler.insert(new: _children[i], context: context)
+      sum += n0 + n1
+
+      // block nodes take care of their own paragraph style.
+      if _children[i].isBlock {
+        segment = 0
+      }
+      else {
+        segment += n0 + n1
+      }
     }
 
-    if isBlockContainer {
-      _refreshParagraphStyle(context, { _ in true })
+    if segment > 0 {
+      context.addParagraphStyle(forSegment: segment, self)
     }
 
     return sum
@@ -143,16 +158,8 @@ internal class ElementNodeImpl: ElementNode {
       }
       // process dirty.
       else {
-        let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        if isBlockContainer {
-          let begin = context.layoutCursor
-          let n = sum - sum0
-          if _children[i].isBlockContainer == false {
-            context.addParagraphStyle(_children[i], begin..<begin + n)
-          }
-        }
       }
     }
 
@@ -306,15 +313,15 @@ internal class ElementNodeImpl: ElementNode {
     }
 
     // add paragraph style forwards
-    if isBlockContainer {
-      let vacuumRange = vacuumRange ?? 0..<0
-      _refreshParagraphStyle(
-        context,
-        { i in
-          current[i].mark == .added || current[i].mark == .dirty
-            || vacuumRange.contains(i)
-        })
-    }
+    //    if isBlockContainer {
+    //      let vacuumRange = vacuumRange ?? 0..<0
+    //      _refreshParagraphStyle(
+    //        context,
+    //        { i in
+    //          current[i].mark == .added || current[i].mark == .dirty
+    //            || vacuumRange.contains(i)
+    //        })
+    //    }
 
     return sum
   }

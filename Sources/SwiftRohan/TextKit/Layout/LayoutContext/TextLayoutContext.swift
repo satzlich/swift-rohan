@@ -51,6 +51,13 @@ final class TextLayoutContext: LayoutContext {
     textStorage.addAttributes(attributes, range: NSRange(range))
   }
 
+  func addParagraphStyle(forSegment segment: Int, _ source: Node) {
+    precondition(isEditing)
+    let begin = self.layoutCursor
+    let end = begin + segment
+    self.addParagraphStyle(source, begin..<end)
+  }
+
   func addParagraphAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {

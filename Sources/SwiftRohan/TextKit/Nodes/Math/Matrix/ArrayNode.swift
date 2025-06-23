@@ -108,6 +108,10 @@ class ArrayNode: Node {
       nodeFragment.fixLayout(mathContext)
       // insert the matrix fragment
       context.insertFragment(nodeFragment, self)
+
+      if self.isBlock {
+        context.addParagraphStyle(forSegment: layoutLength(), self)
+      }
     }
     else {
       assert(_nodeFragment != nil)
@@ -149,6 +153,9 @@ class ArrayNode: Node {
         nodeFragment.fixLayout(mathContext)
         if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(1)
+//          if self.isBlock {
+//            context.addParagraphStyle(forSegment: layoutLength(), self)
+//          }
         }
         else {
           context.skipBackwards(1)
