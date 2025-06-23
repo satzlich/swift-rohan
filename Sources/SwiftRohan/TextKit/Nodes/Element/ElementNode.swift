@@ -458,7 +458,10 @@ internal class ElementNode: Node {
   /// including: a) the last paragraph with no text occasionally uses the
   /// alignment of the previous paragraph, b) the block equation in position
   /// of the second last paragraph have a wrong horizontal shift.
-  private class func newlineArrayMask() -> Bool { self.type == .root }
+  private class func newlineArrayMask() -> Bool {
+    // self.type == .root
+    false
+  }
 
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
