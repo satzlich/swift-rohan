@@ -121,7 +121,7 @@ internal class ElementNodeImpl: ElementNode {
       var sum = 0
       var segment = 0  // accumulated segment length since entry or last newline.
 
-      for i in (0..<_children.count).reversed() {  // backwards insertion.
+      for i in _children.indices.reversed() {  // backwards insertion.
         if _newlines[i] && segment > 0 {
           context.addParagraphStyle(forSegment: segment, self)
           segment = 0
@@ -142,7 +142,7 @@ internal class ElementNodeImpl: ElementNode {
 
     case (false, false):
       var sum = 0
-      for i in (0..<_children.count).reversed() {
+      for i in _children.indices.reversed() {
         assert(_newlines[i] == false)  // inline nodes should not contain newlines.
         sum += NodeReconciler.insert(new: _children[i], context: context)
       }
@@ -164,7 +164,7 @@ internal class ElementNodeImpl: ElementNode {
 
       // Invariant: for every maximum non-block segment which is dirty, add
       //  paragraph style is called.
-      for i in (0..<_children.count).reversed() {
+      for i in _children.indices.reversed() {
         if _newlines[i] && segment > 0 && dirty {
           context.addParagraphStyle(forSegment: segment, self)
           segment = 0
@@ -196,7 +196,7 @@ internal class ElementNodeImpl: ElementNode {
 
     case false:
       var sum = 0
-      for i in (0..<_children.count).reversed() {
+      for i in _children.indices.reversed() {
         assert(_newlines[i] == false)
         if _children[i].isDirty == false {
           sum += NodeReconciler.skip(current: _children[i], context: context)
@@ -205,6 +205,118 @@ internal class ElementNodeImpl: ElementNode {
           sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         }
       }
+      return sum
+    }
+  }
+
+  /// Perform layout for fromScratch=false when snapshot has been made.
+  @inline(__always)
+  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
+    precondition(_snapshotRecords != nil && _children.count == _newlines.count)
+
+    switch (_children.isEmpty, self.isBlock) {
+    case (true, _):
+      context.deleteBackwards(_layoutLength)
+      return _performLayoutEmpty(context)
+
+    case (false, true):
+      let (current, original) = _computeExtendedRecords()
+
+      var sum = 0
+      var segment = 0  // accumulated segment length since entry or last newline.
+      var dirty = false  // true if the segment is dirty.
+      var j = original.count - 1
+
+      for i in _children.indices.reversed() {
+        // process deleted in a batch if any.
+        while j >= 0 && original[j].mark == .deleted {
+          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
+          NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          j -= 1
+        }
+
+        // process added.
+        if current[i].mark == .added {
+          let newline = current[i].insertNewline
+          sum += NewlineReconciler.insert(new: newline, context: context, self)
+          sum += NodeReconciler.insert(new: _children[i], context: context)
+        }
+        // skip none.
+        else if current[i].mark == .none,
+          j >= 0 && original[j].mark == .none
+        {
+          assert(current[i].nodeId == original[j].nodeId)
+          let newlines = (original[j].insertNewline, current[i].insertNewline)
+          sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          j -= 1
+        }
+        // process dirty.
+        else {
+          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
+          assert(current[i].mark == .dirty && original[j].mark == .dirty)
+
+          let newlines = (original[j].insertNewline, current[i].insertNewline)
+          sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          j -= 1
+        }
+      }
+      // process deleted in a batch if any.
+      while j >= 0 && original[j].mark == .deleted {
+        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
+        NodeReconciler.delete(old: original[j].layoutLength, context: context)
+        j -= 1
+      }
+      assert(j < 0)
+      return sum
+
+    case (false, false):
+      let (current, original) = _computeExtendedRecords()
+
+      var sum = 0
+      var j = original.count - 1
+
+      for i in _children.indices.reversed() {
+        // process deleted in a batch if any.
+        while j >= 0 && original[j].mark == .deleted {
+          assert(original[j].insertNewline == false)
+          NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          j -= 1
+        }
+
+        // process added.
+        if current[i].mark == .added {
+          assert(current[i].insertNewline == false)
+          sum += NodeReconciler.insert(new: _children[i], context: context)
+        }
+        // skip none.
+        else if current[i].mark == .none,
+          j >= 0 && original[j].mark == .none
+        {
+          assert(current[i].nodeId == original[j].nodeId)
+          assert(current[i].insertNewline == false)
+          assert(original[j].insertNewline == false)
+          sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          j -= 1
+        }
+        // process dirty.
+        else {
+          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
+          assert(current[i].mark == .dirty && original[j].mark == .dirty)
+          assert(current[i].insertNewline == false)
+          assert(original[j].insertNewline == false)
+          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          j -= 1
+        }
+      }
+      // process deleted in a batch if any.
+      while j >= 0 && original[j].mark == .deleted {
+        assert(original[j].insertNewline == false)
+        NodeReconciler.delete(old: original[j].layoutLength, context: context)
+        j -= 1
+      }
+      assert(j < 0)
       return sum
     }
   }
@@ -238,142 +350,6 @@ internal class ElementNodeImpl: ElementNode {
             : ExtendedRecord(.none, record)
       }
     return (current, original)
-  }
-
-  /// Perform layout for fromScratch=false when snapshot has been made.
-  @inline(__always)
-  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
-    precondition(_snapshotRecords != nil && _children.count == _newlines.count)
-
-    switch (_children.isEmpty, self.isBlock) {
-    case (true, _):
-      context.deleteBackwards(_layoutLength)
-      return _performLayoutEmpty(context)
-
-    case (false, true):
-      let (current, original) = _computeExtendedRecords()
-
-      var sum = 0
-      var i = current.count - 1
-      var j = original.count - 1
-
-      // reconcile content backwards
-      // Invariant:
-      //    [cursor, ...) is consistent with (i, ...)
-      //    [0, cursor) is consistent with [0, j]
-      while true {
-        if i < 0 && j < 0 { break }
-
-        // process added and deleted
-        // (It doesn't matter whether to process add or delete first.)
-        while j >= 0 && original[j].mark == .deleted {
-          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
-          NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          j -= 1
-        }
-        assert(j < 0 || [.none, .dirty].contains(original[j].mark))
-
-        while i >= 0 && current[i].mark == .added {
-          let newline = current[i].insertNewline
-          sum += NewlineReconciler.insert(new: newline, context: context, self)
-          sum += NodeReconciler.insert(new: _children[i], context: context)
-          i -= 1
-        }
-        assert(i < 0 || [.none, .dirty].contains(current[i].mark))
-
-        // skip none
-        while i >= 0 && current[i].mark == .none,
-          j >= 0 && original[j].mark == .none
-        {
-          assert(current[i].nodeId == original[j].nodeId)
-          let newlines = (original[j].insertNewline, current[i].insertNewline)
-          sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-          i -= 1
-          j -= 1
-        }
-
-        // process added or deleted by iterating again
-        if i >= 0 && current[i].mark == .added { continue }
-        if j >= 0 && original[j].mark == .deleted { continue }
-
-        // process dirty
-        assert(i < 0 || current[i].mark == .dirty)
-        assert(j < 0 || original[j].mark == .dirty)
-        if i >= 0 {
-          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
-          assert(current[i].mark == .dirty && original[j].mark == .dirty)
-
-          let newlines = (original[j].insertNewline, current[i].insertNewline)
-          sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-          i -= 1
-          j -= 1
-        }
-      }
-      return sum
-
-    case (false, false):
-      let (current, original) = _computeExtendedRecords()
-
-      var sum = 0
-      var i = current.count - 1
-      var j = original.count - 1
-
-      // reconcile content backwards
-      // Invariant:
-      //    [cursor, ...) is consistent with (i, ...)
-      //    [0, cursor) is consistent with [0, j]
-      while true {
-        if i < 0 && j < 0 { break }
-
-        // process added and deleted
-        // (It doesn't matter whether to process add or delete first.)
-        while j >= 0 && original[j].mark == .deleted {
-          assert(original[j].insertNewline == false)
-          NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          j -= 1
-        }
-        assert(j < 0 || [.none, .dirty].contains(original[j].mark))
-
-        while i >= 0 && current[i].mark == .added {
-          assert(current[i].insertNewline == false)
-          sum += NodeReconciler.insert(new: _children[i], context: context)
-          i -= 1
-        }
-        assert(i < 0 || [.none, .dirty].contains(current[i].mark))
-
-        // skip none
-        while i >= 0 && current[i].mark == .none,
-          j >= 0 && original[j].mark == .none
-        {
-          assert(current[i].nodeId == original[j].nodeId)
-          assert(current[i].insertNewline == false)
-          assert(original[j].insertNewline == false)
-          sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-          i -= 1
-          j -= 1
-        }
-
-        // process added or deleted by iterating again
-        if i >= 0 && current[i].mark == .added { continue }
-        if j >= 0 && original[j].mark == .deleted { continue }
-
-        // process dirty
-        assert(i < 0 || current[i].mark == .dirty)
-        assert(j < 0 || original[j].mark == .dirty)
-        if i >= 0 {
-          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
-          assert(current[i].mark == .dirty && original[j].mark == .dirty)
-          assert(current[i].insertNewline == false)
-          assert(original[j].insertNewline == false)
-          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-          i -= 1
-          j -= 1
-        }
-      }
-      return sum
-    }
   }
 
   /// Refresh paragraph style for those children that match the predicate and are not
