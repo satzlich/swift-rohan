@@ -232,7 +232,7 @@ internal class ElementNodeImpl: ElementNode {
         // process deleted in a batch if any.
         while j >= 0 && original[j].mark == .deleted {
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          NewlineReconciler.delete(old: original[j].newlineBefore, context: context)
+          NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
           j -= 1
         }
 
@@ -252,7 +252,7 @@ internal class ElementNodeImpl: ElementNode {
         {
           assert(current[i].nodeId == original[j].nodeId)
           n1 = NodeReconciler.skip(current: current[i].layoutLength, context: context)
-          let newlines = (original[j].newlineBefore, isNewline)
+          let newlines = (original[j].leadingNewline, isNewline)
           n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           j -= 1
         }
@@ -261,7 +261,7 @@ internal class ElementNodeImpl: ElementNode {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
           n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
-          let newlines = (original[j].newlineBefore, isNewline)
+          let newlines = (original[j].leadingNewline, isNewline)
           n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           isSegmentDirty = true
           j -= 1
@@ -281,7 +281,7 @@ internal class ElementNodeImpl: ElementNode {
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
-        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
+        NewlineReconciler.delete(old: original[j].trailingNewline, context: context)
         j -= 1
       }
       assert(j < 0)
@@ -300,14 +300,14 @@ internal class ElementNodeImpl: ElementNode {
       for i in _children.indices.reversed() {
         // process deleted in a batch if any.
         while j >= 0 && original[j].mark == .deleted {
-          assert(original[j].insertNewline == false)
+          assert(original[j].trailingNewline == false)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
           j -= 1
         }
 
         // process added.
         if current[i].mark == .added {
-          assert(current[i].insertNewline == false)
+          assert(current[i].trailingNewline == false)
           sum += NodeReconciler.insert(new: _children[i], context: context)
         }
         // skip none.
@@ -315,8 +315,8 @@ internal class ElementNodeImpl: ElementNode {
           j >= 0 && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-          assert(current[i].insertNewline == false)
-          assert(original[j].insertNewline == false)
+          assert(current[i].trailingNewline == false)
+          assert(original[j].trailingNewline == false)
           sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
           j -= 1
         }
@@ -324,15 +324,15 @@ internal class ElementNodeImpl: ElementNode {
         else {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
-          assert(current[i].insertNewline == false)
-          assert(original[j].insertNewline == false)
+          assert(current[i].trailingNewline == false)
+          assert(original[j].trailingNewline == false)
           sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
           j -= 1
         }
       }
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
-        assert(original[j].insertNewline == false)
+        assert(original[j].trailingNewline == false)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
         j -= 1
       }
@@ -361,7 +361,7 @@ internal class ElementNodeImpl: ElementNode {
           !originalIds.contains(node.id)
           ? .added
           : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline, newlineBefore: newlineBefore)
+        return ExtendedRecord(mark, node, insertNewline, leadingNewline: newlineBefore)
       }
 
     let original =
@@ -395,60 +395,61 @@ internal class ElementNodeImpl: ElementNode {
 
   internal struct SnapshotRecord: CustomStringConvertible {
     let nodeId: NodeIdentifier
-    let insertNewline: Bool
-    let newlineBefore: Bool
+    let trailingNewline: Bool
+    let leadingNewline: Bool
     let layoutLength: Int
 
-    init(_ node: Node, _ insertNewline: Bool, newlineBefore: Bool) {
+    init(_ node: Node, _ trailingNewline: Bool, newlineBefore: Bool) {
       self.nodeId = node.id
-      self.insertNewline = insertNewline
-      self.newlineBefore = newlineBefore
+      self.trailingNewline = trailingNewline
+      self.leadingNewline = newlineBefore
       self.layoutLength = node.layoutLength()
     }
 
     private init(
       _ nodeId: NodeIdentifier,
-      _ insertNewline: Bool,
-      newlineBefore: Bool,
+      _ trailingNewline: Bool,
+      leadingNewline: Bool,
       _ layoutLength: Int
     ) {
       self.nodeId = nodeId
-      self.insertNewline = insertNewline
-      self.newlineBefore = newlineBefore
+      self.trailingNewline = trailingNewline
+      self.leadingNewline = leadingNewline
       self.layoutLength = layoutLength
     }
 
     /// Create a placeholder record with given layout length.
     static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
       SnapshotRecord(
-        NodeIdAllocator.allocate(), false, newlineBefore: false, layoutLength)
+        NodeIdAllocator.allocate(), false, leadingNewline: false, layoutLength)
     }
 
     var description: String {
-      "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
+      "(\(nodeId),\(layoutLength)+\(trailingNewline.intValue))"
     }
   }
 
   internal struct ExtendedRecord {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
-    let insertNewline: Bool
-    let newlineBefore: Bool
+    let trailingNewline: Bool
+    let leadingNewline: Bool
     let layoutLength: Int
 
     init(_ mark: LayoutMark, _ record: SnapshotRecord) {
       self.mark = mark
       self.nodeId = record.nodeId
-      self.insertNewline = record.insertNewline
-      self.newlineBefore = record.newlineBefore
+      self.trailingNewline = record.trailingNewline
+      self.leadingNewline = record.leadingNewline
       self.layoutLength = record.layoutLength
     }
 
-    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool, newlineBefore: Bool) {
+    init(_ mark: LayoutMark, _ node: Node, _ trailingNewline: Bool, leadingNewline: Bool)
+    {
       self.mark = mark
       self.nodeId = node.id
-      self.insertNewline = insertNewline
-      self.newlineBefore = newlineBefore
+      self.trailingNewline = trailingNewline
+      self.leadingNewline = leadingNewline
       self.layoutLength = node.layoutLength()
     }
   }
