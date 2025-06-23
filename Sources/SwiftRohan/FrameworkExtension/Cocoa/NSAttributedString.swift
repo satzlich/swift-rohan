@@ -4,18 +4,7 @@ import AppKit
 
 extension NSAttributedString.Key {
   static let rhListLevel = NSAttributedString.Key("rhListLevel")  // Int
-  static let rhListIndent = NSAttributedString.Key("rhListIndent")  // CGFloat
+  static let rhFirstLineHeadIndent = NSAttributedString.Key("rhFirstLineHeadIndent")  // CGFloat
+  static let rhHeadIndent = NSAttributedString.Key("rhHeadIndent")  // CGFloat
   static let rhItemMarker = NSAttributedString.Key("rhItemMarker")  // NSAttributedString
 }
-
-/*
- 
- alignment
- indent
- firstLineIndent
- 
- listLevel
- listIndent
- itemMarker
- 
- */

@@ -92,6 +92,8 @@ struct StyleSheetTests {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
+        ParagraphProperty.firstLineHeadIndent: .float(0),
+        ParagraphProperty.headIndent: .float(0),
         ParagraphProperty.listLevel: .integer(0),
         ParagraphProperty.paragraphSpacing: .float(0),
         ParagraphProperty.textAlignment: .textAlignment(.left),

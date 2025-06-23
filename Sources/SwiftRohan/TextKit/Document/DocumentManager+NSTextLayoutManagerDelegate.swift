@@ -13,12 +13,18 @@ extension DocumentManager: @preconcurrency NSTextLayoutManagerDelegate {
       let textElement = textElement as? NSTextParagraph
     {
       let attrString = textElement.attributedString
-      let attributes = attrString.attributes(at: 0, effectiveRange: nil)
+      @inline(__always)
+      func attribute(forKey key: NSAttributedString.Key) -> Any? {
+        attrString.attribute(key, at: 0, effectiveRange: nil)
+      }
 
-      if let _ = attributes[.rhListLevel] as? Int,
-        let indent = attributes[.rhListIndent] as? CGFloat,
-        let itemMarker = attributes[.rhItemMarker] as? NSAttributedString
+      if let listLevel = attribute(forKey: .rhListLevel) as? Int,
+        listLevel > 0,  // list level must be greater than 0.
+        let indent = attribute(forKey: .rhHeadIndent) as? CGFloat
       {
+        let itemMarker =
+          attribute(forKey: .rhItemMarker) as? NSAttributedString
+          ?? NSAttributedString(string: "")
         let fragment = ListItemTextLayoutFragment(
           textElement: textElement, range: textElement.elementRange,
           itemMarker: itemMarker, indent: indent)

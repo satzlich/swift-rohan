@@ -68,7 +68,6 @@ final class EquationNode: MathNode {
 
       if !isReflowActive {
         context.invalidateBackwards(1)
-//        if self.isBlock { context.addParagraphStyle(forSegment: 1, self) }
         _layoutLength = 1
       }
       else {

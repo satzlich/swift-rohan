@@ -152,6 +152,8 @@ public enum StyleSheets {
       MathProperty.style: .mathStyle(.display),
       MathProperty.variant: .mathVariant(.serif),
       // paragraph
+      ParagraphProperty.firstLineHeadIndent: .float(0),
+      ParagraphProperty.headIndent: .float(0),
       ParagraphProperty.listLevel: .integer(0),
       ParagraphProperty.paragraphSpacing: .float(0.5 * textSize.floatValue),
       ParagraphProperty.textAlignment: .textAlignment(.justified),
