@@ -119,25 +119,25 @@ internal class ElementNodeImpl: ElementNode {
 
     case (false, true):
       var sum = 0
-      var segment = 0  // accumulated segment length since entry or last newline.
+      var segmentLength = 0  // accumulated segment length since entry or last newline.
 
       for i in _children.indices.reversed() {  // backwards insertion.
-        if _newlines[i] && segment > 0 {
-          context.addParagraphStyle(forSegment: segment, self)
-          segment = 0
+        if _newlines[i] && segmentLength > 0 {
+          context.addParagraphStyle(forSegment: segmentLength, self)
+          segmentLength = 0
         }
         let n0 = NewlineReconciler.insert(new: _newlines[i], context: context, self)
         let n1 = NodeReconciler.insert(new: _children[i], context: context)
         sum += n0 + n1
 
         if _children[i].isBlock {
-          segment = 0
+          segmentLength = 0
         }
         else {
-          segment += n1
+          segmentLength += n1
         }
       }
-      if segment > 0 { context.addParagraphStyle(forSegment: segment, self) }
+      if segmentLength > 0 { context.addParagraphStyle(forSegment: segmentLength, self) }
       return sum
 
     case (false, false):
@@ -224,8 +224,8 @@ internal class ElementNodeImpl: ElementNode {
       let (current, original) = _computeExtendedRecords()
 
       var sum = 0
-      var segment = 0  // accumulated segment length since entry or last newline.
-      var dirty = false  // true if the segment is dirty.
+      var segmentLength = 0  // accumulated segment length since entry or last newline.
+      var isSegmentDirty = false  // true if the segment is dirty.
       var j = original.count - 1
 
       for i in _children.indices.reversed() {
@@ -236,10 +236,10 @@ internal class ElementNodeImpl: ElementNode {
           j -= 1
         }
 
-        if _newlines[i] && segment > 0 && dirty {
-          context.addParagraphStyle(forSegment: segment, self)
-          segment = 0
-          dirty = false
+        if _newlines[i] && segmentLength > 0 && isSegmentDirty {
+          context.addParagraphStyle(forSegment: segmentLength, self)
+          segmentLength = 0
+          isSegmentDirty = false
         }
 
         // process added.
@@ -249,7 +249,7 @@ internal class ElementNodeImpl: ElementNode {
           let newline = current[i].insertNewline
           n0 = NewlineReconciler.insert(new: newline, context: context, self)
           n1 = NodeReconciler.insert(new: _children[i], context: context)
-          dirty = true
+          isSegmentDirty = true
         }
         // skip none.
         else if current[i].mark == .none,
@@ -269,16 +269,16 @@ internal class ElementNodeImpl: ElementNode {
           let newlines = (original[j].insertNewline, current[i].insertNewline)
           n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
-          dirty = true
+          isSegmentDirty = true
           j -= 1
         }
         sum += n0 + n1
         if _children[i].isBlock {
-          segment = 0
-          dirty = false  // block nodes take care of their own paragraph style.
+          segmentLength = 0
+          isSegmentDirty = false  // block nodes take care of their own paragraph style.
         }
         else {
-          segment += n1
+          segmentLength += n1
         }
       }
       // process deleted in a batch if any.
@@ -289,8 +289,8 @@ internal class ElementNodeImpl: ElementNode {
       }
       assert(j < 0)
 
-      if segment > 0 && dirty {
-        context.addParagraphStyle(forSegment: segment, self)
+      if segmentLength > 0 && isSegmentDirty {
+        context.addParagraphStyle(forSegment: segmentLength, self)
       }
       return sum
 
