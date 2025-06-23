@@ -16,7 +16,7 @@ struct CategoryTests {
       (HeadingNode(.sectionAst, []), .blockNodes),
       (ItemListNode(.enumerate, []), .blockNodes),
       (ParagraphNode([]), .paragraphNodes),
-      (RootNode([]), nil),
+      (RootNode([]), .blockNodes),
       (TextStylesNode(.emph, []), .inlineContent),
       (TextStylesNode(.textbf, []), .inlineContent),
       // math

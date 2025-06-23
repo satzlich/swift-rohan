@@ -108,6 +108,10 @@ class ArrayNode: Node {
       nodeFragment.fixLayout(mathContext)
       // insert the matrix fragment
       context.insertFragment(nodeFragment, self)
+
+      if self.isBlock {
+        context.addParagraphStyle(forSegment: 1, self)
+      }
     }
     else {
       assert(_nodeFragment != nil)

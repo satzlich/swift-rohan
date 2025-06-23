@@ -42,27 +42,30 @@ final class TextLayoutContext: LayoutContext {
     isEditing = false
   }
 
-  // MARK: - Operations
+  // MARK: - Paragraph Style
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     precondition(isEditing)
     let properties: ParagraphProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes()
-    let nsRange = NSRange(range)
-    textStorage.removeAttribute(.paragraphStyle, range: nsRange)
-    textStorage.addAttributes(attributes, range: nsRange)
+    textStorage.addAttributes(attributes, range: NSRange(range))
+  }
+
+  func addParagraphStyle(forSegment segment: Int, _ source: Node) {
+    precondition(isEditing)
+    let begin = self.layoutCursor
+    let end = begin + segment
+    self.addParagraphStyle(source, begin..<end)
   }
 
   func addParagraphAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {
     precondition(isEditing)
-    let nsRange = NSRange(range)
-    for key in attributes.keys {
-      textStorage.removeAttribute(key, range: nsRange)
-    }
-    textStorage.addAttributes(attributes, range: nsRange)
+    textStorage.addAttributes(attributes, range: NSRange(range))
   }
+
+  // MARK: - Operations
 
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)

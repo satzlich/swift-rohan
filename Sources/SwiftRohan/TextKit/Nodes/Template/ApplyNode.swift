@@ -35,7 +35,7 @@ final class ApplyNode: Node {
   }
 
   final override func lastIndex() -> RohanIndex? {
-    guard !_arguments.isEmpty else { return nil }
+    guard _arguments.isEmpty == false else { return nil }
     return .argumentIndex(_arguments.count - 1)
   }
 

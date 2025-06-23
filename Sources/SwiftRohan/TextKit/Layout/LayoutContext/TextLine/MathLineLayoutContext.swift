@@ -57,20 +57,6 @@ final class MathLineLayoutContext: LayoutContext {
     assert(resolvedString.resolved.length == renderedString.length)
   }
 
-  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
-    precondition(isEditing)
-    let resolvedRange = resolvedString.resolvedRange(for: range)
-    layoutContext.addParagraphStyle(source, resolvedRange)
-  }
-
-  func addParagraphAttributes(
-    _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
-  ) {
-    precondition(isEditing)
-    let resolvedRange = resolvedString.resolvedRange(for: range)
-    layoutContext.addParagraphAttributes(attributes, resolvedRange)
-  }
-
   func skipBackwards(_ n: Int) {
     precondition(isEditing)
     let location = layoutCursor - n

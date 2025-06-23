@@ -204,6 +204,20 @@ final class ItemListNode: ElementNode {
     return _layoutLength
   }
 
+  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
+    precondition(_children.isEmpty)
+    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
+
+    let leadingString = _leadingString(forIndex: 0)
+    let sum = StringReconciler.insert(new: leadingString, context: context, self)
+    let location = context.layoutCursor
+    let end = location + sum
+
+    let itemMarker = _attributedMarker(forIndex: 0)
+    _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
+    return sum
+  }
+
   /// Perform layout for fromScratch=true.
   @inline(__always)
   private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
@@ -212,23 +226,21 @@ final class ItemListNode: ElementNode {
     // set up properties before layout.
     self._setupProperties(context.styleSheet)
 
-    if _children.isEmpty { return _performLayoutEmpty(context) }
+    switch _children.isEmpty {
+    case true:
+      return _performLayoutEmpty(context)
 
-    assert(_children.isEmpty == false)
-
-    var sum = 0
-    // insert content backwards
-    for i in (0..<_children.count).reversed() {
-      sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
-      sum += NodeReconciler.insert(new: _children[i], context: context)
-      let leadingString = _leadingString(forIndex: i)
-      sum += StringReconciler.insert(new: leadingString, context: context, self)
+    case false:
+      var sum = 0
+      for i in _children.indices.reversed() {
+        sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
+        sum += NodeReconciler.insert(new: _children[i], context: context)
+        let leadingString = _leadingString(forIndex: i)
+        sum += StringReconciler.insert(new: leadingString, context: context, self)
+      }
+      _refreshParagraphStyle(context, { _ in true })
+      return sum
     }
-
-    // add paragraph style forwards
-    _refreshParagraphStyle(context, { _ in true })
-
-    return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -239,8 +251,7 @@ final class ItemListNode: ElementNode {
     let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
 
     var sum = 0
-    //    var forceParagraphStyle = false
-    for i in (0..<_children.count).reversed() {
+    for i in _children.indices.reversed() {
       // skip clean.
       if _children[i].isDirty == false {
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
@@ -251,15 +262,14 @@ final class ItemListNode: ElementNode {
       }
       // process dirty.
       else {
-        let sum0 = sum
-        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-
+        let n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
+        let n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
         let leadingString = _leadingString(forIndex: i)
-        sum += StringReconciler.skip(current: leadingString, context: context)
+        let n2 = StringReconciler.skip(current: leadingString, context: context)
+        sum += n0 + n1 + n2
 
         let location = context.layoutCursor
-        let end = location + sum - sum0
+        let end = location + n1 + n2
         let itemMarker = _attributedMarker(forIndex: i)
         _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
@@ -273,62 +283,47 @@ final class ItemListNode: ElementNode {
   private final func _performLayoutFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
-    if _children.isEmpty {
-      // remove previous layout
+    guard _children.isEmpty == false else {
       context.deleteBackwards(_layoutLength)
       return _performLayoutEmpty(context)
     }
-    assert(_children.isEmpty == false)
 
     let (current, original) = _computeExtendedRecords()
-    if original.isEmpty {
-      // remove previous layout
-      context.deleteBackwards(_layoutLength)
-    }
+    if original.isEmpty { context.deleteBackwards(_layoutLength) }
 
     var sum = 0
-    var i = current.count - 1
     var j = original.count - 1
 
     // first index where item marker changed
     var startIndex: Int = _children.count
 
-    // reconcile content backwards
-    // Invariant:
-    //    [cursor, ...) is consistent with (i, ...)
-    //    [0, cursor) is consistent with [0, j]
-    while true {
-      if i < 0 && j < 0 { break }
-
-      // process added and deleted
-      // (It doesn't matter whether to process add or delete first.)
-      do {
+    for i in _children.indices.reversed() {
+      // process deleted in a batch if any.
+      if j >= 0 && original[j].mark == .deleted {
         startIndex = i
-        while j >= 0 && original[j].mark == .deleted {
-          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
-          NodeReconciler.delete(old: original[j].layoutLength, context: context)
+      }
+      while j >= 0 && original[j].mark == .deleted {
+        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
+        NodeReconciler.delete(old: original[j].layoutLength, context: context)
 
-          let leadingString = _leadingString(forIndex: j)
-          StringReconciler.delete(old: leadingString, context: context)
-          j -= 1
-        }
-        assert(j < 0 || [.none, .dirty].contains(original[j].mark))
+        let leadingString = _leadingString(forIndex: j)
+        StringReconciler.delete(old: leadingString, context: context)
+        j -= 1
       }
 
-      while i >= 0 && current[i].mark == .added {
+      // process added.
+      if i >= 0 && current[i].mark == .added {
+        startIndex = i
+        //
         let newline = current[i].insertNewline
         sum += NewlineReconciler.insert(new: newline, context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
 
         let leadingString = _leadingString(forIndex: i)
         sum += StringReconciler.insert(new: leadingString, context: context, self)
-        startIndex = i
-        i -= 1
       }
-      assert(i < 0 || [.none, .dirty].contains(current[i].mark))
-
       // skip none
-      while i >= 0 && current[i].mark == .none,
+      else if current[i].mark == .none,
         j >= 0 && original[j].mark == .none
       {
         assert(current[i].nodeId == original[j].nodeId)
@@ -342,18 +337,9 @@ final class ItemListNode: ElementNode {
         let leadingStrings = (oldLeading, newLeading)
 
         sum += StringReconciler.reconcile(dirty: leadingStrings, context: context, self)
-        i -= 1
         j -= 1
       }
-
-      // process added or deleted by iterating again
-      if i >= 0 && current[i].mark == .added { continue }
-      if j >= 0 && original[j].mark == .deleted { continue }
-
-      // process dirty
-      assert(i < 0 || current[i].mark == .dirty)
-      assert(j < 0 || original[j].mark == .dirty)
-      if i >= 0 {
+      else {
         assert(j >= 0 && current[i].nodeId == original[j].nodeId)
         assert(current[i].mark == .dirty && original[j].mark == .dirty)
 
@@ -366,10 +352,22 @@ final class ItemListNode: ElementNode {
         let leadingStrings = (oldLeading, newLeading)
         sum += StringReconciler.reconcile(dirty: leadingStrings, context: context, self)
 
-        i -= 1
         j -= 1
       }
     }
+    // process deleted in a batch if any.
+    if j >= 0 && original[j].mark == .deleted {
+      startIndex = 0
+    }
+    while j >= 0 && original[j].mark == .deleted {
+      NewlineReconciler.delete(old: original[j].insertNewline, context: context)
+      NodeReconciler.delete(old: original[j].layoutLength, context: context)
+
+      let leadingString = _leadingString(forIndex: j)
+      StringReconciler.delete(old: leadingString, context: context)
+      j -= 1
+    }
+    assert(j < 0)
 
     if subtype.isMarkerConstant {
       _refreshParagraphStyle(
@@ -381,20 +379,6 @@ final class ItemListNode: ElementNode {
         context, { i in current[i].mark == .dirty || refreshRange.contains(i) })
     }
 
-    return sum
-  }
-
-  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
-    precondition(_children.isEmpty)
-    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
-
-    let leadingString = _leadingString(forIndex: 0)
-    let sum = StringReconciler.insert(new: leadingString, context: context, self)
-    let location = context.layoutCursor
-    let end = location + sum
-
-    let itemMarker = _attributedMarker(forIndex: 0)
-    _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
     return sum
   }
 
@@ -457,14 +441,12 @@ final class ItemListNode: ElementNode {
     var location = context.layoutCursor
     for i in 0..<_children.count {
       let leadingString = _leadingString(forIndex: i)
-      let end =
-        location + leadingString.length + _children[i].layoutLength()
-        + _newlines[i].intValue
+      let end = location + leadingString.length + _children[i].layoutLength()
       if predicate(i) {
         let itemMarker = _attributedMarker(forIndex: i)
         _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
       }
-      location = end
+      location = end + _newlines[i].intValue
     }
   }
 

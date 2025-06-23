@@ -51,6 +51,7 @@ final class EquationNode: MathNode {
 
       if !isReflowActive {
         context.insertFragment(nodeFragment, self)
+        if self.isBlock { context.addParagraphStyle(forSegment: 1, self) }
         _layoutLength = 1
       }
       else {
@@ -67,6 +68,7 @@ final class EquationNode: MathNode {
 
       if !isReflowActive {
         context.invalidateBackwards(1)
+//        if self.isBlock { context.addParagraphStyle(forSegment: 1, self) }
         _layoutLength = 1
       }
       else {
@@ -79,6 +81,7 @@ final class EquationNode: MathNode {
     return _layoutLength
 
     /// Returns the number of segments emitted.
+    @inline(__always)
     func emitReflowSegments(_ nodeFragment: MathListLayoutFragment) -> Int {
       precondition(self.isReflowActive)
       nodeFragment.performReflow()
