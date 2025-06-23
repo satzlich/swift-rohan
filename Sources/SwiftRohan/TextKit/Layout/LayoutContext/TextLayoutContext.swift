@@ -42,7 +42,7 @@ final class TextLayoutContext: LayoutContext {
     isEditing = false
   }
 
-  // MARK: - Operations
+  // MARK: - Paragraph Style
 
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     precondition(isEditing)
@@ -57,6 +57,8 @@ final class TextLayoutContext: LayoutContext {
     precondition(isEditing)
     textStorage.addAttributes(attributes, range: NSRange(range))
   }
+
+  // MARK: - Operations
 
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)

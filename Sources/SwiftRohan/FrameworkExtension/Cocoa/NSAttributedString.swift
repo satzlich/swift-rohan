@@ -7,3 +7,15 @@ extension NSAttributedString.Key {
   static let rhListIndent = NSAttributedString.Key("rhListIndent")  // CGFloat
   static let rhItemMarker = NSAttributedString.Key("rhItemMarker")  // NSAttributedString
 }
+
+/*
+ 
+ alignment
+ indent
+ firstLineIndent
+ 
+ listLevel
+ listIndent
+ itemMarker
+ 
+ */
