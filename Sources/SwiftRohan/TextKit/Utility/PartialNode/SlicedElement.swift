@@ -53,4 +53,6 @@ extension SlicedElement: GenNode {
   func visitSourceWithChildren<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
     _sourceNode.accept(visitor, context, withChildren: _children)
   }
+
+  var isBlock: Bool { _sourceNode.isBlock }
 }

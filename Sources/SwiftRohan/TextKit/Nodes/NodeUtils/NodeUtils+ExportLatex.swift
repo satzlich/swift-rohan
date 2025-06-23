@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import LatexParser
 
 extension NodeUtils {
@@ -176,12 +177,18 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   private func _visitChildren<T: GenNode, C: Collection<T>>(
     _ children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    let goodChildren = children.map { $0.accept(self, context) }
-      .compactMap { $0.success() }
-    guard goodChildren.count == children.count else {
-      return .failure(SatzError(.ExportLatexFailure))
+
+    let newlines = NewlineArray(children.map(\.isBlock))
+
+    var stream: Array<StreamletSyntax> = []
+    for (child, newline) in zip(children, newlines.asBitArray) {
+      guard let childSyntax = child.accept(self, context).success()
+      else { return .failure(SatzError(.ExportLatexFailure)) }
+      stream.append(contentsOf: childSyntax.stream)
+      if newline {
+        stream.append(.newline(NewlineSyntax()))
+      }
     }
-    let stream = goodChildren.flatMap(\.stream)
     return .success(StreamSyntax(stream))
   }
 
@@ -243,12 +250,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
     let streamSyntax: StreamSyntax = StreamSyntax(streamlets)
     let envSyntax = EnvironmentSyntax(name: envName, wrapped: streamSyntax)
-    return .success(
-      StreamSyntax([
-        .newline(NewlineSyntax()),
-        .environment(envSyntax),
-        .newline(NewlineSyntax()),
-      ]))
+    return .success(StreamSyntax([.environment(envSyntax)]))
   }
 
   override func visit(
@@ -276,14 +278,17 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
 
-    var stream: Array<StreamletSyntax> = []
+    let newlines = NewlineArray(children.map(\.isBlock))
 
-    for (i, child) in children.enumerated() {
+    var stream: Array<StreamletSyntax> = []
+    for (child, newline) in zip(children, newlines.asBitArray) {
       guard let childSyntax = child.accept(self, context).success()
       else { return .failure(SatzError(.ExportLatexFailure)) }
-      stream.append(.newline(NewlineSyntax()))
       stream.append(contentsOf: childSyntax.stream)
-      stream.append(.newline(NewlineSyntax()))
+      if newline {
+        stream.append(.newline(NewlineSyntax()))
+        stream.append(.newline(NewlineSyntax()))
+      }
     }
     return .success(StreamSyntax(stream))
   }
