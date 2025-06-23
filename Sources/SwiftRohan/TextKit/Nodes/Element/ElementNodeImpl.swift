@@ -63,7 +63,7 @@ internal class ElementNodeImpl: ElementNode {
     else {
       _snapshotRecords = _children.indices.map { i in
         SnapshotRecord(
-          _children[i], _newlines[i], newlineBefore: _newlines.value(before: i))
+          _children[i], _newlines[i], leadingNewline: _newlines.value(before: i))
       }
     }
   }
@@ -281,7 +281,7 @@ internal class ElementNodeImpl: ElementNode {
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
-        NewlineReconciler.delete(old: original[j].trailingNewline, context: context)
+        NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
         j -= 1
       }
       assert(j < 0)
@@ -300,14 +300,14 @@ internal class ElementNodeImpl: ElementNode {
       for i in _children.indices.reversed() {
         // process deleted in a batch if any.
         while j >= 0 && original[j].mark == .deleted {
-          assert(original[j].trailingNewline == false)
+          assert(original[j].leadingNewline == false)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
           j -= 1
         }
 
         // process added.
         if current[i].mark == .added {
-          assert(current[i].trailingNewline == false)
+          assert(current[i].leadingNewline == false)
           sum += NodeReconciler.insert(new: _children[i], context: context)
         }
         // skip none.
@@ -315,8 +315,8 @@ internal class ElementNodeImpl: ElementNode {
           j >= 0 && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-          assert(current[i].trailingNewline == false)
-          assert(original[j].trailingNewline == false)
+          assert(current[i].leadingNewline == false)
+          assert(original[j].leadingNewline == false)
           sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
           j -= 1
         }
@@ -324,15 +324,15 @@ internal class ElementNodeImpl: ElementNode {
         else {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
-          assert(current[i].trailingNewline == false)
-          assert(original[j].trailingNewline == false)
+          assert(current[i].leadingNewline == false)
+          assert(original[j].leadingNewline == false)
           sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
           j -= 1
         }
       }
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
-        assert(original[j].trailingNewline == false)
+        assert(original[j].leadingNewline == false)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
         j -= 1
       }
@@ -399,10 +399,10 @@ internal class ElementNodeImpl: ElementNode {
     let leadingNewline: Bool
     let layoutLength: Int
 
-    init(_ node: Node, _ trailingNewline: Bool, newlineBefore: Bool) {
+    init(_ node: Node, _ trailingNewline: Bool, leadingNewline: Bool) {
       self.nodeId = node.id
       self.trailingNewline = trailingNewline
-      self.leadingNewline = newlineBefore
+      self.leadingNewline = leadingNewline
       self.layoutLength = node.layoutLength()
     }
 

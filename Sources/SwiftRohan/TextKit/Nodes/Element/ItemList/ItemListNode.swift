@@ -186,7 +186,7 @@ final class ItemListNode: ElementNode {
     else {
       _snapshotRecords = _children.indices.map { i in
         SnapshotRecord(
-          _children[i], _newlines[i], newlineBefore: _newlines.value(before: i))
+          _children[i], _newlines[i], leadingNewline: _newlines.value(before: i))
       }
     }
   }
