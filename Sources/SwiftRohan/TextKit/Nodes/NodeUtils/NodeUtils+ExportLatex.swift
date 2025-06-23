@@ -208,19 +208,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     heading: HeadingNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-
-    let result = _composeControlSeqCall(heading.command, children: children, context)
-    switch result {
-    case let .success(stream):
-      // add newline before and after the heading
-      var newStream = stream.stream
-      newStream.insert(.newline(NewlineSyntax()), at: 0)
-      newStream.append(.newline(NewlineSyntax()))
-      return .success(StreamSyntax(newStream))
-
-    case let .failure(error):
-      return .failure(error)
-    }
+    return _composeControlSeqCall(heading.command, children: children, context)
   }
 
   override func visit(
@@ -249,13 +237,18 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       streamlets.append(contentsOf: childSyntax.stream)
       // append with a newline.
       if i < children.count - 1 {
-        streamlets.append(.newline(NewlineSyntax("\n")))
+        streamlets.append(.newline(NewlineSyntax()))
       }
     }
 
     let streamSyntax: StreamSyntax = StreamSyntax(streamlets)
     let envSyntax = EnvironmentSyntax(name: envName, wrapped: streamSyntax)
-    return .success(StreamSyntax([.environment(envSyntax)]))
+    return .success(
+      StreamSyntax([
+        .newline(NewlineSyntax()),
+        .environment(envSyntax),
+        .newline(NewlineSyntax()),
+      ]))
   }
 
   override func visit(
@@ -285,22 +278,12 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
     var stream: Array<StreamletSyntax> = []
 
-    var isParagraph = false
     for (i, child) in children.enumerated() {
       guard let childSyntax = child.accept(self, context).success()
       else { return .failure(SatzError(.ExportLatexFailure)) }
-
-      if i > 0 {
-        stream.append(.newline(NewlineSyntax("\n")))
-
-        if isParagraphNode(child) && isParagraph {
-          stream.append(.newline(NewlineSyntax("\n")))
-        }
-      }
+      stream.append(.newline(NewlineSyntax()))
       stream.append(contentsOf: childSyntax.stream)
-
-      // save whether the child is a paragraph node
-      isParagraph = isParagraphNode(child)
+      stream.append(.newline(NewlineSyntax()))
     }
     return .success(StreamSyntax(stream))
   }
