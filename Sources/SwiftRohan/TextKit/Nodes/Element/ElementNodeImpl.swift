@@ -37,12 +37,7 @@ internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Layout)
 
   final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-    if isBlockContainer {
-      return _performLayout(context, fromScratch: fromScratch, isBlockContainer: true)
-    }
-    else {
-      return _performLayout(context, fromScratch: fromScratch, isBlockContainer: false)
-    }
+    _performLayout(context, fromScratch: fromScratch)
   }
 
   // MARK: - Layout Impl.
@@ -72,19 +67,16 @@ internal class ElementNodeImpl: ElementNode {
   }
 
   @inline(__always)
-  private final func _performLayout(
-    _ context: LayoutContext, fromScratch: Bool, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
     if fromScratch {
-      _layoutLength =
-        _performLayoutFromScratch(context, isBlockContainer: isBlockContainer)
+      _layoutLength = _performLayoutFromScratch(context)
       _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context, isBlockContainer: isBlockContainer)
+      _layoutLength = _performLayoutSimple(context)
     }
     else {
-      _layoutLength = _performLayoutFull(context, isBlockContainer: isBlockContainer)
+      _layoutLength = _performLayoutFull(context)
       _snapshotRecords = nil
     }
     _isDirty = false
@@ -93,77 +85,120 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout from scratch.
   @inline(__always)
-  private final func _performLayoutFromScratch(
-    _ context: LayoutContext, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
-    if _children.isEmpty {
+    switch (_children.isEmpty, self.isBlock) {
+    case (true, true):
       if self.isPlaceholderActive {
-        context.insertText("⬚", self)
-        return 1
+        let sum = StringReconciler.insert(new: "⬚", context: context, self)
+        context.addParagraphStyle(forSegment: sum, self)
+        return sum
+      }
+      else {
+        let sum = 0
+        context.addParagraphStyle(forSegment: sum, self)
+        return sum
+      }
+
+    case (true, false):
+      if self.isPlaceholderActive {
+        return StringReconciler.insert(new: "⬚", context: context, self)
       }
       else {
         return 0
       }
-    }
 
-    assert(_children.isEmpty == false)
+    case (false, true):
+      var sum = 0
+      var segment = 0  // accumulated segment length since entry or last newline.
 
-    var sum = 0
-    var segment = 0  // accumulated segment whose paragraph style is to be refreshed.
+      for i in (0..<_children.count).reversed() {  // backwards insertion.
+        if _newlines[i] && segment > 0 {
+          context.addParagraphStyle(forSegment: segment, self)
+          segment = 0
+        }
+        var n = NewlineReconciler.insert(new: _newlines[i], context: context, self)
+        n += NodeReconciler.insert(new: _children[i], context: context)
+        sum += n
 
-    // insert content backwards
-    for i in (0..<_children.count).reversed() {
-      if _newlines[i] && segment > 0 {
-        context.addParagraphStyle(forSegment: segment, self)
-        segment = 0
+        if _children[i].isBlock {
+          segment = 0
+        }
+        else {
+          segment += n
+        }
       }
+      if segment > 0 { context.addParagraphStyle(forSegment: segment, self) }
+      return sum
 
-      let n0 = NewlineReconciler.insert(new: _newlines[i], context: context, self)
-      let n1 = NodeReconciler.insert(new: _children[i], context: context)
-      sum += n0 + n1
-
-      // block nodes take care of their own paragraph style.
-      if _children[i].isBlock {
-        segment = 0
+    case (false, false):
+      var sum = 0
+      for i in (0..<_children.count).reversed() {
+        assert(_newlines[i] == false)  // inline nodes should not contain newlines.
+        sum += NodeReconciler.insert(new: _children[i], context: context)
       }
-      else {
-        segment += n0 + n1
-      }
+      return sum
     }
-
-    if segment > 0 {
-      context.addParagraphStyle(forSegment: segment, self)
-    }
-
-    return sum
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
   @inline(__always)
-  private final func _performLayoutSimple(
-    _ context: LayoutContext, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
+    precondition(_children.isEmpty == false)
 
-    assert(_children.isEmpty == false)
+    switch self.isBlock {
+    case true:
+      var sum = 0
+      var segment = 0  // accumulated segment length since entry or last newline.
+      var dirty = false  // true if the segment is dirty.
 
-    var sum = 0
-    for i in (0..<_children.count).reversed() {
-      // skip clean.
-      if _children[i].isDirty == false {
-        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.skip(current: _children[i], context: context)
+      // Invariant: for every maximum non-block segment which is dirty, add
+      //  paragraph style is called.
+      for i in (0..<_children.count).reversed() {
+        if _newlines[i] && segment > 0 && dirty {
+          context.addParagraphStyle(forSegment: segment, self)
+          segment = 0
+          dirty = false
+        }
+        var n: Int = 0
+        if _children[i].isDirty == false {
+          n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
+          n += NodeReconciler.skip(current: _children[i], context: context)
+        }
+        else {
+          n += NewlineReconciler.skip(currrent: _newlines[i], context: context)
+          n += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          dirty = true
+        }
+        sum += n
+        if _children[i].isBlock {
+          segment = 0
+          dirty = false  // block nodes take care of their own paragraph style.
+        }
+        else {
+          segment += n
+        }
       }
-      // process dirty.
-      else {
-        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
-        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+      if segment > 0 && dirty {
+        context.addParagraphStyle(forSegment: segment, self)
       }
+      return sum
+
+    case false:
+      var sum = 0
+      for i in (0..<_children.count).reversed() {
+        assert(_newlines[i] == false)
+        if _children[i].isDirty == false {
+          sum += NodeReconciler.skip(current: _children[i], context: context)
+        }
+        else {
+          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+        }
+      }
+      return sum
     }
-
-    return sum
   }
 
   @inline(__always)
@@ -199,9 +234,7 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout for fromScratch=false when snapshot has been made.
   @inline(__always)
-  private final func _performLayoutFull(
-    _ context: LayoutContext, isBlockContainer: Bool
-  ) -> Int {
+  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     if _children.isEmpty {
