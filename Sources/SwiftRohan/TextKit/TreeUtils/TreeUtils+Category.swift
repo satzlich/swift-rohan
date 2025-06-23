@@ -135,7 +135,7 @@ extension TreeUtils {
       }
 
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
-      if node.isBlock { summary.topLevelNodes += 1 }
+      if NodePolicy.isTopLevelNode(node) { summary.topLevelNodes += 1 }
       if NodePolicy.isMathOnlyContent(node) { summary.otherMathOnly += 1 }
     }
   }
