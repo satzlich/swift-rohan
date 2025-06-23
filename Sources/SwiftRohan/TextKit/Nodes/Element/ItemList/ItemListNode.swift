@@ -204,6 +204,20 @@ final class ItemListNode: ElementNode {
     return _layoutLength
   }
 
+  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
+    precondition(_children.isEmpty)
+    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
+
+    let leadingString = _leadingString(forIndex: 0)
+    let sum = StringReconciler.insert(new: leadingString, context: context, self)
+    let location = context.layoutCursor
+    let end = location + sum
+
+    let itemMarker = _attributedMarker(forIndex: 0)
+    _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
+    return sum
+  }
+
   /// Perform layout for fromScratch=true.
   @inline(__always)
   private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
@@ -381,20 +395,6 @@ final class ItemListNode: ElementNode {
         context, { i in current[i].mark == .dirty || refreshRange.contains(i) })
     }
 
-    return sum
-  }
-
-  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
-    precondition(_children.isEmpty)
-    let paragraphAttributes = _bakeParagraphAttributes(context.styleSheet)
-
-    let leadingString = _leadingString(forIndex: 0)
-    let sum = StringReconciler.insert(new: leadingString, context: context, self)
-    let location = context.layoutCursor
-    let end = location + sum
-
-    let itemMarker = _attributedMarker(forIndex: 0)
-    _addParagraphAttributes(context, paragraphAttributes, itemMarker, location..<end)
     return sum
   }
 

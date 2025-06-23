@@ -235,11 +235,19 @@ internal class ElementNodeImpl: ElementNode {
           j -= 1
         }
 
+        if _newlines[i] && segment > 0 && dirty {
+          context.addParagraphStyle(forSegment: segment, self)
+          segment = 0
+          dirty = false
+        }
+
         // process added.
+        var n: Int = 0
         if current[i].mark == .added {
           let newline = current[i].insertNewline
-          sum += NewlineReconciler.insert(new: newline, context: context, self)
-          sum += NodeReconciler.insert(new: _children[i], context: context)
+          n += NewlineReconciler.insert(new: newline, context: context, self)
+          n += NodeReconciler.insert(new: _children[i], context: context)
+          dirty = true
         }
         // skip none.
         else if current[i].mark == .none,
@@ -247,8 +255,8 @@ internal class ElementNodeImpl: ElementNode {
         {
           assert(current[i].nodeId == original[j].nodeId)
           let newlines = (original[j].insertNewline, current[i].insertNewline)
-          sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          n += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          n += NodeReconciler.skip(current: current[i].layoutLength, context: context)
           j -= 1
         }
         // process dirty.
@@ -257,9 +265,18 @@ internal class ElementNodeImpl: ElementNode {
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
 
           let newlines = (original[j].insertNewline, current[i].insertNewline)
-          sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          n += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          n += NodeReconciler.reconcile(dirty: _children[i], context: context)
+          dirty = true
           j -= 1
+        }
+        sum += n
+        if _children[i].isBlock {
+          segment = 0
+          dirty = false  // block nodes take care of their own paragraph style.
+        }
+        else {
+          segment += n
         }
       }
       // process deleted in a batch if any.
@@ -269,6 +286,10 @@ internal class ElementNodeImpl: ElementNode {
         j -= 1
       }
       assert(j < 0)
+
+      if segment > 0 && dirty {
+        context.addParagraphStyle(forSegment: segment, self)
+      }
       return sum
 
     case (false, false):
@@ -350,31 +371,6 @@ internal class ElementNodeImpl: ElementNode {
             : ExtendedRecord(.none, record)
       }
     return (current, original)
-  }
-
-  /// Refresh paragraph style for those children that match the predicate and are not
-  /// themselves paragraph containers.
-  ///
-  /// If `self` is **not** a paragraph container, this method does nothing.
-  ///
-  /// - Precondition: layout cursor is at the start of the node.
-  /// - Postcondition: the cursor is unchanged.
-  @inline(__always)
-  private final func _refreshParagraphStyle(
-    _ context: LayoutContext, _ predicate: (Int) -> Bool
-  ) {
-    precondition(self.isBlockContainer)
-
-    var location = context.layoutCursor
-    for i in 0..<_children.count {
-      let child = _children[i]
-      let end = location + child.layoutLength() + _newlines[i].intValue
-      // paragraph containers are styled by themselves, so we skip them.
-      if child.isBlockContainer == false && predicate(i) {
-        context.addParagraphStyle(child, location..<end)
-      }
-      location = end
-    }
   }
 
   final override func getLayoutOffset(_ index: Int) -> Int? {
