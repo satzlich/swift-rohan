@@ -145,7 +145,7 @@ internal class ElementNodeImpl: ElementNode {
     case (false, false):
       var sum = 0
       for i in _children.indices.reversed() {
-        assert(_newlines[i] == false)  // inline nodes should not contain newlines.
+        assert(_newlines.value(before: i) == false)  // inline nodes should not contain newlines.
         sum += NodeReconciler.insert(new: _children[i], context: context)
       }
       return sum
@@ -198,7 +198,7 @@ internal class ElementNodeImpl: ElementNode {
     case false:
       var sum = 0
       for i in _children.indices.reversed() {
-        assert(_newlines[i] == false)
+        assert(_newlines.value(before: i) == false)
         if _children[i].isDirty == false {
           sum += NodeReconciler.skip(current: _children[i], context: context)
         }

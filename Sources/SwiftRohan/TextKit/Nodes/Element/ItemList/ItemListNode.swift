@@ -235,10 +235,11 @@ final class ItemListNode: ElementNode {
     case false:
       var sum = 0
       for i in _children.indices.reversed() {
-        sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
         sum += StringReconciler.insert(
           new: _initialFiller(forIndex: i), context: context, self)
+        sum += NewlineReconciler.insert(
+          new: _newlines.value(before: i), context: context, self)
       }
       _refreshParagraphStyle(context, { _ in true })
       return sum
@@ -256,17 +257,19 @@ final class ItemListNode: ElementNode {
     for i in _children.indices.reversed() {
       // skip clean.
       if _children[i].isDirty == false {
-        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
         sum += StringReconciler.skip(
           current: _initialFiller(forIndex: i), context: context)
+        sum += NewlineReconciler.skip(
+          currrent: _newlines.value(before: i), context: context)
       }
       // process dirty.
       else {
-        let n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
         let n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
         let n2 = StringReconciler.skip(
           current: _initialFiller(forIndex: i), context: context)
+        let n0 = NewlineReconciler.skip(
+          currrent: _newlines.value(before: i), context: context)
         sum += n0 + n1 + n2
 
         let location = context.layoutCursor
@@ -304,9 +307,9 @@ final class ItemListNode: ElementNode {
         firstDirtyMarker = i
       }
       while j >= 0 && original[j].mark == .deleted {
-        NewlineReconciler.delete(old: original[j].trailingNewline, context: context)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
         StringReconciler.delete(old: _initialFiller(forIndex: j), context: context)
+        NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
         j -= 1
       }
 
@@ -314,11 +317,11 @@ final class ItemListNode: ElementNode {
       if i >= 0 && current[i].mark == .added {
         firstDirtyMarker = i
         //
-        sum += NewlineReconciler.insert(
-          new: current[i].trailingNewline, context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
         sum += StringReconciler.insert(
           new: _initialFiller(forIndex: i), context: context, self)
+        sum += NewlineReconciler.insert(
+          new: current[i].leadingNewline, context: context, self)
       }
       // skip none
       else if current[i].mark == .none,
@@ -326,24 +329,24 @@ final class ItemListNode: ElementNode {
       {
         assert(current[i].nodeId == original[j].nodeId)
 
-        sum += NewlineReconciler.reconcile(
-          dirty: (original[j].trailingNewline, current[i].trailingNewline),
-          context: context, self)
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
         sum += StringReconciler.reconcile(
           dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
+          context: context, self)
+        sum += NewlineReconciler.reconcile(
+          dirty: (original[j].leadingNewline, current[i].leadingNewline),
           context: context, self)
         j -= 1
       }
       else {
         assert(j >= 0 && current[i].nodeId == original[j].nodeId)
         assert(current[i].mark == .dirty && original[j].mark == .dirty)
-        sum += NewlineReconciler.reconcile(
-          dirty: (original[j].trailingNewline, current[i].trailingNewline),
-          context: context, self)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         sum += StringReconciler.reconcile(
           dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
+          context: context, self)
+        sum += NewlineReconciler.reconcile(
+          dirty: (original[j].leadingNewline, current[i].leadingNewline),
           context: context, self)
 
         j -= 1
@@ -354,9 +357,9 @@ final class ItemListNode: ElementNode {
       firstDirtyMarker = 0
     }
     while j >= 0 && original[j].mark == .deleted {
-      NewlineReconciler.delete(old: original[j].trailingNewline, context: context)
       NodeReconciler.delete(old: original[j].layoutLength, context: context)
       StringReconciler.delete(old: _initialFiller(forIndex: j), context: context)
+      NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
       j -= 1
     }
     assert(j < 0)
