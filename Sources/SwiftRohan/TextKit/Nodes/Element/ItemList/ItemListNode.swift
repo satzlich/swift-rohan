@@ -184,8 +184,10 @@ final class ItemListNode: ElementNode {
       _snapshotRecords = [SnapshotRecord.placeholder(1)]
     }
     else {
-      _snapshotRecords =
-        zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+      _snapshotRecords = _children.indices.map { i in
+        SnapshotRecord(
+          _children[i], _newlines[i], newlineBefore: _newlines.value(before: i))
+      }
     }
   }
 
@@ -384,12 +386,15 @@ final class ItemListNode: ElementNode {
     let originalIds = Set(_snapshotRecords!.map(\.nodeId))
 
     let current =
-      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+      _children.indices.map { i in
+        let node = _children[i]
+        let insertNewline = _newlines[i]
+        let newlineBefore = _newlines.value(before: i)
         let mark: LayoutMark =
           !originalIds.contains(node.id)
           ? .added
           : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline)
+        return ExtendedRecord(mark, node, insertNewline, newlineBefore: newlineBefore)
       }
 
     let original =

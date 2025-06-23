@@ -61,8 +61,10 @@ internal class ElementNodeImpl: ElementNode {
       _snapshotRecords = [SnapshotRecord.placeholder(1)]
     }
     else {
-      _snapshotRecords =
-        zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+      _snapshotRecords = _children.indices.map { i in
+        SnapshotRecord(
+          _children[i], _newlines[i], newlineBefore: _newlines.value(before: i))
+      }
     }
   }
 
@@ -184,6 +186,7 @@ internal class ElementNodeImpl: ElementNode {
           if isSegmentDirty, _children[i].isBlock == false && segmentLength > 0 {
             context.addParagraphStyle(forSegment: segmentLength, self)
           }
+          segmentLength = 0
           isSegmentDirty = false
         }
       }
@@ -228,24 +231,19 @@ internal class ElementNodeImpl: ElementNode {
       for i in _children.indices.reversed() {
         // process deleted in a batch if any.
         while j >= 0 && original[j].mark == .deleted {
-          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          NewlineReconciler.delete(old: original[j].newlineBefore, context: context)
           j -= 1
         }
 
-        if _newlines[i] && segmentLength > 0 && isSegmentDirty {
-          context.addParagraphStyle(forSegment: segmentLength, self)
-          segmentLength = 0
-          isSegmentDirty = false
-        }
+        let isNewline = _newlines.value(before: i)
 
         // process added.
         let n0: Int
         let n1: Int
         if current[i].mark == .added {
-          let newline = current[i].insertNewline
-          n0 = NewlineReconciler.insert(new: newline, context: context, self)
           n1 = NodeReconciler.insert(new: _children[i], context: context)
+          n0 = NewlineReconciler.insert(new: isNewline, context: context, self)
           isSegmentDirty = true
         }
         // skip none.
@@ -253,35 +251,37 @@ internal class ElementNodeImpl: ElementNode {
           j >= 0 && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-          let newlines = (original[j].insertNewline, current[i].insertNewline)
-          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           n1 = NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          let newlines = (original[j].newlineBefore, isNewline)
+          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           j -= 1
         }
         // process dirty.
         else {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
-
-          let newlines = (original[j].insertNewline, current[i].insertNewline)
-          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
+          let newlines = (original[j].newlineBefore, isNewline)
+          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           isSegmentDirty = true
           j -= 1
         }
+
         sum += n0 + n1
-        if _children[i].isBlock {
+        segmentLength += n0 + n1
+
+        if isNewline {
+          if isSegmentDirty, _children[i].isBlock == false && segmentLength > 0 {
+            context.addParagraphStyle(forSegment: segmentLength, self)
+          }
           segmentLength = 0
-          isSegmentDirty = false  // block nodes take care of their own paragraph style.
-        }
-        else {
-          segmentLength += n1
+          isSegmentDirty = false
         }
       }
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
-        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
+        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
         j -= 1
       }
       assert(j < 0)
@@ -353,12 +353,15 @@ internal class ElementNodeImpl: ElementNode {
     let originalIds = Set(_snapshotRecords!.map(\.nodeId))
 
     let current =
-      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+      _children.indices.map { i in
+        let node = _children[i]
+        let insertNewline = _newlines[i]
+        let newlineBefore = _newlines.value(before: i)
         let mark: LayoutMark =
           !originalIds.contains(node.id)
           ? .added
           : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline)
+        return ExtendedRecord(mark, node, insertNewline, newlineBefore: newlineBefore)
       }
 
     let original =
@@ -393,23 +396,32 @@ internal class ElementNodeImpl: ElementNode {
   internal struct SnapshotRecord: CustomStringConvertible {
     let nodeId: NodeIdentifier
     let insertNewline: Bool
+    let newlineBefore: Bool
     let layoutLength: Int
 
-    init(_ node: Node, _ insertNewline: Bool) {
+    init(_ node: Node, _ insertNewline: Bool, newlineBefore: Bool) {
       self.nodeId = node.id
       self.insertNewline = insertNewline
+      self.newlineBefore = newlineBefore
       self.layoutLength = node.layoutLength()
     }
 
-    private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
+    private init(
+      _ nodeId: NodeIdentifier,
+      _ insertNewline: Bool,
+      newlineBefore: Bool,
+      _ layoutLength: Int
+    ) {
       self.nodeId = nodeId
       self.insertNewline = insertNewline
+      self.newlineBefore = newlineBefore
       self.layoutLength = layoutLength
     }
 
     /// Create a placeholder record with given layout length.
     static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
-      SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
+      SnapshotRecord(
+        NodeIdAllocator.allocate(), false, newlineBefore: false, layoutLength)
     }
 
     var description: String {
@@ -421,19 +433,22 @@ internal class ElementNodeImpl: ElementNode {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
     let insertNewline: Bool
+    let newlineBefore: Bool
     let layoutLength: Int
 
     init(_ mark: LayoutMark, _ record: SnapshotRecord) {
       self.mark = mark
       self.nodeId = record.nodeId
       self.insertNewline = record.insertNewline
+      self.newlineBefore = record.newlineBefore
       self.layoutLength = record.layoutLength
     }
 
-    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
+    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool, newlineBefore: Bool) {
       self.mark = mark
       self.nodeId = node.id
       self.insertNewline = insertNewline
+      self.newlineBefore = newlineBefore
       self.layoutLength = node.layoutLength()
     }
   }
