@@ -286,11 +286,9 @@ internal class ElementNodeImpl: ElementNode {
           j >= 0 && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-
           let newlines = (original[j].insertNewline, current[i].insertNewline)
           sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-
           i -= 1
           j -= 1
         }
@@ -313,6 +311,7 @@ internal class ElementNodeImpl: ElementNode {
           j -= 1
         }
       }
+      return sum
 
     case (false, false):
       let (current, original) = _computeExtendedRecords()
@@ -373,115 +372,8 @@ internal class ElementNodeImpl: ElementNode {
           j -= 1
         }
       }
+      return sum
     }
-    //
-    //    assert(_children.isEmpty == false)
-    //
-    //    let (current, original) = _computeExtendedRecords()
-    //
-    //    var sum = 0
-    //    var i = current.count - 1
-    //    var j = original.count - 1
-    //
-    //    // current range that covers deleted nodes which should be vacuumed
-    //    var vacuumRange: Range<Int>?
-    //
-    //    func updateVacuumRange() {
-    //      if j >= 0 && original[j].mark == .deleted {
-    //        if i >= 0 {
-    //          vacuumRange =
-    //            if let range = vacuumRange {
-    //              max(0, i - 1)..<range.upperBound
-    //            }
-    //            else {
-    //              max(0, i - 1)..<min(childCount, i + 2)
-    //            }
-    //        }
-    //        else {
-    //          vacuumRange =
-    //            if let range = vacuumRange {
-    //              0..<range.upperBound
-    //            }
-    //            else {
-    //              0..<1
-    //            }
-    //        }
-    //      }
-    //    }
-    //
-    //    // reconcile content backwards
-    //    // Invariant:
-    //    //    [cursor, ...) is consistent with (i, ...)
-    //    //    [0, cursor) is consistent with [0, j]
-    //    while true {
-    //      if i < 0 && j < 0 { break }
-    //
-    //      // process added and deleted
-    //      // (It doesn't matter whether to process add or delete first.)
-    //      do {
-    //        if isBlockContainer { updateVacuumRange() }
-    //
-    //        while j >= 0 && original[j].mark == .deleted {
-    //          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
-    //          NodeReconciler.delete(old: original[j].layoutLength, context: context)
-    //          j -= 1
-    //        }
-    //        assert(j < 0 || [.none, .dirty].contains(original[j].mark))
-    //      }
-    //
-    //      while i >= 0 && current[i].mark == .added {
-    //        let newline = current[i].insertNewline
-    //        sum += NewlineReconciler.insert(new: newline, context: context, self)
-    //        sum += NodeReconciler.insert(new: _children[i], context: context)
-    //        i -= 1
-    //      }
-    //      assert(i < 0 || [.none, .dirty].contains(current[i].mark))
-    //
-    //      // skip none
-    //      while i >= 0 && current[i].mark == .none,
-    //        j >= 0 && original[j].mark == .none
-    //      {
-    //        assert(current[i].nodeId == original[j].nodeId)
-    //
-    //        let newlines = (original[j].insertNewline, current[i].insertNewline)
-    //        sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-    //        sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-    //
-    //        i -= 1
-    //        j -= 1
-    //      }
-    //
-    //      // process added or deleted by iterating again
-    //      if i >= 0 && current[i].mark == .added { continue }
-    //      if j >= 0 && original[j].mark == .deleted { continue }
-    //
-    //      // process dirty
-    //      assert(i < 0 || current[i].mark == .dirty)
-    //      assert(j < 0 || original[j].mark == .dirty)
-    //      if i >= 0 {
-    //        assert(j >= 0 && current[i].nodeId == original[j].nodeId)
-    //        assert(current[i].mark == .dirty && original[j].mark == .dirty)
-    //
-    //        let newlines = (original[j].insertNewline, current[i].insertNewline)
-    //        sum += NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-    //        sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-    //        i -= 1
-    //        j -= 1
-    //      }
-    //    }
-
-    // add paragraph style forwards
-    //    if isBlockContainer {
-    //      let vacuumRange = vacuumRange ?? 0..<0
-    //      _refreshParagraphStyle(
-    //        context,
-    //        { i in
-    //          current[i].mark == .added || current[i].mark == .dirty
-    //            || vacuumRange.contains(i)
-    //        })
-    //    }
-
-    return sum
   }
 
   /// Refresh paragraph style for those children that match the predicate and are not

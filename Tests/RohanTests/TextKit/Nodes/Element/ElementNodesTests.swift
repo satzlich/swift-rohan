@@ -77,7 +77,7 @@ struct ElementNodeTests {
       .emph,
       [
         TextNode("a😀b"),
-        EquationNode(.block, [TextNode("a+b")]),
+        EquationNode(.inline, [TextNode("a+b")]),
       ])
     TestUtils.updateLayoutLength(emphasis)
     #expect(emphasis.layoutLength() == 6)
