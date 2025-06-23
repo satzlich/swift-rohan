@@ -58,7 +58,7 @@ final class TextLayoutContext: LayoutContext {
     self.addParagraphStyle(source, begin..<end)
   }
 
-  func addParagraphAttributes(
+  func addAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {
     precondition(isEditing)

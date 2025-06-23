@@ -30,6 +30,8 @@ internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
   case level
 
   // paragraph
+  case firstLineHeadIndent
+  case headIndent
   case paragraphSpacing
   case textAlignment
 

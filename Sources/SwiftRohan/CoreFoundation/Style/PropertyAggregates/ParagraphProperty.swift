@@ -7,7 +7,12 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
 
   public func getAttributes() -> Dictionary<NSAttributedString.Key, Any> {
     let paragraphStyle = self.getParagraphStyle()
-    return [.paragraphStyle: paragraphStyle]
+    return [
+      .paragraphStyle: paragraphStyle,
+      .rhFirstLineHeadIndent: firstLineHeadIndent,
+      .rhHeadIndent: headIndent,
+      .rhListLevel: listLevel,
+    ]
   }
 
   internal func getParagraphStyle() -> NSParagraphStyle {
@@ -22,12 +27,16 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
     }
 
     return ParagraphProperty(
+      firstLineHeadIndent: resolved(firstLineHeadIndent).float()!,
+      headIndent: resolved(headIndent).float()!,
       listLevel: resolved(listLevel).integer()!,
       paragraphSpacing: resolved(paragraphSpacing).float()!,
       textAlignment: resolved(textAlignment).textAlignment()!)
   }
 
   public static let allKeys: Array<PropertyKey> = [
+    firstLineHeadIndent,
+    headIndent,
     listLevel,
     paragraphSpacing,
     textAlignment,
@@ -35,6 +44,8 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
 
   // MARK: - Implementation
 
+  internal let firstLineHeadIndent: CGFloat
+  internal let headIndent: CGFloat
   internal let listLevel: Int  // "0" indicates not in an item list.
   internal let paragraphSpacing: CGFloat
   internal let textAlignment: NSTextAlignment
@@ -46,6 +57,8 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
   private func _createParagraphStyle() -> NSMutableParagraphStyle {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = textAlignment
+    paragraphStyle.firstLineHeadIndent = firstLineHeadIndent
+    paragraphStyle.headIndent = headIndent
     paragraphStyle.paragraphSpacing = paragraphSpacing
     paragraphStyle.hyphenationFactor = 0.9
     return paragraphStyle
@@ -53,6 +66,8 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
 
   // MARK: - Key
 
+  static let firstLineHeadIndent = PropertyKey(.paragraph, .firstLineHeadIndent)  // CGFloat
+  static let headIndent = PropertyKey(.paragraph, .headIndent)  // CGFloat
   static let listLevel = PropertyKey(.itemList, .level)  // Int
   static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
   static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
