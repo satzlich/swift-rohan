@@ -125,15 +125,17 @@ internal class ElementNodeImpl: ElementNode {
 
       for i in _children.indices.reversed() {  // backwards insertion.
         let n1 = NodeReconciler.insert(new: _children[i], context: context)
-        let isNewline = _newlines.value(before: i)
-        let n0 = NewlineReconciler.insert(new: isNewline, context: context, self)
+        let leadingNewline = _newlines.value(before: i)
+        let n0 = NewlineReconciler.insert(new: leadingNewline, context: context, self)
         sum += n0 + n1
 
         segmentLength += n0 + n1
-        if isNewline {
-          if _children[i].isBlock == false && segmentLength > 0 {
-            context.addParagraphStyle(forSegment: segmentLength, self)
-          }
+        if leadingNewline,
+          _children[i].isBlock == false && segmentLength > 0
+        {
+          context.addParagraphStyle(forSegment: segmentLength, self)
+        }
+        if leadingNewline || _children[i].isBlock {
           segmentLength = 0
         }
       }
@@ -167,25 +169,27 @@ internal class ElementNodeImpl: ElementNode {
       // Invariant: for every maximum non-block segment which is dirty, add
       //  paragraph style is called.
       for i in _children.indices.reversed() {
-        let isNewline = _newlines.value(before: i)
+        let leadingNewline = _newlines.value(before: i)
         let n1: Int
         let n0: Int
         if _children[i].isDirty == false {
           n1 = NodeReconciler.skip(current: _children[i], context: context)
-          n0 = NewlineReconciler.skip(currrent: isNewline, context: context)
+          n0 = NewlineReconciler.skip(currrent: leadingNewline, context: context)
         }
         else {
           n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
-          n0 = NewlineReconciler.skip(currrent: isNewline, context: context)
+          n0 = NewlineReconciler.skip(currrent: leadingNewline, context: context)
           isSegmentDirty = true
         }
         sum += n0 + n1
         segmentLength += n0 + n1
 
-        if isNewline {
-          if isSegmentDirty, _children[i].isBlock == false && segmentLength > 0 {
-            context.addParagraphStyle(forSegment: segmentLength, self)
-          }
+        if leadingNewline, isSegmentDirty,
+          _children[i].isBlock == false && segmentLength > 0
+        {
+          context.addParagraphStyle(forSegment: segmentLength, self)
+        }
+        if leadingNewline || _children[i].isBlock {
           segmentLength = 0
           isSegmentDirty = false
         }
@@ -236,14 +240,14 @@ internal class ElementNodeImpl: ElementNode {
           j -= 1
         }
 
-        let isNewline = _newlines.value(before: i)
+        let leadingNewline = _newlines.value(before: i)
 
         // process added.
         let n0: Int
         let n1: Int
         if current[i].mark == .added {
           n1 = NodeReconciler.insert(new: _children[i], context: context)
-          n0 = NewlineReconciler.insert(new: isNewline, context: context, self)
+          n0 = NewlineReconciler.insert(new: leadingNewline, context: context, self)
           isSegmentDirty = true
         }
         // skip none.
@@ -252,7 +256,7 @@ internal class ElementNodeImpl: ElementNode {
         {
           assert(current[i].nodeId == original[j].nodeId)
           n1 = NodeReconciler.skip(current: current[i].layoutLength, context: context)
-          let newlines = (original[j].leadingNewline, isNewline)
+          let newlines = (original[j].leadingNewline, leadingNewline)
           n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           j -= 1
         }
@@ -261,7 +265,7 @@ internal class ElementNodeImpl: ElementNode {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
           n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
-          let newlines = (original[j].leadingNewline, isNewline)
+          let newlines = (original[j].leadingNewline, leadingNewline)
           n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           isSegmentDirty = true
           j -= 1
@@ -270,10 +274,14 @@ internal class ElementNodeImpl: ElementNode {
         sum += n0 + n1
         segmentLength += n0 + n1
 
-        if isNewline {
-          if isSegmentDirty, _children[i].isBlock == false && segmentLength > 0 {
-            context.addParagraphStyle(forSegment: segmentLength, self)
-          }
+        if leadingNewline, isSegmentDirty,
+          _children[i].isBlock == false && segmentLength > 0
+        {
+          context.addParagraphStyle(forSegment: segmentLength, self)
+          segmentLength = 0
+          isSegmentDirty = false
+        }
+        if leadingNewline || _children[i].isBlock {
           segmentLength = 0
           isSegmentDirty = false
         }
