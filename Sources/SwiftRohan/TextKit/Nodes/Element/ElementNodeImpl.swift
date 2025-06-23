@@ -123,6 +123,8 @@ internal class ElementNodeImpl: ElementNode {
       var sum = 0
       var segmentLength = 0  // accumulated segment length since entry or last newline.
 
+      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
+
       for i in _children.indices.reversed() {  // backwards insertion.
         let n1 = NodeReconciler.insert(new: _children[i], context: context)
         let leadingNewline = _newlines.value(before: i)
@@ -166,6 +168,7 @@ internal class ElementNodeImpl: ElementNode {
       var segmentLength = 0  // accumulated segment length since entry or last newline.
       var isSegmentDirty = false  // true if the segment is dirty.
 
+      sum += NewlineReconciler.skip(currrent: _newlines.last!, context: context)
       // Invariant: for every maximum non-block segment which is dirty, add
       //  paragraph style is called.
       for i in _children.indices.reversed() {
@@ -201,6 +204,9 @@ internal class ElementNodeImpl: ElementNode {
 
     case false:
       var sum = 0
+
+      sum += NewlineReconciler.skip(currrent: _newlines.last!, context: context)
+
       for i in _children.indices.reversed() {
         assert(_newlines.value(before: i) == false)
         if _children[i].isDirty == false {
@@ -231,6 +237,12 @@ internal class ElementNodeImpl: ElementNode {
       var segmentLength = 0  // accumulated segment length since entry or last newline.
       var isSegmentDirty = false  // true if the segment is dirty.
       var j = original.count - 1
+
+      do {
+        let old = original.last?.trailingNewline ?? false
+        let new = _newlines.last!
+        sum += NewlineReconciler.reconcile(dirty: (old, new), context: context, self)
+      }
 
       for i in _children.indices.reversed() {
         // process deleted in a batch if any.

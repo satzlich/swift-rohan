@@ -234,6 +234,9 @@ final class ItemListNode: ElementNode {
 
     case false:
       var sum = 0
+
+      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
+
       for i in _children.indices.reversed() {
         sum += NodeReconciler.insert(new: _children[i], context: context)
         sum += StringReconciler.insert(
@@ -254,6 +257,9 @@ final class ItemListNode: ElementNode {
     let itemAttributes = _bakeItemAttributes(context.styleSheet)
 
     var sum = 0
+
+    sum += NewlineReconciler.skip(currrent: _newlines.last!, context: context)
+
     for i in _children.indices.reversed() {
       // skip clean.
       if _children[i].isDirty == false {
@@ -300,6 +306,12 @@ final class ItemListNode: ElementNode {
 
     // first index where item marker changed
     var firstDirtyMarker: Int = _children.count
+
+    do {
+      let old = original.last?.trailingNewline ?? false
+      let new = _newlines.last!
+      sum += NewlineReconciler.reconcile(dirty: (old, new), context: context, self)
+    }
 
     for i in _children.indices.reversed() {
       // process deleted in a batch if any.
