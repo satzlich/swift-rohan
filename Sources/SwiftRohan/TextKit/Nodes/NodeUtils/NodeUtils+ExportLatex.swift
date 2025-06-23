@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import LatexParser
 
 extension NodeUtils {
@@ -176,12 +177,18 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   private func _visitChildren<T: GenNode, C: Collection<T>>(
     _ children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    let goodChildren = children.map { $0.accept(self, context) }
-      .compactMap { $0.success() }
-    guard goodChildren.count == children.count else {
-      return .failure(SatzError(.ExportLatexFailure))
+
+    let newlines = NewlineArray(children.map(\.isBlock))
+
+    var stream: Array<StreamletSyntax> = []
+    for (child, newline) in zip(children, newlines.asBitArray) {
+      guard let childSyntax = child.accept(self, context).success()
+      else { return .failure(SatzError(.ExportLatexFailure)) }
+      stream.append(contentsOf: childSyntax.stream)
+      if newline {
+        stream.append(.newline(NewlineSyntax()))
+      }
     }
-    let stream = goodChildren.flatMap(\.stream)
     return .success(StreamSyntax(stream))
   }
 
@@ -208,19 +215,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     heading: HeadingNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-
-    let result = _composeControlSeqCall(heading.command, children: children, context)
-    switch result {
-    case let .success(stream):
-      // add newline before and after the heading
-      var newStream = stream.stream
-      newStream.insert(.newline(NewlineSyntax()), at: 0)
-      newStream.append(.newline(NewlineSyntax()))
-      return .success(StreamSyntax(newStream))
-
-    case let .failure(error):
-      return .failure(error)
-    }
+    return _composeControlSeqCall(heading.command, children: children, context)
   }
 
   override func visit(
@@ -249,7 +244,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       streamlets.append(contentsOf: childSyntax.stream)
       // append with a newline.
       if i < children.count - 1 {
-        streamlets.append(.newline(NewlineSyntax("\n")))
+        streamlets.append(.newline(NewlineSyntax()))
       }
     }
 
@@ -283,24 +278,17 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
 
-    var stream: Array<StreamletSyntax> = []
+    let newlines = NewlineArray(children.map(\.isBlock))
 
-    var isParagraph = false
-    for (i, child) in children.enumerated() {
+    var stream: Array<StreamletSyntax> = []
+    for (child, newline) in zip(children, newlines.asBitArray) {
       guard let childSyntax = child.accept(self, context).success()
       else { return .failure(SatzError(.ExportLatexFailure)) }
-
-      if i > 0 {
-        stream.append(.newline(NewlineSyntax("\n")))
-
-        if isParagraphNode(child) && isParagraph {
-          stream.append(.newline(NewlineSyntax("\n")))
-        }
-      }
       stream.append(contentsOf: childSyntax.stream)
-
-      // save whether the child is a paragraph node
-      isParagraph = isParagraphNode(child)
+      if newline {
+        stream.append(.newline(NewlineSyntax()))
+        stream.append(.newline(NewlineSyntax()))
+      }
     }
     return .success(StreamSyntax(stream))
   }

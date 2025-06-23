@@ -11,7 +11,7 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
   public static var allCases: Array<ContainerCategory> {
     [
       .textTextContainer, .extendedTextContainer, .inlineContentContainer,
-      .paragraphContainer, .blockContainer,
+      .paragraphContainer, .topLevelContainer,
       .mathTextContainer, .mathContainer,
     ]
   }
@@ -31,9 +31,9 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
   /// Example: TableCell
   static let paragraphContainer = ContainerCategory(rawValue: 0b0000_1111)
 
-  /// container for block-compatible (for text layout)
+  /// container for top-level-compatible (for text layout)
   /// Example: RootNode
-  static let blockContainer = ContainerCategory(rawValue: 0b0001_1111)
+  static let topLevelContainer = ContainerCategory(rawValue: 0b0001_1111)
 
   /// container for math-text-compatible (for math layout)
   static let mathTextContainer = ContainerCategory(rawValue: 0b0110_0000)
@@ -50,7 +50,7 @@ extension ContainerCategory {
       .extendedTextContainer,
       .inlineContentContainer,
       .paragraphContainer,
-      .blockContainer:
+      .topLevelContainer:
       return .textMode
 
     case .mathTextContainer,

@@ -30,10 +30,8 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inline(__always)
-  static func isBlockNode(_ node: Node) -> Bool {
-    isBlockElement(node.type)
-      || node.type == .multiline
-      || (node.type == .equation && node.isBlock)
+  static func isTopLevelNode(_ node: Node) -> Bool {
+    [NodeType.heading, .paragraph].contains(node.type)
   }
 
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
@@ -84,13 +82,21 @@ enum NodePolicy {
     isEquationNode(node) && node.isBlock == false
   }
 
-  /// Returns true if the node is inline but not inline-math.
+  /// Returns true if the node is paragraph content other than inline math compatible.
   @inline(__always)
-  static func isInlineOther(_ node: Node) -> Bool {
-    [.linebreak, .textStyles, .unknown].contains(node.type)
+  static func isOtherParagraphContent(_ node: Node) -> Bool {
+    [
+      .itemList,
+      .linebreak,
+      .multiline,  // block, but inline content.
+      .textStyles,
+      .unknown,
+    ].contains(node.type)
+      || (isEquationNode(node) && node.isBlock)  // block math
   }
 
-  /// Returns true if a node of given kind can be used as paragraph container.
+  /// Returns true if a node of given kind can be used as a container for
+  /// block elements such as heading and paragraph.
   @inlinable @inline(__always)
   static func isBlockContainer(_ nodeType: NodeType) -> Bool {
     [
@@ -224,7 +230,7 @@ enum NodePolicy {
     case .heading: return .inlineContentContainer
     case .itemList: return .paragraphContainer
     case .paragraph: return nil
-    case .root: return .blockContainer
+    case .root: return .topLevelContainer
     case .textStyles: return .extendedTextContainer
 
     // Math

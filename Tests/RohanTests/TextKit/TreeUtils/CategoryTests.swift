@@ -8,21 +8,21 @@ struct CategoryTests {
   @Test
   static func contentCategory() {
     let testCases: [(Node, ContentCategory?)] = [
-      (LinebreakNode(), .inlineContent),
+      (LinebreakNode(), .paragraphContent),
       (TextNode("Hello"), .plaintext),
-      (UnknownNode(), .inlineContent),
+      (UnknownNode(), .paragraphContent),
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
-      (HeadingNode(.sectionAst, []), .blockNodes),
-      (ItemListNode(.enumerate, []), .blockNodes),
+      (HeadingNode(.sectionAst, []), .topLevelNodes),
+      (ItemListNode(.enumerate, []), .paragraphContent),
       (ParagraphNode([]), .paragraphNodes),
-      (RootNode([]), .blockNodes),
-      (TextStylesNode(.emph, []), .inlineContent),
-      (TextStylesNode(.textbf, []), .inlineContent),
+      (RootNode([]), nil),
+      (TextStylesNode(.emph, []), .paragraphContent),
+      (TextStylesNode(.textbf, []), .paragraphContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),
-      (EquationNode(.block, []), .blockNodes),
+      (EquationNode(.block, []), .paragraphContent),
       (EquationNode(.inline, []), .extendedText),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
@@ -42,7 +42,7 @@ struct CategoryTests {
           [
             MultilineNode.Row([MultilineNode.Cell([TextNode("a")])])
           ]),
-        .blockNodes
+        .paragraphContent
       ),
       (RadicalNode([], index: []), .mathContent),
       (TextModeNode([]), .mathContent),

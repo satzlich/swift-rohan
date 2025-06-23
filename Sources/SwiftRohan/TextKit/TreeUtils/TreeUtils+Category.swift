@@ -28,14 +28,14 @@ extension TreeUtils {
     else if counts.total == counts.extendedTextCompatible {
       return .extendedText
     }
-    else if counts.total == counts.inlineContentCompatible {
-      return .inlineContent
+    else if counts.total == counts.paragraphContentCompatible {
+      return .paragraphContent
     }
     else if counts.total == counts.paragraphNodes {
       return .paragraphNodes
     }
-    else if counts.total == counts.blockNodes {
-      return .blockNodes
+    else if counts.total == counts.topLevelNodes {
+      return .topLevelNodes
     }
     // math layout
     else if counts.total == counts.mathTextCompatible {
@@ -58,12 +58,12 @@ extension TreeUtils {
     var textSymbols: Int
     /// EquationNode where subtype=inline.
     var inlineMath: Int
-    /// inline conetnt other than inline-math.
-    var otherInline: Int
+    /// paragraph content other than extend-text compatible nodes.
+    var otherParagraphContent: Int
     /// paragraph node
     var paragraphNodes: Int
-    /// isBlock = true
-    var blockNodes: Int
+    /// top-level node
+    var topLevelNodes: Int
 
     /// math symbols
     var mathSymbols: Int
@@ -72,15 +72,16 @@ extension TreeUtils {
 
     static let zero = CountSummary(
       total: 0, textNodes: 0, universalSymbols: 0,
-      textSymbols: 0, inlineMath: 0, otherInline: 0, paragraphNodes: 0, blockNodes: 0,
+      textSymbols: 0, inlineMath: 0, otherParagraphContent: 0,
+      paragraphNodes: 0, topLevelNodes: 0,
       mathSymbols: 0, otherMathOnly: 0)
 
     var universalTextCompatible: Int { textNodes + universalSymbols }
     // text layout
     var textTextCompatible: Int { universalTextCompatible + textSymbols }
     var extendedTextCompatible: Int { textTextCompatible + inlineMath }
-    var inlineContentCompatible: Int { extendedTextCompatible + otherInline }
-    var blockCompatible: Int { inlineContentCompatible + blockNodes }
+    var paragraphContentCompatible: Int { extendedTextCompatible + otherParagraphContent }
+    var topLevelCompatible: Int { paragraphContentCompatible + topLevelNodes }
     // math layout
     var mathTextCompatible: Int { universalTextCompatible + mathSymbols }
     var mathContentCompatible: Int { mathTextCompatible + otherMathOnly }
@@ -129,12 +130,12 @@ extension TreeUtils {
       if NodePolicy.isInlineMath(node) {
         summary.inlineMath += 1
       }
-      else if NodePolicy.isInlineOther(node) {
-        summary.otherInline += 1
+      else if NodePolicy.isOtherParagraphContent(node) {
+        summary.otherParagraphContent += 1
       }
 
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
-      if node.isBlock { summary.blockNodes += 1 }
+      if NodePolicy.isTopLevelNode(node) { summary.topLevelNodes += 1 }
       if NodePolicy.isMathOnlyContent(node) { summary.otherMathOnly += 1 }
     }
   }

@@ -28,13 +28,13 @@ final class ExportLatexTests: TextKitTestsBase {
         TextNode(" and "),
         TextStylesNode(.textbf, [TextNode("strong")]),
         TextNode("."),
+        EquationNode(
+          .block,
+          [
+            TextNode("E=m"),
+            AttachNode(nuc: [TextNode("c")], sup: [TextNode("2")]),
+          ]),
       ]),
-      EquationNode(
-        .block,
-        [
-          TextNode("E=m"),
-          AttachNode(nuc: [TextNode("c")], sup: [TextNode("2")]),
-        ]),
       ParagraphNode([
         TextNode("This is a paragraph with an inline equation: "),
         EquationNode(
@@ -57,19 +57,19 @@ final class ExportLatexTests: TextKitTestsBase {
         TextNode("."),
       ]),
       ParagraphNode([
-        TextNode("Mary has a little lamb, its fleece was white as snow.")
+        TextNode("Mary has a little lamb, its fleece was white as snow."),
+        EquationNode(
+          .block,
+          [
+            TextNode("M="),
+            MatrixNode(
+              .bmatrix,
+              [
+                [ContentNode([TextNode("1")]), ContentNode([TextNode("2")])],
+                [ContentNode([TextNode("3")]), ContentNode([TextNode("4")])],
+              ]),
+          ]),
       ]),
-      EquationNode(
-        .block,
-        [
-          TextNode("M="),
-          MatrixNode(
-            .bmatrix,
-            [
-              [ContentNode([TextNode("1")]), ContentNode([TextNode("2")])],
-              [ContentNode([TextNode("3")]), ContentNode([TextNode("4")])],
-            ]),
-        ]),
     ]
 
     let document = self.createDocumentManager(RootNode(content))
@@ -89,15 +89,15 @@ final class ExportLatexTests: TextKitTestsBase {
         \usepackage{mathtools}
         \usepackage{unicode-math}
 
-        \setlength\parindent{0pt}
+        %\setlength\parindent{0pt}
         \setlength{\parskip}{0.5em}
 
         \begin{document}
-
         \section*{Heading 1\\ with a line break.[Unknown Node]}
 
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
         \[E=mc^2\]
+
         This is a paragraph with an inline equation: $f\colon X\rightarrow Y$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a little lamb, its fleece was white as snow.
@@ -111,12 +111,13 @@ final class ExportLatexTests: TextKitTestsBase {
     }
 
     do {
-      let range = RhTextRange.parse("[↓1]:3..<[↓4,↓0]:10")!
+      let range = RhTextRange.parse("[↓1]:3..<[↓3,↓0]:10")!
       let latex = document.getLatexContent(for: range)
       let expected =
         #"""
         \textbf{strong}.
         \[E=mc^2\]
+
         This is a paragraph with an inline equation: $f\colon X\rightarrow Y$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a
