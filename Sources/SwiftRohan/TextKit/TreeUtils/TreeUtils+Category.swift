@@ -35,7 +35,7 @@ extension TreeUtils {
       return .paragraphNodes
     }
     else if counts.total == counts.topLevelNodes {
-      return .blockNodes
+      return .topLevelNodes
     }
     // math layout
     else if counts.total == counts.mathTextCompatible {

@@ -13,16 +13,16 @@ struct CategoryTests {
       (UnknownNode(), .inlineContent),
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
-      (HeadingNode(.sectionAst, []), .blockNodes),
-      (ItemListNode(.enumerate, []), .blockNodes),
+      (HeadingNode(.sectionAst, []), .topLevelNodes),
+      (ItemListNode(.enumerate, []), .topLevelNodes),
       (ParagraphNode([]), .paragraphNodes),
-      (RootNode([]), .blockNodes),
+      (RootNode([]), .topLevelNodes),
       (TextStylesNode(.emph, []), .inlineContent),
       (TextStylesNode(.textbf, []), .inlineContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),
-      (EquationNode(.block, []), .blockNodes),
+      (EquationNode(.block, []), .topLevelNodes),
       (EquationNode(.inline, []), .extendedText),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
@@ -42,7 +42,7 @@ struct CategoryTests {
           [
             MultilineNode.Row([MultilineNode.Cell([TextNode("a")])])
           ]),
-        .blockNodes
+        .topLevelNodes
       ),
       (RadicalNode([], index: []), .mathContent),
       (TextModeNode([]), .mathContent),

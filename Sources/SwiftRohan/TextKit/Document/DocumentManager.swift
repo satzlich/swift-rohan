@@ -216,7 +216,7 @@ public final class DocumentManager: NSObject {
       .inlineContent, .mathContent:
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
-    case .paragraphNodes, .blockNodes:
+    case .paragraphNodes, .topLevelNodes:
       switch TreeUtils.insertBlockNodes(nodes, at: location, rootNode) {
       case let .success(range):
         result = .blockInserted(range)

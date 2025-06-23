@@ -222,7 +222,7 @@ enum NodePolicy {
     case .heading: return .inlineContentContainer
     case .itemList: return .paragraphContainer
     case .paragraph: return nil
-    case .root: return .blockContainer
+    case .root: return .topLevelContainer
     case .textStyles: return .extendedTextContainer
 
     // Math
