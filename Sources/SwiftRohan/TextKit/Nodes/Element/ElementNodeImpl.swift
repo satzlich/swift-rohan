@@ -91,7 +91,7 @@ internal class ElementNodeImpl: ElementNode {
     return _layoutLength
   }
 
-  /// Perform layout for fromScratch=true.
+  /// Perform layout from scratch.
   @inline(__always)
   private final func _performLayoutFromScratch(
     _ context: LayoutContext, isBlockContainer: Bool
@@ -103,7 +103,9 @@ internal class ElementNodeImpl: ElementNode {
         context.insertText("⬚", self)
         return 1
       }
-      return 0
+      else {
+        return 0
+      }
     }
 
     assert(_children.isEmpty == false)
@@ -136,7 +138,6 @@ internal class ElementNodeImpl: ElementNode {
     for i in (0..<_children.count).reversed() {
       // skip clean.
       if _children[i].isDirty == false {
-        let sum0 = sum
         sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
       }
