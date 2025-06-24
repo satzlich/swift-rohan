@@ -277,7 +277,7 @@ final class ItemListNode: ElementNode {
           context, itemAttributes, _attributedMarker(forIndex: i), location..<end)
       }
     }
-    sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
+    sum += NewlineReconciler.skipForward(current: _newlines.last!, context: context)
 
     return sum
   }
