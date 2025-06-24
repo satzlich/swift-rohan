@@ -26,12 +26,6 @@ protocol LayoutContext {
   /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
 
-  /// Add paragraph style to the segment after current cursor.
-  /// - Parameters:
-  ///   - segment: the segment length to add paragraph style for.
-  ///   - source: the source node that provides the paragraph style.
-  func addParagraphStyle(forSegment segment: Int, _ source: Node)
-
   /// Add paragraph style to the segment before current cursor.
   func addParagraphStyleBackward(forSegment segment: Int, _ source: Node)
 
@@ -144,11 +138,6 @@ protocol LayoutContext {
 
 extension LayoutContext {
   func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
-    precondition(isEditing)
-    // defeault implementation does nothing.
-  }
-
-  func addParagraphStyle(forSegment segment: Int, _ source: Node) {
     precondition(isEditing)
     // defeault implementation does nothing.
   }
