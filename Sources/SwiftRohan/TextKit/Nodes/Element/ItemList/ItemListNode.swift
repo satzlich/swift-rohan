@@ -160,6 +160,8 @@ final class ItemListNode: ElementNode {
   // MARK: - Node(Tree API)
 
   final override func leadingCursorCorrection() -> Double { -_listIndent }
+  final override var needsLeadingCursorCorrection: Bool { true }
+  final override var needsTrailingCursorCorrection: Bool { true }
 
   // MARK: - Storage
 

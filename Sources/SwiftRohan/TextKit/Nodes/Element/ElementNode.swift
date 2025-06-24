@@ -123,10 +123,15 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
-      if path.count == 1,
-        index == 0 && index < _children.count,
-        _children[index].needsLeadingCursorCorrection
-      {
+      @inline(__always)
+      func needsLeadingCursorCorrection() -> Bool {
+        (path.count == 1 && index < _children.count
+          && _children[index].needsLeadingCursorCorrection)
+          || (path.count == 2 && path.last! == .index(0)
+            && _children[index].needsLeadingCursorCorrection)
+      }
+
+      if needsLeadingCursorCorrection() {
         var isFirstProcessed = false
         func leadingCursorBlock(
           _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
