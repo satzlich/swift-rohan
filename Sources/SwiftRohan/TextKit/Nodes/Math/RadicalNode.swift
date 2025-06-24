@@ -25,7 +25,7 @@ final class RadicalNode: MathNode {
 
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -33,13 +33,13 @@ final class RadicalNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      _performLayoutFramScratch(context)
+      _performLayoutForwardFromScratch(context)
     }
     else if _snapshot == nil {
-      _performLayoutSimple(context)
+      _performLayoutForwardSimple(context)
     }
     else {
-      _performLayoutFull(context)
+      _performLayoutForwardFull(context)
     }
 
     // clear
@@ -246,7 +246,7 @@ final class RadicalNode: MathNode {
     }
   }
 
-  private func _performLayoutFramScratch(_ context: MathListLayoutContext) {
+  private func _performLayoutForwardFromScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
       LayoutUtils.buildMathListLayoutFragment(component, parent: context)
     }
@@ -257,10 +257,10 @@ final class RadicalNode: MathNode {
 
     _nodeFragment = radical
     radical.fixLayout(context.mathContext)
-    context.insertFragment(radical, self)
+    context.insertFragmentForward(radical, self)
   }
 
-  private func _performLayoutSimple(_ context: MathListLayoutContext) {
+  private func _performLayoutForwardSimple(_ context: MathListLayoutContext) {
     guard let nodeFragment = _nodeFragment
     else {
       assertionFailure("radicalFragment not set")
@@ -295,18 +295,18 @@ final class RadicalNode: MathNode {
     if needsFixLayout {
       nodeFragment.fixLayout(context.mathContext)
       if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
-        context.invalidateBackwards(layoutLength())
+        context.invalidateForward(layoutLength())
       }
       else {
-        context.skipBackwards(layoutLength())
+        context.skipForward(layoutLength())
       }
     }
     else {
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
   }
 
-  private func _performLayoutFull(_ context: MathListLayoutContext) {
+  private func _performLayoutForwardFull(_ context: MathListLayoutContext) {
     precondition(_snapshot != nil)
 
     guard let nodeFragment = _nodeFragment,
@@ -338,10 +338,10 @@ final class RadicalNode: MathNode {
     let oldMetrics = nodeFragment.boxMetrics
     nodeFragment.fixLayout(context.mathContext)
     if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
-      context.invalidateBackwards(layoutLength())
+      context.invalidateForward(layoutLength())
     }
     else {
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
   }
 
