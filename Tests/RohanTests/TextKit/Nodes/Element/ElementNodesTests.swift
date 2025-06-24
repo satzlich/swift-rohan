@@ -111,10 +111,7 @@ struct ElementNodeTests {
       ParagraphNode([TextNode("def")]),
     ])
     TestUtils.updateLayoutLength(root)
-    do {
-      let expected = NodePolicy.isInlineMathReflowEnabled ? 11 : 10
-      #expect(root.layoutLength() == expected)
-    }
+    #expect(root.layoutLength() == 10)
   }
 
   @Test
@@ -128,7 +125,7 @@ struct ElementNodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 10
+        root 9
         ├ heading 5
         │ └ text 5
         └ paragraph 3

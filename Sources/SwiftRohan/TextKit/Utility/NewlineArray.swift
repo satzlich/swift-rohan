@@ -7,7 +7,7 @@ import BitCollections
 /// at a given index.
 struct NewlineArray: Equatable, Hashable {
   /// Mask value that is AND-ed with the the last element of `_insertNewline` if any.
-  internal let trailingMask: Bool
+  private let trailingMask: Bool
 
   private var _isBlock: BitArray
   private var _insertNewline: BitArray
@@ -29,19 +29,27 @@ struct NewlineArray: Equatable, Hashable {
   var first: Bool? { _insertNewline.first }
   var last: Bool? { _insertNewline.last }
 
-  init(trailingMask: Bool = false) {
+  init() {
+    self.init(trailingMask: false)
+  }
+
+  init(_ isBlock: some Sequence<Bool>) {
+    self.init(isBlock, trailingMask: false)
+  }
+
+  private init(trailingMask: Bool) {
     self._isBlock = BitArray()
     self._insertNewline = BitArray()
     self.newlineCount = 0
     self.trailingMask = trailingMask
   }
 
-  init<S>(_ isBlock: S, trailingMask: Bool = false)
-  where S: Sequence, S.Element == Bool {
+  private init(_ isBlock: some Sequence<Bool>, trailingMask: Bool) {
     self._isBlock = BitArray(isBlock)
     self._insertNewline =
       _isBlock.isEmpty == false
-      ? Self.computeNewlines(for: _isBlock, trailingMask: trailingMask) : []
+      ? Self.computeNewlines(for: _isBlock, trailingMask: trailingMask)
+      : []
     self.newlineCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
     self.trailingMask = trailingMask
   }
