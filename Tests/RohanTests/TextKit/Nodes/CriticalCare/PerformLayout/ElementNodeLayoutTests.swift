@@ -19,7 +19,7 @@ struct ElementNodeLayoutTests {
       let context = TextLayoutContext(styleSheet)
 
       context.beginEditing()
-      _ = element.performLayout(context, fromScratch: true)
+      _ = element.performLayoutForward(context, fromScratch: true)
       context.endEditing()
     }
   }
@@ -36,7 +36,7 @@ struct ElementNodeLayoutTests {
     let context = TextLayoutContext(styleSheet)
     do {
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: true)
+      _ = rootNode.performLayoutForward(context, fromScratch: true)
       context.endEditing()
     }
 
@@ -54,11 +54,11 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursor()
+      context.resetCursorForForwardEditing()
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
-      assert(context.layoutCursor == 0)
+      assert(context.layoutCursor == rootNode.layoutLength())
     }
 
     // (2) add + dirty
@@ -75,11 +75,11 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursor()
+      context.resetCursorForForwardEditing()
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
-      assert(context.layoutCursor == 0)
+      assert(context.layoutCursor == rootNode.layoutLength())
     }
 
     // (3) delete to activate placeholder
@@ -90,11 +90,11 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursor()
+      context.resetCursorForForwardEditing()
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
-      assert(context.layoutCursor == 0)
+      assert(context.layoutCursor == rootNode.layoutLength())
     }
 
     // (4) add to activate the case of (insertNewline=false, insertNewline'=true)
@@ -107,11 +107,11 @@ struct ElementNodeLayoutTests {
       let result = TreeUtils.insertBlockNodes(nodes, at: location, rootNode)
       assert(result.isSuccess)
 
-      context.resetCursor()
+      context.resetCursorForForwardEditing()
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
-      assert(context.layoutCursor == 0)
+      assert(context.layoutCursor == rootNode.layoutLength())
     }
 
     // (5) delete to trigger double changes of delete range
@@ -129,11 +129,11 @@ struct ElementNodeLayoutTests {
         assert(result2.isSuccess)
       }
 
-      context.resetCursor()
+      context.resetCursorForForwardEditing()
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
-      assert(context.layoutCursor == 0)
+      assert(context.layoutCursor == rootNode.layoutLength())
     }
 
     // (6) delete to trigger double changes of delete range
@@ -151,11 +151,11 @@ struct ElementNodeLayoutTests {
         assert(result2.isSuccess)
       }
 
-      context.resetCursor()
+      context.resetCursorForForwardEditing()
       context.beginEditing()
-      _ = rootNode.performLayout(context, fromScratch: false)
+      _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
-      assert(context.layoutCursor == 0)
+      assert(context.layoutCursor == rootNode.layoutLength())
     }
   }
 }
