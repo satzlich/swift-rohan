@@ -84,15 +84,19 @@ enum NodePolicy {
 
   /// Returns true if the node is paragraph content other than inline math compatible.
   @inline(__always)
-  static func isOtherParagraphContent(_ node: Node) -> Bool {
+  static func isOtherArbitraryParagraphContent(_ node: Node) -> Bool {
     [
-      .itemList,
       .linebreak,
       .multiline,  // block, but inline content.
       .textStyles,
       .unknown,
     ].contains(node.type)
       || (isEquationNode(node) && node.isBlock)  // block math
+  }
+
+  @inline(__always)
+  static func isStrictToplevelParagraphContent(_ node: Node) -> Bool {
+    .itemList == node.type
   }
 
   /// Returns true if a node of given kind can be used as a container for
