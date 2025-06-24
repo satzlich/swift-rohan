@@ -213,10 +213,10 @@ public final class DocumentManager: NSObject {
       return .failure(SatzError(.UnreachableCodePath))
 
     case .universalText, .textText, .mathText, .extendedText,
-      .paragraphContent, .mathContent:
+      .arbitraryParagraphContent, .toplevelParagraphContent, .mathContent:
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
-    case .paragraphNodes, .topLevelNodes:
+    case .paragraphNodes, .toplevelNodes:
       switch TreeUtils.insertBlockNodes(nodes, at: location, rootNode) {
       case let .success(range):
         result = .blockInserted(range)

@@ -9,12 +9,17 @@ public enum ContentCategory: CaseIterable {
   case textText
   /// text-text + inline-math
   case extendedText
-  /// extended text + other paragraph content
-  case paragraphContent
+
+  /// extended text + paragraph content for arbitrary paragraph nodes.
+  case arbitraryParagraphContent
+
+  /// paragraph content + paragraph content for top-level paragraph nodes.
+  case toplevelParagraphContent
+
   /// a list of ParagraphNode's
   case paragraphNodes
   /// a list of top-level nodes of which at least one is non-ParagraphNode
-  case topLevelNodes
+  case toplevelNodes
   /// plaintext + math symbols
   case mathText
   /// math-text + other math content
@@ -64,14 +69,17 @@ private func isCompatible(
       container, .extendedTextContainer, .inlineContentContainer, .paragraphContainer,
       .topLevelContainer)
 
-  case .paragraphContent:
+  case .arbitraryParagraphContent:
     return match(
       container, .inlineContentContainer, .paragraphContainer, .topLevelContainer)
+
+  case .toplevelParagraphContent:
+    return container == .topLevelContainer
 
   case .paragraphNodes:
     return match(container, .paragraphContainer, .topLevelContainer)
 
-  case .topLevelNodes:
+  case .toplevelNodes:
     return container == .topLevelContainer
 
   case .mathText:
