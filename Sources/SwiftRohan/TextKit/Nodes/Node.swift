@@ -147,6 +147,23 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Perform layout in the forward direction. When the method is returned, the node
+  /// must be laid out with dirty flag cleared and layout length updated.
+  /// - Returns: the number of layout units contributed by the node.
+  internal func performLayoutForward(_ context: LayoutContext, fromScratch: Bool) -> Int {
+    if fromScratch {
+      let n = performLayout(context, fromScratch: true)
+      context.skipForward(n)
+      return n
+    }
+    else {
+      context.skipForward(layoutLength())
+      let n = performLayout(context, fromScratch: false)
+      context.skipForward(n)
+      return n
+    }
+  }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
