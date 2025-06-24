@@ -32,11 +32,11 @@ final class UnknownNode: SimpleNode {
 
   final override func layoutLength() -> Int { PLACEHOLDER.length }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
-      context.insertText(PLACEHOLDER, self)
+      context.insertTextForward(PLACEHOLDER, self)
     }
     else {
       assertionFailure("UnknownNode should not be laid out again")
