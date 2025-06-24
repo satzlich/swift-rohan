@@ -80,7 +80,7 @@ class ArrayNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
-  internal override func performLayoutForward(
+  internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     // MathReflowLayoutContext is not used for layout, though it is used for

@@ -18,7 +18,7 @@ final class NamedSymbolNode: SimpleNode {
 
   final override func layoutLength() -> Int { namedSymbol.string.length }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     switch context {

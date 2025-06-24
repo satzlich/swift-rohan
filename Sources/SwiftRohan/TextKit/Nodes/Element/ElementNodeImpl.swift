@@ -36,18 +36,18 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Node(Layout)
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
-      _layoutLength = _performLayoutForwardFromScratch(context)
+      _layoutLength = _performLayoutFromScratch(context)
       _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutForwardSimple(context)
+      _layoutLength = _performLayoutSimple(context)
     }
     else {
-      _layoutLength = _performLayoutForwardFull(context)
+      _layoutLength = _performLayoutFull(context)
       _snapshotRecords = nil
     }
 
@@ -84,7 +84,7 @@ internal class ElementNodeImpl: ElementNode {
   }
 
   @inline(__always)
-  private final func _performLayoutForwardEmpty(_ context: LayoutContext) -> Int {
+  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
     precondition(_children.isEmpty && _newlines.isEmpty)
     switch self.isBlock {
     case true:
@@ -109,12 +109,12 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout from scratch.
   @inline(__always)
-  private final func _performLayoutForwardFromScratch(_ context: LayoutContext) -> Int {
+  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
-      return _performLayoutForwardEmpty(context)
+      return _performLayoutEmpty(context)
 
     case (false, true):
       var sum = 0
@@ -175,7 +175,7 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout incrementally when snapshot was not made.
   @inline(__always)
-  private final func _performLayoutForwardSimple(_ context: LayoutContext) -> Int {
+  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
     precondition(_children.isEmpty == false)
 
@@ -246,13 +246,13 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout incrementally when snapshot has been made.
   @inline(__always)
-  private final func _performLayoutForwardFull(_ context: LayoutContext) -> Int {
+  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
       context.deleteForward(_layoutLength)
-      return _performLayoutForwardEmpty(context)
+      return _performLayoutEmpty(context)
 
     case (false, true):
       let (current, original) = _computeExtendedRecords()

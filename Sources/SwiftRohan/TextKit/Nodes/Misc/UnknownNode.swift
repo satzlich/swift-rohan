@@ -32,7 +32,7 @@ final class UnknownNode: SimpleNode {
 
   final override func layoutLength() -> Int { PLACEHOLDER.length }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {

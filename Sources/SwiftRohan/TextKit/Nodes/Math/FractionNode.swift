@@ -33,7 +33,7 @@ final class FractionNode: MathNode {
 
   final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)

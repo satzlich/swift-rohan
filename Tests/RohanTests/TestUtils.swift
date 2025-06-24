@@ -141,7 +141,7 @@ enum TestUtils {
     let styleSheet = StyleSheets.testingRecord.provider(12)
     let layoutContext = TextLayoutContext(styleSheet)
     layoutContext.beginEditing()
-    _ = node.performLayoutForward(layoutContext, fromScratch: true)
+    _ = node.performLayout(layoutContext, fromScratch: true)
     layoutContext.endEditing()
   }
 }

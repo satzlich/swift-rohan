@@ -43,7 +43,7 @@ final class MathStylesNode: MathNode {
 
   final override var isDirty: Bool { nucleus.isDirty }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)

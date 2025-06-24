@@ -31,7 +31,7 @@ final class TextNode: Node {
 
   final override var isDirty: Bool { false }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
