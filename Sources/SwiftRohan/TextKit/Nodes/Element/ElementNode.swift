@@ -117,50 +117,51 @@ internal class ElementNode: Node {
         // use placeholderBlock
         using: placeholderBlock(_:_:_:))
     }
-    // if start location is immediately before a node that needs leading cursor
-    // correction, we need to construct a leading cursor block.
-    else if path.count == 1,
-      index == 0 && index < _children.count,
-      _children[index].needsLeadingCursorCorrection
-    {
-      guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
-        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
-      else { assertionFailure("Invalid path"); return false }
-      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
-
-      // construct leading cursor block.
-      var isFirstProcessed = false
-      func leadingCursorBlock(
-        _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
-        _ baselinePosition: CGFloat
-      ) -> Bool {
-        precondition(node.needsLeadingCursorCorrection)
-        var correctedFrame = segmentFrame.offsetBy(originCorrection)
-        if !isFirstProcessed {
-          let cursorCorrection = node.leadingCursorCorrection()
-          correctedFrame.origin.x += cursorCorrection
-          if correctedFrame.size.width != 0 {
-            correctedFrame.size.width -= cursorCorrection
-          }
-          isFirstProcessed = true
-        }
-        return block(nil, correctedFrame, baselinePosition)
-      }
-
-      return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use leadingCursorBlock
-        using: { leadingCursorBlock(_children[index], $0, $1, $2) })
-    }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
         let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
-      return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use basicBlock
-        using: basicBlock(_:_:_:))
+
+      if path.count == 1,
+        index == 0 && index < _children.count,
+        _children[index].needsLeadingCursorCorrection
+      {
+        var isFirstProcessed = false
+        func leadingCursorBlock(
+          _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
+          _ baselinePosition: CGFloat
+        ) -> Bool {
+          precondition(node.needsLeadingCursorCorrection)
+          var correctedFrame = segmentFrame.offsetBy(originCorrection)
+          if !isFirstProcessed {
+            let cursorCorrection = node.leadingCursorCorrection()
+            correctedFrame.origin.x += cursorCorrection
+            if correctedFrame.size.width != 0 {
+              correctedFrame.size.width -= cursorCorrection
+            }
+            isFirstProcessed = true
+          }
+          return block(nil, correctedFrame, baselinePosition)
+        }
+        return context.enumerateTextSegments(
+          layoutRange, type: type, options: options,
+          using: { leadingCursorBlock(_children[index], $0, $1, $2) })
+      }
+      else if endPath.count == 1,
+        endIndex == _children.count && _children.count > 0,
+        _children[endIndex - 1].needsTrailingCursorCorrection
+      {
+        // TODO: handle trailing cursor correction.
+        return context.enumerateTextSegments(
+          layoutRange, type: type, options: options,
+          using: basicBlock(_:_:_:))
+      }
+      else {
+        return context.enumerateTextSegments(
+          layoutRange, type: type, options: options,
+          using: basicBlock(_:_:_:))
+      }
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse

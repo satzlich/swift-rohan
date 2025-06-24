@@ -117,10 +117,17 @@ enum NodePolicy {
     isElementNode(node) || isTextNode(node) || isArgumentNode(node)
   }
 
-  /// Returns true if a cursor placed **immediately** before a node of given kind
-  /// needs correction.
+  /// Returns true if correction is necessary for a cursor placed before a
+  /// node of given kind which is the first child of a block node.
   @inline(__always)
   static func needsLeadingCursorCorrection(_ nodeType: NodeType) -> Bool {
+    nodeType == .itemList
+  }
+
+  /// Returns true if correction is necessary for a cursor placed after a node
+  /// of given kind which is the last child of a block node.
+  @inline(__always)
+  static func needsTrailingCursorCorrection(_ nodeType: NodeType) -> Bool {
     nodeType == .itemList
   }
 
