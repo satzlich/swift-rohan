@@ -7,7 +7,7 @@ import BitCollections
 /// at a given index.
 struct NewlineArray: Equatable, Hashable {
   /// Mask value that is AND-ed with the the last element of `_insertNewline` if any.
-  internal let mask: Bool
+  internal let trailingMask: Bool
 
   private var _isBlock: BitArray
   private var _insertNewline: BitArray
@@ -29,20 +29,21 @@ struct NewlineArray: Equatable, Hashable {
   var first: Bool? { _insertNewline.first }
   var last: Bool? { _insertNewline.last }
 
-  init(mask: Bool = false) {
+  init(trailingMask: Bool = false) {
     self._isBlock = BitArray()
     self._insertNewline = BitArray()
     self.newlineCount = 0
-    self.mask = mask
+    self.trailingMask = trailingMask
   }
 
-  init<S>(_ isBlock: S, mask: Bool = false)
+  init<S>(_ isBlock: S, trailingMask: Bool = false)
   where S: Sequence, S.Element == Bool {
     self._isBlock = BitArray(isBlock)
     self._insertNewline =
-      _isBlock.isEmpty == false ? Self.computeNewlines(for: _isBlock, mask: mask) : []
+      _isBlock.isEmpty == false
+      ? Self.computeNewlines(for: _isBlock, trailingMask: trailingMask) : []
     self.newlineCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
-    self.mask = mask
+    self.trailingMask = trailingMask
   }
 
   mutating func insert<C>(contentsOf isBlock: C, at index: Int)
@@ -54,7 +55,8 @@ struct NewlineArray: Equatable, Hashable {
     let prev: Bool? = index > 0 ? _isBlock[index - 1] : nil
     let next: Bool? = index < _isBlock.count ? _isBlock[index] : nil
     let (previous, segment) =
-      Self.computeNewlines(previous: prev, segment: isBlock, next: next, mask: mask)
+      Self.computeNewlines(
+        previous: prev, segment: isBlock, next: next, trailingMask: trailingMask)
 
     var delta = 0
     if let previous {
@@ -122,7 +124,8 @@ struct NewlineArray: Equatable, Hashable {
     let prev: Bool? = range.lowerBound > 0 ? _isBlock[range.lowerBound - 1] : nil
     let next: Bool? = range.upperBound < _isBlock.count ? _isBlock[range.upperBound] : nil
     let (previous, segment) =
-      Self.computeNewlines(previous: prev, segment: isBlock, next: next, mask: mask)
+      Self.computeNewlines(
+        previous: prev, segment: isBlock, next: next, trailingMask: trailingMask)
 
     var delta = 0
     // deduct the old values
@@ -184,7 +187,7 @@ struct NewlineArray: Equatable, Hashable {
   ///   __segment__: The newlines for the segment.
   /// - Precondition: `isBlock` is not empty.
   private static func computeNewlines<C>(
-    previous: Bool?, segment isBlock: C, next: Bool?, mask: Bool
+    previous: Bool?, segment isBlock: C, next: Bool?, trailingMask: Bool
   ) -> (previous: Bool?, segment: BitArray)
   where C: BidirectionalCollection<Bool> {
     precondition(!isBlock.isEmpty)
@@ -195,13 +198,13 @@ struct NewlineArray: Equatable, Hashable {
     if let next {
       // compute newlines
       let isBlock = chain(isBlock, CollectionOfOne(next))
-      var newlines = Self.computeNewlines(for: isBlock, mask: mask)
+      var newlines = Self.computeNewlines(for: isBlock, trailingMask: trailingMask)
       newlines.removeLast()
       return (previous, newlines)
     }
     else {
       // compute newlines
-      let newlines = Self.computeNewlines(for: isBlock, mask: mask)
+      let newlines = Self.computeNewlines(for: isBlock, trailingMask: trailingMask)
       return (previous, newlines)
     }
   }
@@ -209,13 +212,13 @@ struct NewlineArray: Equatable, Hashable {
   /// Determine whether a newline should be inserted after each element.
   /// - Precondition: The input collection is not empty.
   /// - Postcondition: The last element is always false.
-  private static func computeNewlines<C>(for isBlock: C, mask: Bool) -> BitArray
+  private static func computeNewlines<C>(for isBlock: C, trailingMask: Bool) -> BitArray
   where C: BidirectionalCollection<Bool> {
     precondition(!isBlock.isEmpty)
     var bitArray = BitArray()
     bitArray.reserveCapacity(isBlock.count)
     bitArray.append(contentsOf: isBlock.lazy.adjacentPairs().map { $0.0 || $0.1 })
-    bitArray.append((isBlock.last ?? false) && mask)
+    bitArray.append((isBlock.last ?? false) && trailingMask)
     return bitArray
   }
 }
