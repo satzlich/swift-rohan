@@ -39,9 +39,9 @@ final class MathLineLayoutContext: LayoutContext {
 
   private(set) var layoutCursor: Int
 
-  func resetCursorForForwardEditing() {
+  func resetCursor() {
     layoutCursor = 0
-    layoutContext.resetCursorForForwardEditing()
+    layoutContext.resetCursor()
   }
 
   var isEditing: Bool { layoutContext.isEditing }
@@ -79,7 +79,7 @@ final class MathLineLayoutContext: LayoutContext {
     self.skipForward(n)
   }
 
-  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+  func insertText(_ text: some Collection<Character>, _ source: Node) {
     precondition(isEditing)
     guard !text.isEmpty else { return }
 
@@ -102,11 +102,11 @@ final class MathLineLayoutContext: LayoutContext {
     layoutCursor += text.length
   }
 
-  func insertNewlineForward(_ context: Node) {
+  func insertNewline(_ context: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 

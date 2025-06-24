@@ -12,7 +12,7 @@ enum StringReconciler {
   static func insertForward<C: LayoutContext>(
     new: String, context: C, _ container: Node
   ) -> Int {
-    context.insertTextForward(new, container)
+    context.insertText(new, container)
     return new.length
   }
 
@@ -27,7 +27,7 @@ enum StringReconciler {
     }
     else {
       context.deleteForward(old.length)
-      context.insertTextForward(new, container)
+      context.insertText(new, container)
     }
     return new.length
   }

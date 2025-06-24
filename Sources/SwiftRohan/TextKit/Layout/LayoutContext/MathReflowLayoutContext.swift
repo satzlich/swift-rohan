@@ -36,7 +36,7 @@ final class MathReflowLayoutContext: LayoutContext {
 
   var layoutCursor: Int { mathLayoutContext.layoutCursor }
 
-  func resetCursorForForwardEditing() {
+  func resetCursor() {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
@@ -64,15 +64,15 @@ final class MathReflowLayoutContext: LayoutContext {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+  func insertText(_ text: some Collection<Character>, _ source: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertNewlineForward(_ context: Node) {
+  func insertNewline(_ context: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 

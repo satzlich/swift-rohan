@@ -16,12 +16,12 @@ enum NodeReconciler {
 
   @inline(__always)
   static func insertForward<C: LayoutContext>(new: Node, context: C) -> Int {
-    new.performLayoutForward(context, fromScratch: true)
+    new.performLayout(context, fromScratch: true)
   }
 
   @inline(__always)
   static func reconcileForward<C: LayoutContext>(dirty: Node, context: C) -> Int {
-    dirty.performLayoutForward(context, fromScratch: false)
+    dirty.performLayout(context, fromScratch: false)
   }
 
   @inline(__always)

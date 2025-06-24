@@ -19,7 +19,7 @@ final class AccentNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -30,7 +30,7 @@ final class AccentNode: MathNode {
       let accentFragment = MathAccentLayoutFragment(accent, nucleus: nucFrag)
       _nodeFragment = accentFragment
       accentFragment.fixLayout(context.mathContext)
-      context.insertFragmentForward(accentFragment, self)
+      context.insertFragment(accentFragment, self)
     }
     else {
       guard let accentFragment = _nodeFragment

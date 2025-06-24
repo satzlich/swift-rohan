@@ -12,7 +12,7 @@ final class TextLineLayoutContext: CTLineLayoutContext {
     super.init(styleSheet, .textMode, boundsOption)
   }
 
-  override func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+  override func insertText(_ text: some Collection<Character>, _ source: Node) {
     precondition(isEditing)
 
     guard !text.isEmpty else { return }

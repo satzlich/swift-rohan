@@ -12,7 +12,7 @@ protocol LayoutContext {
   var layoutCursor: Int { get }
 
   /// Reset layout cursor to the beginning of the layout context
-  func resetCursorForForwardEditing()
+  func resetCursor()
 
   var isEditing: Bool { get }
   func beginEditing()
@@ -43,16 +43,16 @@ protocol LayoutContext {
   func invalidateForward(_ n: Int)
 
   /// Insert text at cursor and move cursor forward by the length of the text.
-  func insertTextForward(_ text: some Collection<Character>, _ source: Node)
+  func insertText(_ text: some Collection<Character>, _ source: Node)
 
   /// Insert newline at cursor and move cursor forward by one unit.
-  func insertNewlineForward(_ context: Node)
+  func insertNewline(_ context: Node)
 
   /// Insert fragment at cursor and move cursor forward by the length of the fragment.
-  func insertFragmentForward(_ fragment: LayoutFragment, _ source: Node)
+  func insertFragment(_ fragment: LayoutFragment, _ source: Node)
 
   /// Insert fragments at cursor and move cursor forward by the total length of the fragments.
-  func insertFragmentsForward(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
+  func insertFragments(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
 
   // MARK: - Query
 
@@ -130,10 +130,9 @@ extension LayoutContext {
     // defeault implementation does nothing.
   }
 
-  func insertFragmentsForward(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
-  {
+  func insertFragments(contentsOf fragments: Array<LayoutFragment>, _ source: Node) {
     for fragment in fragments {
-      insertFragmentForward(fragment, source)
+      insertFragment(fragment, source)
     }
   }
 }

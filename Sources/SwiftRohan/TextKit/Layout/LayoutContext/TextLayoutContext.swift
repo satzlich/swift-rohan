@@ -26,7 +26,7 @@ final class TextLayoutContext: LayoutContext {
 
   private(set) var layoutCursor: Int
 
-  internal func resetCursorForForwardEditing() {
+  internal func resetCursor() {
     self.layoutCursor = 0
   }
 
@@ -108,7 +108,7 @@ final class TextLayoutContext: LayoutContext {
     layoutCursor += n
   }
 
-  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+  func insertText(_ text: some Collection<Character>, _ source: Node) {
     precondition(isEditing)
     guard !text.isEmpty else { return }
     // obtain style properties
@@ -121,7 +121,7 @@ final class TextLayoutContext: LayoutContext {
     layoutCursor += attrString.length
   }
 
-  func insertNewlineForward(_ context: Node) {
+  func insertNewline(_ context: Node) {
     precondition(isEditing)
     // obtain style properties
     let properties: TextProperty = context.resolveAggregate(styleSheet)
@@ -134,7 +134,7 @@ final class TextLayoutContext: LayoutContext {
     layoutCursor += attrString.length
   }
 
-  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing)
     // obtain style properties
     let properties: TextProperty = source.resolveAggregate(styleSheet)

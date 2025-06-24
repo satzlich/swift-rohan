@@ -21,12 +21,12 @@ final class LinebreakNode: SimpleNode {
 
   final override func layoutLength() -> Int { 1 }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
 
     if fromScratch {
-      context.insertTextForward("\n", self)
+      context.insertText("\n", self)
       return layoutLength()
     }
     else {

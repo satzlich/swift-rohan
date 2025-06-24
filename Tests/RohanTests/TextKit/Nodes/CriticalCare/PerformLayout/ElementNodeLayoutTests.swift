@@ -19,7 +19,7 @@ struct ElementNodeLayoutTests {
       let context = TextLayoutContext(styleSheet)
 
       context.beginEditing()
-      _ = element.performLayoutForward(context, fromScratch: true)
+      _ = element.performLayout(context, fromScratch: true)
       context.endEditing()
     }
   }
@@ -36,7 +36,7 @@ struct ElementNodeLayoutTests {
     let context = TextLayoutContext(styleSheet)
     do {
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: true)
+      _ = rootNode.performLayout(context, fromScratch: true)
       context.endEditing()
     }
 
@@ -54,9 +54,9 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == rootNode.layoutLength())
     }
@@ -75,9 +75,9 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == rootNode.layoutLength())
     }
@@ -90,9 +90,9 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == rootNode.layoutLength())
     }
@@ -107,9 +107,9 @@ struct ElementNodeLayoutTests {
       let result = TreeUtils.insertBlockNodes(nodes, at: location, rootNode)
       assert(result.isSuccess)
 
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == rootNode.layoutLength())
     }
@@ -129,9 +129,9 @@ struct ElementNodeLayoutTests {
         assert(result2.isSuccess)
       }
 
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == rootNode.layoutLength())
     }
@@ -151,9 +151,9 @@ struct ElementNodeLayoutTests {
         assert(result2.isSuccess)
       }
 
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
-      _ = rootNode.performLayoutForward(context, fromScratch: false)
+      _ = rootNode.performLayout(context, fromScratch: false)
       context.endEditing()
       assert(context.layoutCursor == rootNode.layoutLength())
     }

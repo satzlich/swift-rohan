@@ -16,11 +16,11 @@ final class MatrixNode: ArrayNode {
 
   // MARK: - Node(Layout)
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
-    return super.performLayoutForward(context, fromScratch: fromScratch)
+    return super.performLayout(context, fromScratch: fromScratch)
   }
 
   // MARK: - Node(Codable)

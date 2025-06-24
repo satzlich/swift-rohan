@@ -18,7 +18,7 @@ enum NewlineReconciler {
     new: Bool, context: C, _ container: Node
   ) -> Int {
     if new {
-      context.insertNewlineForward(container)
+      context.insertNewline(container)
       return 1
     }
     else {
@@ -34,7 +34,7 @@ enum NewlineReconciler {
     case (false, false):
       return 0
     case (false, true):
-      context.insertNewlineForward(container)
+      context.insertNewline(container)
       return 1
     case (true, false):
       context.deleteForward(1)

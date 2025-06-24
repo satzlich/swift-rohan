@@ -19,7 +19,7 @@ final class UnderOverNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -32,7 +32,7 @@ final class UnderOverNode: MathNode {
       _nodeFragment = underOverFragment
 
       underOverFragment.fixLayout(context.mathContext)
-      context.insertFragmentForward(underOverFragment, self)
+      context.insertFragment(underOverFragment, self)
     }
     else {
       guard let nodeFragment = _nodeFragment

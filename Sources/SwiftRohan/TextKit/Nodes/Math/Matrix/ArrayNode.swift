@@ -80,7 +80,7 @@ class ArrayNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
-  internal override func performLayoutForward(
+  internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     // MathReflowLayoutContext is not used for layout, though it is used for
@@ -107,7 +107,7 @@ class ArrayNode: Node {
       // layout the matrix
       nodeFragment.fixLayout(mathContext)
       // insert the matrix fragment
-      context.insertFragmentForward(nodeFragment, self)
+      context.insertFragment(nodeFragment, self)
 
       if self.isBlock {
         context.addParagraphStyleBackward(forSegment: 1, self)

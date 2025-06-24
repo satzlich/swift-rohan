@@ -25,7 +25,7 @@ final class AttachNode: MathNode {
 
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -33,13 +33,13 @@ final class AttachNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      _performLayoutForwardFromScratch(context)
+      _performLayoutFromScratch(context)
     }
     else if _snapshot == nil {
-      _performLayoutForwardSimple(context)
+      _performLayoutSimple(context)
     }
     else {
-      _performLayoutForwardFull(context)
+      _performLayoutFull(context)
     }
 
     // clear
@@ -354,7 +354,7 @@ final class AttachNode: MathNode {
     }
   }
 
-  private func _performLayoutForwardFromScratch(_ context: MathListLayoutContext) {
+  private func _performLayoutFromScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
       LayoutUtils.buildMathListLayoutFragment(component, parent: context)
     }
@@ -370,10 +370,10 @@ final class AttachNode: MathNode {
 
     _attachFragment = attachFragment
     attachFragment.fixLayout(context.mathContext)
-    context.insertFragmentForward(attachFragment, self)
+    context.insertFragment(attachFragment, self)
   }
 
-  private func _performLayoutForwardSimple(_ context: MathListLayoutContext) {
+  private func _performLayoutSimple(_ context: MathListLayoutContext) {
 
     guard let attachFragment = _attachFragment
     else {
@@ -443,7 +443,7 @@ final class AttachNode: MathNode {
     }
   }
 
-  private func _performLayoutForwardFull(_ context: MathListLayoutContext) {
+  private func _performLayoutFull(_ context: MathListLayoutContext) {
     precondition(_snapshot != nil)
 
     guard let attachFragment = _attachFragment,

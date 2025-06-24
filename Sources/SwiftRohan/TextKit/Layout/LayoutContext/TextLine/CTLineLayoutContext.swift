@@ -36,7 +36,7 @@ internal class CTLineLayoutContext: LayoutContext {
 
   final var layoutCursor: Int { _layoutCursor }
 
-  func resetCursorForForwardEditing() {
+  func resetCursor() {
     self._layoutCursor = 0
   }
 
@@ -86,15 +86,15 @@ internal class CTLineLayoutContext: LayoutContext {
     skipForward(n)
   }
 
-  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+  func insertText(_ text: some Collection<Character>, _ source: Node) {
     preconditionFailure("overriding required")
   }
 
-  func insertNewlineForward(_ context: Node) {
+  func insertNewline(_ context: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 

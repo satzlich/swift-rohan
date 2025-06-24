@@ -74,12 +74,12 @@ struct CTLineLayoutContextTests {
     let textNode = TextNode(string)
     do {
       context0.beginEditing()
-      context0.insertTextForward(textNode.string, textNode)
+      context0.insertText(textNode.string, textNode)
       context0.endEditing()
       #expect(context0.renderedString.string == string)
     }
     do {
-      context0.resetCursorForForwardEditing()
+      context0.resetCursor()
       context0.beginEditing()
       context0.invalidateForward(5)
       context0.deleteForward(2)
@@ -107,12 +107,12 @@ struct CTLineLayoutContextTests {
     let textNode = TextNode(string)
     do {
       context0.beginEditing()
-      context0.insertTextForward(textNode.string, textNode)
+      context0.insertText(textNode.string, textNode)
       context0.endEditing()
       #expect(context0.renderedString.string == string)
     }
     do {
-      context0.resetCursorForForwardEditing()
+      context0.resetCursor()
       context0.beginEditing()
       context0.skipForward(1)
       context0.deleteForward(1)

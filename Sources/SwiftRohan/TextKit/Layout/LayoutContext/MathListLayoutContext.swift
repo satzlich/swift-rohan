@@ -33,7 +33,7 @@ final class MathListLayoutContext: LayoutContext {
   /// index in the math list, measured in number of fragments
   private var fragmentIndex: Int = 0
 
-  func resetCursorForForwardEditing() {
+  func resetCursor() {
     self.layoutCursor = 0
     self.fragmentIndex = 0
   }
@@ -95,7 +95,7 @@ final class MathListLayoutContext: LayoutContext {
     fragmentIndex = index
   }
 
-  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+  func insertText(_ text: some Collection<Character>, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0)
     guard !text.isEmpty else { return }
     let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
@@ -109,11 +109,11 @@ final class MathListLayoutContext: LayoutContext {
     fragmentIndex += fragments.count
   }
 
-  func insertNewlineForward(_ context: Node) {
+  func insertNewline(_ context: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0)
     guard let fragment = fragment as? MathLayoutFragment else {
       preconditionFailure("Invalid fragment type: \(Swift.type(of: fragment))")

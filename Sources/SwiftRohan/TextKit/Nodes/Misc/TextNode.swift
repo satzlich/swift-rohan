@@ -31,11 +31,11 @@ final class TextNode: Node {
 
   final override var isDirty: Bool { false }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
-      context.insertTextForward(_string, self)
+      context.insertText(_string, self)
     }
     else {
       assertionFailure("TextNode should not be laid out incrementally.")

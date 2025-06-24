@@ -19,7 +19,7 @@ final class LeftRightNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -30,7 +30,7 @@ final class LeftRightNode: MathNode {
       let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
       _nodeFragment = leftRightFragment
       leftRightFragment.fixLayout(context.mathContext)
-      context.insertFragmentForward(leftRightFragment, self)
+      context.insertFragment(leftRightFragment, self)
     }
     else {
       guard let leftRightFragment = _nodeFragment

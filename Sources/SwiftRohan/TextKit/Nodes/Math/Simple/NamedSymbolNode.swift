@@ -18,20 +18,20 @@ final class NamedSymbolNode: SimpleNode {
 
   final override func layoutLength() -> Int { namedSymbol.string.length }
 
-  final override func performLayoutForward(
+  final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     switch context {
     case let context as MathListLayoutContext:
       if fromScratch {
         if namedSymbol.string.count <= 1 {
-          context.insertTextForward(namedSymbol.string, self)
+          context.insertText(namedSymbol.string, self)
         }
         else {
           let fragments = context.getFragments(for: namedSymbol.string, self)
           let composite = FragmentCompositeFragment(fragments)
           let fragment = MathFragmentWrapper(composite, layoutLength())
-          context.insertFragmentForward(fragment, self)
+          context.insertFragment(fragment, self)
         }
       }
       else {
@@ -41,7 +41,7 @@ final class NamedSymbolNode: SimpleNode {
 
     default:
       if fromScratch {
-        context.insertTextForward(String(namedSymbol.string), self)
+        context.insertText(String(namedSymbol.string), self)
       }
       else {
         assertionFailure("theoretically we should not reach here")
