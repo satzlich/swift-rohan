@@ -23,19 +23,19 @@ final class MathExpressionNode: SimpleNode {
 
   final override func layoutLength() -> Int { _deflated.layoutLength() }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      return _deflated.performLayout(context, fromScratch: true)
+      return _deflated.performLayoutForward(context, fromScratch: true)
     }
     else {
       assertionFailure("theorectically, we should never reach here")
       let layoutLength = _deflated.layoutLength()
-      context.skipBackwards(layoutLength)
+      context.skipForward(layoutLength)
       return layoutLength
     }
   }
