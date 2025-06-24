@@ -63,8 +63,7 @@ internal class ElementNode: Node {
 
     // children and newlines
     self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
-    self._newlines = NewlineArray(
-      _children.lazy.map(\.isBlock), trailingMask: Self._trailingNewlineMask())
+    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
 
     self._layoutLength = 0
     self._isDirty = false
@@ -456,12 +455,6 @@ internal class ElementNode: Node {
 
   final func childrenReadonly() -> ElementStore { _children }
 
-  /// **workaround for unexpected behaviour** around the end of the layout,
-  /// including: a) the last paragraph with no text occasionally uses the
-  /// alignment of the previous paragraph, b) the block equation in position
-  /// of the second last paragraph have a wrong horizontal shift.
-  private class func _trailingNewlineMask() -> Bool { self.type == .root }
-
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
 
@@ -472,8 +465,7 @@ internal class ElementNode: Node {
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
-    self._newlines =
-      NewlineArray(children.lazy.map(\.isBlock), trailingMask: Self._trailingNewlineMask())
+    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     self._layoutLength = 0
     self._isDirty = false
 
@@ -484,7 +476,7 @@ internal class ElementNode: Node {
   /// - Warning: Sync with other init() method.
   internal override init() {
     self._children = ElementStore()
-    self._newlines = NewlineArray(trailingMask: Self._trailingNewlineMask())
+    self._newlines = NewlineArray()
     self._layoutLength = 0
     self._isDirty = false
 
