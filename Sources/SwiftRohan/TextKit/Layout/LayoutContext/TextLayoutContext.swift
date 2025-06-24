@@ -30,6 +30,10 @@ final class TextLayoutContext: LayoutContext {
     self.layoutCursor = textContentStorage.textStorage!.length
   }
 
+  internal func resetCursorForForwardEditing() {
+    self.layoutCursor = 0
+  }
+
   private(set) var isEditing: Bool = false
 
   func beginEditing() {
