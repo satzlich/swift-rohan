@@ -51,7 +51,8 @@ internal class ElementNodeImpl: ElementNode {
       _layoutLength = _performLayoutForwardSimple(context)
     }
     else {
-      return super.performLayoutForward(context, fromScratch: false)
+      _layoutLength = _performLayoutForwardFull(context)
+      _snapshotRecords = nil
     }
 
     _isDirty = false
@@ -562,6 +563,153 @@ internal class ElementNodeImpl: ElementNode {
           ? NodeReconciler.reconcileForward(dirty: _children[i], context: context)
           : NodeReconciler.skipForward(current: _children[i], context: context)
       }
+      return sum
+    }
+  }
+
+  /// Perform layout incrementally when snapshot has been made.
+  @inline(__always)
+  private final func _performLayoutForwardFull(_ context: LayoutContext) -> Int {
+    precondition(_snapshotRecords != nil && _children.count == _newlines.count)
+
+    switch (_children.isEmpty, self.isBlock) {
+    case (true, _):
+      context.deleteForward(_layoutLength)
+      return _performLayoutForwardEmpty(context)
+
+    case (false, true):
+      let (current, original) = _computeExtendedRecords()
+
+      var sum = 0
+      var segmentLength = 0  // accumulated segment length since entry or last newline.
+      var isSegmentDirty = false  // true if the segment is dirty.
+      var j = original.count - 1
+
+      do {
+        let old = original.last?.trailingNewline ?? false
+        let new = _newlines.last!
+        let n = NewlineReconciler.reconcile(dirty: (old, new), context: context, self)
+        sum += n
+      }
+
+      for i in _children.indices.reversed() {
+        // process deleted in a batch if any.
+        while j >= 0 && original[j].mark == .deleted {
+          NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
+          j -= 1
+        }
+
+        let leadingNewline = _newlines.value(before: i)
+
+        let nc: Int  // Child node length.
+        let nl: Int  // Newline length.
+
+        // process added.
+        if current[i].mark == .added {
+          nc = NodeReconciler.insert(new: _children[i], context: context)
+          nl = NewlineReconciler.insert(new: leadingNewline, context: context, self)
+          isSegmentDirty = true
+        }
+        // skip none.
+        else if current[i].mark == .none,
+          j >= 0 && original[j].mark == .none
+        {
+          assert(current[i].nodeId == original[j].nodeId)
+          nc = NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          let newlines = (original[j].leadingNewline, leadingNewline)
+          nl = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          j -= 1
+        }
+        // process dirty.
+        else {
+          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
+          assert(current[i].mark == .dirty && original[j].mark == .dirty)
+          nc = NodeReconciler.reconcile(dirty: _children[i], context: context)
+          let newlines = (original[j].leadingNewline, leadingNewline)
+          nl = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
+          isSegmentDirty = true
+          j -= 1
+        }
+
+        sum += nc + nl
+        segmentLength += nc + nl
+
+        if isSegmentDirty {
+          if leadingNewline,
+            _children[i].isBlock == false && segmentLength > 0
+          {
+            let begin = context.layoutCursor + nl
+            let end = begin + segmentLength - nl
+            context.addParagraphStyle(self, begin..<end)
+          }
+        }
+        if leadingNewline || _children[i].isBlock {
+          segmentLength = 0
+          isSegmentDirty = false
+        }
+      }
+      // process deleted in a batch if any.
+      while j >= 0 && original[j].mark == .deleted {
+        NodeReconciler.delete(old: original[j].layoutLength, context: context)
+        NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
+        j -= 1
+      }
+      assert(j < 0)
+
+      if isSegmentDirty, segmentLength > 0 {
+        context.addParagraphStyle(forSegment: segmentLength, self)
+      }
+      return sum
+
+    case (false, false):
+      let (current, original) = _computeExtendedRecords()
+
+      var sum = 0
+      var j = 0
+      var originalCount = original.count
+
+      for i in _children.indices {
+        // process deleted in a batch if any.
+        while j < originalCount && original[j].mark == .deleted {
+          assert(original[j].leadingNewline == false)
+          NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+          j += 1
+        }
+
+        // process added.
+        if current[i].mark == .added {
+          assert(current[i].leadingNewline == false)
+          sum += NodeReconciler.insertForward(new: _children[i], context: context)
+        }
+        // skip none.
+        else if current[i].mark == .none,
+          j < originalCount && original[j].mark == .none
+        {
+          assert(current[i].nodeId == original[j].nodeId)
+          assert(current[i].leadingNewline == false)
+          assert(original[j].leadingNewline == false)
+          sum +=
+            NodeReconciler.skipForward(current: current[i].layoutLength, context: context)
+          j += 1
+        }
+        // process dirty.
+        else {
+          assert(j < originalCount && current[i].nodeId == original[j].nodeId)
+          assert(current[i].mark == .dirty && original[j].mark == .dirty)
+          assert(current[i].leadingNewline == false)
+          assert(original[j].leadingNewline == false)
+          sum += NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          j += 1
+        }
+      }
+      // process deleted in a batch if any.
+      while j < originalCount && original[j].mark == .deleted {
+        assert(original[j].leadingNewline == false)
+        NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+        j += 1
+      }
+      assert(j == originalCount)
       return sum
     }
   }
