@@ -25,7 +25,7 @@ final class AttachNode: MathNode {
 
   final override var isDirty: Bool { _isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -33,13 +33,13 @@ final class AttachNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      _performLayoutFromScratch(context)
+      _performLayoutForwardFromScratch(context)
     }
     else if _snapshot == nil {
-      _performLayoutSimple(context)
+      _performLayoutForwardSimple(context)
     }
     else {
-      _performLayoutFull(context)
+      _performLayoutForwardFull(context)
     }
 
     // clear
@@ -354,7 +354,7 @@ final class AttachNode: MathNode {
     }
   }
 
-  private func _performLayoutFromScratch(_ context: MathListLayoutContext) {
+  private func _performLayoutForwardFromScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
       LayoutUtils.buildMathListLayoutFragment(component, parent: context)
     }
@@ -370,10 +370,10 @@ final class AttachNode: MathNode {
 
     _attachFragment = attachFragment
     attachFragment.fixLayout(context.mathContext)
-    context.insertFragment(attachFragment, self)
+    context.insertFragmentForward(attachFragment, self)
   }
 
-  private func _performLayoutSimple(_ context: MathListLayoutContext) {
+  private func _performLayoutForwardSimple(_ context: MathListLayoutContext) {
 
     guard let attachFragment = _attachFragment
     else {
@@ -432,18 +432,18 @@ final class AttachNode: MathNode {
     if needsFixLayout {
       attachFragment.fixLayout(context.mathContext)
       if attachFragment.isNearlyEqual(to: oldBoxMetrics) == false {
-        context.invalidateBackwards(layoutLength())
+        context.invalidateForward(layoutLength())
       }
       else {
-        context.skipBackwards(layoutLength())
+        context.skipForward(layoutLength())
       }
     }
     else {
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
   }
 
-  private func _performLayoutFull(_ context: MathListLayoutContext) {
+  private func _performLayoutForwardFull(_ context: MathListLayoutContext) {
     precondition(_snapshot != nil)
 
     guard let attachFragment = _attachFragment,
@@ -524,10 +524,10 @@ final class AttachNode: MathNode {
     let boxMetrics = attachFragment.boxMetrics
     attachFragment.fixLayout(context.mathContext)
     if attachFragment.isNearlyEqual(to: boxMetrics) == false {
-      context.invalidateBackwards(layoutLength())
+      context.invalidateForward(layoutLength())
     }
     else {
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
   }
 }
