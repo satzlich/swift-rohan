@@ -22,6 +22,7 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
   static func resolveAggregate(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> ParagraphProperty {
+    @inline(__always)
     func resolved(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, styleSheet)
     }

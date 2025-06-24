@@ -122,14 +122,23 @@ final class MultilineNode: ArrayNode {
   }
 
   /// Get the width of the content container for this array node.
-  private static func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
-    let pageWidth = styleSheet.resolveDefault(PageProperty.width).absLength()!
-    let leftMargin = styleSheet.resolveDefault(PageProperty.leftMargin).absLength()!
-    let rightMargin = styleSheet.resolveDefault(PageProperty.rightMargin).absLength()!
-    let fontSize = styleSheet.resolveDefault(TextProperty.size).fontSize()!
-    let containerWidth = pageWidth - leftMargin - rightMargin
+  private func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
+    guard _isMultline() else { return 0 }
+
+    let properties = self.getProperties(styleSheet)
+
+    @inline(__always)
+    func resolveValue(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, styleSheet)
+    }
+    let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
+    let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
+    let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
+    let fontSize = resolveValue(TextProperty.size).fontSize()!.floatValue
+    let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
+    let containerWidth = pageWidth - leftMargin - rightMargin - headIndent
     // 10pt for text container inset, 1em for leading padding.
-    return containerWidth.ptValue - 10 - fontSize.floatValue
+    return containerWidth - 10 - fontSize
   }
 
   final override func _reconcileMathListLayoutFragment(
@@ -145,7 +154,7 @@ final class MultilineNode: ArrayNode {
   final override func _createMathArrayLayoutFragment(
     _ context: LayoutContext, _ mathContext: MathContext
   ) -> MathArrayLayoutFragment {
-    let containerWidth = _isMultline() ? Self._getContainerWidth(context.styleSheet) : 0
+    let containerWidth = _getContainerWidth(context.styleSheet)
     return MathArrayLayoutFragment(
       rowCount: rowCount, columnCount: columnCount, subtype: subtype,
       mathContext, containerWidth)

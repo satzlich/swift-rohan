@@ -8,6 +8,7 @@ internal struct PageProperty: PropertyAggregate {
   public static func resolveAggregate(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> PageProperty {
+    @inline(__always)
     func resolved(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, styleSheet)
     }
@@ -61,5 +62,4 @@ internal struct PageProperty: PropertyAggregate {
   public static let bottomMargin = PropertyKey(.root, .bottomMargin)  // AbsLength
   public static let leftMargin = PropertyKey(.root, .leftMargin)  // AbsLength
   public static let rightMargin = PropertyKey(.root, .rightMargin)  // AbsLength
-
 }

@@ -11,6 +11,7 @@ internal struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   public static func resolveAggregate(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> TextProperty {
+    @inline(__always)
     func resolved(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, styleSheet)
     }

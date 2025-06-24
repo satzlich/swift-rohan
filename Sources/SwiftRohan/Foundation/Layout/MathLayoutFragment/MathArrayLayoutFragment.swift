@@ -29,9 +29,17 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
 
+  /// Creates a new MathArrayLayoutFragment.
+  /// - Parameters:
+  ///   - rowCount: The number of rows in the array.
+  ///   - columnCount: The number of columns in the array.
+  ///   - subtype: The subtype of the array.
+  ///   - mathContext: The math context to use for layout.
+  ///   - containerWidth: The width of the content container which applicable for
+  ///       "subtype == .multline" only.
   init(
-    rowCount: Int, columnCount: Int,
-    subtype: MathArray, _ mathContext: MathContext, _ containerWidth: Double
+    rowCount: Int, columnCount: Int, subtype: MathArray,
+    _ mathContext: MathContext, _ containerWidth: Double
   ) {
     precondition(rowCount > 0 && columnCount > 0)
 
