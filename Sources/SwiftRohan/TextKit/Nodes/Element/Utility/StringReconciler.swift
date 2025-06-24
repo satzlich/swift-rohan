@@ -3,7 +3,7 @@
 enum StringReconciler {
   @inline(__always)
   static func skip<C: LayoutContext>(current: String, context: C) -> Int {
-    context.skipForward(current.length)
+    context.skipBackwards(current.length)
     return current.length
   }
 
@@ -13,7 +13,7 @@ enum StringReconciler {
   @inline(__always)
   static func insert<C: LayoutContext>(new: String, context: C, _ container: Node) -> Int
   {
-    context.insertTextForward(new, container)
+    context.insertText(new, container)
     return new.length
   }
 
@@ -27,17 +27,17 @@ enum StringReconciler {
     let (old, new) = dirty
 
     if old == new {
-      context.skipForward(old.length)
+      context.skipBackwards(old.length)
     }
     else {
-      context.deleteForward(old.length)
-      context.insertTextForward(new, container)
+      context.deleteBackwards(old.length)
+      context.insertText(new, container)
     }
     return new.length
   }
 
   @inline(__always)
   static func delete<C: LayoutContext>(old: String, context: C) {
-    context.deleteForward(old.length)
+    context.deleteBackwards(old.length)
   }
 }

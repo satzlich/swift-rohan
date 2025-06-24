@@ -58,6 +58,14 @@ final class TextLayoutContext: LayoutContext {
     self.addParagraphStyle(source, begin..<end)
   }
 
+  func addParagraphStyleBackward(forSegment segment: Int, _ source: Node) {
+    precondition(isEditing)
+    let begin = self.layoutCursor - segment
+    let end = self.layoutCursor
+    precondition(begin >= 0)
+    self.addParagraphStyle(source, begin..<end)
+  }
+
   func addAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {
