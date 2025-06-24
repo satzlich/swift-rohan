@@ -160,7 +160,7 @@ internal class ElementNodeImpl: ElementNode {
       if isCandidate && segmentLength > 0 {
         context.addParagraphStyleBackward(forSegment: segmentLength, self)
       }
-      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
+      sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
       return sum
 
     case (false, false):
@@ -228,7 +228,7 @@ internal class ElementNodeImpl: ElementNode {
       if isCandidate && segmentLength > 0 {
         context.addParagraphStyleBackward(forSegment: segmentLength, self)
       }
-      sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
+      sum += NewlineReconciler.skipForward(current: _newlines.last!, context: context)
       return sum
 
     case false:
