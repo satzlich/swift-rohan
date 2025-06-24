@@ -19,7 +19,7 @@ final class UnderOverNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -32,7 +32,7 @@ final class UnderOverNode: MathNode {
       _nodeFragment = underOverFragment
 
       underOverFragment.fixLayout(context.mathContext)
-      context.insertFragment(underOverFragment, self)
+      context.insertFragmentForward(underOverFragment, self)
     }
     else {
       guard let nodeFragment = _nodeFragment
@@ -57,12 +57,12 @@ final class UnderOverNode: MathNode {
       if needsFixLayout {
         nodeFragment.fixLayout(context.mathContext)
         if nodeFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
+          context.invalidateForward(layoutLength())
           return layoutLength()
         }
         // FALL THROUGH
       }
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
 
     return layoutLength()
