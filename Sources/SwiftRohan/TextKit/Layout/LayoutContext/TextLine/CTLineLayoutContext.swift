@@ -79,19 +79,11 @@ internal class CTLineLayoutContext: LayoutContext {
   }
 
   final func insertNewline(_ context: Node) {
-    precondition(isEditing)
-
-    assertionFailure("insertNewline not supported")
-    insertText("\u{FFFD}", context)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   final func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
-    precondition(fragment.layoutLength == source.layoutLength())
-
-    assertionFailure("insertFragment not supported")
-    let string = String(repeating: "\u{FFFD}", count: fragment.layoutLength)
-    insertText(string, source)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   private func getBounds() -> (width: CGFloat, ascent: CGFloat, descent: CGFloat) {
@@ -116,12 +108,9 @@ internal class CTLineLayoutContext: LayoutContext {
 
   func deleteForward(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor + n <= renderedString.length)
-    // find range
-    let location = layoutCursor
-    let range = NSRange(location: location, length: n)
-    // update state
+    let range = NSRange(location: layoutCursor, length: n)
     renderedString.replaceCharacters(in: range, with: "")
-    _layoutCursor = location + n
+    // cursor remains unchanged.
   }
 
   func invalidateForward(_ n: Int) {

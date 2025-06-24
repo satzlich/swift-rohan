@@ -178,7 +178,6 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   func insertNewlineForward(_ context: Node) {
-    precondition(isEditing && layoutCursor >= 0)
     preconditionFailure("Unsupported operation: \(#function)")
   }
 

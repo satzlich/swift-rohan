@@ -159,25 +159,22 @@ final class TextLayoutContext: LayoutContext {
 
   func deleteForward(_ n: Int) {
     precondition(isEditing && n >= 0)
-    // find range
-    let location = layoutCursor
-    let range = NSRange(location: location, length: n)
-    // update state
+    let range = NSRange(location: layoutCursor, length: n)
     textStorage.replaceCharacters(in: range, with: "")
+    // cursor remains unchanged.
   }
 
   func invalidateForward(_ n: Int) {
     precondition(isEditing && n >= 0)
     // find character range
-    let location = layoutCursor
-    let range = NSRange(location: location, length: n)
-    // update layout cursor no matter what
-    defer { layoutCursor += n }
+    let range = NSRange(location: layoutCursor, length: n)
     // find text range
     guard let textRange = textContentStorage.textRange(for: range)
     else { assertionFailure("text range not found"); return }
     // update state
     textLayoutManager.invalidateLayout(for: textRange)
+    // update layout cursor no matter what
+    layoutCursor += n
   }
 
   func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
