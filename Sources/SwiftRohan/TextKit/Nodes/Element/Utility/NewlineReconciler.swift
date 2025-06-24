@@ -2,8 +2,8 @@
 
 enum NewlineReconciler {
   @inline(__always)
-  static func skip<C: LayoutContext>(currrent: Bool, context: C) -> Int {
-    if currrent {
+  static func skip<C: LayoutContext>(current: Bool, context: C) -> Int {
+    if current {
       context.skipBackwards(1)
       return 1
     }

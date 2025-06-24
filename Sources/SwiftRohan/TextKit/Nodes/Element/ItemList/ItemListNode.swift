@@ -184,8 +184,10 @@ final class ItemListNode: ElementNode {
       _snapshotRecords = [SnapshotRecord.placeholder(1)]
     }
     else {
-      _snapshotRecords =
-        zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+      _snapshotRecords = _children.indices.map { i in
+        SnapshotRecord(
+          _children[i], _newlines[i], leadingNewline: _newlines.value(before: i))
+      }
     }
   }
 
@@ -232,11 +234,15 @@ final class ItemListNode: ElementNode {
 
     case false:
       var sum = 0
+
+      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
+
       for i in _children.indices.reversed() {
-        sum += NewlineReconciler.insert(new: _newlines[i], context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
         sum += StringReconciler.insert(
           new: _initialFiller(forIndex: i), context: context, self)
+        sum += NewlineReconciler.insert(
+          new: _newlines.value(before: i), context: context, self)
       }
       _refreshParagraphStyle(context, { _ in true })
       return sum
@@ -251,20 +257,25 @@ final class ItemListNode: ElementNode {
     let itemAttributes = _bakeItemAttributes(context.styleSheet)
 
     var sum = 0
+
+    sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
+
     for i in _children.indices.reversed() {
       // skip clean.
       if _children[i].isDirty == false {
-        sum += NewlineReconciler.skip(currrent: _newlines[i], context: context)
         sum += NodeReconciler.skip(current: _children[i], context: context)
         sum += StringReconciler.skip(
           current: _initialFiller(forIndex: i), context: context)
+        sum += NewlineReconciler.skip(
+          current: _newlines.value(before: i), context: context)
       }
       // process dirty.
       else {
-        let n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
         let n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
         let n2 = StringReconciler.skip(
           current: _initialFiller(forIndex: i), context: context)
+        let n0 = NewlineReconciler.skip(
+          current: _newlines.value(before: i), context: context)
         sum += n0 + n1 + n2
 
         let location = context.layoutCursor
@@ -296,15 +307,21 @@ final class ItemListNode: ElementNode {
     // first index where item marker changed
     var firstDirtyMarker: Int = _children.count
 
+    do {
+      let old = original.last?.trailingNewline ?? false
+      let new = _newlines.last!
+      sum += NewlineReconciler.reconcile(dirty: (old, new), context: context, self)
+    }
+
     for i in _children.indices.reversed() {
       // process deleted in a batch if any.
       if j >= 0 && original[j].mark == .deleted {
         firstDirtyMarker = i
       }
       while j >= 0 && original[j].mark == .deleted {
-        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
         StringReconciler.delete(old: _initialFiller(forIndex: j), context: context)
+        NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
         j -= 1
       }
 
@@ -312,11 +329,11 @@ final class ItemListNode: ElementNode {
       if i >= 0 && current[i].mark == .added {
         firstDirtyMarker = i
         //
-        sum += NewlineReconciler.insert(
-          new: current[i].insertNewline, context: context, self)
         sum += NodeReconciler.insert(new: _children[i], context: context)
         sum += StringReconciler.insert(
           new: _initialFiller(forIndex: i), context: context, self)
+        sum += NewlineReconciler.insert(
+          new: current[i].leadingNewline, context: context, self)
       }
       // skip none
       else if current[i].mark == .none,
@@ -324,24 +341,24 @@ final class ItemListNode: ElementNode {
       {
         assert(current[i].nodeId == original[j].nodeId)
 
-        sum += NewlineReconciler.reconcile(
-          dirty: (original[j].insertNewline, current[i].insertNewline),
-          context: context, self)
         sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
         sum += StringReconciler.reconcile(
           dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
+          context: context, self)
+        sum += NewlineReconciler.reconcile(
+          dirty: (original[j].leadingNewline, current[i].leadingNewline),
           context: context, self)
         j -= 1
       }
       else {
         assert(j >= 0 && current[i].nodeId == original[j].nodeId)
         assert(current[i].mark == .dirty && original[j].mark == .dirty)
-        sum += NewlineReconciler.reconcile(
-          dirty: (original[j].insertNewline, current[i].insertNewline),
-          context: context, self)
         sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
         sum += StringReconciler.reconcile(
           dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
+          context: context, self)
+        sum += NewlineReconciler.reconcile(
+          dirty: (original[j].leadingNewline, current[i].leadingNewline),
           context: context, self)
 
         j -= 1
@@ -352,9 +369,9 @@ final class ItemListNode: ElementNode {
       firstDirtyMarker = 0
     }
     while j >= 0 && original[j].mark == .deleted {
-      NewlineReconciler.delete(old: original[j].insertNewline, context: context)
       NodeReconciler.delete(old: original[j].layoutLength, context: context)
       StringReconciler.delete(old: _initialFiller(forIndex: j), context: context)
+      NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
       j -= 1
     }
     assert(j < 0)
@@ -384,12 +401,15 @@ final class ItemListNode: ElementNode {
     let originalIds = Set(_snapshotRecords!.map(\.nodeId))
 
     let current =
-      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+      _children.indices.map { i in
+        let node = _children[i]
+        let insertNewline = _newlines[i]
+        let newlineBefore = _newlines.value(before: i)
         let mark: LayoutMark =
           !originalIds.contains(node.id)
           ? .added
           : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline)
+        return ExtendedRecord(mark, node, insertNewline, leadingNewline: newlineBefore)
       }
 
     let original =

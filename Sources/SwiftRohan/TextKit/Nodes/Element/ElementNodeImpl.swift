@@ -61,8 +61,10 @@ internal class ElementNodeImpl: ElementNode {
       _snapshotRecords = [SnapshotRecord.placeholder(1)]
     }
     else {
-      _snapshotRecords =
-        zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+      _snapshotRecords = _children.indices.map { i in
+        SnapshotRecord(
+          _children[i], _newlines[i], leadingNewline: _newlines.value(before: i))
+      }
     }
   }
 
@@ -94,10 +96,9 @@ internal class ElementNodeImpl: ElementNode {
         return sum
       }
       else {
-        let sum = 0
-        context.addParagraphStyle(forSegment: sum, self)
-        return sum
+        return 0
       }
+
     case false:
       if self.isPlaceholderActive {
         return StringReconciler.insert(new: "⬚", context: context, self)
@@ -120,30 +121,47 @@ internal class ElementNodeImpl: ElementNode {
     case (false, true):
       var sum = 0
       var segmentLength = 0  // accumulated segment length since entry or last newline.
+      var isSegmentDirty = false  // true if the segment is dirty.
+
+      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
 
       for i in _children.indices.reversed() {  // backwards insertion.
-        if _newlines[i] && segmentLength > 0 {
-          context.addParagraphStyle(forSegment: segmentLength, self)
-          segmentLength = 0
-        }
-        let n0 = NewlineReconciler.insert(new: _newlines[i], context: context, self)
-        let n1 = NodeReconciler.insert(new: _children[i], context: context)
-        sum += n0 + n1
+        // 1) insert child content
+        let nc = NodeReconciler.insert(new: _children[i], context: context)
+        sum += nc
+        segmentLength += nc
+        isSegmentDirty = true
 
-        if _children[i].isBlock {
+        // 2) insert leading newline
+        let leadingNewline = _newlines.value(before: i)
+        if leadingNewline {
+          // update paragraph style before inserting leading newline.
+          if _children[i].isBlock == false, segmentLength > 0 {
+            context.addParagraphStyle(forSegment: segmentLength, self)
+          }
+
+          // insert leading newline
+          sum += NewlineReconciler.insert(new: leadingNewline, context: context, self)
+
+          // reset
           segmentLength = 0
+          isSegmentDirty = false
         }
-        else {
-          segmentLength += n1
+        else if _children[i].isBlock {
+          // reset
+          segmentLength = 0
+          isSegmentDirty = false
         }
       }
-      if segmentLength > 0 { context.addParagraphStyle(forSegment: segmentLength, self) }
+      if isSegmentDirty, segmentLength > 0 {
+        context.addParagraphStyle(forSegment: segmentLength, self)
+      }
       return sum
 
     case (false, false):
       var sum = 0
       for i in _children.indices.reversed() {
-        assert(_newlines[i] == false)  // inline nodes should not contain newlines.
+        assert(_newlines.value(before: i) == false)  // inline nodes should not contain newlines.
         sum += NodeReconciler.insert(new: _children[i], context: context)
       }
       return sum
@@ -159,46 +177,58 @@ internal class ElementNodeImpl: ElementNode {
     switch self.isBlock {
     case true:
       var sum = 0
-      var segment = 0  // accumulated segment length since entry or last newline.
-      var dirty = false  // true if the segment is dirty.
+      var segmentLength = 0  // accumulated segment length since entry or last newline.
+      var isSegmentDirty = false  // true if the segment is dirty.
+
+      sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
 
       // Invariant: for every maximum non-block segment which is dirty, add
       //  paragraph style is called.
       for i in _children.indices.reversed() {
-        if _newlines[i] && segment > 0 && dirty {
-          context.addParagraphStyle(forSegment: segment, self)
-          segment = 0
-          dirty = false
-        }
-        let n0: Int
-        let n1: Int
+        // 1) deal with child content.
+        let nc: Int  // Child node length.
         if _children[i].isDirty == false {
-          n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
-          n1 = NodeReconciler.skip(current: _children[i], context: context)
+          nc = NodeReconciler.skip(current: _children[i], context: context)
         }
         else {
-          n0 = NewlineReconciler.skip(currrent: _newlines[i], context: context)
-          n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
-          dirty = true
+          nc = NodeReconciler.reconcile(dirty: _children[i], context: context)
+          isSegmentDirty = true
         }
-        sum += n0 + n1
-        if _children[i].isBlock {
-          segment = 0
-          dirty = false  // block nodes take care of their own paragraph style.
+        sum += nc
+        segmentLength += nc
+
+        // 2) deal with leading newline.
+        let leadingNewline = _newlines.value(before: i)
+        if leadingNewline {
+          // update paragraph style before inserting leading newline.
+          if isSegmentDirty,
+            _children[i].isBlock == false && segmentLength > 0
+          {
+            context.addParagraphStyle(forSegment: segmentLength, self)
+          }
+
+          // skip leading newline
+          sum += NewlineReconciler.skip(current: leadingNewline, context: context)
+
+          // reset
+          segmentLength = 0
+          isSegmentDirty = false
         }
-        else {
-          segment += n1
+        else if _children[i].isBlock {
+          // reset
+          segmentLength = 0
+          isSegmentDirty = false
         }
       }
-      if segment > 0 && dirty {
-        context.addParagraphStyle(forSegment: segment, self)
+      if isSegmentDirty, segmentLength > 0 {
+        context.addParagraphStyle(forSegment: segmentLength, self)
       }
       return sum
 
     case false:
       var sum = 0
       for i in _children.indices.reversed() {
-        assert(_newlines[i] == false)
+        assert(_newlines.value(before: i) == false)
         if _children[i].isDirty == false {
           sum += NodeReconciler.skip(current: _children[i], context: context)
         }
@@ -228,27 +258,30 @@ internal class ElementNodeImpl: ElementNode {
       var isSegmentDirty = false  // true if the segment is dirty.
       var j = original.count - 1
 
+      do {
+        let old = original.last?.trailingNewline ?? false
+        let new = _newlines.last!
+        let n = NewlineReconciler.reconcile(dirty: (old, new), context: context, self)
+        sum += n
+      }
+
       for i in _children.indices.reversed() {
         // process deleted in a batch if any.
         while j >= 0 && original[j].mark == .deleted {
-          NewlineReconciler.delete(old: original[j].insertNewline, context: context)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
+          NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
           j -= 1
         }
 
-        if _newlines[i] && segmentLength > 0 && isSegmentDirty {
-          context.addParagraphStyle(forSegment: segmentLength, self)
-          segmentLength = 0
-          isSegmentDirty = false
-        }
+        let leadingNewline = _newlines.value(before: i)
+
+        let nc: Int  // Child node length.
+        let nl: Int  // Newline length.
 
         // process added.
-        let n0: Int
-        let n1: Int
         if current[i].mark == .added {
-          let newline = current[i].insertNewline
-          n0 = NewlineReconciler.insert(new: newline, context: context, self)
-          n1 = NodeReconciler.insert(new: _children[i], context: context)
+          nc = NodeReconciler.insert(new: _children[i], context: context)
+          nl = NewlineReconciler.insert(new: leadingNewline, context: context, self)
           isSegmentDirty = true
         }
         // skip none.
@@ -256,40 +289,48 @@ internal class ElementNodeImpl: ElementNode {
           j >= 0 && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-          let newlines = (original[j].insertNewline, current[i].insertNewline)
-          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          n1 = NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          nc = NodeReconciler.skip(current: current[i].layoutLength, context: context)
+          let newlines = (original[j].leadingNewline, leadingNewline)
+          nl = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           j -= 1
         }
         // process dirty.
         else {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
-
-          let newlines = (original[j].insertNewline, current[i].insertNewline)
-          n0 = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          n1 = NodeReconciler.reconcile(dirty: _children[i], context: context)
+          nc = NodeReconciler.reconcile(dirty: _children[i], context: context)
+          let newlines = (original[j].leadingNewline, leadingNewline)
+          nl = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
           isSegmentDirty = true
           j -= 1
         }
-        sum += n0 + n1
-        if _children[i].isBlock {
-          segmentLength = 0
-          isSegmentDirty = false  // block nodes take care of their own paragraph style.
+
+        sum += nc + nl
+        segmentLength += nc + nl
+
+        if isSegmentDirty {
+          if leadingNewline,
+            _children[i].isBlock == false && segmentLength > 0
+          {
+            let begin = context.layoutCursor + nl
+            let end = begin + segmentLength - nl
+            context.addParagraphStyle(self, begin..<end)
+          }
         }
-        else {
-          segmentLength += n1
+        if leadingNewline || _children[i].isBlock {
+          segmentLength = 0
+          isSegmentDirty = false
         }
       }
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
-        NewlineReconciler.delete(old: original[j].insertNewline, context: context)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
+        NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
         j -= 1
       }
       assert(j < 0)
 
-      if segmentLength > 0 && isSegmentDirty {
+      if isSegmentDirty, segmentLength > 0 {
         context.addParagraphStyle(forSegment: segmentLength, self)
       }
       return sum
@@ -303,14 +344,14 @@ internal class ElementNodeImpl: ElementNode {
       for i in _children.indices.reversed() {
         // process deleted in a batch if any.
         while j >= 0 && original[j].mark == .deleted {
-          assert(original[j].insertNewline == false)
+          assert(original[j].leadingNewline == false)
           NodeReconciler.delete(old: original[j].layoutLength, context: context)
           j -= 1
         }
 
         // process added.
         if current[i].mark == .added {
-          assert(current[i].insertNewline == false)
+          assert(current[i].leadingNewline == false)
           sum += NodeReconciler.insert(new: _children[i], context: context)
         }
         // skip none.
@@ -318,8 +359,8 @@ internal class ElementNodeImpl: ElementNode {
           j >= 0 && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-          assert(current[i].insertNewline == false)
-          assert(original[j].insertNewline == false)
+          assert(current[i].leadingNewline == false)
+          assert(original[j].leadingNewline == false)
           sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
           j -= 1
         }
@@ -327,15 +368,15 @@ internal class ElementNodeImpl: ElementNode {
         else {
           assert(j >= 0 && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
-          assert(current[i].insertNewline == false)
-          assert(original[j].insertNewline == false)
+          assert(current[i].leadingNewline == false)
+          assert(original[j].leadingNewline == false)
           sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
           j -= 1
         }
       }
       // process deleted in a batch if any.
       while j >= 0 && original[j].mark == .deleted {
-        assert(original[j].insertNewline == false)
+        assert(original[j].leadingNewline == false)
         NodeReconciler.delete(old: original[j].layoutLength, context: context)
         j -= 1
       }
@@ -356,12 +397,15 @@ internal class ElementNodeImpl: ElementNode {
     let originalIds = Set(_snapshotRecords!.map(\.nodeId))
 
     let current =
-      zip(_children, _newlines.asBitArray).map { (node, insertNewline) in
+      _children.indices.map { i in
+        let node = _children[i]
+        let insertNewline = _newlines[i]
+        let newlineBefore = _newlines.value(before: i)
         let mark: LayoutMark =
           !originalIds.contains(node.id)
           ? .added
           : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline)
+        return ExtendedRecord(mark, node, insertNewline, leadingNewline: newlineBefore)
       }
 
     let original =
@@ -395,48 +439,61 @@ internal class ElementNodeImpl: ElementNode {
 
   internal struct SnapshotRecord: CustomStringConvertible {
     let nodeId: NodeIdentifier
-    let insertNewline: Bool
+    let trailingNewline: Bool
+    let leadingNewline: Bool
     let layoutLength: Int
 
-    init(_ node: Node, _ insertNewline: Bool) {
+    init(_ node: Node, _ trailingNewline: Bool, leadingNewline: Bool) {
       self.nodeId = node.id
-      self.insertNewline = insertNewline
+      self.trailingNewline = trailingNewline
+      self.leadingNewline = leadingNewline
       self.layoutLength = node.layoutLength()
     }
 
-    private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
+    private init(
+      _ nodeId: NodeIdentifier,
+      _ trailingNewline: Bool,
+      leadingNewline: Bool,
+      _ layoutLength: Int
+    ) {
       self.nodeId = nodeId
-      self.insertNewline = insertNewline
+      self.trailingNewline = trailingNewline
+      self.leadingNewline = leadingNewline
       self.layoutLength = layoutLength
     }
 
     /// Create a placeholder record with given layout length.
     static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
-      SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
+      SnapshotRecord(
+        NodeIdAllocator.allocate(), false, leadingNewline: false, layoutLength)
     }
 
     var description: String {
-      "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
+      "(\(nodeId),\(layoutLength)+\(trailingNewline.intValue))"
     }
   }
 
   internal struct ExtendedRecord {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
-    let insertNewline: Bool
+    let trailingNewline: Bool
+    let leadingNewline: Bool
     let layoutLength: Int
 
     init(_ mark: LayoutMark, _ record: SnapshotRecord) {
       self.mark = mark
       self.nodeId = record.nodeId
-      self.insertNewline = record.insertNewline
+      self.trailingNewline = record.trailingNewline
+      self.leadingNewline = record.leadingNewline
       self.layoutLength = record.layoutLength
     }
 
-    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
+    init(_ mark: LayoutMark, _ node: Node, _ trailingNewline: Bool, leadingNewline: Bool)
+    {
       self.mark = mark
       self.nodeId = node.id
-      self.insertNewline = insertNewline
+      self.trailingNewline = trailingNewline
+      self.leadingNewline = leadingNewline
       self.layoutLength = node.layoutLength()
     }
   }
