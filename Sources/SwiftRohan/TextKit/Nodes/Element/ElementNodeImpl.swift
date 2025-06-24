@@ -40,6 +40,20 @@ internal class ElementNodeImpl: ElementNode {
     _performLayout(context, fromScratch: fromScratch)
   }
 
+  final override func performLayoutForward(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      _layoutLength = _performLayoutForwardFromScratch(context)
+      _snapshotRecords = nil
+      _isDirty = false
+      return _layoutLength
+    }
+    else {
+      return super.performLayoutForward(context, fromScratch: false)
+    }
+  }
+
   // MARK: - Layout Impl.
 
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
@@ -381,6 +395,96 @@ internal class ElementNodeImpl: ElementNode {
         j -= 1
       }
       assert(j < 0)
+      return sum
+    }
+  }
+
+  @inline(__always)
+  private final func _performLayoutForwardEmpty(_ context: LayoutContext) -> Int {
+    precondition(_children.isEmpty && _newlines.isEmpty)
+    switch self.isBlock {
+    case true:
+      if self.isPlaceholderActive {
+        let sum = StringReconciler.insertForward(new: "⬚", context: context, self)
+        context.addParagraphStyleBackward(forSegment: sum, self)
+        return sum
+      }
+      else {
+        return 0
+      }
+
+    case false:
+      if self.isPlaceholderActive {
+        return StringReconciler.insertForward(new: "⬚", context: context, self)
+      }
+      else {
+        return 0
+      }
+    }
+  }
+
+  /// Perform layout from scratch.
+  @inline(__always)
+  private final func _performLayoutForwardFromScratch(_ context: LayoutContext) -> Int {
+    precondition(_children.count == _newlines.count)
+
+    switch (_children.isEmpty, self.isBlock) {
+    case (true, _):
+      return _performLayoutForwardEmpty(context)
+
+    case (false, true):
+      var sum = 0
+      var segmentLength = 0
+      var isSegmentDirty = false
+
+      /*
+       Invariant:
+        (a) segmentLength maintains accumulated length since entry or previous newline.
+        (b) isSegmentDirty is true if the segment is candidate for paragraph style.
+        (c) sum maintains the total length inserted so far.
+        (d) every segment (separated by leading newlines) is applied with paragraph
+            style when downstream edge is reached.
+        (e) block child nodes are skipped for paragraph style.
+       */
+      for i in _children.indices {
+        let leadingNewline = _newlines.value(before: i)
+
+        // apply paragraph style when segment edge is reached.
+        if leadingNewline, isSegmentDirty && segmentLength > 0 {
+          context.addParagraphStyleBackward(forSegment: segmentLength, self)
+          // reset
+          segmentLength = 0
+          isSegmentDirty = false
+        }
+
+        // insert newline and child content.
+        let nl =
+          NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
+        let nc = NodeReconciler.insertForward(new: _children[i], context: context)
+        sum += nl + nc
+
+        // update segment length and dirty flag.
+        if _children[i].isBlock {
+          segmentLength = 0
+          isSegmentDirty = false
+        }
+        else {
+          segmentLength += nc
+          isSegmentDirty = true
+        }
+      }
+      if isSegmentDirty && segmentLength > 0 {
+        context.addParagraphStyleBackward(forSegment: segmentLength, self)
+      }
+      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
+      return sum
+
+    case (false, false):
+      var sum = 0
+      for i in _children.indices {
+        assert(_newlines.value(before: i) == false)  // inline nodes should not contain newlines.
+        sum += NodeReconciler.insertForward(new: _children[i], context: context)
+      }
       return sum
     }
   }
