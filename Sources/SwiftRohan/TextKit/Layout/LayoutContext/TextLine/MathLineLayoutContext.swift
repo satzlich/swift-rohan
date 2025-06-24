@@ -39,11 +39,6 @@ final class MathLineLayoutContext: LayoutContext {
 
   private(set) var layoutCursor: Int
 
-  func resetCursor() {
-    layoutCursor = originalString.length
-    layoutContext.resetCursor()
-  }
-
   func resetCursorForForwardEditing() {
     layoutCursor = 0
     layoutContext.resetCursorForForwardEditing()
@@ -60,53 +55,6 @@ final class MathLineLayoutContext: LayoutContext {
 
     assert(resolvedString.string.count == resolvedString.resolved.count)
     assert(resolvedString.resolved.length == renderedString.length)
-  }
-
-  func skipBackwards(_ n: Int) {
-    precondition(isEditing)
-    let location = layoutCursor - n
-    let resolvedRange = resolvedString.resolvedRange(for: location..<layoutCursor)
-    layoutContext.skipBackwards(resolvedRange.count)
-    layoutCursor = location
-  }
-
-  func deleteBackwards(_ n: Int) {
-    precondition(isEditing)
-    let location = layoutCursor - n
-    let resolvedRange = resolvedString.removeSubrange(location..<layoutCursor)
-    layoutContext.deleteBackwards(resolvedRange.count)
-    layoutCursor = location
-  }
-
-  func invalidateBackwards(_ n: Int) {
-    self.skipBackwards(n)
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-
-    //
-    let mathProperty = source.resolveAggregate(styleSheet) as MathProperty
-    let textProperty = source.resolveAggregate(styleSheet) as TextProperty
-    let attributes = mathProperty.getAttributes(
-      isFlipped: true,  // flip for CTLine
-      textProperty, mathContext)
-    //
-    let range = layoutCursor..<layoutCursor
-    let (rrange, rstring) =
-      resolvedString.replaceSubrange(range, with: String(text), mathProperty)
-    let attrString = NSAttributedString(string: rstring, attributes: attributes)
-    //
-    renderedString.replaceCharacters(in: NSRange(rrange), with: attrString)
-  }
-
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  func insertNewline(_ context: Node) {
-    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Edit

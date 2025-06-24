@@ -11,9 +11,6 @@ protocol LayoutContext {
   /// Cursor in the layout context
   var layoutCursor: Int { get }
 
-  /// Reset layout cursor to the end of the layout context
-  func resetCursor()
-
   /// Reset layout cursor to the beginning of the layout context
   func resetCursorForForwardEditing()
 
@@ -32,27 +29,6 @@ protocol LayoutContext {
   /// Add attributes to the given range.
   func addAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>)
-
-  // MARK: - Operations
-
-  /// Place cursor at `layoutCursor - n`
-  func skipBackwards(_ n: Int)
-
-  /// Remove `[layoutCursor - n, layoutCursor)` and place cursor at `layoutCursor - n`
-  func deleteBackwards(_ n: Int)
-
-  /// Inform the layout context that the frames for `[layoutCursor - n, layoutCursor)`
-  /// now become invalid, and place cursor at `layoutCursor - n`
-  func invalidateBackwards(_ n: Int)
-
-  /// Insert text at cursor. Cursor remains at the same location.
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node)
-
-  /// Insert newline at cursor. Cursor remains at the same location.
-  func insertNewline(_ context: Node)
-
-  /// Insert fragment at cursor. Cursor remains at the same location.
-  func insertFragment(_ fragment: LayoutFragment, _ source: Node)
 
   // MARK: - Editing
 

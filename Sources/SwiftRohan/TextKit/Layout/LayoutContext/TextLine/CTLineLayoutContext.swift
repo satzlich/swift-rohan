@@ -36,10 +36,6 @@ internal class CTLineLayoutContext: LayoutContext {
 
   final var layoutCursor: Int { _layoutCursor }
 
-  final func resetCursor() {
-    self._layoutCursor = renderedString.length
-  }
-
   func resetCursorForForwardEditing() {
     self._layoutCursor = 0
   }
@@ -58,37 +54,6 @@ internal class CTLineLayoutContext: LayoutContext {
   }
 
   // MARK: - Operations
-
-  func skipBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    _layoutCursor -= n
-  }
-
-  func deleteBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    // find range
-    let location = layoutCursor - n
-    let range = NSRange(location: location, length: n)
-    // update state
-    renderedString.replaceCharacters(in: range, with: "")
-    _layoutCursor = location
-  }
-
-  final func invalidateBackwards(_ n: Int) {
-    skipBackwards(n)
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    preconditionFailure("override this method")
-  }
-
-  final func insertNewline(_ context: Node) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  final func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
 
   private func getBounds() -> (width: CGFloat, ascent: CGFloat, descent: CGFloat) {
     var width: CGFloat = 0

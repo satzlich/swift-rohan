@@ -26,10 +26,6 @@ final class TextLayoutContext: LayoutContext {
 
   private(set) var layoutCursor: Int
 
-  internal func resetCursor() {
-    self.layoutCursor = textContentStorage.textStorage!.length
-  }
-
   internal func resetCursorForForwardEditing() {
     self.layoutCursor = 0
   }
@@ -68,76 +64,6 @@ final class TextLayoutContext: LayoutContext {
   ) {
     precondition(isEditing)
     textStorage.addAttributes(attributes, range: NSRange(range))
-  }
-
-  // MARK: - Operations
-
-  func skipBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    layoutCursor -= n
-  }
-
-  func deleteBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    // find range
-    let location = layoutCursor - n
-    let range = NSRange(location: location, length: n)
-    // update state
-    textStorage.replaceCharacters(in: range, with: "")
-    layoutCursor = location
-  }
-
-  func invalidateBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    // find character range
-    let location = layoutCursor - n
-    let range = NSRange(location: location, length: n)
-    // update layout cursor no matter what
-    defer { layoutCursor = location }
-    // find text range
-    guard let textRange = textContentStorage.textRange(for: range)
-    else { assertionFailure("text range not found"); return }
-    // update state
-    textLayoutManager.invalidateLayout(for: textRange)
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-    // obtain style properties
-    let properties: TextProperty = source.resolveAggregate(styleSheet)
-    let attributes = properties.getAttributes()
-    // create attributed string
-    let attrString = NSAttributedString(string: String(text), attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
-  }
-
-  func insertNewline(_ source: Node) {
-    precondition(isEditing)
-    // obtain style properties
-    let properties: TextProperty = source.resolveAggregate(styleSheet)
-    let attributes = properties.getAttributes()
-    // create attributed string
-    let attrString = NSAttributedString(string: "\n", attributes: attributes)
-    assert(attrString.length == 1)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
-  }
-
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
-
-    // obtain style properties
-    let properties: TextProperty = source.resolveAggregate(styleSheet)
-    let attributes = properties.getAttributes()
-    // form attributed string
-    let attrString = Self.attributedString(for: fragment, attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
   }
 
   /// Wrap given fragment in text attachment which is further embedded in an

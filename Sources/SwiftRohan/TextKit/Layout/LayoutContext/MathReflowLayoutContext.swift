@@ -36,10 +36,6 @@ final class MathReflowLayoutContext: LayoutContext {
 
   var layoutCursor: Int { mathLayoutContext.layoutCursor }
 
-  func resetCursor() {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
   func resetCursorForForwardEditing() {
     preconditionFailure("Unsupported operation: \(#function)")
   }
@@ -51,32 +47,6 @@ final class MathReflowLayoutContext: LayoutContext {
   }
 
   func endEditing() {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  // MARK: - Layout
-
-  func skipBackwards(_ n: Int) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  func deleteBackwards(_ n: Int) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  func invalidateBackwards(_ n: Int) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  func insertNewline(_ context: Node) {
-    preconditionFailure("Unsupported operation: \(#function)")
-  }
-
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     preconditionFailure("Unsupported operation: \(#function)")
   }
 
