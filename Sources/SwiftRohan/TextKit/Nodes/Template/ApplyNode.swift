@@ -57,12 +57,6 @@ final class ApplyNode: Node {
 
   final override var isDirty: Bool { _content.isDirty }
 
-  final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
-  ) -> Int {
-    _content.performLayout(context, fromScratch: fromScratch)
-  }
-
   final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
