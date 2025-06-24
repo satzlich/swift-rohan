@@ -16,7 +16,7 @@ internal class CTLineLayoutContext: LayoutContext {
     self.styleSheet = styleSheet
     self.renderedString = fragment.attrString
     self.ctLine = fragment.ctLine
-    self.layoutCursor = fragment.attrString.length
+    self._layoutCursor = fragment.attrString.length
     self.layoutMode = fragment.layoutMode
     self.boundsOption = fragment.boundsOption
   }
@@ -25,17 +25,19 @@ internal class CTLineLayoutContext: LayoutContext {
     self.styleSheet = styleSheet
     self.renderedString = NSMutableAttributedString()
     self.ctLine = CTLineCreateWithAttributedString(renderedString)
-    self.layoutCursor = renderedString.length
+    self._layoutCursor = renderedString.length
     self.layoutMode = layoutMode
     self.boundsOption = boundsOption
   }
 
   // MARK: - State
 
-  final private(set) var layoutCursor: Int
+  final var _layoutCursor: Int
 
-  final func resetCursor() {
-    self.layoutCursor = renderedString.length
+  final var layoutCursor: Int { _layoutCursor }
+
+  func resetCursorForForwardEditing() {
+    self._layoutCursor = 0
   }
 
   final private(set) var isEditing: Bool = false
@@ -53,45 +55,6 @@ internal class CTLineLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func skipBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    layoutCursor -= n
-  }
-
-  func deleteBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    // find range
-    let location = layoutCursor - n
-    let range = NSRange(location: location, length: n)
-    // update state
-    renderedString.replaceCharacters(in: range, with: "")
-    layoutCursor = location
-  }
-
-  final func invalidateBackwards(_ n: Int) {
-    skipBackwards(n)
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    preconditionFailure("override this method")
-  }
-
-  final func insertNewline(_ context: Node) {
-    precondition(isEditing)
-
-    assertionFailure("insertNewline not supported")
-    insertText("\u{FFFD}", context)
-  }
-
-  final func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
-    precondition(fragment.layoutLength == source.layoutLength())
-
-    assertionFailure("insertFragment not supported")
-    let string = String(repeating: "\u{FFFD}", count: fragment.layoutLength)
-    insertText(string, source)
-  }
-
   private func getBounds() -> (width: CGFloat, ascent: CGFloat, descent: CGFloat) {
     var width: CGFloat = 0
     var ascent: CGFloat = 0
@@ -103,6 +66,36 @@ internal class CTLineLayoutContext: LayoutContext {
       width = ctLine.getImageBounds(&ascent, &descent)
     }
     return (width, ascent, descent)
+  }
+
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    precondition(isEditing && n >= 0 && layoutCursor + n <= renderedString.length)
+    _layoutCursor += n
+  }
+
+  func deleteForward(_ n: Int) {
+    precondition(isEditing && n >= 0 && layoutCursor + n <= renderedString.length)
+    let range = NSRange(location: layoutCursor, length: n)
+    renderedString.replaceCharacters(in: range, with: "")
+    // cursor remains unchanged.
+  }
+
+  func invalidateForward(_ n: Int) {
+    skipForward(n)
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    preconditionFailure("overriding required")
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Query

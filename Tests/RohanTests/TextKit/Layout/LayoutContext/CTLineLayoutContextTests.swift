@@ -6,7 +6,7 @@ import Testing
 @testable import SwiftRohan
 
 struct CTLineLayoutContextTests {
-  
+
   private func standardQueries<T: LayoutContext>(_ context1: T) {
     do {
       guard let segmentFrame = context1.getSegmentFrame(3, .downstream) else {
@@ -59,12 +59,13 @@ struct CTLineLayoutContextTests {
       #expect(result == nil)
     }
   }
-  
-  
-  @Test("TextLineLayoutContext", arguments: [
-    CTLineLayoutFragment.BoundsOption.typographicBounds,
-    .imageBounds
-  ])
+
+  @Test(
+    "TextLineLayoutContext",
+    arguments: [
+      CTLineLayoutFragment.BoundsOption.typographicBounds,
+      .imageBounds,
+    ])
   func textLineLayoutContext(_ bounds: CTLineLayoutFragment.BoundsOption) {
     let context0 = TextLineLayoutContext(StyleSheetTests.testingStyleSheet(), bounds)
 
@@ -73,17 +74,17 @@ struct CTLineLayoutContextTests {
     let textNode = TextNode(string)
     do {
       context0.beginEditing()
-      context0.insertText(textNode.string, textNode)
+      context0.insertTextForward(textNode.string, textNode)
       context0.endEditing()
       #expect(context0.renderedString.string == string)
     }
     do {
-      context0.resetCursor()
+      context0.resetCursorForForwardEditing()
       context0.beginEditing()
-      context0.deleteBackwards(1)
-      context0.skipBackwards(5)
-      context0.deleteBackwards(2)
-      context0.invalidateBackwards(5)
+      context0.invalidateForward(5)
+      context0.deleteForward(2)
+      context0.skipForward(5)
+      context0.deleteForward(1)
       context0.addParagraphStyle(textNode, 0..<10)
       context0.endEditing()
       #expect(context0.renderedString.string == "HelloWorld")
@@ -106,24 +107,24 @@ struct CTLineLayoutContextTests {
     let textNode = TextNode(string)
     do {
       context0.beginEditing()
-      context0.insertText(textNode.string, textNode)
+      context0.insertTextForward(textNode.string, textNode)
       context0.endEditing()
       #expect(context0.renderedString.string == string)
     }
     do {
-      context0.resetCursor()
+      context0.resetCursorForForwardEditing()
       context0.beginEditing()
-      context0.skipBackwards(1)
-      context0.deleteBackwards(1)
-      context0.invalidateBackwards(3)
-      context0.deleteBackwards(1)
+      context0.skipForward(1)
+      context0.deleteForward(1)
+      context0.invalidateForward(3)
+      context0.deleteForward(1)
       context0.addParagraphStyle(textNode, 0..<5)
       context0.endEditing()
       #expect(context0.renderedString.string == "ab-cw")
     }
-    
+
     // Query
-    
+
     let fragment = CTLineLayoutFragment(context0)
     let context1 = MathLineLayoutContext(context0.styleSheet, fragment, mathContext)
     standardQueries(context1)

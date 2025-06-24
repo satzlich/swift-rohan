@@ -33,11 +33,11 @@ final class MultilineNode: ArrayNode {
 
   final override var isBlock: Bool { true }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is TextLayoutContext)
-    return super.performLayout(context, fromScratch: fromScratch)
+    return super.performLayoutForward(context, fromScratch: fromScratch)
   }
 
   // MARK: - Node(Codable)

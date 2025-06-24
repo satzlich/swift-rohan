@@ -41,7 +41,9 @@ final class EquationNode: MathNode {
 
   final override func layoutLength() -> Int { _layoutLength }
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  final override func performLayoutForward(
+    _ context: LayoutContext, fromScratch: Bool
+  ) -> Int {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
 
@@ -50,8 +52,8 @@ final class EquationNode: MathNode {
       _nodeFragment = nodeFragment
 
       if !isReflowActive {
-        context.insertFragment(nodeFragment, self)
-        if self.isBlock { context.addParagraphStyle(forSegment: 1, self) }
+        context.insertFragmentForward(nodeFragment, self)
+        if self.isBlock { context.addParagraphStyleBackward(forSegment: 1, self) }
         _layoutLength = 1
       }
       else {
@@ -67,12 +69,12 @@ final class EquationNode: MathNode {
       LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
 
       if !isReflowActive {
-        context.invalidateBackwards(1)
+        context.invalidateForward(1)
         _layoutLength = 1
       }
       else {
         // delete segments emitted in previous layout, and emit new segments
-        context.deleteBackwards(_layoutLength)
+        context.deleteForward(_layoutLength)
         _layoutLength = emitReflowSegments(nodeFragment)
       }
     }
@@ -84,9 +86,7 @@ final class EquationNode: MathNode {
     func emitReflowSegments(_ nodeFragment: MathListLayoutFragment) -> Int {
       precondition(self.isReflowActive)
       nodeFragment.performReflow()
-      for fragment in nodeFragment.reflowSegments.reversed() {
-        context.insertFragment(fragment, self)
-      }
+      context.insertFragmentsForward(contentsOf: nodeFragment.reflowSegments, self)
       return nodeFragment.reflowSegments.count
     }
   }

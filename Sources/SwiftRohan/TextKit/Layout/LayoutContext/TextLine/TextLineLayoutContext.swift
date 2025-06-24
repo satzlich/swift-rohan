@@ -12,9 +12,11 @@ final class TextLineLayoutContext: CTLineLayoutContext {
     super.init(styleSheet, .textMode, boundsOption)
   }
 
-  override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
+  override func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
     precondition(isEditing)
+
     guard !text.isEmpty else { return }
+
     // obtain style properties
     let properties: TextProperty = source.resolveAggregate(styleSheet)
     let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
@@ -23,5 +25,7 @@ final class TextLineLayoutContext: CTLineLayoutContext {
     // update state
     let location = NSRange(location: layoutCursor, length: 0)
     renderedString.replaceCharacters(in: location, with: attrString)
+    // update layout cursor
+    _layoutCursor += attrString.length
   }
 }

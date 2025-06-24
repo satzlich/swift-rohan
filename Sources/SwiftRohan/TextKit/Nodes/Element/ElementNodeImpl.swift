@@ -36,8 +36,23 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Node(Layout)
 
-  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-    _performLayout(context, fromScratch: fromScratch)
+  final override func performLayoutForward(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      _layoutLength = _performLayoutForwardFromScratch(context)
+      _snapshotRecords = nil
+    }
+    else if _snapshotRecords == nil {
+      _layoutLength = _performLayoutForwardSimple(context)
+    }
+    else {
+      _layoutLength = _performLayoutForwardFull(context)
+      _snapshotRecords = nil
+    }
+
+    _isDirty = false
+    return _layoutLength
   }
 
   // MARK: - Layout Impl.
@@ -69,30 +84,13 @@ internal class ElementNodeImpl: ElementNode {
   }
 
   @inline(__always)
-  private final func _performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-    if fromScratch {
-      _layoutLength = _performLayoutFromScratch(context)
-      _snapshotRecords = nil
-    }
-    else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context)
-    }
-    else {
-      _layoutLength = _performLayoutFull(context)
-      _snapshotRecords = nil
-    }
-    _isDirty = false
-    return _layoutLength
-  }
-
-  @inline(__always)
-  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
+  private final func _performLayoutForwardEmpty(_ context: LayoutContext) -> Int {
     precondition(_children.isEmpty && _newlines.isEmpty)
     switch self.isBlock {
     case true:
       if self.isPlaceholderActive {
-        let sum = StringReconciler.insert(new: "⬚", context: context, self)
-        context.addParagraphStyle(forSegment: sum, self)
+        let sum = StringReconciler.insertForward(new: "⬚", context: context, self)
+        context.addParagraphStyleBackward(forSegment: sum, self)
         return sum
       }
       else {
@@ -101,7 +99,7 @@ internal class ElementNodeImpl: ElementNode {
 
     case false:
       if self.isPlaceholderActive {
-        return StringReconciler.insert(new: "⬚", context: context, self)
+        return StringReconciler.insertForward(new: "⬚", context: context, self)
       }
       else {
         return 0
@@ -111,227 +109,247 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout from scratch.
   @inline(__always)
-  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
+  private final func _performLayoutForwardFromScratch(_ context: LayoutContext) -> Int {
     precondition(_children.count == _newlines.count)
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
-      return _performLayoutEmpty(context)
+      return _performLayoutForwardEmpty(context)
 
     case (false, true):
       var sum = 0
-      var segmentLength = 0  // accumulated segment length since entry or last newline.
-      var isSegmentDirty = false  // true if the segment is dirty.
+      var segmentLength = 0
+      var isCandidate = false
 
-      sum += NewlineReconciler.insert(new: _newlines.last!, context: context, self)
-
-      for i in _children.indices.reversed() {  // backwards insertion.
-        // 1) insert child content
-        let nc = NodeReconciler.insert(new: _children[i], context: context)
-        sum += nc
-        segmentLength += nc
-        isSegmentDirty = true
-
-        // 2) insert leading newline
+      /*
+       Invariant:
+        (a) segmentLength maintains accumulated length since entry or previous newline.
+        (b) isCandidate is true if the segment is candidate for paragraph style.
+        (c) sum maintains the total length inserted so far.
+        (d) every segment (separated by leading newlines) is applied with paragraph
+            style when downstream edge is reached with the exception of (e).
+        (e) block child nodes are skipped for paragraph style.
+       */
+      for i in _children.indices {
         let leadingNewline = _newlines.value(before: i)
-        if leadingNewline {
-          // update paragraph style before inserting leading newline.
-          if _children[i].isBlock == false, segmentLength > 0 {
-            context.addParagraphStyle(forSegment: segmentLength, self)
-          }
 
-          // insert leading newline
-          sum += NewlineReconciler.insert(new: leadingNewline, context: context, self)
-
+        // apply paragraph style when segment edge is reached.
+        if leadingNewline, isCandidate && segmentLength > 0 {
+          context.addParagraphStyleBackward(forSegment: segmentLength, self)
           // reset
           segmentLength = 0
-          isSegmentDirty = false
+          isCandidate = false
         }
-        else if _children[i].isBlock {
-          // reset
+
+        // insert newline and child content.
+        let nl =
+          NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
+        let nc = NodeReconciler.insertForward(new: _children[i], context: context)
+        sum += nl + nc
+
+        // update segment length and dirty flag.
+        if _children[i].isBlock {
           segmentLength = 0
-          isSegmentDirty = false
+          isCandidate = false
+        }
+        else {
+          segmentLength += nc
+          isCandidate = true
         }
       }
-      if isSegmentDirty, segmentLength > 0 {
-        context.addParagraphStyle(forSegment: segmentLength, self)
+      if isCandidate && segmentLength > 0 {
+        context.addParagraphStyleBackward(forSegment: segmentLength, self)
       }
+      sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
       return sum
 
     case (false, false):
       var sum = 0
-      for i in _children.indices.reversed() {
+      for i in _children.indices {
         assert(_newlines.value(before: i) == false)  // inline nodes should not contain newlines.
-        sum += NodeReconciler.insert(new: _children[i], context: context)
+        sum += NodeReconciler.insertForward(new: _children[i], context: context)
       }
       return sum
     }
   }
 
-  /// Perform layout for fromScratch=false when snapshot was not made.
+  /// Perform layout incrementally when snapshot was not made.
   @inline(__always)
-  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
+  private final func _performLayoutForwardSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
     precondition(_children.isEmpty == false)
 
     switch self.isBlock {
     case true:
       var sum = 0
-      var segmentLength = 0  // accumulated segment length since entry or last newline.
-      var isSegmentDirty = false  // true if the segment is dirty.
+      var segmentLength = 0
+      var isCandidate = false
 
-      sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
+      /*
+       Invariant:
+        (a) segmentLength maintains accumulated length since entry or previous newline.
+        (b) isCandidate is true if the segment is candidate for paragraph style.
+        (c) sum maintains the total length inserted so far.
+        (d) every segment (separated by leading newlines) is applied with paragraph
+            style when downstream edge is reached with the exception of (e).
+        (e) block child nodes are skipped for paragraph style.
+       */
 
-      // Invariant: for every maximum non-block segment which is dirty, add
-      //  paragraph style is called.
-      for i in _children.indices.reversed() {
-        // 1) deal with child content.
-        let nc: Int  // Child node length.
-        if _children[i].isDirty == false {
-          nc = NodeReconciler.skip(current: _children[i], context: context)
+      for i in _children.indices {
+        let leadingNewline = _newlines.value(before: i)
+
+        // apply paragraph style when segment edge is reached.
+        if leadingNewline, isCandidate && segmentLength > 0 {
+          context.addParagraphStyleBackward(forSegment: segmentLength, self)
+          // reset
+          segmentLength = 0
+          isCandidate = false
+        }
+
+        // process newline and child content.
+        let childWasDirty = _children[i].isDirty
+        let nl = NewlineReconciler.skipForward(current: leadingNewline, context: context)
+        let nc =
+          _children[i].isDirty
+          ? NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          : NodeReconciler.skipForward(current: _children[i], context: context)
+        sum += nl + nc
+
+        // update segment length and dirty flag.
+        if _children[i].isBlock {
+          segmentLength = 0
+          isCandidate = false
         }
         else {
-          nc = NodeReconciler.reconcile(dirty: _children[i], context: context)
-          isSegmentDirty = true
-        }
-        sum += nc
-        segmentLength += nc
-
-        // 2) deal with leading newline.
-        let leadingNewline = _newlines.value(before: i)
-        if leadingNewline {
-          // update paragraph style before inserting leading newline.
-          if isSegmentDirty,
-            _children[i].isBlock == false && segmentLength > 0
-          {
-            context.addParagraphStyle(forSegment: segmentLength, self)
-          }
-
-          // skip leading newline
-          sum += NewlineReconciler.skip(current: leadingNewline, context: context)
-
-          // reset
-          segmentLength = 0
-          isSegmentDirty = false
-        }
-        else if _children[i].isBlock {
-          // reset
-          segmentLength = 0
-          isSegmentDirty = false
+          segmentLength += nc
+          isCandidate = isCandidate || childWasDirty
         }
       }
-      if isSegmentDirty, segmentLength > 0 {
-        context.addParagraphStyle(forSegment: segmentLength, self)
+      if isCandidate && segmentLength > 0 {
+        context.addParagraphStyleBackward(forSegment: segmentLength, self)
       }
+      sum += NewlineReconciler.skipForward(current: _newlines.last!, context: context)
       return sum
 
     case false:
       var sum = 0
-      for i in _children.indices.reversed() {
+      for i in _children.indices {
         assert(_newlines.value(before: i) == false)
-        if _children[i].isDirty == false {
-          sum += NodeReconciler.skip(current: _children[i], context: context)
-        }
-        else {
-          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-        }
+        sum +=
+          _children[i].isDirty
+          ? NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          : NodeReconciler.skipForward(current: _children[i], context: context)
       }
       return sum
     }
   }
 
-  /// Perform layout for fromScratch=false when snapshot has been made.
+  /// Perform layout incrementally when snapshot has been made.
   @inline(__always)
-  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
+  private final func _performLayoutForwardFull(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
-      context.deleteBackwards(_layoutLength)
-      return _performLayoutEmpty(context)
+      context.deleteForward(_layoutLength)
+      return _performLayoutForwardEmpty(context)
 
     case (false, true):
       let (current, original) = _computeExtendedRecords()
 
       var sum = 0
-      var segmentLength = 0  // accumulated segment length since entry or last newline.
-      var isSegmentDirty = false  // true if the segment is dirty.
-      var j = original.count - 1
+      var segmentLength = 0
+      var isCandidate = false
+      var j = 0
+      let originalCount = original.count
 
-      do {
-        let old = original.last?.trailingNewline ?? false
-        let new = _newlines.last!
-        let n = NewlineReconciler.reconcile(dirty: (old, new), context: context, self)
-        sum += n
-      }
-
-      for i in _children.indices.reversed() {
+      /*
+       Invariant:
+        (a) segmentLength maintains accumulated length since entry or previous newline.
+        (b) isCandidate is true if the segment is candidate for paragraph style.
+        (c) sum maintains the total length inserted so far.
+        (d) every segment (separated by leading newlines) is applied with paragraph
+            style when downstream edge is reached with the exception of (e).
+        (e) block child nodes are skipped for paragraph style.
+       */
+      for i in _children.indices {
         // process deleted in a batch if any.
-        while j >= 0 && original[j].mark == .deleted {
-          NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
-          j -= 1
+        while j < originalCount && original[j].mark == .deleted {
+          NewlineReconciler.deleteForward(
+            old: original[j].leadingNewline, context: context)
+          NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+          j += 1
         }
 
         let leadingNewline = _newlines.value(before: i)
 
-        let nc: Int  // Child node length.
-        let nl: Int  // Newline length.
+        // apply paragraph style when segment edge is reached.
+        if leadingNewline, isCandidate && segmentLength > 0 {
+          context.addParagraphStyleBackward(forSegment: segmentLength, self)
+          // reset
+          segmentLength = 0
+          isCandidate = false
+        }
+
+        let nc: Int
+        let nl: Int
 
         // process added.
         if current[i].mark == .added {
-          nc = NodeReconciler.insert(new: _children[i], context: context)
-          nl = NewlineReconciler.insert(new: leadingNewline, context: context, self)
-          isSegmentDirty = true
+          nl =
+            NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
+          nc = NodeReconciler.insertForward(new: _children[i], context: context)
+          isCandidate = true
         }
         // skip none.
         else if current[i].mark == .none,
-          j >= 0 && original[j].mark == .none
+          j < originalCount && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
-          nc = NodeReconciler.skip(current: current[i].layoutLength, context: context)
           let newlines = (original[j].leadingNewline, leadingNewline)
-          nl = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          j -= 1
+          nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
+          nc =
+            NodeReconciler.skipForward(current: current[i].layoutLength, context: context)
+          j += 1
         }
         // process dirty.
         else {
-          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
+          assert(j < originalCount && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
-          nc = NodeReconciler.reconcile(dirty: _children[i], context: context)
           let newlines = (original[j].leadingNewline, leadingNewline)
-          nl = NewlineReconciler.reconcile(dirty: newlines, context: context, self)
-          isSegmentDirty = true
-          j -= 1
+          nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
+          nc = NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          isCandidate = true
+          j += 1
         }
-
         sum += nc + nl
-        segmentLength += nc + nl
 
-        if isSegmentDirty {
-          if leadingNewline,
-            _children[i].isBlock == false && segmentLength > 0
-          {
-            let begin = context.layoutCursor + nl
-            let end = begin + segmentLength - nl
-            context.addParagraphStyle(self, begin..<end)
-          }
-        }
-        if leadingNewline || _children[i].isBlock {
+        // update segment length and dirty flag.
+        if _children[i].isBlock {
           segmentLength = 0
-          isSegmentDirty = false
+          isCandidate = false
+        }
+        else {
+          segmentLength += nc
+          // isCandidate is unchanged.
         }
       }
       // process deleted in a batch if any.
-      while j >= 0 && original[j].mark == .deleted {
-        NodeReconciler.delete(old: original[j].layoutLength, context: context)
-        NewlineReconciler.delete(old: original[j].leadingNewline, context: context)
-        j -= 1
+      while j < originalCount && original[j].mark == .deleted {
+        NewlineReconciler.deleteForward(old: original[j].leadingNewline, context: context)
+        NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+        j += 1
       }
-      assert(j < 0)
-
-      if isSegmentDirty, segmentLength > 0 {
-        context.addParagraphStyle(forSegment: segmentLength, self)
+      assert(j == originalCount)
+      if isCandidate, segmentLength > 0 {
+        context.addParagraphStyleBackward(forSegment: segmentLength, self)
+      }
+      do {
+        let old = original.last?.trailingNewline ?? false
+        let new = _newlines.last!
+        let n = NewlineReconciler.reconcileForward(
+          dirty: (old, new), context: context, self)
+        sum += n
       }
       return sum
 
@@ -339,48 +357,50 @@ internal class ElementNodeImpl: ElementNode {
       let (current, original) = _computeExtendedRecords()
 
       var sum = 0
-      var j = original.count - 1
+      var j = 0
+      let originalCount = original.count
 
-      for i in _children.indices.reversed() {
+      for i in _children.indices {
         // process deleted in a batch if any.
-        while j >= 0 && original[j].mark == .deleted {
+        while j < originalCount && original[j].mark == .deleted {
           assert(original[j].leadingNewline == false)
-          NodeReconciler.delete(old: original[j].layoutLength, context: context)
-          j -= 1
+          NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+          j += 1
         }
 
         // process added.
         if current[i].mark == .added {
           assert(current[i].leadingNewline == false)
-          sum += NodeReconciler.insert(new: _children[i], context: context)
+          sum += NodeReconciler.insertForward(new: _children[i], context: context)
         }
         // skip none.
         else if current[i].mark == .none,
-          j >= 0 && original[j].mark == .none
+          j < originalCount && original[j].mark == .none
         {
           assert(current[i].nodeId == original[j].nodeId)
           assert(current[i].leadingNewline == false)
           assert(original[j].leadingNewline == false)
-          sum += NodeReconciler.skip(current: current[i].layoutLength, context: context)
-          j -= 1
+          sum +=
+            NodeReconciler.skipForward(current: current[i].layoutLength, context: context)
+          j += 1
         }
         // process dirty.
         else {
-          assert(j >= 0 && current[i].nodeId == original[j].nodeId)
+          assert(j < originalCount && current[i].nodeId == original[j].nodeId)
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
           assert(current[i].leadingNewline == false)
           assert(original[j].leadingNewline == false)
-          sum += NodeReconciler.reconcile(dirty: _children[i], context: context)
-          j -= 1
+          sum += NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          j += 1
         }
       }
       // process deleted in a batch if any.
-      while j >= 0 && original[j].mark == .deleted {
+      while j < originalCount && original[j].mark == .deleted {
         assert(original[j].leadingNewline == false)
-        NodeReconciler.delete(old: original[j].layoutLength, context: context)
-        j -= 1
+        NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+        j += 1
       }
-      assert(j < 0)
+      assert(j == originalCount)
       return sum
     }
   }

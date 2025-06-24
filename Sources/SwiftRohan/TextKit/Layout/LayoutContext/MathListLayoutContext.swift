@@ -33,9 +33,9 @@ final class MathListLayoutContext: LayoutContext {
   /// index in the math list, measured in number of fragments
   private var fragmentIndex: Int = 0
 
-  func resetCursor() {
-    self.layoutCursor = layoutFragment.contentLayoutLength
-    self.fragmentIndex = layoutFragment.count
+  func resetCursorForForwardEditing() {
+    self.layoutCursor = 0
+    self.fragmentIndex = 0
   }
 
   var isEditing: Bool { layoutFragment.isEditing }
@@ -55,78 +55,74 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func skipBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-
-    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
-    else { preconditionFailure("index not found") }
-
-    // update location
-    layoutCursor -= n
-    fragmentIndex = index
-  }
-
-  func deleteBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-
-    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
-    else { preconditionFailure("index not found") }
-
-    // remove
-    layoutFragment.removeSubrange(index..<fragmentIndex)
-
-    // update location
-    layoutCursor -= n
-    fragmentIndex = index
-  }
-
-  func invalidateBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-
-    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
-    else { preconditionFailure("index not found") }
-
-    // invalidate
-    layoutFragment.invalidateSubrange(index..<fragmentIndex)
-
-    // update location
-    layoutCursor -= n
-    fragmentIndex = index
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing && layoutCursor >= 0)
-    guard !text.isEmpty else { return }
-    let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
-    let fragments = _fragmentFactory.makeFragments(from: text, mathProperty)
-    layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
-  }
-
-  func insertNewline(_ context: Node) {
-    precondition(isEditing && layoutCursor >= 0)
-    assertionFailure("newline is invalid")
-    // newline is invalid; insert a replacement glyph instead
-    let glyph = _fragmentFactory.replacementGlyph(1)
-    layoutFragment.insert(glyph, at: fragmentIndex)
-  }
-
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing && layoutCursor >= 0)
-    assert(fragment is MathLayoutFragment)
-    // for robustness, insert a replacement glyph for invalid fragment
-    if let fragment = fragment as? MathLayoutFragment {
-      layoutFragment.insert(fragment, at: fragmentIndex)
-    }
-    else {
-      let glyph = _fragmentFactory.replacementGlyph(fragment.layoutLength)
-      layoutFragment.insert(glyph, at: fragmentIndex)
-    }
-  }
-
   /// Get math fragments for the given string.
   internal func getFragments(for string: String, _ source: Node) -> Array<MathFragment> {
     let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
     return _fragmentFactory.makeFragments(from: string, mathProperty)
+  }
+
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: n)
+    else { preconditionFailure("index not found") }
+
+    // update location
+    layoutCursor += n
+    fragmentIndex = index
+  }
+
+  func deleteForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: n)
+    else { preconditionFailure("index not found") }
+    // remove
+    layoutFragment.removeSubrange(fragmentIndex..<index)
+    // location remains unchanged
+  }
+
+  func invalidateForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: n)
+    else { preconditionFailure("index not found") }
+    // invalidate
+    layoutFragment.invalidateSubrange(fragmentIndex..<index)
+
+    // update location
+    layoutCursor += n
+    fragmentIndex = index
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    precondition(isEditing && layoutCursor >= 0)
+    guard !text.isEmpty else { return }
+    let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
+    let text = String(text)
+    let fragments = _fragmentFactory.makeFragments(from: text, mathProperty)
+    layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
+
+    // update location
+
+    layoutCursor += text.length
+    fragmentIndex += fragments.count
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    precondition(isEditing && layoutCursor >= 0)
+    guard let fragment = fragment as? MathLayoutFragment else {
+      preconditionFailure("Invalid fragment type: \(Swift.type(of: fragment))")
+    }
+
+    layoutFragment.insert(fragment, at: fragmentIndex)
+    // update location
+    layoutCursor += fragment.layoutLength
+    fragmentIndex += 1
   }
 
   // MARK: - Query

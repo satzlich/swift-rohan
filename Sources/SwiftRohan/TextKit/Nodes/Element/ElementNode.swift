@@ -53,11 +53,6 @@ internal class ElementNode: Node {
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
 
-  internal override func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int
-  {
-    preconditionFailure("overriding required")
-  }
-
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case children }

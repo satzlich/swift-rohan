@@ -11,8 +11,8 @@ protocol LayoutContext {
   /// Cursor in the layout context
   var layoutCursor: Int { get }
 
-  /// Reset layout cursor to the end of the layout context
-  func resetCursor()
+  /// Reset layout cursor to the beginning of the layout context
+  func resetCursorForForwardEditing()
 
   var isEditing: Bool { get }
   func beginEditing()
@@ -23,36 +23,36 @@ protocol LayoutContext {
   /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
 
-  /// Add paragraph style to the segment after current cursor.
-  /// - Parameters:
-  ///   - segment: the segment length to add paragraph style for.
-  ///   - source: the source node that provides the paragraph style.
-  func addParagraphStyle(forSegment segment: Int, _ source: Node)
+  /// Add paragraph style to the segment before current cursor.
+  func addParagraphStyleBackward(forSegment segment: Int, _ source: Node)
 
   /// Add attributes to the given range.
   func addAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>)
 
-  // MARK: - Operations
+  // MARK: - Editing
 
-  /// Place cursor at `layoutCursor - n`
-  func skipBackwards(_ n: Int)
+  /// Move cursor forward by `n` units.
+  func skipForward(_ n: Int)
 
-  /// Remove `[layoutCursor - n, layoutCursor)` and place cursor at `layoutCursor - n`
-  func deleteBackwards(_ n: Int)
+  /// Delete forward by `n` units. Cursor remains at the same location.
+  func deleteForward(_ n: Int)
 
-  /// Inform the layout context that the frames for `[layoutCursor - n, layoutCursor)`
-  /// now become invalid, and place cursor at `layoutCursor - n`
-  func invalidateBackwards(_ n: Int)
+  /// Inform the layout context that the frames for the next `n` units now
+  /// become invalid, and move cursor forward by `n` units.
+  func invalidateForward(_ n: Int)
 
-  /// Insert text at cursor. Cursor remains at the same location.
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node)
+  /// Insert text at cursor and move cursor forward by the length of the text.
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node)
 
-  /// Insert newline at cursor. Cursor remains at the same location.
-  func insertNewline(_ context: Node)
+  /// Insert newline at cursor and move cursor forward by one unit.
+  func insertNewlineForward(_ context: Node)
 
-  /// Insert fragment at cursor. Cursor remains at the same location.
-  func insertFragment(_ fragment: LayoutFragment, _ source: Node)
+  /// Insert fragment at cursor and move cursor forward by the length of the fragment.
+  func insertFragmentForward(_ fragment: LayoutFragment, _ source: Node)
+
+  /// Insert fragments at cursor and move cursor forward by the total length of the fragments.
+  func insertFragmentsForward(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
 
   // MARK: - Query
 
@@ -118,7 +118,7 @@ extension LayoutContext {
     // defeault implementation does nothing.
   }
 
-  func addParagraphStyle(forSegment segment: Int, _ source: Node) {
+  func addParagraphStyleBackward(forSegment segment: Int, _ source: Node) {
     precondition(isEditing)
     // defeault implementation does nothing.
   }
@@ -128,5 +128,12 @@ extension LayoutContext {
   ) {
     precondition(isEditing)
     // defeault implementation does nothing.
+  }
+
+  func insertFragmentsForward(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
+  {
+    for fragment in fragments {
+      insertFragmentForward(fragment, source)
+    }
   }
 }

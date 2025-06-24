@@ -32,7 +32,7 @@ final class MathOperatorNode: SimpleNode {
 
   final override func layoutLength() -> Int { 1 }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -42,7 +42,7 @@ final class MathOperatorNode: SimpleNode {
       let fragment =
         MathOperatorLayoutFragment(self, context.styleSheet, context.mathContext)
       _mathOperatorFragment = fragment
-      context.insertFragment(fragment, self)
+      context.insertFragmentForward(fragment, self)
     }
     else {
       guard _mathOperatorFragment != nil
@@ -50,7 +50,7 @@ final class MathOperatorNode: SimpleNode {
         assertionFailure("Fragment should exist")
         return 1
       }
-      context.skipBackwards(1)
+      context.skipForward(1)
     }
 
     return 1

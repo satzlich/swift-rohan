@@ -57,10 +57,10 @@ final class ApplyNode: Node {
 
   final override var isDirty: Bool { _content.isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
-    _content.performLayout(context, fromScratch: fromScratch)
+    _content.performLayoutForward(context, fromScratch: fromScratch)
   }
 
   // MARK: - Node(Codable)

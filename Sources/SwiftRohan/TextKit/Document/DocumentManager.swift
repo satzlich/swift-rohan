@@ -527,10 +527,11 @@ public final class DocumentManager: NSObject {
 
     // perform layout
     layoutContext.beginEditing()
+    layoutContext.resetCursorForForwardEditing()
     textContentStorage.performEditingTransaction {
       let fromScratch = textContentStorage.documentRange.isEmpty
       guard rootNode.isDirty || fromScratch else { return }
-      _ = rootNode.performLayout(layoutContext, fromScratch: fromScratch)
+      _ = rootNode.performLayoutForward(layoutContext, fromScratch: fromScratch)
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)

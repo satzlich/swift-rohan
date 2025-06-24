@@ -26,8 +26,8 @@ final class TextLayoutContext: LayoutContext {
 
   private(set) var layoutCursor: Int
 
-  internal func resetCursor() {
-    self.layoutCursor = textContentStorage.textStorage!.length
+  internal func resetCursorForForwardEditing() {
+    self.layoutCursor = 0
   }
 
   private(set) var isEditing: Bool = false
@@ -51,10 +51,11 @@ final class TextLayoutContext: LayoutContext {
     textStorage.addAttributes(attributes, range: NSRange(range))
   }
 
-  func addParagraphStyle(forSegment segment: Int, _ source: Node) {
+  func addParagraphStyleBackward(forSegment segment: Int, _ source: Node) {
     precondition(isEditing)
-    let begin = self.layoutCursor
-    let end = begin + segment
+    let begin = self.layoutCursor - segment
+    let end = self.layoutCursor
+    precondition(begin >= 0)
     self.addParagraphStyle(source, begin..<end)
   }
 
@@ -63,76 +64,6 @@ final class TextLayoutContext: LayoutContext {
   ) {
     precondition(isEditing)
     textStorage.addAttributes(attributes, range: NSRange(range))
-  }
-
-  // MARK: - Operations
-
-  func skipBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    layoutCursor -= n
-  }
-
-  func deleteBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    // find range
-    let location = layoutCursor - n
-    let range = NSRange(location: location, length: n)
-    // update state
-    textStorage.replaceCharacters(in: range, with: "")
-    layoutCursor = location
-  }
-
-  func invalidateBackwards(_ n: Int) {
-    precondition(isEditing && n >= 0 && layoutCursor >= n)
-    // find character range
-    let location = layoutCursor - n
-    let range = NSRange(location: location, length: n)
-    // update layout cursor no matter what
-    defer { layoutCursor = location }
-    // find text range
-    guard let textRange = textContentStorage.textRange(for: range)
-    else { assertionFailure("text range not found"); return }
-    // update state
-    textLayoutManager.invalidateLayout(for: textRange)
-  }
-
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-    // obtain style properties
-    let properties: TextProperty = source.resolveAggregate(styleSheet)
-    let attributes = properties.getAttributes()
-    // create attributed string
-    let attrString = NSAttributedString(string: String(text), attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
-  }
-
-  func insertNewline(_ source: Node) {
-    precondition(isEditing)
-    // obtain style properties
-    let properties: TextProperty = source.resolveAggregate(styleSheet)
-    let attributes = properties.getAttributes()
-    // create attributed string
-    let attrString = NSAttributedString(string: "\n", attributes: attributes)
-    assert(attrString.length == 1)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
-  }
-
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
-
-    // obtain style properties
-    let properties: TextProperty = source.resolveAggregate(styleSheet)
-    let attributes = properties.getAttributes()
-    // form attributed string
-    let attrString = Self.attributedString(for: fragment, attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
   }
 
   /// Wrap given fragment in text attachment which is further embedded in an
@@ -148,6 +79,72 @@ final class TextLayoutContext: LayoutContext {
     else {
       return NSAttributedString(attachment: attachment)
     }
+  }
+
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    layoutCursor += n
+  }
+
+  func deleteForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    let range = NSRange(location: layoutCursor, length: n)
+    textStorage.replaceCharacters(in: range, with: "")
+    // cursor remains unchanged.
+  }
+
+  func invalidateForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    // find character range
+    let range = NSRange(location: layoutCursor, length: n)
+    // find text range
+    guard let textRange = textContentStorage.textRange(for: range)
+    else { assertionFailure("text range not found"); return }
+    // update state
+    textLayoutManager.invalidateLayout(for: textRange)
+    // update layout cursor no matter what
+    layoutCursor += n
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    precondition(isEditing)
+    guard !text.isEmpty else { return }
+    // obtain style properties
+    let properties: TextProperty = source.resolveAggregate(styleSheet)
+    let attributes = properties.getAttributes()
+    // create attributed string
+    let attrString = NSAttributedString(string: String(text), attributes: attributes)
+    // update state
+    textStorage.insert(attrString, at: layoutCursor)
+    layoutCursor += attrString.length
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    precondition(isEditing)
+    // obtain style properties
+    let properties: TextProperty = context.resolveAggregate(styleSheet)
+    let attributes = properties.getAttributes()
+    // create attributed string
+    let attrString = NSAttributedString(string: "\n", attributes: attributes)
+    assert(attrString.length == 1)
+    // update state
+    textStorage.insert(attrString, at: layoutCursor)
+    layoutCursor += attrString.length
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    precondition(isEditing)
+    // obtain style properties
+    let properties: TextProperty = source.resolveAggregate(styleSheet)
+    let attributes = properties.getAttributes()
+    // form attributed string
+    let attrString = Self.attributedString(for: fragment, attributes)
+    assert(attrString.length == fragment.layoutLength)
+    // update state
+    textStorage.insert(attrString, at: layoutCursor)
+    layoutCursor += attrString.length
   }
 
   // MARK: - Frame

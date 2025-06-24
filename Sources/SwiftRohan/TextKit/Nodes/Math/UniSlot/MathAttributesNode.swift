@@ -20,7 +20,7 @@ final class MathAttributesNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -34,7 +34,7 @@ final class MathAttributesNode: MathNode {
       _nodeFragment = attrFragment
 
       attrFragment.fixLayout(context.mathContext)
-      context.insertFragment(attrFragment, self)
+      context.insertFragmentForward(attrFragment, self)
     }
     else {
       guard let attrFragment = _nodeFragment
@@ -59,12 +59,12 @@ final class MathAttributesNode: MathNode {
       if needsFixLayout {
         attrFragment.fixLayout(context.mathContext)
         if attrFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
+          context.invalidateForward(layoutLength())
           return layoutLength()
         }
         // FALL THROUGH
       }
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
     return layoutLength()
   }

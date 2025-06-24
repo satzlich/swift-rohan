@@ -140,10 +140,10 @@ internal class Node: Codable {
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /// Perform layout. When the method is returned, the node must be laid out
-  /// with dirty flag cleared and layout length updated.
+  /// Perform layout in the forward direction. When the method is returned, the node
+  /// must be laid out with dirty flag cleared and layout length updated.
   /// - Returns: the number of layout units contributed by the node.
-  internal func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  internal func performLayoutForward(_ context: LayoutContext, fromScratch: Bool) -> Int {
     preconditionFailure("overriding required")
   }
 

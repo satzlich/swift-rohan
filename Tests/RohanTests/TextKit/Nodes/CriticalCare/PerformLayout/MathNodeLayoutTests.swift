@@ -18,7 +18,7 @@ struct MathNodeLayoutTests {
     let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(styleSheet, mathContext, fragment)
     context.beginEditing()
-    _ = contentNode.performLayout(context, fromScratch: true)
+    _ = contentNode.performLayoutForward(context, fromScratch: true)
     context.endEditing()
 
     for node in mathNodes {
@@ -53,7 +53,7 @@ struct MathNodeLayoutTests {
     let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(styleSheet, mathContext, fragment)
     context.beginEditing()
-    _ = contentNode.performLayout(context, fromScratch: true)
+    _ = contentNode.performLayoutForward(context, fromScratch: true)
     context.endEditing()
     return (contentNode, context)
   }
@@ -61,9 +61,9 @@ struct MathNodeLayoutTests {
   private func performLayout(
     _ context: MathListLayoutContext, _ contentNode: ContentNode
   ) {
-    context.resetCursor()
+    context.resetCursorForForwardEditing()
     context.beginEditing()
-    _ = contentNode.performLayout(context, fromScratch: false)
+    _ = contentNode.performLayoutForward(context, fromScratch: false)
     context.endEditing()
   }
 

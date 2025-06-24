@@ -39,9 +39,9 @@ final class MathLineLayoutContext: LayoutContext {
 
   private(set) var layoutCursor: Int
 
-  func resetCursor() {
-    layoutCursor = originalString.length
-    layoutContext.resetCursor()
+  func resetCursorForForwardEditing() {
+    layoutCursor = 0
+    layoutContext.resetCursorForForwardEditing()
   }
 
   var isEditing: Bool { layoutContext.isEditing }
@@ -57,27 +57,34 @@ final class MathLineLayoutContext: LayoutContext {
     assert(resolvedString.resolved.length == renderedString.length)
   }
 
-  func skipBackwards(_ n: Int) {
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
     precondition(isEditing)
-    let location = layoutCursor - n
-    let resolvedRange = resolvedString.resolvedRange(for: location..<layoutCursor)
-    layoutContext.skipBackwards(resolvedRange.count)
+    let location = layoutCursor + n
+    let resolvedRange = resolvedString.resolvedRange(for: layoutCursor..<location)
+    layoutContext.skipForward(resolvedRange.count)
     layoutCursor = location
   }
 
-  func deleteBackwards(_ n: Int) {
+  func deleteForward(_ n: Int) {
     precondition(isEditing)
-    let location = layoutCursor - n
-    let resolvedRange = resolvedString.removeSubrange(location..<layoutCursor)
-    layoutContext.deleteBackwards(resolvedRange.count)
-    layoutCursor = location
+    let location = layoutCursor + n
+    let resolvedRange = resolvedString.removeSubrange(layoutCursor..<location)
+    layoutContext.deleteForward(resolvedRange.count)
+    // cursor remains unchanged.
   }
 
-  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
+  func invalidateForward(_ n: Int) {
+    self.skipForward(n)
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
     precondition(isEditing)
     guard !text.isEmpty else { return }
 
-    //
+    let text = String(text)
+
     let mathProperty = source.resolveAggregate(styleSheet) as MathProperty
     let textProperty = source.resolveAggregate(styleSheet) as TextProperty
     let attributes = mathProperty.getAttributes(
@@ -86,33 +93,21 @@ final class MathLineLayoutContext: LayoutContext {
     //
     let range = layoutCursor..<layoutCursor
     let (rrange, rstring) =
-      resolvedString.replaceSubrange(range, with: String(text), mathProperty)
+      resolvedString.replaceSubrange(range, with: text, mathProperty)
     let attrString = NSAttributedString(string: rstring, attributes: attributes)
     //
     renderedString.replaceCharacters(in: NSRange(rrange), with: attrString)
+
+    // update location
+    layoutCursor += text.length
   }
 
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
-    precondition(fragment.layoutLength == source.layoutLength())
-
-    assertionFailure("insertFragment not supported")
-    let string = String(repeating: "\u{FFFD}", count: fragment.layoutLength)
-    _ = resolvedString.replaceSubrange(layoutCursor..<layoutCursor, with: string)
-
-    layoutContext.insertFragment(fragment, source)
+  func insertNewlineForward(_ context: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func insertNewline(_ context: Node) {
-    precondition(isEditing)
-    assertionFailure("insertNewline not supported")
-    _ = resolvedString.replaceSubrange(layoutCursor..<layoutCursor, with: "\u{FFFD}")
-
-    layoutContext.insertNewline(context)
-  }
-
-  func invalidateBackwards(_ n: Int) {
-    self.skipBackwards(n)
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Query
