@@ -117,13 +117,6 @@ enum NodePolicy {
     isElementNode(node) || isTextNode(node) || isArgumentNode(node)
   }
 
-  /// Returns true if a cursor placed **immediately** before a node of given kind
-  /// needs correction.
-  @inline(__always)
-  static func needsLeadingCursorCorrection(_ nodeType: NodeType) -> Bool {
-    nodeType == .itemList
-  }
-
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
   @inline(__always)

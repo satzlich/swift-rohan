@@ -211,9 +211,16 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /// Horizontal cursor correction applied to a cursor position when the cursor is
-  /// at the leading edge of the node.
+  internal var needsLeadingCursorCorrection: Bool { false }
+  internal var needsTrailingCursorCorrection: Bool { false }
+
+  /// Horizontal cursor **correction** applied to a cursor position when the cursor is
+  /// at the leading edge of the node which is the first child of a block node.
   internal func leadingCursorCorrection() -> Double { 0 }
+
+  /// Horizontal cursor **position** used when the cursor is at the trailing edge of
+  /// the node which is the last child of a block node.
+  internal func trailingCursorPosition() -> Double? { nil }
 
   /// Resolve the text location for the given point within the node.
   /// - Parameters:
@@ -253,10 +260,6 @@ extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
   final var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
-
-  final var needsLeadingCursorCorrection: Bool {
-    NodePolicy.needsLeadingCursorCorrection(type)
-  }
 
   final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet)

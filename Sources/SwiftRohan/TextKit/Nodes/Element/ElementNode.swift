@@ -64,7 +64,7 @@ internal class ElementNode: Node {
     // children and newlines
     self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
     self._newlines = NewlineArray(
-      _children.lazy.map(\.isBlock), mask: Self.newlineArrayMask())
+      _children.lazy.map(\.isBlock), trailingMask: Self._trailingNewlineMask())
 
     self._layoutLength = 0
     self._isDirty = false
@@ -117,50 +117,56 @@ internal class ElementNode: Node {
         // use placeholderBlock
         using: placeholderBlock(_:_:_:))
     }
-    // if start location is immediately before a node that needs leading cursor
-    // correction, we need to construct a leading cursor block.
-    else if path.count == 1,
-      index < _children.count,
-      _children[index].needsLeadingCursorCorrection
-    {
-      guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
-        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
-      else { assertionFailure("Invalid path"); return false }
-      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
-
-      // construct leading cursor block.
-      var isFirstProcessed = false
-      func leadingCursorBlock(
-        _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
-        _ baselinePosition: CGFloat
-      ) -> Bool {
-        precondition(node.needsLeadingCursorCorrection)
-        var correctedFrame = segmentFrame.offsetBy(originCorrection)
-        if !isFirstProcessed {
-          let cursorCorrection = node.leadingCursorCorrection()
-          correctedFrame.origin.x += cursorCorrection
-          if correctedFrame.size.width != 0 {
-            correctedFrame.size.width -= cursorCorrection
-          }
-          isFirstProcessed = true
-        }
-        return block(nil, correctedFrame, baselinePosition)
-      }
-
-      return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use leadingCursorBlock
-        using: { leadingCursorBlock(_children[index], $0, $1, $2) })
-    }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
         let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
-      return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use basicBlock
-        using: basicBlock(_:_:_:))
+
+      @inline(__always)
+      func needsLeadingCursorCorrection() -> Bool {
+        (path.count == 1 && index < _children.count
+          && _children[index].needsLeadingCursorCorrection)
+          || (path.count == 2 && path.last! == .index(0)
+            && _children[index].needsLeadingCursorCorrection)
+      }
+
+      if needsLeadingCursorCorrection() {
+        var isFirstProcessed = false
+        func leadingCursorBlock(
+          _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
+          _ baselinePosition: CGFloat
+        ) -> Bool {
+          precondition(node.needsLeadingCursorCorrection)
+          var correctedFrame = segmentFrame.offsetBy(originCorrection)
+          if !isFirstProcessed {
+            let cursorCorrection = node.leadingCursorCorrection()
+            correctedFrame.origin.x += cursorCorrection
+            if correctedFrame.size.width != 0 {
+              correctedFrame.size.width -= cursorCorrection
+            }
+            isFirstProcessed = true
+          }
+          return block(nil, correctedFrame, baselinePosition)
+        }
+        return context.enumerateTextSegments(
+          layoutRange, type: type, options: options,
+          using: { leadingCursorBlock(_children[index], $0, $1, $2) })
+      }
+      else if endPath.count == 1,
+        endIndex == _children.count && _children.count > 0,
+        _children[endIndex - 1].needsTrailingCursorCorrection
+      {
+        // TODO: handle trailing cursor correction.
+        return context.enumerateTextSegments(
+          layoutRange, type: type, options: options,
+          using: basicBlock(_:_:_:))
+      }
+      else {
+        return context.enumerateTextSegments(
+          layoutRange, type: type, options: options,
+          using: basicBlock(_:_:_:))
+      }
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
@@ -454,7 +460,7 @@ internal class ElementNode: Node {
   /// including: a) the last paragraph with no text occasionally uses the
   /// alignment of the previous paragraph, b) the block equation in position
   /// of the second last paragraph have a wrong horizontal shift.
-  private class func newlineArrayMask() -> Bool { self.type == .root }
+  private class func _trailingNewlineMask() -> Bool { self.type == .root }
 
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
@@ -467,7 +473,7 @@ internal class ElementNode: Node {
   internal init(_ children: ElementStore) {
     self._children = children
     self._newlines =
-      NewlineArray(children.lazy.map(\.isBlock), mask: Self.newlineArrayMask())
+      NewlineArray(children.lazy.map(\.isBlock), trailingMask: Self._trailingNewlineMask())
     self._layoutLength = 0
     self._isDirty = false
 
@@ -478,7 +484,7 @@ internal class ElementNode: Node {
   /// - Warning: Sync with other init() method.
   internal override init() {
     self._children = ElementStore()
-    self._newlines = NewlineArray(mask: Self.newlineArrayMask())
+    self._newlines = NewlineArray(trailingMask: Self._trailingNewlineMask())
     self._layoutLength = 0
     self._isDirty = false
 
