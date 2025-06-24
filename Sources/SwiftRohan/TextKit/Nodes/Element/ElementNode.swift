@@ -120,7 +120,7 @@ internal class ElementNode: Node {
     // if start location is immediately before a node that needs leading cursor
     // correction, we need to construct a leading cursor block.
     else if path.count == 1,
-      index < _children.count,
+      index == 0 && index < _children.count,
       _children[index].needsLeadingCursorCorrection
     {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
