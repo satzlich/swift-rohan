@@ -23,6 +23,13 @@ final class MatrixNode: ArrayNode {
     return super.performLayout(context, fromScratch: fromScratch)
   }
 
+  final override func performLayoutForward(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    precondition(context is MathListLayoutContext)
+    return super.performLayoutForward(context, fromScratch: fromScratch)
+  }
+
   // MARK: - Node(Codable)
 
   required init(from decoder: any Decoder) throws {

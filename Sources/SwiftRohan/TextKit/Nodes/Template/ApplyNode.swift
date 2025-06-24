@@ -63,6 +63,12 @@ final class ApplyNode: Node {
     _content.performLayout(context, fromScratch: fromScratch)
   }
 
+  final override func performLayoutForward(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    _content.performLayoutForward(context, fromScratch: fromScratch)
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case template, arguments }
