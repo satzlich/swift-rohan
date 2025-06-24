@@ -144,7 +144,17 @@ internal class Node: Codable {
   /// with dirty flag cleared and layout length updated.
   /// - Returns: the number of layout units contributed by the node.
   internal func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
-    preconditionFailure("overriding required")
+    if fromScratch {
+      let n = performLayoutForward(context, fromScratch: true)
+      context.skipBackwards(n)
+      return n
+    }
+    else {
+      context.skipBackwards(layoutLength())
+      let n = performLayoutForward(context, fromScratch: false)
+      context.skipBackwards(n)
+      return n
+    }
   }
 
   /// Perform layout in the forward direction. When the method is returned, the node

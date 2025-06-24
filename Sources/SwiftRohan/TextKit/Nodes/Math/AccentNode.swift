@@ -19,53 +19,6 @@ final class AccentNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
-  ) -> Int {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      let accentFragment = MathAccentLayoutFragment(accent, nucleus: nucFrag)
-      _nodeFragment = accentFragment
-      accentFragment.fixLayout(context.mathContext)
-      context.insertFragment(accentFragment, self)
-    }
-    else {
-      guard let accentFragment = _nodeFragment
-      else {
-        assertionFailure("Accent fragment is nil")
-        return layoutLength()
-      }
-
-      // save metrics before any layout changes
-      let oldMetrics = accentFragment.boxMetrics
-      var needsFixLayout = false
-
-      if nucleus.isDirty {
-        let nucMetrics = accentFragment.nucleus.boxMetrics
-
-        LayoutUtils.reconcileMathListLayoutFragment(
-          nucleus, accentFragment.nucleus, parent: context)
-        if accentFragment.nucleus.isNearlyEqual(to: nucMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        accentFragment.fixLayout(context.mathContext)
-        if accentFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
-          return layoutLength()
-        }
-        // FALL THROUGH
-      }
-      context.skipBackwards(layoutLength())
-    }
-    return layoutLength()
-  }
-
   final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
