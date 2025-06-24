@@ -61,7 +61,7 @@ struct MathNodeLayoutTests {
   private func performLayout(
     _ context: MathListLayoutContext, _ contentNode: ContentNode
   ) {
-    context.resetCursorForForwardEditing()
+    context.resetCursor()
     context.beginEditing()
     _ = contentNode.performLayoutForward(context, fromScratch: false)
     context.endEditing()

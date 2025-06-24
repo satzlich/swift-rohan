@@ -370,7 +370,7 @@ final class AttachNode: MathNode {
 
     _attachFragment = attachFragment
     attachFragment.fixLayout(context.mathContext)
-    context.insertFragmentForward(attachFragment, self)
+    context.insertFragment(attachFragment, self)
   }
 
   private func _performLayoutForwardSimple(_ context: MathListLayoutContext) {

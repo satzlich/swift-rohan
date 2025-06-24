@@ -45,7 +45,7 @@ final class TextModeNode: MathNode {
       let fragment = _NodeFragment(nucleus)
       _nodeFragment = fragment
 
-      context.insertFragmentForward(fragment, self)
+      context.insertFragment(fragment, self)
     }
     else {
       guard let fragment = _nodeFragment else {

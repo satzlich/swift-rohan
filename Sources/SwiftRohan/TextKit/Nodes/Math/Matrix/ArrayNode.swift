@@ -107,7 +107,7 @@ class ArrayNode: Node {
       // layout the matrix
       nodeFragment.fixLayout(mathContext)
       // insert the matrix fragment
-      context.insertFragmentForward(nodeFragment, self)
+      context.insertFragment(nodeFragment, self)
 
       if self.isBlock {
         context.addParagraphStyleBackward(forSegment: 1, self)

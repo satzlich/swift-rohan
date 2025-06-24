@@ -26,7 +26,7 @@ final class LinebreakNode: SimpleNode {
   ) -> Int {
 
     if fromScratch {
-      context.insertTextForward("\n", self)
+      context.insertText("\n", self)
       return layoutLength()
     }
     else {

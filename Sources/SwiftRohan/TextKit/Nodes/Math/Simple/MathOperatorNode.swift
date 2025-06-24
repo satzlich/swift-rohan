@@ -42,7 +42,7 @@ final class MathOperatorNode: SimpleNode {
       let fragment =
         MathOperatorLayoutFragment(self, context.styleSheet, context.mathContext)
       _mathOperatorFragment = fragment
-      context.insertFragmentForward(fragment, self)
+      context.insertFragment(fragment, self)
     }
     else {
       guard _mathOperatorFragment != nil

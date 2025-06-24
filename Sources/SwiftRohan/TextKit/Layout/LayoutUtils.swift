@@ -103,7 +103,7 @@ enum LayoutUtils {
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
-    context.resetCursorForForwardEditing()
+    context.resetCursor()
     _ = component.performLayoutForward(context, fromScratch: fromScratch)
     context.endEditing(previousClass: previousClass)
     assert(fragment.contentLayoutLength == component.layoutLength())
@@ -132,7 +132,7 @@ enum LayoutUtils {
   ) {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
-    context.resetCursorForForwardEditing()
+    context.resetCursor()
     _ = component.performLayoutForward(context, fromScratch: fromScratch)
     context.endEditing(previousClass: previousClass)
     assert(fragment.contentLayoutLength == component.layoutLength())

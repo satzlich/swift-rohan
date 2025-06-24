@@ -36,7 +36,7 @@ final class UnknownNode: SimpleNode {
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
-      context.insertTextForward(PLACEHOLDER, self)
+      context.insertText(PLACEHOLDER, self)
     }
     else {
       assertionFailure("UnknownNode should not be laid out again")

@@ -34,7 +34,7 @@ final class MathAttributesNode: MathNode {
       _nodeFragment = attrFragment
 
       attrFragment.fixLayout(context.mathContext)
-      context.insertFragmentForward(attrFragment, self)
+      context.insertFragment(attrFragment, self)
     }
     else {
       guard let attrFragment = _nodeFragment

@@ -257,7 +257,7 @@ final class RadicalNode: MathNode {
 
     _nodeFragment = radical
     radical.fixLayout(context.mathContext)
-    context.insertFragmentForward(radical, self)
+    context.insertFragment(radical, self)
   }
 
   private func _performLayoutForwardSimple(_ context: MathListLayoutContext) {

@@ -30,7 +30,7 @@ final class AccentNode: MathNode {
       let accentFragment = MathAccentLayoutFragment(accent, nucleus: nucFrag)
       _nodeFragment = accentFragment
       accentFragment.fixLayout(context.mathContext)
-      context.insertFragmentForward(accentFragment, self)
+      context.insertFragment(accentFragment, self)
     }
     else {
       guard let accentFragment = _nodeFragment

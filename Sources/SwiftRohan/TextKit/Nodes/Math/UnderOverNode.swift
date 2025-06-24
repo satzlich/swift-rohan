@@ -32,7 +32,7 @@ final class UnderOverNode: MathNode {
       _nodeFragment = underOverFragment
 
       underOverFragment.fixLayout(context.mathContext)
-      context.insertFragmentForward(underOverFragment, self)
+      context.insertFragment(underOverFragment, self)
     }
     else {
       guard let nodeFragment = _nodeFragment

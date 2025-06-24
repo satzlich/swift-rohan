@@ -50,7 +50,7 @@ final class FractionNode: MathNode {
 
       let mathContext = _resolveMathContext(context.mathContext)
       fractionFragment.fixLayout(mathContext)
-      context.insertFragmentForward(fractionFragment, self)
+      context.insertFragment(fractionFragment, self)
     }
     else {
       guard let fractionFragment = _nodeFragment

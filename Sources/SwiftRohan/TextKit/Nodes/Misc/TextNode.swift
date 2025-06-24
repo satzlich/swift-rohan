@@ -35,7 +35,7 @@ final class TextNode: Node {
     _ context: LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
-      context.insertTextForward(_string, self)
+      context.insertText(_string, self)
     }
     else {
       assertionFailure("TextNode should not be laid out incrementally.")

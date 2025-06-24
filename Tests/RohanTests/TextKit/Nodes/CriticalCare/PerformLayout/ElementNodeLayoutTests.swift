@@ -54,7 +54,7 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
       _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
@@ -75,7 +75,7 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
       _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
@@ -90,7 +90,7 @@ struct ElementNodeLayoutTests {
       assert(result.isSuccess)
 
       //
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
       _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
@@ -107,7 +107,7 @@ struct ElementNodeLayoutTests {
       let result = TreeUtils.insertBlockNodes(nodes, at: location, rootNode)
       assert(result.isSuccess)
 
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
       _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
@@ -129,7 +129,7 @@ struct ElementNodeLayoutTests {
         assert(result2.isSuccess)
       }
 
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
       _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
@@ -151,7 +151,7 @@ struct ElementNodeLayoutTests {
         assert(result2.isSuccess)
       }
 
-      context.resetCursorForForwardEditing()
+      context.resetCursor()
       context.beginEditing()
       _ = rootNode.performLayoutForward(context, fromScratch: false)
       context.endEditing()
