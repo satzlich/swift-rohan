@@ -33,7 +33,7 @@ final class TextModeNode: MathNode {
 
   final override var isDirty: Bool { nucleus.isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -45,7 +45,7 @@ final class TextModeNode: MathNode {
       let fragment = _NodeFragment(nucleus)
       _nodeFragment = fragment
 
-      context.insertFragment(fragment, self)
+      context.insertFragmentForward(fragment, self)
     }
     else {
       guard let fragment = _nodeFragment else {
@@ -68,10 +68,10 @@ final class TextModeNode: MathNode {
       }
 
       if needsFixLayout {
-        context.invalidateBackwards(layoutLength())
+        context.invalidateForward(layoutLength())
       }
       else {
-        context.skipBackwards(layoutLength())
+        context.skipForward(layoutLength())
       }
     }
 
