@@ -129,6 +129,71 @@ final class MathListLayoutContext: LayoutContext {
     return _fragmentFactory.makeFragments(from: string, mathProperty)
   }
 
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: n)
+    else { preconditionFailure("index not found") }
+
+    // update location
+    layoutCursor += n
+    fragmentIndex = index
+  }
+
+  func deleteForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: n)
+    else { preconditionFailure("index not found") }
+    // remove
+    layoutFragment.removeSubrange(fragmentIndex..<index)
+    // location remains unchanged
+  }
+
+  func invalidateForward(_ n: Int) {
+    precondition(isEditing && n >= 0)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: n)
+    else { preconditionFailure("index not found") }
+    // invalidate
+    layoutFragment.invalidateSubrange(fragmentIndex..<index)
+
+    // update location
+    layoutCursor += n
+    fragmentIndex = index
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    precondition(isEditing && layoutCursor >= 0)
+    guard !text.isEmpty else { return }
+    let mathProperty: MathProperty = source.resolveAggregate(styleSheet)
+    let text = String(text)
+    let fragments = _fragmentFactory.makeFragments(from: text, mathProperty)
+    layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
+
+    // update location
+
+    layoutCursor += text.length
+    fragmentIndex += fragments.count
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    precondition(isEditing && layoutCursor >= 0)
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    precondition(isEditing && layoutCursor >= 0)
+    guard let fragment = fragment as? MathLayoutFragment else {
+      preconditionFailure("Invalid fragment type: \(Swift.type(of: fragment))")
+    }
+
+    layoutFragment.insert(fragment, at: fragmentIndex)
+    // update location
+    layoutCursor += fragment.layoutLength
+    fragmentIndex += 1
+  }
+
   // MARK: - Query
 
   func getSegmentFrame(

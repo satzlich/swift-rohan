@@ -16,7 +16,7 @@ internal class CTLineLayoutContext: LayoutContext {
     self.styleSheet = styleSheet
     self.renderedString = fragment.attrString
     self.ctLine = fragment.ctLine
-    self.layoutCursor = fragment.attrString.length
+    self._layoutCursor = fragment.attrString.length
     self.layoutMode = fragment.layoutMode
     self.boundsOption = fragment.boundsOption
   }
@@ -25,17 +25,19 @@ internal class CTLineLayoutContext: LayoutContext {
     self.styleSheet = styleSheet
     self.renderedString = NSMutableAttributedString()
     self.ctLine = CTLineCreateWithAttributedString(renderedString)
-    self.layoutCursor = renderedString.length
+    self._layoutCursor = renderedString.length
     self.layoutMode = layoutMode
     self.boundsOption = boundsOption
   }
 
   // MARK: - State
 
-  final private(set) var layoutCursor: Int
+  final var _layoutCursor: Int
+
+  final var layoutCursor: Int { _layoutCursor }
 
   final func resetCursor() {
-    self.layoutCursor = renderedString.length
+    self._layoutCursor = renderedString.length
   }
 
   final private(set) var isEditing: Bool = false
@@ -55,7 +57,7 @@ internal class CTLineLayoutContext: LayoutContext {
 
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
-    layoutCursor -= n
+    _layoutCursor -= n
   }
 
   func deleteBackwards(_ n: Int) {
@@ -65,7 +67,7 @@ internal class CTLineLayoutContext: LayoutContext {
     let range = NSRange(location: location, length: n)
     // update state
     renderedString.replaceCharacters(in: range, with: "")
-    layoutCursor = location
+    _layoutCursor = location
   }
 
   final func invalidateBackwards(_ n: Int) {
@@ -103,6 +105,39 @@ internal class CTLineLayoutContext: LayoutContext {
       width = ctLine.getImageBounds(&ascent, &descent)
     }
     return (width, ascent, descent)
+  }
+
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    precondition(isEditing && n >= 0 && layoutCursor + n <= renderedString.length)
+    _layoutCursor += n
+  }
+
+  func deleteForward(_ n: Int) {
+    precondition(isEditing && n >= 0 && layoutCursor + n <= renderedString.length)
+    // find range
+    let location = layoutCursor
+    let range = NSRange(location: location, length: n)
+    // update state
+    renderedString.replaceCharacters(in: range, with: "")
+    _layoutCursor = location + n
+  }
+
+  func invalidateForward(_ n: Int) {
+    skipForward(n)
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    preconditionFailure("overriding required")
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Query

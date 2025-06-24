@@ -53,27 +53,53 @@ final class MathReflowLayoutContext: LayoutContext {
   // MARK: - Layout
 
   func skipBackwards(_ n: Int) {
-    mathLayoutContext.skipBackwards(n)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func deleteBackwards(_ n: Int) {
-    mathLayoutContext.deleteBackwards(n)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func invalidateBackwards(_ n: Int) {
-    mathLayoutContext.invalidateBackwards(n)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    mathLayoutContext.insertText(text, source)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func insertNewline(_ context: Node) {
-    mathLayoutContext.insertNewline(context)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    mathLayoutContext.insertFragment(fragment, source)
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func deleteForward(_ n: Int) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func invalidateForward(_ n: Int) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Query

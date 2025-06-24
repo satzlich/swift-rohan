@@ -73,6 +73,10 @@ final class MathLineLayoutContext: LayoutContext {
     layoutCursor = location
   }
 
+  func invalidateBackwards(_ n: Int) {
+    self.skipBackwards(n)
+  }
+
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
     precondition(isEditing)
     guard !text.isEmpty else { return }
@@ -93,26 +97,64 @@ final class MathLineLayoutContext: LayoutContext {
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing)
-    precondition(fragment.layoutLength == source.layoutLength())
-
-    assertionFailure("insertFragment not supported")
-    let string = String(repeating: "\u{FFFD}", count: fragment.layoutLength)
-    _ = resolvedString.replaceSubrange(layoutCursor..<layoutCursor, with: string)
-
-    layoutContext.insertFragment(fragment, source)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func insertNewline(_ context: Node) {
-    precondition(isEditing)
-    assertionFailure("insertNewline not supported")
-    _ = resolvedString.replaceSubrange(layoutCursor..<layoutCursor, with: "\u{FFFD}")
-
-    layoutContext.insertNewline(context)
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
-  func invalidateBackwards(_ n: Int) {
-    self.skipBackwards(n)
+  // MARK: - Edit
+
+  func skipForward(_ n: Int) {
+    precondition(isEditing)
+    let location = layoutCursor + n
+    let resolvedRange = resolvedString.resolvedRange(for: layoutCursor..<location)
+    layoutContext.skipForward(resolvedRange.count)
+    layoutCursor = location
+  }
+
+  func deleteForward(_ n: Int) {
+    precondition(isEditing)
+    let location = layoutCursor + n
+    let resolvedRange = resolvedString.removeSubrange(layoutCursor..<location)
+    layoutContext.deleteForward(resolvedRange.count)
+    // cursor remains unchanged.
+  }
+
+  func invalidateForward(_ n: Int) {
+    self.skipForward(n)
+  }
+
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node) {
+    precondition(isEditing)
+    guard !text.isEmpty else { return }
+
+    let text = String(text)
+
+    let mathProperty = source.resolveAggregate(styleSheet) as MathProperty
+    let textProperty = source.resolveAggregate(styleSheet) as TextProperty
+    let attributes = mathProperty.getAttributes(
+      isFlipped: true,  // flip for CTLine
+      textProperty, mathContext)
+    //
+    let range = layoutCursor..<layoutCursor
+    let (rrange, rstring) =
+      resolvedString.replaceSubrange(range, with: text, mathProperty)
+    let attrString = NSAttributedString(string: rstring, attributes: attributes)
+    //
+    renderedString.replaceCharacters(in: NSRange(rrange), with: attrString)
+
+    // update location
+    layoutCursor += text.length
+  }
+
+  func insertNewlineForward(_ context: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func insertFragmentForward(_ fragment: any LayoutFragment, _ source: Node) {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Query
