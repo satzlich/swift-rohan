@@ -19,7 +19,7 @@ final class LeftRightNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -30,7 +30,7 @@ final class LeftRightNode: MathNode {
       let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
       _nodeFragment = leftRightFragment
       leftRightFragment.fixLayout(context.mathContext)
-      context.insertFragment(leftRightFragment, self)
+      context.insertFragmentForward(leftRightFragment, self)
     }
     else {
       guard let leftRightFragment = _nodeFragment
@@ -55,12 +55,12 @@ final class LeftRightNode: MathNode {
       if needsFixLayout {
         leftRightFragment.fixLayout(context.mathContext)
         if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
+          context.invalidateForward(layoutLength())
           return layoutLength()
         }
         // FALL THROUGH
       }
-      context.skipBackwards(layoutLength())
+      context.skipForward(layoutLength())
     }
 
     return layoutLength()
