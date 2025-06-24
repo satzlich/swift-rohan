@@ -44,6 +44,11 @@ final class MathLineLayoutContext: LayoutContext {
     layoutContext.resetCursor()
   }
 
+  func resetCursorForForwardEditing() {
+    layoutCursor = 0
+    layoutContext.resetCursorForForwardEditing()
+  }
+
   var isEditing: Bool { layoutContext.isEditing }
 
   func beginEditing() {

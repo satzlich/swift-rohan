@@ -37,17 +37,21 @@ final class MathReflowLayoutContext: LayoutContext {
   var layoutCursor: Int { mathLayoutContext.layoutCursor }
 
   func resetCursor() {
-    mathLayoutContext.resetCursor()
+    preconditionFailure("Unsupported operation: \(#function)")
+  }
+
+  func resetCursorForForwardEditing() {
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   var isEditing: Bool { mathLayoutContext.isEditing }
 
   func beginEditing() {
-    mathLayoutContext.beginEditing()
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   func endEditing() {
-    mathLayoutContext.endEditing()
+    preconditionFailure("Unsupported operation: \(#function)")
   }
 
   // MARK: - Layout

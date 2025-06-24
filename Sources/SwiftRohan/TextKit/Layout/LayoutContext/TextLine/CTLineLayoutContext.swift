@@ -40,6 +40,10 @@ internal class CTLineLayoutContext: LayoutContext {
     self._layoutCursor = renderedString.length
   }
 
+  func resetCursorForForwardEditing() {
+    self._layoutCursor = 0
+  }
+
   final private(set) var isEditing: Bool = false
 
   final func beginEditing() {

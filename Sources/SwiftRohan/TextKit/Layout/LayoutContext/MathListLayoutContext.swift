@@ -38,6 +38,11 @@ final class MathListLayoutContext: LayoutContext {
     self.fragmentIndex = layoutFragment.count
   }
 
+  func resetCursorForForwardEditing() {
+    self.layoutCursor = 0
+    self.fragmentIndex = 0
+  }
+
   var isEditing: Bool { layoutFragment.isEditing }
 
   func beginEditing() {

@@ -14,6 +14,9 @@ protocol LayoutContext {
   /// Reset layout cursor to the end of the layout context
   func resetCursor()
 
+  /// Reset layout cursor to the beginning of the layout context
+  func resetCursorForForwardEditing()
+
   var isEditing: Bool { get }
   func beginEditing()
   func endEditing()

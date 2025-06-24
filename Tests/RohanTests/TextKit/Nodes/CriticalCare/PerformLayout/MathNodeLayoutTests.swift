@@ -67,6 +67,15 @@ struct MathNodeLayoutTests {
     context.endEditing()
   }
 
+  private func performLayoutForward(
+    _ context: MathListLayoutContext, _ contentNode: ContentNode
+  ) {
+    context.resetCursor()
+    context.beginEditing()
+    _ = contentNode.performLayoutForward(context, fromScratch: false)
+    context.endEditing()
+  }
+
   @Test
   func accent() {
     let accentNode = AccentNode(.overleftarrow, nucleus: [TextNode("x")])
