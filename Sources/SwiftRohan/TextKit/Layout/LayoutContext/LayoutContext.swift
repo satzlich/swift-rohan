@@ -78,6 +78,9 @@ protocol LayoutContext {
   /// Insert fragment at cursor and move cursor forward by the length of the fragment.
   func insertFragmentForward(_ fragment: LayoutFragment, _ source: Node)
 
+  /// Insert fragments at cursor and move cursor forward by the total length of the fragments.
+  func insertFragmentsForward(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
+
   // MARK: - Query
 
   /// Get the frame of the layout fragment at the given layout offset.
@@ -157,5 +160,12 @@ extension LayoutContext {
   ) {
     precondition(isEditing)
     // defeault implementation does nothing.
+  }
+
+  func insertFragmentsForward(contentsOf fragments: Array<LayoutFragment>, _ source: Node)
+  {
+    for fragment in fragments {
+      insertFragmentForward(fragment, source)
+    }
   }
 }

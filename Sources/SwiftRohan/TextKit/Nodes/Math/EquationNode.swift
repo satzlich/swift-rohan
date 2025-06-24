@@ -91,6 +91,56 @@ final class EquationNode: MathNode {
     }
   }
 
+  final override func performLayoutForward(
+    _ context: LayoutContext, fromScratch: Bool
+  ) -> Int {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    if fromScratch {
+      let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      _nodeFragment = nodeFragment
+
+      if !isReflowActive {
+        context.insertFragmentForward(nodeFragment, self)
+        if self.isBlock { context.addParagraphStyleBackward(forSegment: 1, self) }
+        _layoutLength = 1
+      }
+      else {
+        _layoutLength = emitReflowSegments(nodeFragment)
+      }
+    }
+    else {
+      guard let nodeFragment = _nodeFragment else {
+        assertionFailure("expected _nodeFragment to be non-nil")
+        return _layoutLength
+      }
+
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
+
+      if !isReflowActive {
+        context.invalidateForward(1)
+        _layoutLength = 1
+      }
+      else {
+        // delete segments emitted in previous layout, and emit new segments
+        context.deleteForward(_layoutLength)
+        _layoutLength = emitReflowSegments(nodeFragment)
+      }
+    }
+
+    return _layoutLength
+
+    /// Returns the number of segments emitted.
+    @inline(__always)
+    func emitReflowSegments(_ nodeFragment: MathListLayoutFragment) -> Int {
+      precondition(self.isReflowActive)
+      nodeFragment.performReflow()
+      context.insertFragmentsForward(contentsOf: nodeFragment.reflowSegments, self)
+      return nodeFragment.reflowSegments.count
+    }
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case subtype, nuc }
