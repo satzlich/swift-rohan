@@ -258,7 +258,7 @@ final class ItemListNode: ElementNode {
 
     var sum = 0
 
-    sum += NewlineReconciler.skip(currrent: _newlines.last!, context: context)
+    sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
 
     for i in _children.indices.reversed() {
       // skip clean.
@@ -267,7 +267,7 @@ final class ItemListNode: ElementNode {
         sum += StringReconciler.skip(
           current: _initialFiller(forIndex: i), context: context)
         sum += NewlineReconciler.skip(
-          currrent: _newlines.value(before: i), context: context)
+          current: _newlines.value(before: i), context: context)
       }
       // process dirty.
       else {
@@ -275,7 +275,7 @@ final class ItemListNode: ElementNode {
         let n2 = StringReconciler.skip(
           current: _initialFiller(forIndex: i), context: context)
         let n0 = NewlineReconciler.skip(
-          currrent: _newlines.value(before: i), context: context)
+          current: _newlines.value(before: i), context: context)
         sum += n0 + n1 + n2
 
         let location = context.layoutCursor

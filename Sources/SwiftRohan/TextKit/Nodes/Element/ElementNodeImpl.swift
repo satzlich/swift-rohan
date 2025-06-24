@@ -180,7 +180,7 @@ internal class ElementNodeImpl: ElementNode {
       var segmentLength = 0  // accumulated segment length since entry or last newline.
       var isSegmentDirty = false  // true if the segment is dirty.
 
-      sum += NewlineReconciler.skip(currrent: _newlines.last!, context: context)
+      sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
 
       // Invariant: for every maximum non-block segment which is dirty, add
       //  paragraph style is called.
@@ -208,7 +208,7 @@ internal class ElementNodeImpl: ElementNode {
           }
 
           // skip leading newline
-          sum += NewlineReconciler.skip(currrent: leadingNewline, context: context)
+          sum += NewlineReconciler.skip(current: leadingNewline, context: context)
 
           // reset
           segmentLength = 0
