@@ -54,6 +54,27 @@ protocol LayoutContext {
   /// Insert fragment at cursor. Cursor remains at the same location.
   func insertFragment(_ fragment: LayoutFragment, _ source: Node)
 
+  // MARK: - Editing
+
+  /// Move cursor forward by `n` units.
+  func skipForward(_ n: Int)
+
+  /// Delete forward by `n` units. Cursor remains at the same location.
+  func deleteForward(_ n: Int)
+
+  /// Inform the layout context that the frames for the next `n` units now
+  /// become invalid, and move cursor forward by `n` units.
+  func invalidateForward(_ n: Int)
+
+  /// Insert text at cursor and move cursor forward by the length of the text.
+  func insertTextForward(_ text: some Collection<Character>, _ source: Node)
+
+  /// Insert newline at cursor and move cursor forward by one unit.
+  func insertNewlineForward(_ context: Node)
+
+  /// Insert fragment at cursor and move cursor forward by the length of the fragment.
+  func insertFragmentForward(_ fragment: LayoutFragment, _ source: Node)
+
   // MARK: - Query
 
   /// Get the frame of the layout fragment at the given layout offset.
