@@ -61,5 +61,4 @@ internal struct PageProperty: PropertyAggregate {
   public static let bottomMargin = PropertyKey(.root, .bottomMargin)  // AbsLength
   public static let leftMargin = PropertyKey(.root, .leftMargin)  // AbsLength
   public static let rightMargin = PropertyKey(.root, .rightMargin)  // AbsLength
-
 }
