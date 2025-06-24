@@ -21,7 +21,7 @@ final class LinebreakNode: SimpleNode {
 
   final override func layoutLength() -> Int { 1 }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
 
