@@ -89,7 +89,9 @@ internal class ElementNodeImpl: ElementNode {
     switch self.isBlock {
     case true:
       if self.isPlaceholderActive {
-        let sum = StringReconciler.insertForward(new: "⬚", context: context, self)
+        let placeholder = String(NodePolicy.placeholder(for: self.type))
+        let sum =
+          StringReconciler.insertForward(new: placeholder, context: context, self)
         context.addParagraphStyleBackward(forSegment: sum, self)
         return sum
       }
@@ -99,7 +101,8 @@ internal class ElementNodeImpl: ElementNode {
 
     case false:
       if self.isPlaceholderActive {
-        return StringReconciler.insertForward(new: "⬚", context: context, self)
+        let placeholder = String(NodePolicy.placeholder(for: self.type))
+        return StringReconciler.insertForward(new: placeholder, context: context, self)
       }
       else {
         return 0

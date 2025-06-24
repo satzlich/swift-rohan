@@ -70,10 +70,17 @@ enum NodePolicy {
     [
       NodeType.content,
       .heading,
+      .paragraph,
       .textStyles,
       .variable,
     ]
     .contains(nodeType)
+  }
+
+  @inline(__always)
+  static func placeholder(for nodeType: NodeType) -> Character {
+    // ZWSP or dotted square
+    nodeType == .paragraph ? "\u{200B}" : "⬚"
   }
 
   /// Returns true if the node is inline-math.

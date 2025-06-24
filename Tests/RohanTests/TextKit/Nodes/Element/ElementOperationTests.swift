@@ -36,7 +36,7 @@ struct ElementOperationTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 9
+        root 8
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 2
@@ -66,7 +66,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 11
+        root 10
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 1
@@ -92,7 +92,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 8
+        root 7
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 1
@@ -135,7 +135,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 10
+        root 9
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 3
@@ -161,7 +161,7 @@ struct ElementOperationTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 8
+        root 7
         ├ paragraph 2
         │ └ text 2
         ├ paragraph 1
@@ -256,9 +256,8 @@ struct ElementOperationTests {
 
     do {
       let expected =
-        NodePolicy.isInlineMathReflowEnabled
-        ? """
-        root 16
+        """
+        root 15
         ├ heading 8
         │ ├ text 3
         │ └ emph 5
@@ -266,18 +265,6 @@ struct ElementOperationTests {
         └ paragraph 6
           ├ text 4
           └ equation 2
-            └ nuc 3
-              └ text 3
-        """
-        : """
-        root 15
-        ├ heading 8
-        │ ├ text 3
-        │ └ emph 5
-        │   └ text 5
-        └ paragraph 5
-          ├ text 4
-          └ equation 1
             └ nuc 3
               └ text 3
         """
@@ -292,9 +279,8 @@ struct ElementOperationTests {
 
     do {
       let expected =
-        NodePolicy.isInlineMathReflowEnabled
-        ? """
-        root 16
+        """
+        root 15
         ├ heading 8
         │ ├ text 3
         │ └ emph 5
@@ -302,19 +288,6 @@ struct ElementOperationTests {
         └ paragraph 6
           ├ text 4
           └ equation 2
-            └ nuc 4
-              ├ text 3
-              └ text 1
-        """
-        : """
-        root 15
-        ├ heading 8
-        │ ├ text 3
-        │ └ emph 5
-        │   └ text 5
-        └ paragraph 5
-          ├ text 4
-          └ equation 1
             └ nuc 4
               ├ text 3
               └ text 1

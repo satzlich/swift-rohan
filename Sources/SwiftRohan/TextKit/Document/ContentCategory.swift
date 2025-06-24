@@ -10,10 +10,10 @@ public enum ContentCategory: CaseIterable {
   /// text-text + inline-math
   case extendedText
 
-  /// extended text + paragraph content for arbitrary paragraph nodes.
+  /// extended text + other paragraph content for arbitrary paragraph nodes.
   case arbitraryParagraphContent
 
-  /// paragraph content + paragraph content for top-level paragraph nodes.
+  /// arbitrary paragraph content + paragraph content for top-level paragraph nodes.
   case toplevelParagraphContent
 
   /// a list of ParagraphNode's
