@@ -8,6 +8,7 @@ internal struct InternalProperty: PropertyAggregate {
   public static func resolveAggregate(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> InternalProperty {
+    @inline(__always)
     func resolved(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, styleSheet)
     }
