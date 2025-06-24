@@ -33,7 +33,7 @@ final class FractionNode: MathNode {
 
   final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
-  final override func performLayout(
+  final override func performLayoutForward(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
@@ -50,7 +50,7 @@ final class FractionNode: MathNode {
 
       let mathContext = _resolveMathContext(context.mathContext)
       fractionFragment.fixLayout(mathContext)
-      context.insertFragment(fractionFragment, self)
+      context.insertFragmentForward(fractionFragment, self)
     }
     else {
       guard let fractionFragment = _nodeFragment
@@ -85,14 +85,14 @@ final class FractionNode: MathNode {
         fractionFragment.fixLayout(mathContext)
 
         if fractionFragment.isNearlyEqual(to: oldBoxMetrics) == false {
-          context.invalidateBackwards(layoutLength())
+          context.invalidateForward(layoutLength())
         }
         else {
-          context.skipBackwards(layoutLength())
+          context.skipForward(layoutLength())
         }
       }
       else {
-        context.skipBackwards(layoutLength())
+        context.skipForward(layoutLength())
       }
     }
 
