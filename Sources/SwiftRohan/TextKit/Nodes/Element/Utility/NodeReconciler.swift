@@ -4,13 +4,13 @@ enum NodeReconciler {
   @inline(__always)
   static func skip<C: LayoutContext>(current: Node, context: C) -> Int {
     let length = current.layoutLength()
-    context.skipBackwards(length)
+    context.skipForward(length)
     return length
   }
 
   @inline(__always)
   static func skip<C: LayoutContext>(current: Int, context: C) -> Int {
-    context.skipBackwards(current)
+    context.skipForward(current)
     return current
   }
 
@@ -26,6 +26,6 @@ enum NodeReconciler {
 
   @inline(__always)
   static func delete<C: LayoutContext>(old: Int, context: C) {
-    context.deleteBackwards(old)
+    context.deleteForward(old)
   }
 }

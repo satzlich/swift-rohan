@@ -4,7 +4,7 @@ enum NewlineReconciler {
   @inline(__always)
   static func skip<C: LayoutContext>(current: Bool, context: C) -> Int {
     if current {
-      context.skipBackwards(1)
+      context.skipForward(1)
       return 1
     }
     else {
@@ -18,7 +18,7 @@ enum NewlineReconciler {
   @inline(__always)
   static func insert<C: LayoutContext>(new: Bool, context: C, _ container: Node) -> Int {
     if new {
-      context.insertNewline(container)
+      context.insertNewlineForward(container)
       return 1
     }
     else {
@@ -37,19 +37,19 @@ enum NewlineReconciler {
     case (false, false):
       return 0
     case (false, true):
-      context.insertNewline(container)
+      context.insertNewlineForward(container)
       return 1
     case (true, false):
-      context.deleteBackwards(1)
+      context.deleteForward(1)
       return 0
     case (true, true):
-      context.skipBackwards(1)
+      context.skipForward(1)
       return 1
     }
   }
 
   @inline(__always)
   static func delete<C: LayoutContext>(old: Bool, context: C) {
-    if old { context.deleteBackwards(1) }
+    if old { context.deleteForward(1) }
   }
 }
