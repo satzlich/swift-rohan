@@ -94,6 +94,24 @@ final class ItemListNode: ElementNode {
     return _performLayout(context, fromScratch: fromScratch)
   }
 
+  final override func performLayoutForward(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      _layoutLength = _performLayoutForwardFromScratch(context)
+      _snapshotRecords = nil
+    }
+    else if _snapshotRecords == nil {
+      _layoutLength = _performLayoutForwardSimple(context)
+    }
+    else {
+      _layoutLength = _performLayoutForwardFull(context)
+      _snapshotRecords = nil
+    }
+    _isDirty = false
+    return _layoutLength
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: String, CodingKey { case subtype }
@@ -389,6 +407,192 @@ final class ItemListNode: ElementNode {
     return sum
   }
 
+  // MARK: - Layout Forward
+
+  private final func _performLayoutForwardEmpty(_ context: LayoutContext) -> Int {
+    precondition(_children.isEmpty)
+    let itemAttributes = _bakeItemAttributes(context.styleSheet)
+    let sum = StringReconciler.insertForward(
+      new: _initialFiller(forIndex: 0), context: context, self)
+    let end = context.layoutCursor
+    let location = end - sum
+    _addItemAttributes(
+      context, itemAttributes, _attributedMarker(forIndex: 0), location..<end)
+    return sum
+  }
+
+  /// Perform layout for fromScratch=true.
+  @inline(__always)
+  private final func _performLayoutForwardFromScratch(_ context: LayoutContext) -> Int {
+    precondition(_children.count == _newlines.count)
+
+    // set up properties before layout.
+    self._setupNodeProperties(context.styleSheet)
+
+    switch _children.isEmpty {
+    case true:
+      return _performLayoutForwardEmpty(context)
+
+    case false:
+      var sum = 0
+
+      for i in _children.indices {
+        sum += NewlineReconciler.insertForward(
+          new: _newlines.value(before: i), context: context, self)
+        sum += StringReconciler.insertForward(
+          new: _initialFiller(forIndex: i), context: context, self)
+        sum += NodeReconciler.insertForward(new: _children[i], context: context)
+      }
+      sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
+      _refreshParagraphStyleForForwardEditing(context, { _ in true })
+      return sum
+    }
+  }
+
+  /// Perform layout incrementally when snapshot was not made.
+  @inline(__always)
+  private final func _performLayoutForwardSimple(_ context: LayoutContext) -> Int {
+    precondition(_snapshotRecords == nil && _children.count == _newlines.count)
+    assert(_children.isEmpty == false)
+    let itemAttributes = _bakeItemAttributes(context.styleSheet)
+
+    var sum = 0
+
+    for i in _children.indices {
+      // skip clean.
+      if _children[i].isDirty == false {
+        sum += NewlineReconciler.skipForward(
+          current: _newlines.value(before: i), context: context)
+        sum += StringReconciler.skipForward(
+          current: _initialFiller(forIndex: i), context: context)
+        sum += NodeReconciler.skipForward(current: _children[i], context: context)
+      }
+      // process dirty.
+      else {
+        let nl = NewlineReconciler.skipForward(
+          current: _newlines.value(before: i), context: context)
+        let ni = StringReconciler.skipForward(
+          current: _initialFiller(forIndex: i), context: context)
+        let nc = NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+        sum += nl + ni + nc
+
+        let end = context.layoutCursor - nc
+        let location = end - ni
+        _addItemAttributes(
+          context, itemAttributes, _attributedMarker(forIndex: i), location..<end)
+      }
+    }
+    sum += NewlineReconciler.skip(current: _newlines.last!, context: context)
+
+    return sum
+  }
+
+  /// Perform layout incrementally when snapshot has been made.
+  @inline(__always)
+  private final func _performLayoutForwardFull(_ context: LayoutContext) -> Int {
+    precondition(_snapshotRecords != nil && _children.count == _newlines.count)
+
+    guard _children.isEmpty == false else {
+      context.deleteForward(_layoutLength)
+      return _performLayoutForwardEmpty(context)
+    }
+
+    let (current, original) = _computeExtendedRecords()
+    if original.isEmpty { context.deleteForward(_layoutLength) }
+
+    var sum = 0
+    var j = 0
+    let originalCount = original.count
+
+    // first index where item marker changed
+    var firstDirtyMarker: Int? = nil
+
+    for i in _children.indices {
+      // process deleted in a batch if any.
+      if j < originalCount && original[j].mark == .deleted {
+        firstDirtyMarker = firstDirtyMarker ?? i
+      }
+      while j < originalCount && original[j].mark == .deleted {
+        NewlineReconciler.deleteForward(old: original[j].leadingNewline, context: context)
+        StringReconciler.deleteForward(old: _initialFiller(forIndex: j), context: context)
+        NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+        j += 1
+      }
+
+      // process added.
+      if i >= 0 && current[i].mark == .added {
+        firstDirtyMarker = firstDirtyMarker ?? i
+        //
+        sum += NewlineReconciler.insertForward(
+          new: current[i].leadingNewline, context: context, self)
+        sum += StringReconciler.insertForward(
+          new: _initialFiller(forIndex: i), context: context, self)
+        sum += NodeReconciler.insertForward(new: _children[i], context: context)
+      }
+      // skip none
+      else if current[i].mark == .none,
+        j < originalCount && original[j].mark == .none
+      {
+        assert(current[i].nodeId == original[j].nodeId)
+        sum +=
+          NewlineReconciler.reconcileForward(
+            dirty: (original[j].leadingNewline, current[i].leadingNewline),
+            context: context, self)
+        sum +=
+          StringReconciler.reconcileForward(
+            dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
+            context: context, self)
+        sum +=
+          NodeReconciler.skipForward(current: current[i].layoutLength, context: context)
+        j += 1
+      }
+      else {
+        assert(j < originalCount && current[i].nodeId == original[j].nodeId)
+        assert(current[i].mark == .dirty && original[j].mark == .dirty)
+        sum +=
+          NewlineReconciler.reconcileForward(
+            dirty: (original[j].leadingNewline, current[i].leadingNewline),
+            context: context, self)
+        sum +=
+          StringReconciler.reconcileForward(
+            dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
+            context: context, self)
+        sum += NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+
+        j += 1
+      }
+    }
+    // process deleted in a batch if any.
+    if j < originalCount && original[j].mark == .deleted {
+      firstDirtyMarker = firstDirtyMarker ?? 0
+    }
+    while j < originalCount && original[j].mark == .deleted {
+      NewlineReconciler.deleteForward(old: original[j].leadingNewline, context: context)
+      StringReconciler.deleteForward(old: _initialFiller(forIndex: j), context: context)
+      NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+      j += 1
+    }
+    assert(j == originalCount)
+
+    do {
+      let old = original.last?.trailingNewline ?? false
+      let new = _newlines.last!
+      sum += NewlineReconciler.reconcileForward(dirty: (old, new), context: context, self)
+    }
+
+    if subtype.isMarkerConstant {
+      _refreshParagraphStyleForForwardEditing(
+        context, { i in current[i].mark == .added || current[i].mark == .dirty })
+    }
+    else {
+      let firstDirtyMarker = firstDirtyMarker ?? _children.count
+      let refreshRange = firstDirtyMarker..<_children.count
+      _refreshParagraphStyleForForwardEditing(
+        context, { i in current[i].mark == .dirty || refreshRange.contains(i) })
+    }
+    return sum
+  }
+
   @inline(__always)
   private final func _computeExtendedRecords() -> (
     current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
@@ -457,6 +661,25 @@ final class ItemListNode: ElementNode {
       }
       location = end + _children[i].layoutLength() + _newlines[i].intValue
     }
+  }
+
+  private final func _refreshParagraphStyleForForwardEditing(
+    _ context: LayoutContext, _ predicate: (Int) -> Bool
+  ) {
+    precondition(self.isBlock)
+    let itemAttributes = _bakeItemAttributes(context.styleSheet)
+
+    var location = context.layoutCursor
+    for i in _children.indices.reversed() {
+      location -= _children[i].layoutLength() + _newlines[i].intValue
+      let end = location
+      location -= _initialFiller(forIndex: i).length
+      if predicate(i) {
+        _addItemAttributes(
+          context, itemAttributes, _attributedMarker(forIndex: i), location..<end)
+      }
+    }
+    assert(_newlines.isEmpty || _newlines.value(before: 0) == false)
   }
 
   final override func getLayoutOffset(_ index: Int) -> Int? {
