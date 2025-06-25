@@ -117,7 +117,7 @@ internal class ElementNode: Node {
       let index = path.first?.index(),
       let secondIndex = path.last?.index(),
       index < _children.count,
-      let node = _children[index] as? GenElementNode,
+      let node = _children[index] as? ElementNode,
       secondIndex == node.childCount,
       node.needsTrailingCursorCorrection
     {

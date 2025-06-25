@@ -379,11 +379,7 @@ final class ItemListNode: ElementNode {
       sum += NewlineReconciler.reconcileForward(dirty: (old, new), context: context, self)
     }
 
-    if subtype.isMarkerConstant {
-      _refreshParagraphStyleForForwardEditing(
-        context, { i in current[i].mark == .added || current[i].mark == .dirty })
-    }
-    else {
+    do {
       let firstDirtyMarker = firstDirtyMarker ?? _children.count
       let refreshRange = firstDirtyMarker..<_children.count
       _refreshParagraphStyleForForwardEditing(
