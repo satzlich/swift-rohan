@@ -12,6 +12,7 @@ internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Senda
       .rhFirstLineHeadIndent: firstLineHeadIndent,
       .rhHeadIndent: headIndent,
       .rhListLevel: listLevel,
+      .rhTextAlignment: textAlignment,
     ]
   }
 
