@@ -80,48 +80,51 @@ internal class ElementNode: Node {
 
   // MARK: - Node(Tree API)
 
-  /// Returns true if the next node following given path needs leading cursor correction.
-  @inline(__always)
-  private final func _needsLeadingCursorCorrection(_ path: ArraySlice<RohanIndex>) -> Bool
+  /// Returns the node that needs leading cursor correction.
+  private final func _leadingCursorCorrectionNode(_ path: ArraySlice<RohanIndex>) -> Node?
   {
     if path.count == 1,
-      let index = path.first?.index()
+      let index = path.first?.index(),
+      index < _children.count && _children[index].needsLeadingCursorCorrection
     {
-      return index < _children.count && _children[index].needsLeadingCursorCorrection
+      return _children[index]
     }
     else if path.count == 2,
       let index = path.first?.index(),
-      let secondIndex = path.last?.index()
-    {
-      return secondIndex == 0 && index < _children.count
+      let secondIndex = path.last?.index(),
+      secondIndex == 0 && index < _children.count
         && _children[index].needsLeadingCursorCorrection
+    {
+      return _children[index]
     }
     else {
-      return false
+      return nil
     }
   }
 
-  /// Returns true if the next node preceding given path needs trailing cursor correction.
+  /// Returns the node that needs trailing cursor correction.
   @inline(__always)
-  private final func _needsTrailingCursorCorrection(
+  private final func _trailingCursorCorrectionNode(
     _ path: ArraySlice<RohanIndex>
-  ) -> Bool {
+  ) -> Node? {
     if path.count == 1,
-      let index = path.first?.index()
+      let index = path.first?.index(),
+      index > 0 && _children[index - 1].needsTrailingCursorCorrection
     {
-      return index > 0 && _children[index - 1].needsTrailingCursorCorrection
+      return _children[index - 1]
     }
     else if path.count == 2,
       let index = path.first?.index(),
       let secondIndex = path.last?.index(),
       index < _children.count,
       let node = _children[index] as? GenElementNode,
-      secondIndex == node.childCount
+      secondIndex == node.childCount,
+      node.needsTrailingCursorCorrection
     {
-      return node.needsTrailingCursorCorrection
+      return node
     }
     else {
-      return false
+      return nil
     }
   }
 
@@ -158,9 +161,8 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
-      let firstNode: Node? = _needsLeadingCursorCorrection(path) ? _children[index] : nil
-      let lastNode: Node? =
-        _needsTrailingCursorCorrection(endPath) ? _children[endIndex - 1] : nil
+      let firstNode: Node? = _leadingCursorCorrectionNode(path)
+      let lastNode: Node? = _trailingCursorCorrectionNode(endPath)
 
       func specialBlock(
         _ firstNode: Node?, _ lastNode: Node?,
@@ -424,11 +426,11 @@ internal class ElementNode: Node {
           result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
         }
       }
-      else if _needsLeadingCursorCorrection(path) {
-        result.position.x += _children[index].leadingCursorCorrection()
+      else if let leadingNode = _leadingCursorCorrectionNode(path) {
+        result.position.x += leadingNode.leadingCursorCorrection()
       }
-      else if _needsTrailingCursorCorrection(path),
-        let x = _children[index - 1].trailingCursorPosition()
+      else if let trailingNode = _trailingCursorCorrectionNode(path),
+        let x = trailingNode.trailingCursorPosition()
       {
         result.position.x = x
       }
