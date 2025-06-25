@@ -80,6 +80,49 @@ internal class ElementNode: Node {
 
   // MARK: - Node(Tree API)
 
+  /// Returns true if the next node following given path needs leading cursor correction.
+  @inline(__always)
+  private final func _needsLeadingCursorCorrection(_ path: ArraySlice<RohanIndex>) -> Bool
+  {
+    if path.count == 1,
+      let index = path.first?.index()
+    {
+      return index < _children.count && _children[index].needsLeadingCursorCorrection
+    }
+    else if path.count == 2,
+      let index = path.first?.index(),
+      let secondIndex = path.last?.index()
+    {
+      return secondIndex == 0 && index < _children.count
+        && _children[index].needsLeadingCursorCorrection
+    }
+    else {
+      return false
+    }
+  }
+
+  /// Returns true if the next node preceding given path needs trailing cursor correction.
+  @inline(__always)
+  private final func _needsTrailingCursorCorrection(
+    _ path: ArraySlice<RohanIndex>
+  ) -> Bool {
+    guard let index = path.first?.index() else { return false }
+    return path.count == 1 && index > 0
+      && _children[index - 1].needsTrailingCursorCorrection
+  }
+
+  /// Returns true if the next node preceding given path needs trailing cursor correction.
+  @inline(__always)
+  private final func _needsTrailingCursorCorrection(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>
+  ) -> Bool {
+    guard let index = path.first?.index(),
+      let endIndex = endPath.first?.index()
+    else { return false }
+    return path.count == 1 && endPath.count == 1 && index == endIndex
+      && index > 0 && _children[index - 1].needsTrailingCursorCorrection
+  }
+
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
@@ -105,8 +148,7 @@ internal class ElementNode: Node {
         return block(nil, correctedFrame, baselinePosition)
       }
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        using: placeholderBlock(_:_:_:))
+        layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
@@ -114,16 +156,7 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
-      @inline(__always) func needsLeadingCursorCorrection() -> Bool {
-        (path.count == 1 && index < _children.count
-          && _children[index].needsLeadingCursorCorrection)
-      }
-      @inline(__always) func needsTrailingCursorCorrection() -> Bool {
-        path.count == 1 && endPath.count == 1 && index == endIndex
-          && index > 0 && _children[index - 1].needsTrailingCursorCorrection
-      }
-
-      if needsLeadingCursorCorrection() {
+      if _needsLeadingCursorCorrection(path) {
         var isFirstProcessed = false
         func leadingCursorBlock(
           _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
@@ -145,7 +178,7 @@ internal class ElementNode: Node {
           layoutRange, type: type, options: options,
           using: { leadingCursorBlock(_children[index], $0, $1, $2) })
       }
-      else if needsTrailingCursorCorrection() {
+      else if _needsTrailingCursorCorrection(path, endPath) {
         func trailingCursorBlock(
           _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
           _ baselinePosition: CGFloat
@@ -400,10 +433,13 @@ internal class ElementNode: Node {
           result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
         }
       }
-      else if index < self._children.count,
-        _children[index].needsLeadingCursorCorrection
-      {
+      else if _needsLeadingCursorCorrection(path) {
         result.position.x += _children[index].leadingCursorCorrection()
+      }
+      else if _needsTrailingCursorCorrection(path),
+        let x = _children[index - 1].trailingCursorPosition()
+      {
+        result.position.x = x
       }
 
       return LayoutUtils.relayRayshoot(
