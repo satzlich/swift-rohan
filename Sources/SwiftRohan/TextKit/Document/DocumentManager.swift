@@ -578,7 +578,7 @@ public final class DocumentManager: NSObject {
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
   internal func resolveTextLocation(with point: CGPoint) -> AffineLocation? {
-    #if LOG_TEXT_SELECTION
+    #if LOG_PICKING_POINT
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
 

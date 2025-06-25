@@ -75,8 +75,8 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
       usageBasedHeight = height + margins + padding
     }
     frame.size.height = max(usageBasedHeight, page.height.ptValue)
-    Rohan.logger.debug(
-      "usageBasedHeight: \(usageBasedHeight), frame height: \(self.frame.height)")
+//    Rohan.logger.debug(
+//      "usageBasedHeight: \(usageBasedHeight), frame height: \(self.frame.height)")
 
     // 3) request update of selection
     setNeedsUpdate(selection: true)
