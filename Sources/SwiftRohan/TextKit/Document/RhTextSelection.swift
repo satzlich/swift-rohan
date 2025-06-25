@@ -56,30 +56,20 @@ public struct RhTextSelection: CustomStringConvertible {
     self.affinity = affinity
   }
 
-  public var description: String {
-    if anchor == focus {
-      return "(location: \(anchor), affinity: \(affinity))"
-    }
-    else {
-      return
-        """
-        (anchor: \(anchor), focus: \(focus), reversed: \(isReversed), affinity: \(affinity))
-        """
-    }
-  }
+  public var description: String { debugDescription }
 }
 
 extension RhTextSelection: CustomDebugStringConvertible {
   public var debugDescription: String {
     if anchor == focus {
-      return "(location: \(anchor), affinity: \(affinity))"
+      return "(\(focus), \(affinity))"
+    }
+    else if !isReversed {
+      return "(anchor: \(anchor); focus: \(focus), \(affinity); range: \(textRange))"
     }
     else {
       return
-        """
-        (anchor: \(anchor), focus: \(focus), reversed: \(isReversed), \
-        affinity: \(affinity), textRange: \(textRange))
-        """
+        "(focus: \(focus), \(affinity); anchor: \(anchor); range: \(textRange))"
     }
   }
 }
