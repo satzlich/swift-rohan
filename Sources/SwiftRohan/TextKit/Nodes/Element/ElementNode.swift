@@ -208,66 +208,6 @@ internal class ElementNode: Node {
       return context.enumerateTextSegments(
         layoutRange, type: type, options: options,
         using: { specialBlock(firstNode, lastNode, $0, $1, $2) })
-
-      /*
-      if _needsLeadingCursorCorrection(path) {
-        var isFirstProcessed = false
-        func leadingCursorBlock(
-          _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
-          _ baselinePosition: CGFloat
-        ) -> Bool {
-          precondition(node.needsLeadingCursorCorrection)
-          var correctedFrame = segmentFrame.offsetBy(originCorrection)
-          if !isFirstProcessed {
-            let cursorCorrection = node.leadingCursorCorrection()
-            correctedFrame.origin.x += cursorCorrection
-            if correctedFrame.size.width != 0 {
-              correctedFrame.size.width -= cursorCorrection
-            }
-            isFirstProcessed = true
-          }
-          return block(nil, correctedFrame, baselinePosition)
-        }
-        return context.enumerateTextSegments(
-          layoutRange, type: type, options: options,
-          using: { leadingCursorBlock(_children[index], $0, $1, $2) })
-      }
-      else if _needsTrailingCursorCorrection(endPath) {
-        func trailingCursorBlock(
-          _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
-          _ baselinePosition: CGFloat
-        ) -> Bool {
-          precondition(node.needsTrailingCursorCorrection)
-          var correctedFrame = segmentFrame.offsetBy(originCorrection)
-          if range?.upperBound == layoutRange.upperBound,
-            let position = node.trailingCursorPosition()
-          {
-            if correctedFrame.size.width.isNearlyEqual(to: 0) {
-              correctedFrame.origin.x = position
-            }
-            else {
-              let extender = max(position - correctedFrame.maxX, 0)
-              correctedFrame.size.width += extender
-            }
-          }
-          return block(nil, correctedFrame, baselinePosition)
-        }
-      
-        return context.enumerateTextSegments(
-          layoutRange, type: type, options: options,
-          using: { trailingCursorBlock(_children[endIndex - 1], $0, $1, $2) })
-      }
-      else {
-        func basicBlock(
-          _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-        ) -> Bool {
-          let correctedFrame = segmentFrame.offsetBy(originCorrection)
-          return block(nil, correctedFrame, baselinePosition)
-        }
-        return context.enumerateTextSegments(
-          layoutRange, type: type, options: options, using: basicBlock(_:_:_:))
-      }
-      */
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
