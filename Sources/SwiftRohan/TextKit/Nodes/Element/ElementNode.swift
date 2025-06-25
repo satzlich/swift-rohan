@@ -125,18 +125,6 @@ internal class ElementNode: Node {
     }
   }
 
-  /// Returns true if the next node preceding given path needs trailing cursor correction.
-  @inline(__always)
-  private final func _needsTrailingCursorCorrection(
-    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>
-  ) -> Bool {
-    guard let index = path.first?.index(),
-      let endIndex = endPath.first?.index()
-    else { return false }
-    return path.count == 1 && endPath.count == 1 && index == endIndex
-      && index > 0 && _children[index - 1].needsTrailingCursorCorrection
-  }
-
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
