@@ -80,28 +80,57 @@ internal class ElementNode: Node {
 
   // MARK: - Node(Tree API)
 
+  /// Returns true if the next node following given path needs leading cursor correction.
+  @inline(__always)
+  private final func _needsLeadingCursorCorrection(_ path: ArraySlice<RohanIndex>) -> Bool
+  {
+    if path.count == 1,
+      let index = path.first?.index()
+    {
+      return index < _children.count && _children[index].needsLeadingCursorCorrection
+    }
+    else if path.count == 2,
+      let index = path.first?.index(),
+      let secondIndex = path.last?.index()
+    {
+      return secondIndex == 0 && index < _children.count
+        && _children[index].needsLeadingCursorCorrection
+    }
+    else {
+      return false
+    }
+  }
+
+  /// Returns true if the next node preceding given path needs trailing cursor correction.
+  @inline(__always)
+  private final func _needsTrailingCursorCorrection(
+    _ path: ArraySlice<RohanIndex>
+  ) -> Bool {
+    if path.count == 1,
+      let index = path.first?.index()
+    {
+      return index > 0 && _children[index - 1].needsTrailingCursorCorrection
+    }
+    else if path.count == 2,
+      let index = path.first?.index(),
+      let secondIndex = path.last?.index(),
+      index < _children.count,
+      let node = _children[index] as? GenElementNode,
+      secondIndex == node.childCount
+    {
+      return node.needsTrailingCursorCorrection
+    }
+    else {
+      return false
+    }
+  }
+
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-
-    func basicBlock(
-      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      let correctedFrame = segmentFrame.offsetBy(originCorrection)
-      return block(nil, correctedFrame, baselinePosition)
-    }
-
-    func placeholderBlock(
-      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      var correctedFrame = segmentFrame.offsetBy(originCorrection)
-      correctedFrame.origin.x = correctedFrame.midX
-      correctedFrame.size.width = 0
-      return block(nil, correctedFrame, baselinePosition)
-    }
 
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
@@ -111,10 +140,17 @@ internal class ElementNode: Node {
       assert(path.count == 1 && endPath.count == 1)
       assert(index == endIndex && index == 0)
       let layoutRange = layoutOffset..<layoutOffset + 1
+
+      func placeholderBlock(
+        _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+      ) -> Bool {
+        var correctedFrame = segmentFrame.offsetBy(originCorrection)
+        correctedFrame.origin.x = correctedFrame.midX
+        correctedFrame.size.width = 0
+        return block(nil, correctedFrame, baselinePosition)
+      }
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options,
-        // use placeholderBlock
-        using: placeholderBlock(_:_:_:))
+        layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
@@ -122,50 +158,44 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
-      @inline(__always)
-      func needsLeadingCursorCorrection() -> Bool {
-        (path.count == 1 && index < _children.count
-          && _children[index].needsLeadingCursorCorrection)
-          || (path.count == 2 && path.last! == .index(0)
-            && _children[index].needsLeadingCursorCorrection)
+      let firstNode: Node? = _needsLeadingCursorCorrection(path) ? _children[index] : nil
+      let lastNode: Node? =
+        _needsTrailingCursorCorrection(endPath) ? _children[endIndex - 1] : nil
+
+      func specialBlock(
+        _ firstNode: Node?, _ lastNode: Node?,
+        _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+      ) -> Bool {
+        var correctedFrame = segmentFrame.offsetBy(originCorrection)
+        // apply leading correction
+        if let firstNode = firstNode,
+          range?.lowerBound == layoutRange.lowerBound
+        {
+          let cursorCorrection = firstNode.leadingCursorCorrection()
+          correctedFrame.origin.x += cursorCorrection
+          if correctedFrame.size.width != 0 {
+            correctedFrame.size.width -= cursorCorrection
+          }
+        }
+        // apply trailing correction
+        if let lastNode = lastNode,
+          range?.upperBound == layoutRange.upperBound,
+          let trailingCursorPos = lastNode.trailingCursorPosition()
+        {
+          if correctedFrame.size.width == 0 {
+            correctedFrame.origin.x = trailingCursorPos
+          }
+          else {
+            let extender = max(trailingCursorPos - correctedFrame.maxX, 0)
+            correctedFrame.size.width += extender
+          }
+        }
+        return block(nil, correctedFrame, baselinePosition)
       }
 
-      if needsLeadingCursorCorrection() {
-        var isFirstProcessed = false
-        func leadingCursorBlock(
-          _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
-          _ baselinePosition: CGFloat
-        ) -> Bool {
-          precondition(node.needsLeadingCursorCorrection)
-          var correctedFrame = segmentFrame.offsetBy(originCorrection)
-          if !isFirstProcessed {
-            let cursorCorrection = node.leadingCursorCorrection()
-            correctedFrame.origin.x += cursorCorrection
-            if correctedFrame.size.width != 0 {
-              correctedFrame.size.width -= cursorCorrection
-            }
-            isFirstProcessed = true
-          }
-          return block(nil, correctedFrame, baselinePosition)
-        }
-        return context.enumerateTextSegments(
-          layoutRange, type: type, options: options,
-          using: { leadingCursorBlock(_children[index], $0, $1, $2) })
-      }
-      else if endPath.count == 1,
-        endIndex == _children.count && _children.count > 0,
-        _children[endIndex - 1].needsTrailingCursorCorrection
-      {
-        // TODO: handle trailing cursor correction.
-        return context.enumerateTextSegments(
-          layoutRange, type: type, options: options,
-          using: basicBlock(_:_:_:))
-      }
-      else {
-        return context.enumerateTextSegments(
-          layoutRange, type: type, options: options,
-          using: basicBlock(_:_:_:))
-      }
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options,
+        using: { specialBlock(firstNode, lastNode, $0, $1, $2) })
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
@@ -175,9 +205,7 @@ internal class ElementNode: Node {
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context: context,
         layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
-        type: type, options: options,
-        // use block
-        using: block)
+        type: type, options: options, using: block)
     }
   }
 
@@ -396,10 +424,13 @@ internal class ElementNode: Node {
           result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
         }
       }
-      else if index < self._children.count,
-        _children[index].needsLeadingCursorCorrection
-      {
+      else if _needsLeadingCursorCorrection(path) {
         result.position.x += _children[index].leadingCursorCorrection()
+      }
+      else if _needsTrailingCursorCorrection(path),
+        let x = _children[index - 1].trailingCursorPosition()
+      {
+        result.position.x = x
       }
 
       return LayoutUtils.relayRayshoot(

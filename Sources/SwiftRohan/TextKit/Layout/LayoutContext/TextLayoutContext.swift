@@ -163,7 +163,7 @@ final class TextLayoutContext: LayoutContext {
 
     var result: SegmentFrame? = nil
     textLayoutManager.enumerateTextSegments(
-      in: textRange, type: .standard, options: [.rangeNotRequired, options]
+      in: textRange, type: .standard, options: options
     ) { (_, segmentFrame, baselinePosition, _) in
       // pass frame to caller
       result = SegmentFrame(segmentFrame, baselinePosition)
@@ -308,6 +308,10 @@ final class TextLayoutContext: LayoutContext {
   ) -> SegmentFrame? {
     guard let textLocation = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
+
+    // Workaround for unexpected behaviour of `NSTextSelectionNavigation` when
+    // layoutOffset is 0.
+    let affinity: SelectionAffinity = layoutOffset == 0 ? .downstream : affinity
 
     let selection = NSTextSelection(textLocation, affinity: affinity)
 

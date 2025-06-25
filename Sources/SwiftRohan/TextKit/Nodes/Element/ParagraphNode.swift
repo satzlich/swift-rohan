@@ -37,11 +37,19 @@ final class ParagraphNode: ElementNodeImpl {
   /// - Note: No companion ``needsTrailingCursorCorrection`` property is provided,
   ///     because paragraphs are not expected to have trailing cursors.
   final override var needsLeadingCursorCorrection: Bool {
-    _children.isEmpty || _children.first!.needsLeadingCursorCorrection
+    _children.first?.needsLeadingCursorCorrection ?? false
+  }
+
+  final override var needsTrailingCursorCorrection: Bool {
+    _children.last?.needsTrailingCursorCorrection ?? false
   }
 
   final override func leadingCursorCorrection() -> Double {
-    _children.isEmpty ? 0 : _children.first!.leadingCursorCorrection()
+    _children.first?.leadingCursorCorrection() ?? 0
+  }
+
+  final override func trailingCursorPosition() -> Double? {
+    _children.last?.trailingCursorPosition()
   }
 
   // MARK: - ElementNode

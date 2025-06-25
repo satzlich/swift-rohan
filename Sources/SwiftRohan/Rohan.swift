@@ -9,7 +9,7 @@ internal enum Rohan {
   static let logger = Logger(subsystem: domain, category: "Rohan")
 
   /// tolerance for layout calculations
-  static let tolerance: CGFloat = 1e-6
+  static let tolerance: Double = 1e-6
 
   /// True if text in math mode should be auto-italicised.
   static let autoItalic: Bool = true

@@ -40,7 +40,7 @@ final class MathListLayoutFragmentTests: MathLayoutTestsBase {
 
       let shouldContinue =
         mathList.enumerateTextSegments(
-          0..<0, context.cursorHeight(), type: .standard, options: .rangeNotRequired
+          0..<0, context.cursorHeight(), type: .standard, options: []
         ) {
           (_, frame, baselinePosition) in
           rect = frame
