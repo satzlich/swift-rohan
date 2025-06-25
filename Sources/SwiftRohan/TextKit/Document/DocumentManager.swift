@@ -578,7 +578,7 @@ public final class DocumentManager: NSObject {
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
   internal func resolveTextLocation(with point: CGPoint) -> AffineLocation? {
-    #if LOG_TEXT_SELECTION
+    #if LOG_PICKING_POINT
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
 
@@ -588,9 +588,19 @@ public final class DocumentManager: NSObject {
 
     let modified = rootNode.resolveTextLocation(
       with: point, context: context, layoutOffset: 0, trace: &trace, affinity: &affinity)
-    if modified,
-      let location = trace.toUserSpaceLocation()
+    guard modified else { return nil }
+
+    // Fix affinity if needed:
+    //  When an empty paragraph is selected from beyond the right edge, the
+    //  affinity is resolved to upstream, but it should be downstream.
+    if let last = trace.last,
+      last.node.isBlock,
+      last.index == .index(0)
     {
+      affinity = .downstream
+    }
+
+    if let location = trace.toUserSpaceLocation() {
       return AffineLocation(location, affinity)
     }
     return nil

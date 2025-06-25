@@ -237,21 +237,19 @@ final class MousePickTests: TextKitTestsBase {
       return TextLocation(path, "The ".length)
     }()
 
-    let testCases: [(TextLocation, CGPoint, String)] = [
+    let testCases: Array<(TextLocation, CGPoint, String)> = [
       (
         location0, CGPoint(x: 58.90, y: 29.40),
-        "(anchor: [↓0,↓0]:4, focus: [↓0,↓0]:17, reversed: false, affinity: downstream)"
+        "(anchor: [↓0,↓0]:4; focus: [↓0,↓0]:17, downstream; range: [↓0,↓0]:4..<[↓0,↓0]:17)"
       ),
       (
         location1, CGPoint(x: 65.18, y: 55.75),
-        "(anchor: [↓1,↓0]:4, focus: [↓2]:0, reversed: false, affinity: upstream)"
+        "(anchor: [↓1,↓0]:4; focus: [↓2]:0, downstream; range: [↓1,↓0]:4..<[↓2]:0)"
       ),
     ]
 
     for (i, (location, point, expected)) in testCases.enumerated() {
-      let result = resolveTextRange(with: point, location, documentManager)
-      guard let result
-      else {
+      guard let result = resolveTextRange(with: point, location, documentManager) else {
         Issue.record("Failed to resolve text range")
         return
       }
@@ -284,11 +282,7 @@ final class MousePickTests: TextKitTestsBase {
       Issue.record("Failed to resolve text selection")
       return
     }
-
-    #expect(
-      second.description == """
-        (location: [↓0,↓0]:40, affinity: upstream)
-        """)
+    #expect(second.description == "([↓0,↓0]:40, upstream)")
   }
 
   private func resolveTextLocation(
