@@ -309,6 +309,10 @@ final class TextLayoutContext: LayoutContext {
     guard let textLocation = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
 
+    // Workaround for unexpected behaviour of `NSTextSelectionNavigation` when
+    // layoutOffset is 0.
+    let affinity: SelectionAffinity = layoutOffset == 0 ? .downstream : affinity
+
     let selection = NSTextSelection(textLocation, affinity: affinity)
 
     guard
