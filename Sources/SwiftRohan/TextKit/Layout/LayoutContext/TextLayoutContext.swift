@@ -163,7 +163,7 @@ final class TextLayoutContext: LayoutContext {
 
     var result: SegmentFrame? = nil
     textLayoutManager.enumerateTextSegments(
-      in: textRange, type: .standard, options: [.rangeNotRequired, options]
+      in: textRange, type: .standard, options: options
     ) { (_, segmentFrame, baselinePosition, _) in
       // pass frame to caller
       result = SegmentFrame(segmentFrame, baselinePosition)

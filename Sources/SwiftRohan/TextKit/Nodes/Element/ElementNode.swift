@@ -106,9 +106,23 @@ internal class ElementNode: Node {
   private final func _needsTrailingCursorCorrection(
     _ path: ArraySlice<RohanIndex>
   ) -> Bool {
-    guard let index = path.first?.index() else { return false }
-    return path.count == 1 && index > 0
-      && _children[index - 1].needsTrailingCursorCorrection
+    if path.count == 1,
+      let index = path.first?.index()
+    {
+      return index > 0 && _children[index - 1].needsTrailingCursorCorrection
+    }
+    else if path.count == 2,
+      let index = path.first?.index(),
+      let secondIndex = path.last?.index(),
+      index < _children.count,
+      let node = _children[index] as? GenElementNode,
+      secondIndex == node.childCount
+    {
+      return node.needsTrailingCursorCorrection
+    }
+    else {
+      return false
+    }
   }
 
   /// Returns true if the next node preceding given path needs trailing cursor correction.
@@ -156,6 +170,46 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
+      let firstNode: Node? = _needsLeadingCursorCorrection(path) ? _children[index] : nil
+      let lastNode: Node? =
+        _needsTrailingCursorCorrection(endPath) ? _children[endIndex - 1] : nil
+
+      func specialBlock(
+        _ firstNode: Node?, _ lastNode: Node?,
+        _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+      ) -> Bool {
+        var correctedFrame = segmentFrame.offsetBy(originCorrection)
+        // apply leading correction
+        if let firstNode = firstNode,
+          range?.lowerBound == layoutRange.lowerBound
+        {
+          let cursorCorrection = firstNode.leadingCursorCorrection()
+          correctedFrame.origin.x += cursorCorrection
+          if correctedFrame.size.width != 0 {
+            correctedFrame.size.width -= cursorCorrection
+          }
+        }
+        // apply trailing correction
+        if let lastNode = lastNode,
+          range?.upperBound == layoutRange.upperBound,
+          let trailingCursorPos = lastNode.trailingCursorPosition()
+        {
+          if correctedFrame.size.width == 0 {
+            correctedFrame.origin.x = trailingCursorPos
+          }
+          else {
+            let extender = max(trailingCursorPos - correctedFrame.maxX, 0)
+            correctedFrame.size.width += extender
+          }
+        }
+        return block(nil, correctedFrame, baselinePosition)
+      }
+
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options,
+        using: { specialBlock(firstNode, lastNode, $0, $1, $2) })
+
+      /*
       if _needsLeadingCursorCorrection(path) {
         var isFirstProcessed = false
         func leadingCursorBlock(
@@ -178,22 +232,30 @@ internal class ElementNode: Node {
           layoutRange, type: type, options: options,
           using: { leadingCursorBlock(_children[index], $0, $1, $2) })
       }
-      else if _needsTrailingCursorCorrection(path, endPath) {
+      else if _needsTrailingCursorCorrection(endPath) {
         func trailingCursorBlock(
           _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
           _ baselinePosition: CGFloat
         ) -> Bool {
           precondition(node.needsTrailingCursorCorrection)
           var correctedFrame = segmentFrame.offsetBy(originCorrection)
-          if let position = node.trailingCursorPosition() {
-            correctedFrame.origin.x = position
+          if range?.upperBound == layoutRange.upperBound,
+            let position = node.trailingCursorPosition()
+          {
+            if correctedFrame.size.width.isNearlyEqual(to: 0) {
+              correctedFrame.origin.x = position
+            }
+            else {
+              let extender = max(position - correctedFrame.maxX, 0)
+              correctedFrame.size.width += extender
+            }
           }
           return block(nil, correctedFrame, baselinePosition)
         }
-
+      
         return context.enumerateTextSegments(
           layoutRange, type: type, options: options,
-          using: { trailingCursorBlock(_children[index - 1], $0, $1, $2) })
+          using: { trailingCursorBlock(_children[endIndex - 1], $0, $1, $2) })
       }
       else {
         func basicBlock(
@@ -205,6 +267,7 @@ internal class ElementNode: Node {
         return context.enumerateTextSegments(
           layoutRange, type: type, options: options, using: basicBlock(_:_:_:))
       }
+      */
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse

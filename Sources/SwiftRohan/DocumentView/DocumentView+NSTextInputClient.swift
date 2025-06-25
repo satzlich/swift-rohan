@@ -232,9 +232,8 @@ extension DocumentView: @preconcurrency NSTextInputClient {
     else { return .zero }
 
     var screenRect = NSRect.zero
-    documentManager.enumerateTextSegments(
-      in: textRange, type: .standard, options: .rangeNotRequired
-    ) { (_, textSegmentFrame, _) in
+    documentManager.enumerateTextSegments(in: textRange, type: .standard) {
+      (_, textSegmentFrame, _) in
       screenRect = window.convertToScreen(contentView.convert(textSegmentFrame, to: nil))
       return false  // stop
     }
