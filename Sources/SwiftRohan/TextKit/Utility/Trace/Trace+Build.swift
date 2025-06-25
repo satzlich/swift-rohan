@@ -20,6 +20,28 @@ extension Trace {
     return trace
   }
 
+  /// Build a trace from a path in a subtree.
+  /// - Returns: The trace if the path is valid, otherwise nil.
+  /// - Precondition: The path must not be empty.
+  static func from(_ path: ArraySlice<RohanIndex>, _ subtree: ElementNode) -> Trace? {
+    precondition(!path.isEmpty)
+
+    var trace = Trace()
+    trace.reserveCapacity(path.count)
+
+    var node: Node = subtree
+    for index in path.dropLast() {
+      guard let child = node.getChild(index) else { return nil }
+      trace.emplaceBack(node, index)
+      node = child
+    }
+    guard let lastIndex = path.last?.index(),
+      NodeUtils.validateOffset(lastIndex, node)
+    else { return nil }
+    trace.emplaceBack(node, .index(lastIndex))
+    return trace
+  }
+
   /// Build a trace from a location in a subtree until given predicate is met, or
   /// the end of the path specified by location is reached.
   /// - Returns: The trace if the probed part of location is valid, otherwise nil.

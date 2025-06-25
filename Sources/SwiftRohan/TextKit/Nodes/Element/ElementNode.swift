@@ -80,26 +80,18 @@ internal class ElementNode: Node {
 
   // MARK: - Node(Tree API)
 
+  private static let _maxPathLength = 3  // heuristic limit for cursor correction.
+
   /// Returns the node that needs leading cursor correction.
   private final func _leadingCursorCorrectionNode(_ path: ArraySlice<RohanIndex>) -> Node?
   {
-    if path.count == 1,
-      let index = path.first?.index(),
-      index < _children.count && _children[index].needsLeadingCursorCorrection
-    {
-      return _children[index]
-    }
-    else if path.count == 2,
-      let index = path.first?.index(),
-      let secondIndex = path.last?.index(),
-      secondIndex == 0 && index < _children.count
-        && _children[index].needsLeadingCursorCorrection
-    {
-      return _children[index]
-    }
-    else {
-      return nil
-    }
+    guard path.count <= Self._maxPathLength,
+      let trace = Trace.from(path, self),
+      let last = trace.last,
+      let descendant = last.getChild(),
+      descendant.needsLeadingCursorCorrection
+    else { return nil }
+    return descendant
   }
 
   /// Returns the node that needs trailing cursor correction.
@@ -107,25 +99,17 @@ internal class ElementNode: Node {
   private final func _trailingCursorCorrectionNode(
     _ path: ArraySlice<RohanIndex>
   ) -> Node? {
-    if path.count == 1,
-      let index = path.first?.index(),
-      index > 0 && _children[index - 1].needsTrailingCursorCorrection
-    {
-      return _children[index - 1]
-    }
-    else if path.count == 2,
-      let index = path.first?.index(),
-      let secondIndex = path.last?.index(),
-      index < _children.count,
-      let node = _children[index] as? GenElementNode,
-      secondIndex == node.childCount,
-      node.needsTrailingCursorCorrection
-    {
-      return node
-    }
-    else {
-      return nil
-    }
+    guard path.count <= Self._maxPathLength,
+      let trace = Trace.from(path, self),
+      let last = trace.last,
+      let lastIndex = last.index.index(),
+      lastIndex > 0,
+      let previous = last.node.getChild(.index(lastIndex - 1)),
+      previous.needsTrailingCursorCorrection,
+      // when `previous` is the last child.
+      last.getChild() == nil
+    else { return nil }
+    return previous
   }
 
   final override func enumerateTextSegments(
