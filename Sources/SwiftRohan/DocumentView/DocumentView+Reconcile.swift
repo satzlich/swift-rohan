@@ -62,7 +62,7 @@ extension DocumentView {
     guard _isUpdateEnqueued == false else { return }
     _isUpdateEnqueued = true
 
-    RunLoop.current.perform(inModes: [.default, .eventTracking]) {
+    Task { @MainActor in
       self.performPendingUpdates()
     }
   }

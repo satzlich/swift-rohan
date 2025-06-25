@@ -8,13 +8,6 @@ enum ItemListSubtype: String, Codable, CaseIterable {
 
   var command: String { rawValue }
 
-  var isMarkerConstant: Bool {
-    switch self {
-    case .itemize: return true
-    case .enumerate: return false
-    }
-  }
-
   /// Instantiate text list for given level (1-based).
   func textList(forLevel level: Int) -> RhTextList {
     precondition(level >= 1)
