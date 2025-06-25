@@ -80,10 +80,12 @@ internal class ElementNode: Node {
 
   // MARK: - Node(Tree API)
 
+  private static let _maxPathLength = 3  // heuristic limit for cursor correction.
+
   /// Returns the node that needs leading cursor correction.
   private final func _leadingCursorCorrectionNode(_ path: ArraySlice<RohanIndex>) -> Node?
   {
-    guard path.count <= 3,  // this is heuristic limit.
+    guard path.count <= Self._maxPathLength,
       let trace = Trace.from(path, self),
       let last = trace.last,
       let descendant = last.getChild(),
@@ -97,7 +99,7 @@ internal class ElementNode: Node {
   private final func _trailingCursorCorrectionNode(
     _ path: ArraySlice<RohanIndex>
   ) -> Node? {
-    guard path.count <= 3,  // this is heuristic limit.
+    guard path.count <= Self._maxPathLength,
       let trace = Trace.from(path, self),
       let last = trace.last,
       let lastIndex = last.index.index(),
