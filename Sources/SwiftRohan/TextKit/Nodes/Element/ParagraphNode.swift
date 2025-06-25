@@ -31,27 +31,6 @@ final class ParagraphNode: ElementNodeImpl {
     return json
   }
 
-  // MARK: - Node(Tree API)
-
-  /// Returns the value of the first child of the paragraph, if any.
-  /// - Note: No companion ``needsTrailingCursorCorrection`` property is provided,
-  ///     because paragraphs are not expected to have trailing cursors.
-  final override var needsLeadingCursorCorrection: Bool {
-    _children.first?.needsLeadingCursorCorrection ?? false
-  }
-
-  final override var needsTrailingCursorCorrection: Bool {
-    _children.last?.needsTrailingCursorCorrection ?? false
-  }
-
-  final override func leadingCursorCorrection() -> Double {
-    _children.first?.leadingCursorCorrection() ?? 0
-  }
-
-  final override func trailingCursorPosition() -> Double? {
-    _children.last?.trailingCursorPosition()
-  }
-
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(

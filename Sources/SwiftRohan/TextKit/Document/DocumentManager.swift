@@ -35,7 +35,7 @@ public final class DocumentManager: NSObject {
   internal var textSelection: RhTextSelection? {
     didSet {
       #if LOG_TEXT_SELECTION
-      let string = textSelection?.description ?? "no selection"
+      let string = textSelection?.debugDescription ?? "no selection"
       Rohan.logger.debug("\(string)")
       #endif
     }

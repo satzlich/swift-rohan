@@ -69,6 +69,21 @@ public struct RhTextSelection: CustomStringConvertible {
   }
 }
 
+extension RhTextSelection: CustomDebugStringConvertible {
+  public var debugDescription: String {
+    if anchor == focus {
+      return "(location: \(anchor), affinity: \(affinity))"
+    }
+    else {
+      return
+        """
+        (anchor: \(anchor), focus: \(focus), reversed: \(isReversed), \
+        affinity: \(affinity), textRange: \(textRange))
+        """
+    }
+  }
+}
+
 extension SelectionAffinity: @retroactive CustomStringConvertible {
   public var description: String {
     switch self {
