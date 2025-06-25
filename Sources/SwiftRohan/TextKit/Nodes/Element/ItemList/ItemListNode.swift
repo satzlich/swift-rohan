@@ -139,6 +139,14 @@ final class ItemListNode: ElementNode {
     return json
   }
 
+  // MARK: - Node(Tree API)
+
+  final override var needsLeadingCursorCorrection: Bool { true }
+  final override var needsTrailingCursorCorrection: Bool { true }
+
+  final override func leadingCursorCorrection() -> Double { -_listIndent }
+  final override func trailingCursorPosition() -> Double? { _trailingCursorPosition }
+
   // MARK: - ElementNode
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
@@ -156,12 +164,6 @@ final class ItemListNode: ElementNode {
     try container.encode(subtype, forKey: .subtype)
     try super.encode(to: encoder, withChildren: children)
   }
-
-  // MARK: - Node(Tree API)
-
-  final override func leadingCursorCorrection() -> Double { -_listIndent }
-  final override var needsLeadingCursorCorrection: Bool { true }
-  final override var needsTrailingCursorCorrection: Bool { true }
 
   // MARK: - Storage
 
@@ -507,7 +509,9 @@ final class ItemListNode: ElementNode {
   /// Text attributes used for item markers.
   private var _textAttributes: Dictionary<NSAttributedString.Key, Any> = [:]
   /// Indent for item text.
-  private var _listIndent: CGFloat = 0.0
+  private var _listIndent: Double = 0.0
+  /// Trailing cursor position.
+  private var _trailingCursorPosition: Double? = nil
 
   init(_ subtype: ItemListSubtype, _ children: ElementStore) {
     self.subtype = subtype
@@ -522,9 +526,13 @@ final class ItemListNode: ElementNode {
   /// Set up properties for layout.
   private func _setupNodeProperties(_ styleSheet: StyleSheet) {
     let properties = self.getProperties(styleSheet)
+
+    @inline(__always) func resolveValue(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, styleSheet)
+    }
+
     // resolve list level
-    let listLevel =
-      ParagraphProperty.listLevel.resolveValue(properties, styleSheet).integer()!
+    let listLevel = resolveValue(ParagraphProperty.listLevel).integer()!
     self._textList = self.subtype.textList(forLevel: listLevel)
     // prepare text attributes
     let textProperty = TextProperty.resolveAggregate(properties, styleSheet)
@@ -532,6 +540,14 @@ final class ItemListNode: ElementNode {
     // prepare list indent
     self._listIndent =
       Self.indent(forLevel: listLevel).floatValue * textProperty.size.floatValue
+    // prepare trailing cursor position
+    do {
+      let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
+      let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
+      let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
+      // "5" for padding.
+      self._trailingCursorPosition = pageWidth - leftMargin - rightMargin - 5
+    }
   }
 
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {

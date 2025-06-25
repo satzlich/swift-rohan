@@ -8,9 +8,6 @@ internal enum Rohan {
   static let domain = "net.satzlich.rohan"
   static let logger = Logger(subsystem: domain, category: "Rohan")
 
-  /// Default padding used by TextKit.
-  static let padding: Double = 5
-
   /// tolerance for layout calculations
   static let tolerance: Double = 1e-6
 

@@ -87,22 +87,6 @@ internal class ElementNode: Node {
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
 
-    func basicBlock(
-      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      let correctedFrame = segmentFrame.offsetBy(originCorrection)
-      return block(nil, correctedFrame, baselinePosition)
-    }
-
-    func placeholderBlock(
-      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
-    ) -> Bool {
-      var correctedFrame = segmentFrame.offsetBy(originCorrection)
-      correctedFrame.origin.x = correctedFrame.midX
-      correctedFrame.size.width = 0
-      return block(nil, correctedFrame, baselinePosition)
-    }
-
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
     else { assertionFailure("Invalid path"); return false }
@@ -111,9 +95,17 @@ internal class ElementNode: Node {
       assert(path.count == 1 && endPath.count == 1)
       assert(index == endIndex && index == 0)
       let layoutRange = layoutOffset..<layoutOffset + 1
+
+      func placeholderBlock(
+        _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+      ) -> Bool {
+        var correctedFrame = segmentFrame.offsetBy(originCorrection)
+        correctedFrame.origin.x = correctedFrame.midX
+        correctedFrame.size.width = 0
+        return block(nil, correctedFrame, baselinePosition)
+      }
       return context.enumerateTextSegments(
         layoutRange, type: type, options: options,
-        // use placeholderBlock
         using: placeholderBlock(_:_:_:))
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
@@ -122,12 +114,13 @@ internal class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
-      @inline(__always)
-      func needsLeadingCursorCorrection() -> Bool {
+      @inline(__always) func needsLeadingCursorCorrection() -> Bool {
         (path.count == 1 && index < _children.count
           && _children[index].needsLeadingCursorCorrection)
-          || (path.count == 2 && path.last! == .index(0)
-            && _children[index].needsLeadingCursorCorrection)
+      }
+      @inline(__always) func needsTrailingCursorCorrection() -> Bool {
+        path.count == 1 && endPath.count == 1 && index == endIndex
+          && index > 0 && _children[index - 1].needsTrailingCursorCorrection
       }
 
       if needsLeadingCursorCorrection() {
@@ -152,19 +145,32 @@ internal class ElementNode: Node {
           layoutRange, type: type, options: options,
           using: { leadingCursorBlock(_children[index], $0, $1, $2) })
       }
-      else if endPath.count == 1,
-        endIndex == _children.count && _children.count > 0,
-        _children[endIndex - 1].needsTrailingCursorCorrection
-      {
-        // TODO: handle trailing cursor correction.
+      else if needsTrailingCursorCorrection() {
+        func trailingCursorBlock(
+          _ node: Node, _ range: Range<Int>?, _ segmentFrame: CGRect,
+          _ baselinePosition: CGFloat
+        ) -> Bool {
+          precondition(node.needsTrailingCursorCorrection)
+          var correctedFrame = segmentFrame.offsetBy(originCorrection)
+          if let position = node.trailingCursorPosition() {
+            correctedFrame.origin.x = position
+          }
+          return block(nil, correctedFrame, baselinePosition)
+        }
+
         return context.enumerateTextSegments(
           layoutRange, type: type, options: options,
-          using: basicBlock(_:_:_:))
+          using: { trailingCursorBlock(_children[index - 1], $0, $1, $2) })
       }
       else {
+        func basicBlock(
+          _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+        ) -> Bool {
+          let correctedFrame = segmentFrame.offsetBy(originCorrection)
+          return block(nil, correctedFrame, baselinePosition)
+        }
         return context.enumerateTextSegments(
-          layoutRange, type: type, options: options,
-          using: basicBlock(_:_:_:))
+          layoutRange, type: type, options: options, using: basicBlock(_:_:_:))
       }
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
@@ -175,9 +181,7 @@ internal class ElementNode: Node {
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context: context,
         layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
-        type: type, options: options,
-        // use block
-        using: block)
+        type: type, options: options, using: block)
     }
   }
 
