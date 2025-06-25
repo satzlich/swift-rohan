@@ -66,23 +66,24 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     documentManager.ensureLayout(scope: .viewport)
 
     // 2) propagate text container height to view
-    let page: PageProperty = documentManager.styleSheet.resolveDefault()
-    let pageHeight = page.height.ptValue
+    let pageHeight: Double
     let usageBasedHeight: Double
     do {
-      let height = documentManager.usageBoundsForTextContainer.height
-      usageBasedHeight = height + pageHeight / 2
+      let page: PageProperty = documentManager.styleSheet.resolveDefault()
+      pageHeight = page.height.ptValue
+      usageBasedHeight =
+        documentManager.usageBoundsForTextContainer.height + pageHeight / 2
     }
-    let oldHeight = self.bounds.size.height
-    let newHeight = max(usageBasedHeight, pageHeight)
-    setFrameSize(CGSize(width: self.bounds.width, height: newHeight))
+    let oldFrameHeight = self.bounds.size.height
+    let frameHeight = max(usageBasedHeight, pageHeight)
+    setFrameSize(CGSize(width: self.bounds.width, height: frameHeight))
 
     // 3) request update of selection
     setNeedsUpdate(selection: true)
 
     // 4) request re-layout again if needed. This is necessary as TextKit may
     //    occasionally returns a usage bounds with drastic error after layout.
-    if newHeight < oldHeight - pageHeight / 2 {
+    if frameHeight < oldFrameHeight - pageHeight / 2 {
       Rohan.logger.debug("Re-layout needed after height change.")
       needsLayout = true
     }
