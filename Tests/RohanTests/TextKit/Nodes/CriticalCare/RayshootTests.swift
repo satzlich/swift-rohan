@@ -57,10 +57,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =
-        """
-        (location: [↓0,↓0,nuc,↓0,(0,0),↓0]:0, affinity: downstream)
-        """
+      let expected1 = "([↓0,↓0,nuc,↓0,(0,0),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -71,10 +68,7 @@ final class RayshootTests: TextKitTestsBase {
       let reslt2 =
         navigation.destinationSelection(
           for: selection, direction: .down, destination: .character, extending: false)
-      let expected2 =
-        """
-        (location: [↓0,↓0,nuc,↓0,(2,0)]:0, affinity: downstream)
-        """
+      let expected2 = "([↓0,↓0,nuc,↓0,(2,0)]:0, downstream)"
       guard let result2 = reslt2 else {
         Issue.record("No result found")
         return
@@ -89,10 +83,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =
-        """
-        (location: [↓0,↓0,nuc,↓0,(1,1),↓0,denom,↓0,nuc,↓0]:1, affinity: upstream)
-        """
+      let expected1 =        "([↓0,↓0,nuc,↓0,(1,1),↓0,denom,↓0,nuc,↓0]:1, upstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -107,10 +98,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =
-        """
-        (location: [↓0,↓0,nuc,↓0,(0,1),↓0]:0, affinity: downstream)
-        """
+      let expected1 =        "([↓0,↓0,nuc,↓0,(0,1),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -126,10 +114,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =
-        """
-        (location: [↓0,↓0,nuc,↓0,(1,0),↓0]:0, affinity: downstream)
-        """
+      let expected1 =        "([↓0,↓0,nuc,↓0,(1,0),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return

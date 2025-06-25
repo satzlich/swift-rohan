@@ -236,14 +236,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓0]:0, affinity: downstream), \
-          (location: [↓0,↓0]:24, affinity: downstream), \
-          (location: [↓1,↓0]:40, affinity: upstream), \
-          (location: [↓0,↓0]:25, affinity: downstream), \
-          (anchor: [↓0,↓0]:25, focus: [↓1,↓0]:0, reversed: false, affinity: downstream), \
-          (anchor: [↓0,↓0]:25, focus: [↓0,↓0]:24, reversed: true, affinity: downstream), \
-          (anchor: [↓0,↓0]:25, focus: [↓1,↓0]:40, reversed: false, affinity: upstream), \
-          (anchor: [↓0,↓0]:25, focus: []:0, reversed: true, affinity: downstream)]
+          [([↓1,↓0]:0, downstream), \
+          ([↓0,↓0]:24, downstream), \
+          ([↓1,↓0]:40, upstream), \
+          ([↓0,↓0]:25, downstream), \
+          (anchor: [↓0,↓0]:25; focus: [↓1,↓0]:0, downstream; range: []:0..<[↓1,↓0]:0), \
+          (focus: [↓0,↓0]:24, downstream; anchor: [↓0,↓0]:25; range: [↓0,↓0]:24..<[↓0,↓0]:25), \
+          (anchor: [↓0,↓0]:25; focus: [↓1,↓0]:40, upstream; range: []:0..<[↓1,↓0]:40), \
+          (focus: []:0, downstream; anchor: [↓0,↓0]:25; range: []:0..<[]:1)]
           """)
     }
     do {
@@ -257,14 +257,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓0]:63, affinity: upstream), \
-          (location: [↓1,↓0]:61, affinity: downstream), \
-          (location: [↓1,↓0]:89, affinity: upstream), \
-          (location: [↓1,↓0]:22, affinity: downstream), \
-          (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:63, reversed: false, affinity: upstream), \
-          (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:61, reversed: true, affinity: downstream), \
-          (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:89, reversed: false, affinity: upstream), \
-          (anchor: [↓1,↓0]:62, focus: [↓1,↓0]:22, reversed: true, affinity: downstream)]
+          [([↓1,↓0]:63, upstream), \
+          ([↓1,↓0]:61, downstream), \
+          ([↓1,↓0]:89, upstream), \
+          ([↓1,↓0]:22, downstream), \
+          (anchor: [↓1,↓0]:62; focus: [↓1,↓0]:63, upstream; range: [↓1,↓0]:62..<[↓1,↓0]:63), \
+          (focus: [↓1,↓0]:61, downstream; anchor: [↓1,↓0]:62; range: [↓1,↓0]:61..<[↓1,↓0]:62), \
+          (anchor: [↓1,↓0]:62; focus: [↓1,↓0]:89, upstream; range: [↓1,↓0]:62..<[↓1,↓0]:89), \
+          (focus: [↓1,↓0]:22, downstream; anchor: [↓1,↓0]:62; range: [↓1,↓0]:22..<[↓1,↓0]:62)]
           """)
     }
     do {
@@ -277,14 +277,13 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓0]:87, affinity: upstream), \
-          (location: [↓1,↓0]:85, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓1,num,↓0]:2, affinity: upstream), \
-          (location: [↓1,↓0]:46, affinity: downstream), \
-          (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:87, reversed: false, affinity: upstream), \
-          (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:85, reversed: true, affinity: downstream), \
-          (anchor: [↓1,↓0]:86, focus: [↓2,↓0,nuc,↓1,num,↓0]:2, reversed: false, affinity: upstream), \
-          (anchor: [↓1,↓0]:86, focus: [↓1,↓0]:46, reversed: true, affinity: downstream)]
+          [([↓1,↓0]:87, upstream), ([↓1,↓0]:85, downstream), \
+          ([↓2,↓0,nuc,↓1,num,↓0]:2, upstream), \
+          ([↓1,↓0]:46, downstream), \
+          (anchor: [↓1,↓0]:86; focus: [↓1,↓0]:87, upstream; range: [↓1,↓0]:86..<[↓1,↓0]:87), \
+          (focus: [↓1,↓0]:85, downstream; anchor: [↓1,↓0]:86; range: [↓1,↓0]:85..<[↓1,↓0]:86), \
+          (anchor: [↓1,↓0]:86; focus: [↓2,↓0,nuc,↓1,num,↓0]:2, upstream; range: [↓1,↓0]:86..<[↓2]:1), \
+          (focus: [↓1,↓0]:46, downstream; anchor: [↓1,↓0]:86; range: [↓1,↓0]:46..<[↓1,↓0]:86)]
           """)
     }
     do {
@@ -293,29 +292,25 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
 
-      #expect(
-        "\(destinations[0])" == "(location: [↓2,↓0,nuc,↓2]:3, affinity: upstream)")
-      #expect(
-        "\(destinations[1])" == "(location: [↓2,↓0,nuc,↓2]:1, affinity: downstream)")
-      #expect(
-        "\(destinations[2])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, affinity: downstream)")
-      #expect(
-        "\(destinations[3])" == "(location: [↓1,↓0]:89, affinity: upstream)")
+      #expect("\(destinations[0])" == "([↓2,↓0,nuc,↓2]:3, upstream)")
+      #expect("\(destinations[1])" == "([↓2,↓0,nuc,↓2]:1, downstream)")
+      #expect("\(destinations[2])" == "([↓3,↓0,⇒0,↓0,⇒0,↓0]:1, downstream)")
+      #expect("\(destinations[3])" == "([↓1,↓0]:89, upstream)")
       #expect(
         "\(destinations[4])"
-          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:3, reversed: false, affinity: upstream)"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2; focus: [↓2,↓0,nuc,↓2]:3, upstream; range: [↓2,↓0,nuc,↓2]:2..<[↓2,↓0,nuc,↓2]:3)"
       )
       #expect(
         "\(destinations[5])"
-          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:1, reversed: true, affinity: downstream)"
+          == "(focus: [↓2,↓0,nuc,↓2]:1, downstream; anchor: [↓2,↓0,nuc,↓2]:2; range: [↓2,↓0,nuc,↓2]:1..<[↓2,↓0,nuc,↓2]:2)"
       )
       #expect(
         "\(destinations[6])"
-          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, reversed: false, affinity: downstream)"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2; focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, downstream; range: [↓2]:0..<[↓3]:1)"
       )
       #expect(
         "\(destinations[7])"
-          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓1,↓0]:89, reversed: true, affinity: upstream)"
+          == "(focus: [↓1,↓0]:89, upstream; anchor: [↓2,↓0,nuc,↓2]:2; range: [↓1,↓0]:89..<[↓2]:1)"
       )
       #expect(destinations.count == 8)
     }
@@ -326,14 +321,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓2,↓0,nuc,↓1,num,↓0]:3, affinity: upstream), \
-          (location: [↓2,↓0,nuc,↓1,num,↓0]:1, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓1,denom,↓0]:2, affinity: upstream), \
-          (location: [↓1,↓0]:86, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓2,↓0,nuc,↓1,num,↓0]:3, reversed: false, affinity: upstream), \
-          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓2,↓0,nuc,↓1,num,↓0]:1, reversed: true, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓2,↓0,nuc,↓1,denom,↓0]:2, reversed: false, affinity: upstream), \
-          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2, focus: [↓1,↓0]:86, reversed: true, affinity: downstream)]
+          [([↓2,↓0,nuc,↓1,num,↓0]:3, upstream), \
+          ([↓2,↓0,nuc,↓1,num,↓0]:1, downstream), \
+          ([↓2,↓0,nuc,↓1,denom,↓0]:2, upstream), \
+          ([↓1,↓0]:86, downstream), \
+          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2; focus: [↓2,↓0,nuc,↓1,num,↓0]:3, upstream; range: [↓2,↓0,nuc,↓1,num,↓0]:2..<[↓2,↓0,nuc,↓1,num,↓0]:3), \
+          (focus: [↓2,↓0,nuc,↓1,num,↓0]:1, downstream; anchor: [↓2,↓0,nuc,↓1,num,↓0]:2; range: [↓2,↓0,nuc,↓1,num,↓0]:1..<[↓2,↓0,nuc,↓1,num,↓0]:2), \
+          (anchor: [↓2,↓0,nuc,↓1,num,↓0]:2; focus: [↓2,↓0,nuc,↓1,denom,↓0]:2, upstream; range: [↓2,↓0,nuc]:1..<[↓2,↓0,nuc]:2), \
+          (focus: [↓1,↓0]:86, downstream; anchor: [↓2,↓0,nuc,↓1,num,↓0]:2; range: [↓1,↓0]:86..<[↓2]:1)]
           """)
     }
     do {
@@ -343,14 +338,13 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓2,↓0,nuc,↓1,denom,↓0]:3, affinity: upstream), \
-          (location: [↓2,↓0,nuc,↓1,denom,↓0]:1, affinity: downstream), \
-          (location: [↓3,↓0,⇒0]:0, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓1,num,↓0]:2, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2, focus: [↓2,↓0,nuc,↓1,denom,↓0]:3, reversed: false, affinity: upstream), \
-          (anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2, focus: [↓2,↓0,nuc,↓1,denom,↓0]:1, reversed: true, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2, focus: [↓3,↓0,⇒0]:0, reversed: false, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2, focus: [↓2,↓0,nuc,↓1,num,↓0]:2, reversed: true, affinity: downstream)]
+          [([↓2,↓0,nuc,↓1,denom,↓0]:3, upstream), \
+          ([↓2,↓0,nuc,↓1,denom,↓0]:1, downstream), \
+          ([↓3,↓0,⇒0]:0, downstream), \
+          ([↓2,↓0,nuc,↓1,num,↓0]:2, downstream), \
+          (anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2; focus: [↓2,↓0,nuc,↓1,denom,↓0]:3, upstream; range: [↓2,↓0,nuc,↓1,denom,↓0]:2..<[↓2,↓0,nuc,↓1,denom,↓0]:3), \
+          (focus: [↓2,↓0,nuc,↓1,denom,↓0]:1, downstream; anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2; range: [↓2,↓0,nuc,↓1,denom,↓0]:1..<[↓2,↓0,nuc,↓1,denom,↓0]:2), \
+          (anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2; focus: [↓3,↓0,⇒0]:0, downstream; range: [↓2]:0..<[↓3]:1), (focus: [↓2,↓0,nuc,↓1,num,↓0]:2, downstream; anchor: [↓2,↓0,nuc,↓1,denom,↓0]:2; range: [↓2,↓0,nuc]:1..<[↓2,↓0,nuc]:2)]
           """)
     }
     do {
@@ -359,27 +353,25 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
 
-      #expect("\(destinations[0])" == "(location: [↓3,↓1]:0, affinity: upstream)")
-      #expect(
-        "\(destinations[1])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream)")
-      #expect("\(destinations[2])" == "(location: [↓3,↓1]:23, affinity: downstream)")
-      #expect(
-        "\(destinations[3])" == "(location: [↓2,↓0,nuc,↓2]:3, affinity: downstream)")
+      #expect("\(destinations[0])" == "([↓3,↓1]:0, upstream)")
+      #expect("\(destinations[1])" == "([↓3,↓0,⇒0,↓0,⇒0,↓0]:3, downstream)")
+      #expect("\(destinations[2])" == "([↓3,↓1]:23, downstream)")
+      #expect("\(destinations[3])" == "([↓2,↓0,nuc,↓2]:3, downstream)")
       #expect(
         "\(destinations[4])"
-          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓1]:0, reversed: false, affinity: upstream)"
+          == "(anchor: [↓3,↓0,⇒0]:1; focus: [↓3,↓1]:0, upstream; range: [↓3]:0..<[↓3,↓1]:0)"
       )
       #expect(
         "\(destinations[5])"
-          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: true, affinity: downstream)"
+          == "(focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, downstream; anchor: [↓3,↓0,⇒0]:1; range: [↓3,↓0,⇒0]:0..<[↓3,↓0,⇒0]:1)"
       )
       #expect(
         "\(destinations[6])"
-          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓1]:23, reversed: false, affinity: downstream)"
+          == "(anchor: [↓3,↓0,⇒0]:1; focus: [↓3,↓1]:23, downstream; range: [↓3]:0..<[↓3,↓1]:23)"
       )
       #expect(
         "\(destinations[7])"
-          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓2,↓0,nuc,↓2]:3, reversed: true, affinity: downstream)"
+          == "(focus: [↓2,↓0,nuc,↓2]:3, downstream; anchor: [↓3,↓0,⇒0]:1; range: [↓2]:0..<[↓3]:1)"
       )
       #expect(destinations.count == 8)
     }
@@ -388,29 +380,25 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let location = TextLocation.compose("[↓3,↓0,⇒0,↓0,⇒0,↓0]", "fo".length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
-      #expect(
-        "\(destinations[0])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: upstream)")
-      #expect(
-        "\(destinations[1])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, affinity: downstream)")
-      #expect("\(destinations[2])" == "(location: [↓3,↓1]:14, affinity: downstream)")
-      #expect(
-        "\(destinations[3])"
-          == "(location: [↓2,↓0,nuc,↓0]:2, affinity: downstream)")
+      #expect("\(destinations[0])" == "([↓3,↓0,⇒0,↓0,⇒0,↓0]:3, upstream)")
+      #expect("\(destinations[1])" == "([↓3,↓0,⇒0,↓0,⇒0,↓0]:1, downstream)")
+      #expect("\(destinations[2])" == "([↓3,↓1]:14, downstream)")
+      #expect(        "\(destinations[3])"          == "([↓2,↓0,nuc,↓0]:2, downstream)")
       #expect(
         "\(destinations[4])"
-          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: false, affinity: upstream)"
+          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2; focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, upstream; range: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2..<[↓3,↓0,⇒0,↓0,⇒0,↓0]:3)"
       )
       #expect(
         "\(destinations[5])"
-          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, reversed: true, affinity: downstream)"
+          == "(focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, downstream; anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2; range: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1..<[↓3,↓0,⇒0,↓0,⇒0,↓0]:2)"
       )
       #expect(
         "\(destinations[6])"
-          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓1]:14, reversed: false, affinity: downstream)"
+          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2; focus: [↓3,↓1]:14, downstream; range: [↓3]:0..<[↓3,↓1]:14)"
       )
       #expect(
         "\(destinations[7])"
-          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓2,↓0,nuc,↓0]:2, reversed: true, affinity: downstream)"
+          == "(focus: [↓2,↓0,nuc,↓0]:2, downstream; anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2; range: [↓2]:0..<[↓3]:1)"
       )
       #expect(destinations.count == 8)
     }
@@ -425,14 +413,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓3,↓1]:15, affinity: upstream), \
-          (location: [↓3,↓1]:13, affinity: downstream), \
-          (location: [↓3,↓1]:44, affinity: upstream), \
-          (location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream), \
-          (anchor: [↓3,↓1]:14, focus: [↓3,↓1]:15, reversed: false, affinity: upstream), \
-          (anchor: [↓3,↓1]:14, focus: [↓3,↓1]:13, reversed: true, affinity: downstream), \
-          (anchor: [↓3,↓1]:14, focus: [↓3,↓1]:44, reversed: false, affinity: upstream), \
-          (anchor: [↓3,↓1]:14, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: true, affinity: downstream)]
+          [([↓3,↓1]:15, upstream), \
+          ([↓3,↓1]:13, downstream), \
+          ([↓3,↓1]:44, upstream), \
+          ([↓3,↓0,⇒0,↓0,⇒0,↓0]:3, downstream), \
+          (anchor: [↓3,↓1]:14; focus: [↓3,↓1]:15, upstream; range: [↓3,↓1]:14..<[↓3,↓1]:15), \
+          (focus: [↓3,↓1]:13, downstream; anchor: [↓3,↓1]:14; range: [↓3,↓1]:13..<[↓3,↓1]:14), \
+          (anchor: [↓3,↓1]:14; focus: [↓3,↓1]:44, upstream; range: [↓3,↓1]:14..<[↓3,↓1]:44), \
+          (focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, downstream; anchor: [↓3,↓1]:14; range: [↓3]:0..<[↓3,↓1]:14)]
           """)
     }
   }
@@ -476,10 +464,10 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         Issue.record("Failed to get destination selection")
         return
       }
-      #expect("\(forwardDestination)" == "(location: [↓1,↓0]:15, affinity: downstream)")
-      #expect("\(backwardDestination)" == "(location: [↓1,↓0]:9, affinity: downstream)")
-      #expect("\(downDestination)" == "(location: [↓1,↓0]:56, affinity: downstream)")
-      #expect("\(upDestination)" == "(location: [↓0,↓0]:5, affinity: downstream)")
+      #expect("\(forwardDestination)" == "([↓1,↓0]:15, downstream)")
+      #expect("\(backwardDestination)" == "([↓1,↓0]:9, downstream)")
+      #expect("\(downDestination)" == "([↓1,↓0]:56, downstream)")
+      #expect("\(upDestination)" == "([↓0,↓0]:5, downstream)")
     }
   }
 
@@ -521,8 +509,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓1,↓0]:0, affinity: upstream), \
-          (anchor: [↓1,↓0]:10, focus: [↓1,↓0]:4, reversed: true, affinity: downstream)]
+          [([↓1,↓1,↓0]:0, upstream), \
+          (focus: [↓1,↓0]:4, downstream; anchor: [↓1,↓0]:10; range: [↓1,↓0]:4..<[↓1,↓0]:10)]
           """)
     }
     do {
@@ -534,8 +522,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓1,↓0]:0, affinity: upstream), \
-          (anchor: [↓1]:1, focus: [↓1,↓0]:10, reversed: true, affinity: downstream)]
+          [([↓1,↓1,↓0]:0, upstream), \
+          (focus: [↓1,↓0]:10, downstream; anchor: [↓1]:1; range: [↓1,↓0]:10..<[↓1]:1)]
           """)
     }
     do {
@@ -547,8 +535,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓2]:0, affinity: upstream), \
-          (anchor: [↓1]:2, focus: [↓1,↓1,↓0]:21, reversed: true, affinity: downstream)]
+          [([↓1,↓2]:0, upstream), \
+          (focus: [↓1,↓1,↓0]:21, downstream; anchor: [↓1]:2; range: [↓1]:1..<[↓1]:2)]
           """)
     }
     do {
@@ -561,8 +549,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓2]:4, affinity: downstream), \
-          (anchor: [↓1,↓2]:0, focus: [↓1,↓1,↓0]:21, reversed: true, affinity: downstream)]
+          [([↓1,↓2]:4, downstream), \
+          (focus: [↓1,↓1,↓0]:21, downstream; anchor: [↓1,↓2]:0; range: [↓1]:1..<[↓1,↓2]:0)]
           """)
     }
     do {
@@ -575,8 +563,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [↓1,↓2]:9, affinity: downstream), \
-          (anchor: [↓1,↓2]:4, focus: [↓1,↓2]:0, reversed: true, affinity: downstream)]
+          [([↓1,↓2]:9, downstream), \
+          (focus: [↓1,↓2]:0, downstream; anchor: [↓1,↓2]:4; range: [↓1,↓2]:0..<[↓1,↓2]:4)]
           """)
     }
   }
@@ -730,7 +718,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     let enclosingRange =
       documentManager.textSelectionNavigation.enclosingTextRange(for: .word, selection)
     let expected =
-      "(anchor: [↓0,↓0]:4, focus: [↓0,↓0]:10, reversed: false, affinity: upstream)"
+      "(anchor: [↓0,↓0]:4; focus: [↓0,↓0]:10, upstream; range: [↓0,↓0]:4..<[↓0,↓0]:10)"
 
     #expect(enclosingRange != nil)
     #expect("\(enclosingRange!)" == expected)
