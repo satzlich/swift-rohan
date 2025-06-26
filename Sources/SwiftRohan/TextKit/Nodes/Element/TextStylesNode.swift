@@ -160,4 +160,11 @@ final class TextStylesNode: ElementNodeImpl {
     self.subtype = node.subtype
     super.init(deepCopyOf: node)
   }
+
+  static var commandRecords: Array<CommandRecord> {
+    TextStyles.allCases.map { subtype in
+      let expr = TextStylesExpr(subtype, [])
+      return CommandRecord(subtype.command, CommandBody(expr, 1))
+    }
+  }
 }
