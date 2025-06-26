@@ -28,6 +28,7 @@ final class TextStylesNode: ElementNodeImpl {
     case .emph: return _getProperties(styleSheet, emph: ())
     case .textbf: return _getProperties(styleSheet, textbf: ())
     case .textit: return _getProperties(styleSheet, textit: ())
+    case .texttt: return super.getProperties(styleSheet)
     }
   }
 

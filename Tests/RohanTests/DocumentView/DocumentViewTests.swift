@@ -444,27 +444,27 @@ struct DocumentViewTests {
     do {
       gotoLocation1()
       documentView.moveDown(nil)
-      let expected = "([↓1,↓0]:10, downstream)"
+      let expected = "([↓1,↓0]:9, downstream)"
       #expect("\(documentManager.textSelection!)" == expected)
     }
     do {
       gotoLocation1()
       documentView.moveDownAndModifySelection(nil)
       let expected =
-        "(anchor: [↓0,↓0]:7; focus: [↓1,↓0]:10, downstream; range: []:0..<[↓1,↓0]:10)"
+        "(anchor: [↓0,↓0]:7; focus: [↓1,↓0]:9, downstream; range: []:0..<[↓1,↓0]:9)"
       #expect("\(documentManager.textSelection!)" == expected)
     }
     do {
       gotoLocation2()
       documentView.moveUp(nil)
-      let expected = "([↓0,↓0]:5, downstream)"
+      let expected = "([↓0,↓0]:6, downstream)"
       #expect("\(documentManager.textSelection!)" == expected)
     }
     do {
       gotoLocation2()
       documentView.moveUpAndModifySelection(nil)
       let expected =
-        "(focus: [↓0,↓0]:5, downstream; anchor: [↓1,↓0]:8; range: []:0..<[↓1,↓0]:8)"
+        "(focus: [↓0,↓0]:6, downstream; anchor: [↓1,↓0]:8; range: []:0..<[↓1,↓0]:8)"
       #expect("\(documentManager.textSelection!)" == expected)
     }
 

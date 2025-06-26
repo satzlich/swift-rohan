@@ -52,14 +52,6 @@ public enum FontLoader {
   public static let allFonts: Array<String> = _allFonts()
 
   private static func _allFonts() -> Array<String> {
-    let ConcreteMath: Array<String> = [
-      // "NonExistent.otf",
-      "Concrete-Math.otf",
-      "Concrete-Math-Bold.otf",
-    ]
-    let CMUConcrete: Array<String> = [
-      "cmunobi.ttf", "cmunobx.ttf", "cmunorm.ttf", "cmunoti.ttf",
-    ]
 
     let Libertinus: Array<String> = [
       "LibertinusMath-Regular.otf",
@@ -78,6 +70,7 @@ public enum FontLoader {
       "NotoSans-BoldItalic.ttf",
       "NotoSans-Italic.ttf",
       "NotoSans-Regular.ttf",
+      "NotoSansMono-Regular.ttf",
       "NotoSerif-Bold.ttf",
       "NotoSerif-BoldItalic.ttf",
       "NotoSerif-Italic.ttf",
@@ -111,7 +104,7 @@ public enum FontLoader {
       "STIXTwoText-Regular.otf",
     ]
 
-    return ConcreteMath + CMUConcrete + Libertinus + Noto + NewComputerModern + STIX
+    return Libertinus + Noto + NewComputerModern + STIX
   }
 }
 
