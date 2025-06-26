@@ -37,14 +37,14 @@ public enum StyleSheets {
       // (name, textFont, mathFont, headerFont, monoFont)
       (
         "Libertinus", "Libertinus Serif", "Libertinus Math", "Libertinus Sans",
-        "Libertinus Mono"
+        "PT Mono"
       ),
       (
         "New Computer Modern", "NewComputerModern10", "NewComputerModernMath",
         "NewComputerModernSans10", "NewComputerModernMono10"
       ),
       ("Noto", "Noto Serif", "Noto Sans Math", "Noto Sans", "Noto Sans Mono"),
-      ("STIX Two", "STIX Two Text", "STIX Two Math", "Arial", "Andale Mono"),
+      ("STIX Two", "STIX Two Text", "STIX Two Math", "Arial", "PT Mono"),
     ]
     .map { name, textFont, mathFont, headerFont, monoFont in
       Record(
