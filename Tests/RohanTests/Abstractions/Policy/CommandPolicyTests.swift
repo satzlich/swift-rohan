@@ -20,7 +20,7 @@ struct CommandPolicyTests {
     #expect(MathStyles.allCommands.count == 12)
     #expect(MathTemplate.allCommands.count == 5)
     #expect(NamedSymbol.allCommands.count == 458)
-    #expect(TextStyles.allCases.count == 4)
+    #expect(TextStyles.allCommands.count == 4)
 
     let sum =
       MathAccent.allCommands.count + MathArray.allCommands.count
