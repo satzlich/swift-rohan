@@ -6,6 +6,7 @@ enum TextStyles: String, CaseIterable, CommandDeclarationProtocol {
   case emph
   case textbf
   case textit
+  case texttt
 
   var command: String { rawValue }
   var source: CommandSource { .preBuilt }

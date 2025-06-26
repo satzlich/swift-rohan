@@ -16,7 +16,8 @@ public enum StyleSheets {
     }
   }
 
-  nonisolated(unsafe) public static let defaultRecord = allRecords[2]  // "New Computer Modern"
+  nonisolated(unsafe) public static let defaultRecord =
+    allRecords.first(where: { $0.name == "New Computer Modern" }) ?? allRecords[0]
   public static let defaultTextSize = textSizes[2]  // 12pt
   nonisolated(unsafe) public static let testingRecord =
     Record(
@@ -24,24 +25,28 @@ public enum StyleSheets {
       { textSize in
         styleSheet(
           for: textSize,
-          textFont: "NewComputerModern10", mathFont: "NewComputerModernMath",
-          headerFont: "NewComputerModernSans10")
+          textFont: "NewComputerModern10",
+          mathFont: "NewComputerModernMath",
+          headerFont: "NewComputerModernSans10",
+          monoFont: "NewComputerModernMono10")
       }
     )
 
   nonisolated(unsafe) public static let allRecords: Array<Record> =
     [
-      // (name, textFont, mathFont, headerFont)
-      ("Concrete", "CMU Concrete", "Concrete Math", "NewComputerModern10"),
-      ("Libertinus", "Libertinus Serif", "Libertinus Math", "Libertinus Sans"),
+      // (name, textFont, mathFont, headerFont, monoFont)
+      (
+        "Libertinus", "Libertinus Serif", "Libertinus Math", "Libertinus Sans",
+        "Libertinus Mono"
+      ),
       (
         "New Computer Modern", "NewComputerModern10", "NewComputerModernMath",
-        "NewComputerModernSans10"
+        "NewComputerModernSans10", "NewComputerModernMono10"
       ),
-      ("Noto", "Noto Serif", "Noto Sans Math", "Noto Sans"),
-      ("STIX Two", "STIX Two Text", "STIX Two Math", "Arial"),
+      ("Noto", "Noto Serif", "Noto Sans Math", "Noto Sans", "Noto Sans Mono"),
+      ("STIX Two", "STIX Two Text", "STIX Two Math", "Arial", "Andale Mono"),
     ]
-    .map { name, textFont, mathFont, headerFont in
+    .map { name, textFont, mathFont, headerFont, monoFont in
       Record(
         name,
         { textSize in
@@ -49,7 +54,8 @@ public enum StyleSheets {
             for: textSize,
             textFont: textFont,
             mathFont: mathFont,
-            headerFont: headerFont)
+            headerFont: headerFont,
+            monoFont: monoFont)
         })
     }
 
@@ -67,15 +73,16 @@ public enum StyleSheets {
     for textSize: FontSize,
     textFont: String,
     mathFont: String,
-    headerFont: String
+    headerFont: String,
+    monoFont: String
   ) -> StyleSheet {
-    let styleRules = commonStyleRules(textFont, textSize, headerFont)
+    let styleRules = commonStyleRules(textFont, textSize, headerFont, monoFont)
     let defaultProperties = defaultProperties(textFont, textSize, mathFont)
     return StyleSheet(styleRules, defaultProperties)
   }
 
   private static func commonStyleRules(
-    _ textFont: String, _ textSize: FontSize, _ headerFont: String
+    _ textFont: String, _ textSize: FontSize, _ headerFont: String, _ monoFont: String
   ) -> StyleRules {
     let h1Size = FontSize(textSize.floatValue + 8)
     let h2Size = FontSize(textSize.floatValue + 4)
@@ -83,6 +90,7 @@ public enum StyleSheets {
 
     let emphasisColor = Color.brown
     let strongColor = Color.brown
+    let monoColor = Color.blue
 
     let styleRules: StyleRules = [
       // H1
@@ -121,6 +129,10 @@ public enum StyleSheets {
       // textbf
       TextStylesNode.selector(command: TextStyles.textbf.command): [
         TextProperty.foregroundColor: .color(strongColor)
+      ],
+      // texttt
+      TextStylesNode.selector(command: TextStyles.texttt.command): [
+        TextProperty.font: .string(monoFont)
       ],
       // equation
       EquationNode.selector(isBlock: true): [

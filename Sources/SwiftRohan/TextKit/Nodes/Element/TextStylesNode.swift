@@ -28,6 +28,7 @@ final class TextStylesNode: ElementNodeImpl {
     case .emph: return _getProperties(styleSheet, emph: ())
     case .textbf: return _getProperties(styleSheet, textbf: ())
     case .textit: return _getProperties(styleSheet, textit: ())
+    case .texttt: return super.getProperties(styleSheet)
     }
   }
 
@@ -159,5 +160,12 @@ final class TextStylesNode: ElementNodeImpl {
   private init(deepCopyOf node: TextStylesNode) {
     self.subtype = node.subtype
     super.init(deepCopyOf: node)
+  }
+
+  static var commandRecords: Array<CommandRecord> {
+    TextStyles.allCases.map { subtype in
+      let expr = TextStylesExpr(subtype, [])
+      return CommandRecord(subtype.command, CommandBody(expr, 1))
+    }
   }
 }

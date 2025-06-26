@@ -347,8 +347,9 @@ extension DocumentView {
     switch result {
     // for editing operation, affinity is always upstream.
     case let .success(range):
-      documentManager.textSelection =
-        RhTextSelection(range.endLocation, affinity: .upstream)
+      let target = range.endLocation
+      let affinity = documentManager.resolveAffinityForMove(in: .forward, target: target)
+      documentManager.textSelection = RhTextSelection(target, affinity: affinity)
 
     case let .extraParagraph(range):
       documentManager.textSelection =
