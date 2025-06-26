@@ -635,7 +635,7 @@ public final class DocumentManager: NSObject {
   /// - Parameters:
   ///   - direction: The navigation direction.
   ///   - location: The target location.
-  private func _resolveAffinityForMove(
+  internal func resolveAffinityForMove(
     in direction: TextSelectionNavigation.Direction,
     target location: TextLocation
   ) -> SelectionAffinity {
@@ -695,7 +695,7 @@ public final class DocumentManager: NSObject {
     case .forward, .backward:
       guard let target = TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
       else { return nil }
-      let affinity = _resolveAffinityForMove(in: direction, target: target)
+      let affinity = resolveAffinityForMove(in: direction, target: target)
       return AffineLocation(target, affinity)
 
     case .up, .down:
@@ -755,7 +755,7 @@ public final class DocumentManager: NSObject {
         trace.moveTo(.index(range.upperBound))
 
         guard let target = trace.toRawLocation() else { return nil }
-        let affinity = _resolveAffinityForMove(in: direction, target: target)
+        let affinity = resolveAffinityForMove(in: direction, target: target)
         return AffineLocation(target, affinity)
       }
     }
@@ -771,7 +771,7 @@ public final class DocumentManager: NSObject {
         trace.moveTo(.index(range.lowerBound))
 
         guard let target = trace.toRawLocation() else { return nil }
-        let affinity = _resolveAffinityForMove(in: direction, target: target)
+        let affinity = resolveAffinityForMove(in: direction, target: target)
         return AffineLocation(target, affinity)
       }
     }
