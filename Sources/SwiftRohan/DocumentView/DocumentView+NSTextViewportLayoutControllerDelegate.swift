@@ -69,8 +69,9 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     let pageHeight: Double
     let usageBasedHeight: Double
     do {
-      let page: PageProperty = documentManager.styleSheet.resolveDefault()
-      pageHeight = page.height.ptValue
+      pageHeight =
+        documentManager.styleSheet
+        .resolveDefault(PageProperty.height).absLength()!.ptValue
       usageBasedHeight =
         documentManager.usageBoundsForTextContainer.height + pageHeight
     }
