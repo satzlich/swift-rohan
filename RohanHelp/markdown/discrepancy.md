@@ -38,6 +38,4 @@ or other irregularities. Below are key differences and usage guidelines.
 
 ## Environment `{itemize}` and `{enumerate}`
 
-Currently we don't support nested lists in the app. One-level lists are most commonly used in academic writing, so we focus on that.
-
-We will go back to this later and add support for nested lists.
+Currently we support only one-level lists in the app. We will go back to this later and add support for nested lists.
