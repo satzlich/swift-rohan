@@ -1,8 +1,16 @@
 import Foundation
 
-struct BoolArray {
+struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   private var _size: Int
   private var _truePositions: Array<Int> = []
+
+  typealias ArrayLiteralElement = Bool
+
+  init(arrayLiteral elements: ArrayLiteralElement...) {
+    self._size = elements.count
+    self._truePositions = elements.enumerated()
+      .compactMap { (index, value) -> Int? in value ? index : nil }
+  }
 
   init() {
     self._size = 0
@@ -16,7 +24,7 @@ struct BoolArray {
       guard position >= 0 && position < _size else {
         fatalError("Index out of bounds: \(position) (0..<\(_size))")
       }
-      return _contains(position)
+      return _getValue(at: position)
     }
     set {
       guard position >= 0 && position < _size else {
@@ -73,7 +81,8 @@ struct BoolArray {
 
     // Shift remaining true positions after the range
     let shiftAmount = bounds.count
-    for i in _lowerBound(bounds.upperBound)..<_truePositions.count {
+    let upperBound = _upperBound(bounds.upperBound - 1)
+    for i in upperBound..<_truePositions.count {
       _truePositions[i] -= shiftAmount
     }
 
@@ -81,15 +90,43 @@ struct BoolArray {
     _size -= bounds.count
 
     // Find range of true positions to remove
-    let lower = _lowerBound(bounds.lowerBound)
-    let upper = _lowerBound(bounds.upperBound)
-    _truePositions.removeSubrange(lower..<upper)
+    let lowerBound = _lowerBound(bounds.lowerBound)
+    _truePositions.removeSubrange(lowerBound..<upperBound)
+  }
+
+  mutating func removeAll() {
+    _size = 0
+    _truePositions.removeAll()
+  }
+
+  mutating func replaceSubrange(
+    _ bounds: Range<Int>, with newElements: some Collection<Bool>
+  ) {
+    guard bounds.lowerBound >= 0 && bounds.upperBound <= _size else {
+      fatalError("Range \(bounds) out of bounds (0..<\(_size))")
+    }
+
+    // Shift existing true positions after the range
+    let shiftAmount = bounds.count - newElements.count
+    for i in _lowerBound(bounds.upperBound)..<_truePositions.count {
+      _truePositions[i] -= shiftAmount
+    }
+
+    // Decrease the size
+    _size += newElements.count - bounds.count
+
+    // Replace true positions in the range
+    let lowerBound = _lowerBound(bounds.lowerBound)
+    let upperBound = _lowerBound(bounds.upperBound)
+    let positions = newElements.enumerated()
+      .compactMap { (offset, value) -> Int? in value ? bounds.lowerBound + offset : nil }
+    _truePositions.replaceSubrange(lowerBound..<upperBound, with: positions)
   }
 
   // MARK: - Efficient Queries
 
   /// Returns the last index less than or equal to the given position and contains true.
-  func previousTrueIndex(_ position: Int) -> Int? {
+  func trueIndex(before position: Int) -> Int? {
     guard position >= 0 else { return nil }
 
     let index = _lowerBound(position)
@@ -101,7 +138,7 @@ struct BoolArray {
   }
 
   /// Returns the first index greater than the given position and contains true.
-  func nextTrueIndex(_ position: Int) -> Int? {
+  func trueIndex(after position: Int) -> Int? {
     guard position < _size else { return nil }
 
     let index = _upperBound(position)
@@ -156,12 +193,14 @@ struct BoolArray {
     return left
   }
 
-  private func _contains(_ position: Int) -> Bool {
+  @inline(__always)
+  private func _getValue(at position: Int) -> Bool {
     let index = _lowerBound(position)
     return index < _truePositions.count && _truePositions[index] == position
   }
 
   /// Set a true value at the specified position.
+  @inline(__always)
   private mutating func _setTrue(at position: Int) {
     let index = _lowerBound(position)
     if index >= _truePositions.count || _truePositions[index] != position {
@@ -170,6 +209,7 @@ struct BoolArray {
   }
 
   /// Set a false value at the specified position.
+  @inline(__always)
   private mutating func _setFalse(at position: Int) {
     let index = _lowerBound(position)
     if index < _truePositions.count && _truePositions[index] == position {
