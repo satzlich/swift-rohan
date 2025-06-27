@@ -91,4 +91,44 @@ struct CountHolderTests {
       #expect(observer2.count == 2)
     }
   }
+
+  @Test
+  func insertRemove() {
+    let (initial, final_) = CountHolder.initList()
+
+    defer { withExtendedLifetime(initial, {}) }
+
+    // declare count holders
+    let section1 = BasicCountHolder(.section)
+    let subsection1 = BasicCountHolder(.subsection)
+    let equation1 = BasicCountHolder(.equation)
+
+    // declare observers
+    let observer1 = TestingCountObserver()
+    let observer2 = TestingCountObserver()
+
+    // register observers
+    subsection1.registerObserver(observer1)
+    equation1.registerObserver(observer2)
+
+    // insert holders
+    for holder in [section1, subsection1, equation1] {
+      CountHolder.insert(holder, before: final_)
+    }
+    initial.propagateDirty()
+
+    #expect(section1.value(forName: .section) == 1)
+    #expect(subsection1.value(forName: .subsection) == 1)
+    #expect(equation1.value(forName: .equation) == 1)
+    #expect(observer1.count == 1)
+    #expect(observer2.count == 1)
+
+    // remove holders
+    CountHolder.remove(subsection1)
+    initial.propagateDirty()
+
+    #expect(section1.value(forName: .section) == 1)
+    #expect(equation1.value(forName: .subsection) == 0)
+    #expect(equation1.value(forName: .equation) == 1)
+  }
 }
