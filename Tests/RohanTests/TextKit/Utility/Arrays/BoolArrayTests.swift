@@ -75,8 +75,8 @@ struct BoolArrayTests {
   func remove() {
     var boolArray: BoolArray = [false, true, false, true, true]
 
-    // remove at index 4
-    boolArray.remove(at: 4)
+    // remove at index 3
+    boolArray.remove(at: 3)
     #expect(boolArray.count == 4)
     #expect(!boolArray.isEmpty)
     #expect(boolArray.trueCount == 2)
