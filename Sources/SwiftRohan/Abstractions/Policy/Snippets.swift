@@ -20,10 +20,12 @@ enum Snippets {
 
   nonisolated(unsafe) static let fraction =
     CommandBody(FractionExpr(num: [], denom: []), 2, preview: .image("frac"))
-  nonisolated(unsafe) static let sqrt = CommandBody(
-    RadicalExpr([]), 1, preview: .image("sqrt"))
-  nonisolated(unsafe) static let root = CommandBody(
-    RadicalExpr([], index: []), 2, preview: .image("root"))
+
+  nonisolated(unsafe) static let sqrt =
+    CommandBody(RadicalExpr([]), 1, preview: .image("sqrt"))
+  nonisolated(unsafe) static let root =
+    CommandBody(RadicalExpr([], index: []), 2, preview: .image("root"))
+
   nonisolated(unsafe) static let textMode = CommandBody(TextModeExpr(), 1)
 
   static func mathTextStyle(_ style: MathTextStyle, _ string: String) -> CommandBody {

@@ -1,4 +1,7 @@
+// Copyright 2024-2025 Lie Yan
+
 import Foundation
+import SatzAlgorithms
 
 struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   private var _size: Int
@@ -21,15 +24,11 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
 
   subscript(position: Int) -> Bool {
     get {
-      guard position >= 0 && position < _size else {
-        fatalError("Index out of bounds: \(position) (0..<\(_size))")
-      }
+      precondition(0..<_size ~= position)
       return _getValue(at: position)
     }
     set {
-      guard position >= 0 && position < _size else {
-        fatalError("Index out of bounds: \(position) (0..<\(_size))")
-      }
+      precondition(0..<_size ~= position)
       if newValue {
         _setTrue(at: position)
       }
@@ -49,48 +48,53 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
     insert(contentsOf: CollectionOfOne(value), at: index)
   }
 
+  @inlinable
   mutating func insert(contentsOf values: some Collection<Bool>, at index: Int) {
-    guard index >= 0 && index <= _size else {
-      fatalError("Index out of bounds: \(index) (0..<\(_size))")
+    precondition(0..._size ~= index)
+
+    let delta = values.count
+    _size += delta
+
+    let lowerBound = Satz.lowerBound(_truePositions, index)
+    for i in lowerBound..<_truePositions.count {
+      _truePositions[i] += delta
     }
 
-    // First increase the size
-    _size += values.count
-
-    // Shift existing true positions after the insertion point
-    let startIndex = _lowerBound(index)
-    let shiftAmount = values.count
-    for i in startIndex..<_truePositions.count {
-      _truePositions[i] += shiftAmount
-    }
-
-    // Insert new true values
     let positions = values.enumerated()
       .compactMap { (offset, value) -> Int? in value ? index + offset : nil }
-    _truePositions.insert(contentsOf: positions, at: startIndex)
+    _truePositions.insert(contentsOf: positions, at: lowerBound)
   }
 
   mutating func remove(at index: Int) {
-    removeSubrange(index..<index + 1)
+    precondition(0..<_size ~= index)
+
+    _size -= 1
+
+    let lowerBound = Satz.lowerBound(_truePositions, index)
+    if lowerBound < _truePositions.count && _truePositions[lowerBound] == index {
+      for i in lowerBound + 1..<_truePositions.count {
+        _truePositions[i] -= 1
+      }
+      _truePositions.remove(at: lowerBound)
+    }
+    else {
+      for i in lowerBound..<_truePositions.count {
+        _truePositions[i] -= 1
+      }
+    }
   }
 
   mutating func removeSubrange(_ bounds: Range<Int>) {
-    guard bounds.lowerBound >= 0 && bounds.upperBound <= _size else {
-      fatalError("Range \(bounds) out of bounds (0..<\(_size))")
-    }
+    precondition(bounds.lowerBound >= 0 && bounds.upperBound <= _size)
 
-    // Shift remaining true positions after the range
-    let shiftAmount = bounds.count
-    let upperBound = _upperBound(bounds.upperBound - 1)
+    let size = bounds.count
+    _size -= size
+
+    let upperBound = Satz.lowerBound(_truePositions, bounds.upperBound)
     for i in upperBound..<_truePositions.count {
-      _truePositions[i] -= shiftAmount
+      _truePositions[i] -= size
     }
-
-    // Decrease the size
-    _size -= bounds.count
-
-    // Find range of true positions to remove
-    let lowerBound = _lowerBound(bounds.lowerBound)
+    let lowerBound = Satz.lowerBound(_truePositions, bounds.lowerBound)
     _truePositions.removeSubrange(lowerBound..<upperBound)
   }
 
@@ -102,22 +106,19 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   mutating func replaceSubrange(
     _ bounds: Range<Int>, with newElements: some Collection<Bool>
   ) {
-    guard bounds.lowerBound >= 0 && bounds.upperBound <= _size else {
-      fatalError("Range \(bounds) out of bounds (0..<\(_size))")
+    precondition(bounds.lowerBound >= 0 && bounds.upperBound <= _size)
+
+    let delta = newElements.count - bounds.count
+    _size += delta
+
+    // make shift
+    let upperBound = Satz.lowerBound(_truePositions, bounds.upperBound)
+    for i in upperBound..<_truePositions.count {
+      _truePositions[i] += delta
     }
 
-    // Shift existing true positions after the range
-    let shiftAmount = bounds.count - newElements.count
-    for i in _lowerBound(bounds.upperBound)..<_truePositions.count {
-      _truePositions[i] -= shiftAmount
-    }
-
-    // Decrease the size
-    _size += newElements.count - bounds.count
-
-    // Replace true positions in the range
-    let lowerBound = _lowerBound(bounds.lowerBound)
-    let upperBound = _lowerBound(bounds.upperBound)
+    // make replacement
+    let lowerBound = Satz.lowerBound(_truePositions, bounds.lowerBound)
     let positions = newElements.enumerated()
       .compactMap { (offset, value) -> Int? in value ? bounds.lowerBound + offset : nil }
     _truePositions.replaceSubrange(lowerBound..<upperBound, with: positions)
@@ -129,7 +130,7 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   func trueIndex(before position: Int) -> Int? {
     guard position >= 0 else { return nil }
 
-    let index = _lowerBound(position)
+    let index = Satz.lowerBound(_truePositions, position)
     if index > 0 {
       return _truePositions[index - 1]
     }
@@ -140,69 +141,25 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   /// Returns the first index greater than the given position and contains true.
   func trueIndex(after position: Int) -> Int? {
     guard position < _size else { return nil }
-
-    let index = _upperBound(position)
-
-    // Return the found position or next one
+    let index = Satz.upperBound(_truePositions, position)
     if index < _truePositions.count {
       return _truePositions[index]
     }
-
     return nil
   }
 
   // MARK: - Private Helpers
 
-  /// Returns the first index where the element is not less than the given value
-  /// (like std::lower_bound)
-  @inline(__always)
-  private func _lowerBound(_ position: Int) -> Int {
-    var left = 0
-    var right = _truePositions.count
-
-    while left < right {
-      let mid = left + (right - left) / 2
-      if _truePositions[mid] < position {
-        left = mid + 1
-      }
-      else {
-        right = mid
-      }
-    }
-
-    return left
-  }
-
-  /// Returns the first index where the element is greater than the given value
-  /// (like std::upper_bound)
-  @inline(__always)
-  private func _upperBound(_ position: Int) -> Int {
-    var left = 0
-    var right = _truePositions.count
-
-    while left < right {
-      let mid = left + (right - left) / 2
-      if _truePositions[mid] <= position {
-        left = mid + 1
-      }
-      else {
-        right = mid
-      }
-    }
-
-    return left
-  }
-
   @inline(__always)
   private func _getValue(at position: Int) -> Bool {
-    let index = _lowerBound(position)
+    let index = Satz.lowerBound(_truePositions, position)
     return index < _truePositions.count && _truePositions[index] == position
   }
 
   /// Set a true value at the specified position.
   @inline(__always)
   private mutating func _setTrue(at position: Int) {
-    let index = _lowerBound(position)
+    let index = Satz.lowerBound(_truePositions, position)
     if index >= _truePositions.count || _truePositions[index] != position {
       _truePositions.insert(position, at: index)
     }
@@ -211,7 +168,7 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   /// Set a false value at the specified position.
   @inline(__always)
   private mutating func _setFalse(at position: Int) {
-    let index = _lowerBound(position)
+    let index = Satz.lowerBound(_truePositions, position)
     if index < _truePositions.count && _truePositions[index] == position {
       _truePositions.remove(at: index)
     }
