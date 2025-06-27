@@ -7,6 +7,8 @@ internal struct BooleanArray: Equatable, Hashable {
   private var _bitArray: BitArray
   private(set) var trueCount: Int
 
+  internal var asBitArray: BitArray { _bitArray }
+
   internal var isEmpty: Bool { _bitArray.isEmpty }
   internal var count: Int { _bitArray.count }
 
