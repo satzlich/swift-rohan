@@ -81,7 +81,7 @@ final class ItemListNode: ElementNode {
     }
     else {
       let consumed = s + _initialFiller(forIndex: k).length
-      return consumed < layoutOffset
+      return consumed <= layoutOffset
         ? .halfway(value: .index(k), consumed: consumed)
         : .terminal(value: .index(k), target: consumed)
     }
