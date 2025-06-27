@@ -18,7 +18,9 @@ public enum StyleSheets {
 
   nonisolated(unsafe) public static let defaultRecord =
     allRecords.first(where: { $0.name == "New Computer Modern" }) ?? allRecords[0]
+
   public static let defaultTextSize = textSizes[2]  // 12pt
+
   nonisolated(unsafe) public static let testingRecord =
     Record(
       "Testing",
@@ -36,8 +38,7 @@ public enum StyleSheets {
     [
       // (name, textFont, mathFont, headerFont, monoFont)
       (
-        "Libertinus", "Libertinus Serif", "Libertinus Math", "Libertinus Sans",
-        "PT Mono"
+        "Libertinus", "Libertinus Serif", "Libertinus Math", "Libertinus Sans", "PT Mono"
       ),
       (
         "New Computer Modern", "NewComputerModern10", "NewComputerModernMath",
