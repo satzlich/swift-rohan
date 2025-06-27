@@ -22,10 +22,3 @@ In rare cases, a line may extend slightly beyond the right margin (by half a cha
 
 This appears to be a bug in the underlying layout engine. While it doesn’t affect logical cursor movement, it can be visually disorienting. We're investigating and will fix this in a future update.
 
-## Unpickable Area Near Document Bottom
-
-In some cases, particularly after magnification, the area near the bottom of whole document may not be pickable, meaning you can't select text or interact with elements in that region.
-
-This is a known issue that can occur after zooming in or out. If you encounter this:
-
-- Select any options of the `Theme` menu to refresh the layout.
