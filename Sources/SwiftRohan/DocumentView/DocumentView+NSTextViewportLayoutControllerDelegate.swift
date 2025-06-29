@@ -11,8 +11,8 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     let overdrawRect = preparedContentRect
     let minX: CGFloat
     let maxX: CGFloat
-    let minY: CGFloat
-    let maxY: CGFloat
+    var minY: CGFloat
+    var maxY: CGFloat
 
     let visibleRect = scrollView?.documentVisibleRect ?? contentView.visibleRect
 
@@ -33,8 +33,11 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
       maxY = visibleRect.maxY
     }
 
-    let rect = CGRect(x: minX, y: minY, width: maxX, height: maxY - minY)
-    return rect.insetBy(dx: 0, dy: -50)
+    let expansion = 50.0
+    minY = max(minY - expansion, 0)
+    maxY = maxY + expansion
+
+    return CGRect(x: minX, y: minY, width: maxX, height: maxY - minY)
   }
 
   public func textViewportLayoutControllerWillLayout(
@@ -84,7 +87,7 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
 
     // 4) request re-layout again if needed. This is necessary as TextKit may
     //    occasionally returns a usage bounds with drastic error after layout.
-    if abs(frameHeight - oldFrameHeight) > pageHeight * 0.25 {
+    if abs(frameHeight - oldFrameHeight) > pageHeight * 0.5 {
       Rohan.logger.debug("Re-layout needed after height change.")
       needsLayout = true
     }
