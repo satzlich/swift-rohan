@@ -77,6 +77,15 @@ internal class CountHolder {
     begin.previous = nil
   }
 
+  /// Remove the count holders in the closed range `[begin, end]`.
+  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) {
+    precondition(begin.previous != nil)
+    precondition(end.next != nil)
+
+    guard let end = end.next else { return }
+    removeSubrange(begin, end)
+  }
+
   /// Returns the value for the given counter name.
   /// - Postcondition: Call to this method clears the dirty state of the holder.
   internal func value(forName name: CounterName) -> Int {
