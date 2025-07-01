@@ -270,10 +270,7 @@ extension TreeUtils {
     _ nodes: C, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) -> (Array<Int>, Array<Int>)
-  where
-    C: BidirectionalCollection & MutableCollection,
-    C.Element == Node, C.Index == Int
-  {
+  where C: MutableCollection<Node> & BidirectionalCollection, C.Index == Int {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.isTopLevelNode($0) == false })
     precondition(parent.getChild(index) === textNode)
@@ -381,10 +378,9 @@ extension TreeUtils {
   /// - Postcondition: If merge between text nodes is possible, the text nodes
   ///     are merged. In this case, location at the merged end has count 2.
   ///     Otherwise, the location has count 1.
-  static func insertInlineContent<C>(
-    _ nodes: C, elementNode: ElementNode, index: Int
-  ) -> (Array<Int>, Array<Int>)
-  where C: BidirectionalCollection, C.Element == Node {
+  static func insertInlineContent(
+    _ nodes: some BidirectionalCollection<Node>, elementNode: ElementNode, index: Int
+  ) -> (Array<Int>, Array<Int>) {
     precondition(nodes.allSatisfy { NodePolicy.isTopLevelNode($0) == false })
     precondition(index <= elementNode.childCount)
 
