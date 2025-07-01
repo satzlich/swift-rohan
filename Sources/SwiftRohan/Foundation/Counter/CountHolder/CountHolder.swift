@@ -91,4 +91,17 @@ internal class CountHolder {
   internal func value(forName name: CounterName) -> Int {
     preconditionFailure("overriding required")
   }
+
+  /// Count the number of count holders in the half-open range `[begin, end)`.
+  static func count(_ begin: CountHolder, _ end: CountHolder) -> Int {
+    var count = 0
+    var holder: CountHolder? = begin
+
+    while holder != nil && holder !== end {
+      count += 1
+      holder = holder?.next
+    }
+    return count
+  }
+
 }

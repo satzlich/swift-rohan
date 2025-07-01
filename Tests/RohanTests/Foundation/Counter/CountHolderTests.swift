@@ -131,4 +131,34 @@ struct CountHolderTests {
     #expect(equation1.value(forName: .subsection) == 0)
     #expect(equation1.value(forName: .equation) == 1)
   }
+
+  @Test
+  func removeSubrangeClosed() {
+    let (initial, final_) = CountHolder.initList()
+
+    defer { withExtendedLifetime(initial, {}) }
+
+    // declare count holders
+    let section1 = BasicCountHolder(.section)
+    let subsection1 = BasicCountHolder(.subsection)
+    let equation1 = BasicCountHolder(.equation)
+
+    // insert holders
+    for holder in [section1, subsection1, equation1] {
+      CountHolder.insert(holder, before: final_)
+    }
+    initial.propagateDirty()
+
+    #expect(CountHolder.count(initial, final_) == 4)
+
+    // remove subrange
+    CountHolder.removeSubrange(section1, inclusive: equation1)
+    initial.propagateDirty()
+
+    #expect(final_.value(forName: .section) == 0)
+    #expect(final_.value(forName: .subsection) == 0)
+    #expect(final_.value(forName: .equation) == 0)
+
+    #expect(CountHolder.count(initial, final_) == 1)
+  }
 }
