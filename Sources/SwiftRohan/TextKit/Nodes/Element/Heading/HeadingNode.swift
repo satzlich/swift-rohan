@@ -58,10 +58,7 @@ final class HeadingNode: ElementNodeImpl {
     visitor.visit(heading: self, context, withChildren: children)
   }
 
-  final override func createSuccessor() -> ElementNode? {
-    /* create "paragraph" */
-    ParagraphNode()
-  }
+  final override func createSuccessor() -> ElementNode? { ParagraphNode() }
 
   final override func cloneEmpty() -> Self { Self(subtype, []) }
 
@@ -109,15 +106,7 @@ final class HeadingNode: ElementNodeImpl {
 
   // MARK: - Command
 
-  var command: String { Self._command(forSubtype: subtype) }
-
-  private static func _command(forSubtype subtype: HeadingSubtype) -> String {
-    switch subtype {
-    case .sectionAst: return "section*"
-    case .subsectionAst: return "subsection*"
-    case .subsubsectionAst: return "subsubsection*"
-    }
-  }
+  var command: String { subtype.command }
 
   /// Returns a command body for the given heading level.
   static func commandBody(forSubtype subtype: HeadingSubtype) -> CommandBody {
@@ -125,13 +114,8 @@ final class HeadingNode: ElementNodeImpl {
   }
 
   /// Returns **all** command records emitted by this heading class.
-  static var commandRecords: Array<CommandRecord> {
-    var records: Array<CommandRecord> = []
-    records.reserveCapacity(HeadingSubtype.allCases.count)
-    for subtype in HeadingSubtype.allCases {
-      let command = _command(forSubtype: subtype)
-      records.append(CommandRecord(command, commandBody(forSubtype: subtype)))
+  static let commandRecords: Array<CommandRecord> =
+    HeadingSubtype.allCases.map { subtype in
+      CommandRecord(subtype.command, commandBody(forSubtype: subtype))
     }
-    return records
-  }
 }
