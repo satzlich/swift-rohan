@@ -54,11 +54,8 @@ internal class Node: Codable {
     _cachedProperties = nil
   }
 
-  /// Returns the selector for the node class without instance properties.
-  final class func selector() -> TargetSelector { TargetSelector(type) }
-
   /// Returns the selector for the node instance.
-  internal func selector() -> TargetSelector { Self.selector() }
+  internal func selector() -> TargetSelector { TargetSelector(type) }
 
   internal func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
