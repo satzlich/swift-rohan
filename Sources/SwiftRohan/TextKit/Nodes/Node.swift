@@ -211,7 +211,10 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Returns true if the node needs leading cursor correction.
   internal var needsLeadingCursorCorrection: Bool { false }
+
+  /// Returns true if the node needs trailing cursor correction.
   internal var needsTrailingCursorCorrection: Bool { false }
 
   /// Horizontal cursor **correction** applied to a cursor position when the cursor is
@@ -254,6 +257,11 @@ internal class Node: Codable {
     precondition(direction == .up || direction == .down)
     preconditionFailure("overriding required")
   }
+
+  // MARK: - Counter
+
+  /// Returns the counter segment provided by the node, if any.
+  internal var counterSegment: CounterSegment? { nil }
 }
 
 extension Node {
