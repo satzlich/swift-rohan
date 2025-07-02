@@ -7,18 +7,15 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
   public func viewportBounds(
     for textViewportLayoutController: NSTextViewportLayoutController
   ) -> CGRect {
-
     let overdrawRect = preparedContentRect
     let minX: CGFloat
     let maxX: CGFloat
     var minY: CGFloat
     var maxY: CGFloat
 
-    let visibleRect = scrollView?.documentVisibleRect ?? contentView.visibleRect
+    let visibleRect = contentView.visibleRect
 
-    if !overdrawRect.isEmpty,
-      overdrawRect.intersects(visibleRect)
-    {
+    if !overdrawRect.isEmpty, overdrawRect.intersects(visibleRect) {
       // Extend the overdraw rect to include the visible rect
       minX = min(overdrawRect.minX, max(visibleRect.minX, bounds.minX))
       minY = min(overdrawRect.minY, max(visibleRect.minY, bounds.minY))
