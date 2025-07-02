@@ -6,4 +6,14 @@ struct CounterSegment {
   let end: CountHolder
 
   var isSingleton: Bool { begin === end }
+
+  init(_ begin: CountHolder, _ end: CountHolder) {
+    self.begin = begin
+    self.end = end
+  }
+
+  init(_ holder: CountHolder) {
+    self.begin = holder
+    self.end = holder
+  }
 }

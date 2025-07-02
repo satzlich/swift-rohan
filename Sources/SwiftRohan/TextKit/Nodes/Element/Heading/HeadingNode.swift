@@ -26,6 +26,7 @@ final class HeadingNode: ElementNodeImpl {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.subtype = try container.decode(HeadingSubtype.self, forKey: .subtype)
     try super.init(from: decoder)
+    _setUp()
   }
 
   final override func encode(to encoder: any Encoder) throws {
@@ -88,20 +89,34 @@ final class HeadingNode: ElementNodeImpl {
 
   var level: Int { subtype.level }
   let subtype: HeadingSubtype
+  private var _counterSegment: CounterSegment?
+
+  final override var counterSegment: CounterSegment? { _counterSegment }
 
   init(_ subtype: HeadingSubtype, _ children: ElementStore) {
     self.subtype = subtype
     super.init(children)
+    _setUp()
   }
 
   private init(deepCopyOf headingNode: HeadingNode) {
     self.subtype = headingNode.subtype
     super.init(deepCopyOf: headingNode)
+    _setUp()
   }
 
   static func selector(level: Int? = nil) -> TargetSelector {
     guard let level else { return TargetSelector(.heading) }
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
+  }
+
+  private final func _setUp() {
+    if let countHolder = subtype.createCountHolder() {
+      _counterSegment = CounterSegment(countHolder)
+    }
+    else {
+      _counterSegment = nil
+    }
   }
 
   // MARK: - Command
