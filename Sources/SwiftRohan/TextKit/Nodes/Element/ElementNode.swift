@@ -470,6 +470,10 @@ internal class ElementNode: Node {
 
   internal final var _isDirty: Bool
 
+  internal final var _counterSegment: CounterSegment?
+
+  final override var counterSegment: CounterSegment? { _counterSegment }
+
   final func childrenReadonly() -> ElementStore { _children }
 
   /// Returns true if node is allowed to be empty.

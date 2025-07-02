@@ -89,9 +89,6 @@ final class HeadingNode: ElementNodeImpl {
 
   var level: Int { subtype.level }
   let subtype: HeadingSubtype
-  private var _counterSegment: CounterSegment?
-
-  final override var counterSegment: CounterSegment? { _counterSegment }
 
   init(_ subtype: HeadingSubtype, _ children: ElementStore) {
     self.subtype = subtype
