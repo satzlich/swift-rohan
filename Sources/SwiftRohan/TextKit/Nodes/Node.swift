@@ -54,11 +54,8 @@ internal class Node: Codable {
     _cachedProperties = nil
   }
 
-  /// Returns the selector for the node class without instance properties.
-  final class func selector() -> TargetSelector { TargetSelector(type) }
-
   /// Returns the selector for the node instance.
-  internal func selector() -> TargetSelector { Self.selector() }
+  internal func selector() -> TargetSelector { TargetSelector(type) }
 
   internal func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -211,7 +208,10 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Returns true if the node needs leading cursor correction.
   internal var needsLeadingCursorCorrection: Bool { false }
+
+  /// Returns true if the node needs trailing cursor correction.
   internal var needsTrailingCursorCorrection: Bool { false }
 
   /// Horizontal cursor **correction** applied to a cursor position when the cursor is
@@ -254,6 +254,11 @@ internal class Node: Codable {
     precondition(direction == .up || direction == .down)
     preconditionFailure("overriding required")
   }
+
+  // MARK: - Counter
+
+  /// Returns the counter segment provided by the node, if any.
+  internal var counterSegment: CounterSegment? { nil }
 }
 
 extension Node {

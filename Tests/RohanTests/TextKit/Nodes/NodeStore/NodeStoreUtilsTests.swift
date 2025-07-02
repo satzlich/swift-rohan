@@ -87,13 +87,13 @@ struct NodeStoreUtilsTests {
       "rightarrowtail", "rightharpoondown", "rightharpoonup", "rightleftarrows",
       "rightleftharpoons", "rightouterjoin", "rightrightarrows", "rightsquigarrow",
       "rightthreetimes", "risingdotseq", "rmoustache", "rtimes", "rvert",
-      "scriptscriptstyle", "scriptstyle", "searrow", "sec", "section*",
+      "scriptscriptstyle", "scriptstyle", "searrow", "sec", "section", "section*",
       "setminus", "sharp", "sigma",
       "sim", "simeq", "sin", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
-      "square", "stackrel", "star", "subsection*", "subset", "subseteq", "subseteqq",
-      "subsetneq", "subsetneqq", "substack", "subsubsection*", "succ", "succapprox",
-      "succcurlyeq", "succeq",
+      "square", "stackrel", "star", "subsection", "subsection*", "subset", "subseteq",
+      "subseteqq", "subsetneq", "subsetneqq", "substack", "subsubsection",
+      "subsubsection*", "succ", "succapprox", "succcurlyeq", "succeq",
       "succnapprox", "succneqq", "succnsim", "succsim", "sum", "sup", "supset",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
       "tanh", "tau", "tbinom", "text", "textbf", "textit", "textstyle", "texttt", "tfrac",
@@ -114,7 +114,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 617)
+    #expect(tags.count == 620)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
