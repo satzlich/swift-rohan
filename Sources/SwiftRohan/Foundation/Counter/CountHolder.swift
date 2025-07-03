@@ -60,15 +60,6 @@ internal class CountHolder: CountPublisher {
     removeSubrange(begin, end)
   }
 
-//  /// Initialize the linked list with an initial and final count holder.
-//  static func initList() -> (initial: InitialCountHolder, final: FinalCountHolder) {
-//    let initial = InitialCountHolder()
-//    let final = FinalCountHolder()
-//    initial.next = final
-//    final.previous = initial
-//    return (initial, final)
-//  }
-
   // MARK: - Manipulation
 
   /// Concatenate the given count holders into a linked list.
@@ -256,12 +247,12 @@ internal class CountHolder: CountPublisher {
       return cachedValue
     }
 
-    let value = computeValue(forName: name)
+    let value = _computeValue(forName: name)
     _cache[name] = value
     return value
   }
 
-  final func computeValue(forName name: CounterName) -> Int {
+  private final func _computeValue(forName name: CounterName) -> Int {
     switch name {
     case .section:
       let previousValue = previous?.value(forName: .section) ?? 0
@@ -325,7 +316,6 @@ internal class CountHolder: CountPublisher {
   // MARK: - Observer
 
   final func registerObserver(_ observer: any CountObserver) {
-    /// We use a weak reference to avoid strong reference cycles.
     _observers.insert(WeakObserver(observer))
   }
 
@@ -335,12 +325,12 @@ internal class CountHolder: CountPublisher {
 
   final func notifyObservers(markAsDirty: Void) {
     for observer in _observers {
-      observer.countObserver(markAsDirty: markAsDirty)
+      observer.observer?.countObserver(markAsDirty: markAsDirty)
     }
   }
 
   private struct WeakObserver: Equatable, Hashable {
-    private weak var observer: (any CountObserver)?
+    weak var observer: (any CountObserver)?
 
     init(_ observer: any CountObserver) {
       self.observer = observer
@@ -351,11 +341,8 @@ internal class CountHolder: CountPublisher {
     }
 
     func hash(into hasher: inout Hasher) {
-      hasher.combine(ObjectIdentifier(observer!))
-    }
-
-    func countObserver(markAsDirty: Void) {
-      observer?.countObserver(markAsDirty: markAsDirty)
+      guard let observer = observer else { return }
+      hasher.combine(ObjectIdentifier(observer))
     }
   }
 }
