@@ -17,6 +17,44 @@ internal class CountHolder {
   ///     action is applicable become dirty.
   internal func propagateDirty() { preconditionFailure("overriding required") }
 
+  static func remove(_ holder: CountHolder) {
+    if let p = holder.previous {
+      p.next = holder.next
+      holder.next?.previous = p
+      holder.previous = nil
+      holder.next = nil
+    }
+    else {
+      // `holder` is the first holder in the linked list.
+      guard let next = holder.next else { return }
+      next.previous = nil
+      holder.next = nil
+    }
+  }
+
+  /// Remove the count holders in the half-open range `[begin, end)`.
+  static func removeSubrange(_ begin: CountHolder, _ end: CountHolder) {
+    guard begin !== end else { return }
+
+    if begin.previous != nil {
+      begin.previous?.next = end
+      end.previous?.next = nil
+      end.previous = begin.previous
+      begin.previous = nil
+    }
+    else {
+      // `[begin,end)` is the initial segment in the linked list.
+      end.previous?.next = nil
+      end.previous = nil
+    }
+  }
+
+  /// Remove the count holders in the closed range `[begin, end]`.
+  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) {
+    guard let end = end.next else { return }
+    removeSubrange(begin, end)
+  }
+
   /// Initialize the linked list with an initial and final count holder.
   static func initList() -> (initial: InitialCountHolder, final: FinalCountHolder) {
     let initial = InitialCountHolder()
@@ -24,6 +62,26 @@ internal class CountHolder {
     initial.next = final
     final.previous = initial
     return (initial, final)
+  }
+
+  // MARK: - Manipulation
+
+  /// Concatenate the given count holders into a linked list.
+  /// - Returns: The first holder in the linked list, or `nil` if the collection is empty.
+  static func concate(
+    contentsOf holders: some BidirectionalCollection<CountHolder>
+  ) -> CounterSegment? {
+    guard let first = holders.first else { return nil }
+
+    var p = first
+
+    for holder in holders.dropFirst() {
+      p.next = holder
+      holder.previous = p
+      p = holder
+    }
+    p.next = nil
+    return CounterSegment(first, p)
   }
 
   /// Insert a new holder before the next holder in the linked list.
@@ -116,43 +174,7 @@ internal class CountHolder {
     }
   }
 
-  static func remove(_ holder: CountHolder) {
-    if let p = holder.previous {
-      p.next = holder.next
-      holder.next?.previous = p
-      holder.previous = nil
-      holder.next = nil
-    }
-    else {
-      // `holder` is the first holder in the linked list.
-      guard let next = holder.next else { return }
-      next.previous = nil
-      holder.next = nil
-    }
-  }
-
-  /// Remove the count holders in the half-open range `[begin, end)`.
-  static func removeSubrange(_ begin: CountHolder, _ end: CountHolder) {
-    guard begin !== end else { return }
-
-    if begin.previous != nil {
-      begin.previous?.next = end
-      end.previous?.next = nil
-      end.previous = begin.previous
-      begin.previous = nil
-    }
-    else {
-      // `[begin,end)` is the initial segment in the linked list.
-      end.previous?.next = nil
-      end.previous = nil
-    }
-  }
-
-  /// Remove the count holders in the closed range `[begin, end]`.
-  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) {
-    guard let end = end.next else { return }
-    removeSubrange(begin, end)
-  }
+  // MARK: - Query
 
   /// Returns the value for the given counter name.
   /// - Postcondition: Call to this method clears the dirty state of the holder.
@@ -175,5 +197,46 @@ internal class CountHolder {
   /// Count the number of count holders in the closed range `[begin, end]`.
   static func countSubrange(_ begin: CountHolder, inclusive end: CountHolder) -> Int {
     countSubrange(begin, end) + 1
+  }
+
+  /// Map the count holders in the half-open range `[begin, end)` to an array.
+  static func mapSubrange<T>(
+    _ begin: CountHolder, _ end: CountHolder,
+    _ transform: (CountHolder) throws -> T
+  ) rethrows -> Array<T> {
+    var result: Array<T> = []
+    var holder: CountHolder = begin
+
+    while holder !== end {
+      result.append(try transform(holder))
+      if let next = holder.next {
+        holder = next
+      }
+      else {
+        break
+      }
+    }
+    return result
+  }
+
+  /// Map the count holders in the closed range `[begin, end]` to an array.
+  static func mapSubrange<T>(
+    _ begin: CountHolder, inclusive end: CountHolder,
+    _ transform: (CountHolder) throws -> T
+  ) rethrows -> Array<T> {
+    var result: Array<T> = []
+    var holder: CountHolder = begin
+
+    while holder !== end {
+      result.append(try transform(holder))
+      if let next = holder.next {
+        holder = next
+      }
+      else {
+        break
+      }
+    }
+    result.append(try transform(end))
+    return result
   }
 }
