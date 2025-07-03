@@ -332,7 +332,7 @@ internal class CountHolder: CountPublisher {
 
   private var _cache: Dictionary<CounterName, Int> = [:]
 
-  private var _observers = Set<WeakObserver>()
+  private var _observers = NSHashTable<AnyObject>(options: .weakMemory)
 
   init(_ name: CounterName) {
     self.counterName = name
@@ -341,33 +341,16 @@ internal class CountHolder: CountPublisher {
   // MARK: - Observer
 
   final func registerObserver(_ observer: any CountObserver) {
-    _observers.insert(WeakObserver(observer))
+    _observers.add(observer)
   }
 
   final func unregisterObserver(_ observer: any CountObserver) {
-    _observers.remove(WeakObserver(observer))
+    _observers.remove(observer)
   }
 
   final func notifyObservers(markAsDirty: Void) {
-    for observer in _observers {
-      observer.observer?.countObserver(markAsDirty: markAsDirty)
-    }
-  }
-
-  private struct WeakObserver: Equatable, Hashable {
-    weak var observer: (any CountObserver)?
-
-    init(_ observer: any CountObserver) {
-      self.observer = observer
-    }
-
-    static func == (lhs: WeakObserver, rhs: WeakObserver) -> Bool {
-      lhs.observer === rhs.observer
-    }
-
-    func hash(into hasher: inout Hasher) {
-      guard let observer = observer else { return }
-      hasher.combine(ObjectIdentifier(observer))
+    for case let observer as CountObserver in _observers.objectEnumerator() {
+      observer.countObserver(markAsDirty: markAsDirty)
     }
   }
 }
