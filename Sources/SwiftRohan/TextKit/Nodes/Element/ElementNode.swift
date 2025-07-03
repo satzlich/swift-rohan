@@ -515,8 +515,8 @@ internal class ElementNode: Node {
 
     if self.shouldSynthesiseCounterSegment {
       _counterArray.insert(contentsOf: _children.lazy.map(\.counterSegment), at: 0)
-      
-      // TODO: concatenate counter segments and synthesise an encompassing one.
+      _counterSegment =
+        CounterSegment.concate(contentsOf: _children.lazy.compactMap(\.counterSegment))
     }
   }
 
@@ -580,8 +580,8 @@ internal class ElementNode: Node {
     insertChildren(contentsOf: CollectionOfOne(node), at: index, inStorage: inStorage)
   }
 
-  final func insertChildren<S: Collection<Node>>(
-    contentsOf nodes: S, at index: Int, inStorage: Bool
+  final func insertChildren(
+    contentsOf nodes: some Collection<Node>, at index: Int, inStorage: Bool
   ) {
     guard !nodes.isEmpty else { return }
 

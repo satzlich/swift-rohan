@@ -13,6 +13,7 @@ internal struct CounterArray {
 
   var isEmpty: Bool { _boolArray.isEmpty }
   var count: Int { _boolArray.count }
+  var trueCount: Int { _boolArray.trueCount }
 
   subscript(index: Int) -> Bool {
     get { _boolArray[index] }

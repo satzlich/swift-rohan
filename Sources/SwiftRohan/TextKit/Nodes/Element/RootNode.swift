@@ -50,4 +50,30 @@ final class RootNode: ElementNodeImpl {
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
+
+  // MARK: - RootNode
+
+  override init() {
+    super.init()
+    _setUp()
+  }
+
+  override init(_ children: ElementStore) {
+    super.init(children)
+    _setUp()
+  }
+
+  required init(from decoder: any Decoder) throws {
+    try super.init(from: decoder)
+    _setUp()
+  }
+
+  private init(deepCopyOf node: RootNode) {
+    super.init(deepCopyOf: node)
+    _setUp()
+  }
+
+  private final func _setUp() {
+    _counterSegment?.begin.propagateDirty()
+  }
 }

@@ -81,6 +81,12 @@ internal class CountHolder {
     p.next = nil
   }
 
+  @inlinable @inline(__always)
+  static func connect(_ first: CountHolder, _ second: CountHolder) {
+    first.next = second
+    second.previous = first
+  }
+
   /// Insert a new holder before the next holder in the linked list.
   static func insert(_ holder: CountHolder, before next: CountHolder) {
     if let p = next.previous {
