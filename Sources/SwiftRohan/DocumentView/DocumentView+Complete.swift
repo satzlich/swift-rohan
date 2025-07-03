@@ -112,7 +112,7 @@ extension DocumentView {
   }
 }
 
-extension DocumentView: CompositorWindowDelegate {
+extension DocumentView: @preconcurrency CompositorWindowDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorWindowController) {
     // check preconditions
     guard let selection = documentManager.textSelection,

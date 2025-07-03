@@ -6,8 +6,7 @@ import Testing
 @testable import SwiftRohan
 
 struct NodesTests {
-
-  static var uncoveredNodeTypes: Set<NodeType> = [.argument, /*.apply,*/ .cVariable]
+  static let uncoveredNodeTypes: Set<NodeType> = [.argument, /*.apply,*/ .cVariable]
 
   @Test
   func coverage() {

@@ -6,7 +6,7 @@ import Testing
 @testable import SwiftRohan
 
 struct ExprsTests {
-  static var uncoveredExprTypes: Set<ExprType> = [.argument]
+  static let uncoveredExprTypes: Set<ExprType> = [.argument]
 
   @Test
   func coverage() {

@@ -50,7 +50,8 @@ public final class DocumentView: NSView {
 
   // NOTE: set a large default font size so that when something goes wrong,
   // the mistake is conspicuous.
-  internal var documentManager = DocumentManager(StyleSheets.defaultRecord.provider(20))
+  internal nonisolated(unsafe) var documentManager =
+    DocumentManager(StyleSheets.defaultRecord.provider(20))
 
   // MARK: - Subviews
 
@@ -84,7 +85,7 @@ public final class DocumentView: NSView {
   // IME support
   internal var _markedText: MarkedText? = nil
   // Undo support
-  internal let _undoManager: UndoManager = UndoManager()
+  internal nonisolated(unsafe) let _undoManager: UndoManager = UndoManager()
   // Copy/Paste support
   internal private(set) var _pasteboardManagers: [any PasteboardManager] = []
 

@@ -100,3 +100,13 @@ internal func findDuplicates<T: Hashable & Equatable, S: Sequence<T>>(
 
   return Array(duplicates)
 }
+
+@inlinable @inline(__always)
+func runOnMainThread<T: Sendable>(_ block: @MainActor () throws -> T) rethrows -> T {
+  if Thread.isMainThread {
+    try MainActor.assumeIsolated { try block() }
+  }
+  else {
+    try DispatchQueue.main.sync { try block() }
+  }
+}

@@ -3,6 +3,8 @@
 import AppKit
 import Foundation
 
+private let DECORATE_CONTENT_VIEW = false
+
 final class ContentView: RohanView {
   private typealias FragmentViewCache =
     NSMapTable<NSTextLayoutFragment, TextLayoutFragmentView>

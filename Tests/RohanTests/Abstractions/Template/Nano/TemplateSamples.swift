@@ -5,9 +5,9 @@ import Foundation
 @testable import SwiftRohan
 
 struct TemplateSamples {
-  static let cdots = Template(name: "cdots", body: [TextExpr("⋯")])
+  nonisolated(unsafe) static let cdots = Template(name: "cdots", body: [TextExpr("⋯")])
 
-  static let circle =
+  nonisolated(unsafe) static let circle =
     Template(
       name: "circle", parameters: ["x", "y"],
       body: [
@@ -17,7 +17,7 @@ struct TemplateSamples {
         TextExpr("=1"),
       ])
 
-  static let ellipse =
+  nonisolated(unsafe) static let ellipse =
     Template(
       name: "ellipse", parameters: ["x", "y"],
       body: [
@@ -32,7 +32,7 @@ struct TemplateSamples {
       ])
 
   /// Sum of squares
-  static let SOS =
+  nonisolated(unsafe) static let SOS =
     Template(
       name: "SOS", parameters: ["x"],
       body: [
@@ -48,14 +48,14 @@ struct TemplateSamples {
           nuc: [VariableExpr("x")], sub: [TextExpr("n")], sup: [TextExpr("2")]),
       ])
 
-  static let square =
+  nonisolated(unsafe) static let square =
     Template(
       name: "square", parameters: ["x"],
       body: [AttachExpr(nuc: [VariableExpr("x")], sup: [TextExpr("2")])])
 
   // MARK: - Expanded
 
-  static let circle_xpd =
+  nonisolated(unsafe) static let circle_xpd =
     Template(
       name: "circle", parameters: ["x", "y"],
       body: [
@@ -65,7 +65,7 @@ struct TemplateSamples {
         TextExpr("=1"),
       ])
 
-  static let ellipse_xpd =
+  nonisolated(unsafe) static let ellipse_xpd =
     Template(
       name: "ellipse", parameters: ["x", "y"],
       body: [
@@ -81,7 +81,7 @@ struct TemplateSamples {
         TextExpr("=1"),
       ])
 
-  static let SOS_xpd =
+  nonisolated(unsafe) static let SOS_xpd =
     Template(
       name: "SOS", parameters: ["x"],
       body: [
@@ -97,7 +97,7 @@ struct TemplateSamples {
 
   // MARK: - Converted
 
-  static let circle_idx =
+  nonisolated(unsafe) static let circle_idx =
     Template(
       name: "circle", parameters: ["x", "y"],
       body: [
@@ -107,7 +107,7 @@ struct TemplateSamples {
         TextExpr("=1"),
       ])
 
-  static let ellipse_idx =
+  nonisolated(unsafe) static let ellipse_idx =
     Template(
       name: "ellipse", parameters: ["x", "y"],
       body: [
@@ -127,7 +127,7 @@ struct TemplateSamples {
         TextExpr("=1"),
       ])
 
-  static let SOS_idx =
+  nonisolated(unsafe) static let SOS_idx =
     Template(
       name: "SOS", parameters: ["x"],
       body: [
@@ -141,7 +141,7 @@ struct TemplateSamples {
           nuc: [CompiledVariableExpr(0)], sub: [TextExpr("n")], sup: [TextExpr("2")]),
       ])
 
-  static let square_idx =
+  nonisolated(unsafe) static let square_idx =
     Template(
       name: "square", parameters: ["x"],
       body: [AttachExpr(nuc: [CompiledVariableExpr(0)], sup: [TextExpr("2")])])
