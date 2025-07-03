@@ -97,7 +97,7 @@ final class EquationNode: MathNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+    self.subtype = try container.decode(EquationSubtype.self, forKey: .subtype)
     self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
@@ -285,7 +285,7 @@ final class EquationNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let subtype = (tag == .displaymath) ? Subtype.block : Subtype.inline
+    let subtype = (tag == .displaymath) ? EquationSubtype.block : EquationSubtype.inline
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
 
     switch nucleus {
@@ -302,9 +302,7 @@ final class EquationNode: MathNode {
 
   // MARK: - EquationNode
 
-  internal typealias Subtype = EquationExpr.Subtype
-
-  internal let subtype: Subtype
+  internal let subtype: EquationSubtype
   internal let nucleus: ContentNode
 
   private var _layoutLength: Int = 1
@@ -315,14 +313,14 @@ final class EquationNode: MathNode {
     NodePolicy.isInlineMathReflowEnabled && subtype == .inline
   }
 
-  init(_ subtype: Subtype, _ nucleus: ElementStore = []) {
+  init(_ subtype: EquationSubtype, _ nucleus: ElementStore = []) {
     self.subtype = subtype
     self.nucleus = ContentNode(nucleus)
     super.init()
     self._setUp()
   }
 
-  private init(_ subtype: Subtype, _ nucleus: ContentNode) {
+  private init(_ subtype: EquationSubtype, _ nucleus: ContentNode) {
     self.subtype = subtype
     self.nucleus = nucleus
     super.init()
