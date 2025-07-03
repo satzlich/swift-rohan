@@ -22,7 +22,7 @@ struct CategoryTests {
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),
-      (EquationNode(.block, []), .arbitraryParagraphContent),
+      (EquationNode(.display, []), .arbitraryParagraphContent),
       (EquationNode(.inline, []), .extendedText),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),

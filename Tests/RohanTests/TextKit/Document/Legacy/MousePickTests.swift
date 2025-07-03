@@ -122,7 +122,7 @@ final class MousePickTests: TextKitTestsBase {
         // #4
         ParagraphNode([
           EquationNode(
-            .block,
+            .display,
             [
               ApplyNode(
                 MathTemplateSamples.bifun,

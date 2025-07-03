@@ -36,7 +36,7 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Layout)
 
-  final override var isBlock: Bool { subtype == .block }
+  final override var isBlock: Bool { subtype.isBlock }
   final override var isDirty: Bool { nucleus.isDirty }
 
   final override func layoutLength() -> Int { _layoutLength }
@@ -97,7 +97,7 @@ final class EquationNode: MathNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+    self.subtype = try container.decode(EquationSubtype.self, forKey: .subtype)
     self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
@@ -112,7 +112,9 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Storage)
 
-  private enum Tag: String, Codable, CaseIterable { case displaymath, inlinemath }
+  private enum Tag: String, Codable, CaseIterable {
+    case displaymath, inlinemath, equation
+  }
 
   final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
 
@@ -123,10 +125,12 @@ final class EquationNode: MathNode {
   final override func store() -> JSONValue {
     let nucleus = nucleus.store()
     switch subtype {
-    case .block:
-      return JSONValue.array([.string(Tag.displaymath.rawValue), nucleus])
     case .inline:
       return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
+    case .display:
+      return JSONValue.array([.string(Tag.displaymath.rawValue), nucleus])
+    case .equation:
+      return JSONValue.array([.string(Tag.equation.rawValue), nucleus])
     }
   }
 
@@ -285,7 +289,7 @@ final class EquationNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let subtype = (tag == .displaymath) ? Subtype.block : Subtype.inline
+    let subtype = (tag == .displaymath) ? EquationSubtype.display : EquationSubtype.inline
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
 
     switch nucleus {
@@ -302,10 +306,11 @@ final class EquationNode: MathNode {
 
   // MARK: - EquationNode
 
-  internal typealias Subtype = EquationExpr.Subtype
-
-  internal let subtype: Subtype
+  internal let subtype: EquationSubtype
   internal let nucleus: ContentNode
+
+  private var _counterSegment: CounterSegment?
+  final override var counterSegment: CounterSegment? { _counterSegment }
 
   private var _layoutLength: Int = 1
   private var _nodeFragment: MathListLayoutFragment? = nil
@@ -315,14 +320,14 @@ final class EquationNode: MathNode {
     NodePolicy.isInlineMathReflowEnabled && subtype == .inline
   }
 
-  init(_ subtype: Subtype, _ nucleus: ElementStore = []) {
+  init(_ subtype: EquationSubtype, _ nucleus: ElementStore = []) {
     self.subtype = subtype
     self.nucleus = ContentNode(nucleus)
     super.init()
     self._setUp()
   }
 
-  private init(_ subtype: Subtype, _ nucleus: ContentNode) {
+  private init(_ subtype: EquationSubtype, _ nucleus: ContentNode) {
     self.subtype = subtype
     self.nucleus = nucleus
     super.init()
@@ -342,6 +347,14 @@ final class EquationNode: MathNode {
 
   private final func _setUp() {
     self.nucleus.setParent(self)
+
+    switch subtype {
+    case .equation:
+      let countHolder = CountHolder(.equation)
+      self._counterSegment = CounterSegment(countHolder)
+    case _:
+      self._counterSegment = nil
+    }
   }
 
   internal static func selector(isBlock: Bool? = nil) -> TargetSelector {

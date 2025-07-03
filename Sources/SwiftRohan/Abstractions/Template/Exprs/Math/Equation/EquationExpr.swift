@@ -3,21 +3,16 @@
 final class EquationExpr: MathExpr {
   class override var type: ExprType { .equation }
 
-  enum Subtype: String, Codable {
-    case inline
-    case block
-  }
-
-  let subtype: Subtype
+  let subtype: EquationSubtype
   let nucleus: ContentExpr
 
-  init(_ subtype: Subtype, _ nucleus: ContentExpr) {
+  init(_ subtype: EquationSubtype, _ nucleus: ContentExpr) {
     self.subtype = subtype
     self.nucleus = nucleus
     super.init()
   }
 
-  convenience init(_ subtype: Subtype, _ nucleus: Array<Expr> = []) {
+  convenience init(_ subtype: EquationSubtype, _ nucleus: Array<Expr> = []) {
     self.init(subtype, ContentExpr(nucleus))
   }
 
@@ -40,7 +35,7 @@ final class EquationExpr: MathExpr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    subtype = try container.decode(Subtype.self, forKey: .subtype)
+    subtype = try container.decode(EquationSubtype.self, forKey: .subtype)
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }

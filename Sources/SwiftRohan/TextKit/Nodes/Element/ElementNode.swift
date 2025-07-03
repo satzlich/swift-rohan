@@ -471,8 +471,9 @@ internal class ElementNode: Node {
   internal final var _isDirty: Bool
 
   internal final var _counterSegment: CounterSegment?
-
   final override var counterSegment: CounterSegment? { _counterSegment }
+
+  internal final var _counterArray: CounterArray = CounterArray()
 
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
@@ -510,6 +511,12 @@ internal class ElementNode: Node {
   private final func _setUp() {
     for child in _children {
       child.setParent(self)
+    }
+
+    if self.shouldSynthesiseCounterSegment {
+      _counterArray.insert(contentsOf: _children.lazy.map(\.counterSegment), at: 0)
+      _counterSegment =
+        CounterSegment.concate(contentsOf: _children.lazy.compactMap(\.counterSegment))
     }
   }
 
@@ -573,8 +580,8 @@ internal class ElementNode: Node {
     insertChildren(contentsOf: CollectionOfOne(node), at: index, inStorage: inStorage)
   }
 
-  final func insertChildren<S: Collection<Node>>(
-    contentsOf nodes: S, at index: Int, inStorage: Bool
+  final func insertChildren(
+    contentsOf nodes: some Collection<Node>, at index: Int, inStorage: Bool
   ) {
     guard !nodes.isEmpty else { return }
 
@@ -632,9 +639,9 @@ extension ElementNode {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
 
-  /// Returns true if the node has a **synthesized** counter segment and should update
-  /// the counter segment when the node is modified.
-  final var shouldUpdateCounterSegment: Bool {
-    NodePolicy.shouldUpdateCounterSegment(type)
+  final var shouldSynthesiseCounterSegment: Bool { Self.shouldSynthesiseCounterSegment }
+
+  final class var shouldSynthesiseCounterSegment: Bool {
+    NodePolicy.shouldSynthesiseCounterSegment(type)
   }
 }

@@ -183,7 +183,7 @@ final class InsertStringTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([
-          EquationNode(.block, [TextNode("=ma")])
+          EquationNode(.display, [TextNode("=ma")])
         ])
       ])
       return createDocumentManager(rootNode)
@@ -212,7 +212,7 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            .block, [FractionNode(num: [TextNode("d")], denom: [TextNode("dt")])])
+            .display, [FractionNode(num: [TextNode("d")], denom: [TextNode("dt")])])
         ])
       ])
       return createDocumentManager(rootNode)
@@ -244,7 +244,7 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            .block,
+            .display,
             [
               TextNode("F="),
               FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
@@ -494,7 +494,7 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            .block,
+            .display,
             [
               ApplyNode(
                 MathTemplateSamples.bifun,

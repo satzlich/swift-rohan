@@ -21,7 +21,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func editAttachNode_modifyExisting() {
     // create an example that contains AttachNode, RadicalNode, and MatrixNode
     let documentManager = _createDocumentManager([
-      EquationNode(.block, [AttachNode(nuc: [TextNode("x")], sup: [TextNode("y")])])
+      EquationNode(.display, [AttachNode(nuc: [TextNode("x")], sup: [TextNode("y")])])
     ])
 
     do {
@@ -109,7 +109,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func editAttachNode_createNew() {
     let documentManager = _createDocumentManager([
       EquationNode(
-        .block,
+        .display,
         [
           NamedSymbolNode(NamedSymbol.lookup("alpha")!),
           NamedSymbolNode(NamedSymbol.lookup("beta")!),
@@ -174,7 +174,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func editRadicalNode() {
     let documentManager = _createDocumentManager([
       EquationNode(
-        .block,
+        .display,
         [
           RadicalNode([TextNode("x")], index: nil)
         ])
@@ -226,7 +226,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func modifyGrid() {
     let documentManager = _createDocumentManager([
       EquationNode(
-        .block,
+        .display,
         [
           MatrixNode(
             .pmatrix,
@@ -442,7 +442,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   private func _replacementSupportExample() -> DocumentManager {
     let documentManager = _createDocumentManager([
       EquationNode(
-        .block,
+        .display,
         [
           TextNode("xyzw"),
           NamedSymbolNode(NamedSymbol.lookup("alpha")!),
@@ -592,7 +592,7 @@ final class DocumentManagerTests: TextKitTestsBase {
 
     let documentManager = _createDocumentManager([
       HeadingNode(.sectionAst, [TextNode("Hello")]),
-      EquationNode(.block, [FractionNode(num: [], denom: [])]),
+      EquationNode(.display, [FractionNode(num: [], denom: [])]),
     ])
 
     // location points to the interior of text node.
@@ -650,7 +650,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func descendTo() {
     let documentManager = _createDocumentManager([
       EquationNode(
-        .block,
+        .display,
         [
           AttachNode(nuc: [], sup: [TextNode("abc")]),
           MatrixNode(
@@ -689,7 +689,7 @@ final class DocumentManagerTests: TextKitTestsBase {
   func contextualNode() {
     let documentManager = _createDocumentManager([
       EquationNode(
-        .block,
+        .display,
         [
           FractionNode(num: [TextNode("x")], denom: [TextNode("y")])
         ])

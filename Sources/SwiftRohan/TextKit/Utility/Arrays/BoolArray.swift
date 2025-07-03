@@ -10,14 +10,18 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   typealias ArrayLiteralElement = Bool
 
   init(arrayLiteral elements: ArrayLiteralElement...) {
-    self._size = elements.count
-    self._truePositions = elements.enumerated()
-      .compactMap { (index, value) -> Int? in value ? index : nil }
+    self.init(elements)
   }
 
   init() {
     self._size = 0
     self._truePositions = []
+  }
+
+  init(_ values: some Collection<Bool>) {
+    self._size = values.count
+    self._truePositions = values.enumerated()
+      .compactMap { (index, value) -> Int? in value ? index : nil }
   }
 
   // MARK: - Query
@@ -65,7 +69,7 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
     _truePositions.insert(contentsOf: positions, at: lowerBound)
   }
 
-  mutating func remove(at index: Int) {
+  mutating func remove(at index: Int) -> Bool {
     precondition(0..<_size ~= index)
 
     _size -= 1
@@ -76,11 +80,13 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
         _truePositions[i] -= 1
       }
       _truePositions.remove(at: lowerBound)
+      return true
     }
     else {
       for i in lowerBound..<_truePositions.count {
         _truePositions[i] -= 1
       }
+      return false
     }
   }
 

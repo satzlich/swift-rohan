@@ -17,3 +17,19 @@ struct CounterSegment {
     self.end = holder
   }
 }
+
+extension CounterSegment {
+  static func concate(
+    contentsOf segments: some Collection<CounterSegment>
+  ) -> CounterSegment? {
+    guard let first = segments.first else { return nil }
+
+    var i = first
+
+    for segment in segments.dropFirst() {
+      CountHolder.connect(i.end, segment.begin)
+      i = segment
+    }
+    return CounterSegment(first.begin, i.end)
+  }
+}

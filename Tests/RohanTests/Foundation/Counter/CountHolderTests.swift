@@ -14,21 +14,28 @@ struct CountHolderTests {
     }
   }
 
+  private func initPair() -> (CountHolder, CountHolder) {
+    let initial = CountHolder(.subsubsection)
+    let final_ = CountHolder(.subsubsection)
+    CountHolder.connect(initial, final_)
+    return (initial, final_)
+  }
+
   @Test
   func coverage() {
-    let (initial, final_) = CountHolder.initList()
+    let (initial, final_) = initPair()
 
     defer { withExtendedLifetime(initial, {}) }
 
     // declare count holders
-    let section1 = BasicCountHolder(.section)
-    let subsection1 = BasicCountHolder(.subsection)
-    let equation1 = BasicCountHolder(.equation)
-    let subsection2 = BasicCountHolder(.subsection)
-    let section2 = BasicCountHolder(.section)
-    let subsubsection1 = BasicCountHolder(.subsubsection)
-    let subsubsection2 = BasicCountHolder(.subsubsection)
-    let equation2 = BasicCountHolder(.equation)
+    let section1 = CountHolder(.section)
+    let subsection1 = CountHolder(.subsection)
+    let equation1 = CountHolder(.equation)
+    let subsection2 = CountHolder(.subsection)
+    let section2 = CountHolder(.section)
+    let subsubsection1 = CountHolder(.subsubsection)
+    let subsubsection2 = CountHolder(.subsubsection)
+    let equation2 = CountHolder(.equation)
     let list = [
       section1, subsection1, equation1, subsection2,
       section2, subsubsection1, subsubsection2, equation2,
@@ -94,14 +101,14 @@ struct CountHolderTests {
 
   @Test
   func insertRemove() {
-    let (initial, final_) = CountHolder.initList()
+    let (initial, final_) = initPair()
 
     defer { withExtendedLifetime(initial, {}) }
 
     // declare count holders
-    let section1 = BasicCountHolder(.section)
-    let subsection1 = BasicCountHolder(.subsection)
-    let equation1 = BasicCountHolder(.equation)
+    let section1 = CountHolder(.section)
+    let subsection1 = CountHolder(.subsection)
+    let equation1 = CountHolder(.equation)
 
     // declare observers
     let observer1 = TestingCountObserver()
@@ -134,14 +141,14 @@ struct CountHolderTests {
 
   @Test
   func removeSubrangeClosed() {
-    let (initial, final_) = CountHolder.initList()
+    let (initial, final_) = initPair()
 
     defer { withExtendedLifetime(initial, {}) }
 
     // declare count holders
-    let section1 = BasicCountHolder(.section)
-    let subsection1 = BasicCountHolder(.subsection)
-    let equation1 = BasicCountHolder(.equation)
+    let section1 = CountHolder(.section)
+    let subsection1 = CountHolder(.subsection)
+    let equation1 = CountHolder(.equation)
 
     // insert holders
     for holder in [section1, subsection1, equation1] {
@@ -149,7 +156,7 @@ struct CountHolderTests {
     }
     initial.propagateDirty()
 
-    #expect(CountHolder.count(initial, final_) == 4)
+    #expect(CountHolder.countSubrange(initial, final_) == 4)
 
     // remove subrange
     CountHolder.removeSubrange(section1, inclusive: equation1)
@@ -159,6 +166,6 @@ struct CountHolderTests {
     #expect(final_.value(forName: .subsection) == 0)
     #expect(final_.value(forName: .equation) == 0)
 
-    #expect(CountHolder.count(initial, final_) == 1)
+    #expect(CountHolder.countSubrange(initial, final_) == 1)
   }
 }

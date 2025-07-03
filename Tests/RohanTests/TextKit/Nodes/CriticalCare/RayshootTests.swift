@@ -138,7 +138,7 @@ final class RayshootTests: TextKitTestsBase {
       RadicalNode([TextNode("abc")], index: [TextNode("k")]),
       UnderOverNode(.overbrace, [TextNode("abc")]),
     ]
-    let equationNode = EquationNode(.block, ElementStore(mathNodes))
+    let equationNode = EquationNode(.display, ElementStore(mathNodes))
 
     // Call createDocumentManager() to ensure the tree is laid out.
     _ = self.createDocumentManager(RootNode([equationNode]))

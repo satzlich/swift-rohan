@@ -46,8 +46,8 @@ struct NodeStoreUtilsTests {
       "dot", "doteq", "doteqdot", "dotplus", "dotsb", "dotsc", "dotsi", "dotsm", "dotso",
       "doublebarwedge", "doublecap", "doublecup", "downarrow", "downdownarrows",
       "downharpoonleft", "downharpoonright", "dprime", "ell", "emph", "emptyset",
-      "enspace", "enumerate",
-      "epsilon", "eqcirc", "eqsim", "eqslantgtr", "eqslantless", "equiv",
+      "enspace", "enumerate", "epsilon", "eqcirc", "eqsim", "eqslantgtr", "eqslantless",
+      "equation", "equiv",
       "eta", "eth", "exists", "exp", "fallingdotseq", "flat", "forall", "frac", "frown",
       "fullouterjoin", "gamma", "gather*", "gathered", "gcd", "ge", "geq", "geqq",
       "geqslant", "gets", "gg", "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq",
@@ -114,7 +114,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 620)
+    #expect(tags.count == 621)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

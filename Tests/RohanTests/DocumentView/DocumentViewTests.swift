@@ -505,7 +505,7 @@ struct DocumentViewTests {
       let rootNode = RootNode([
         HeadingNode(.sectionAst, [TextNode("text ..")]),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("frac")
           ]),
@@ -561,7 +561,7 @@ struct DocumentViewTests {
     do {
       let rootNode = RootNode([
         EquationNode(
-          .block,
+          .display,
           [
             NamedSymbolNode(NamedSymbol.lookup("lvert")!),
             TextNode(".+"),
@@ -599,7 +599,7 @@ struct DocumentViewTests {
     do {
       let rootNode = RootNode([
         EquationNode(
-          .block,
+          .display,
           [
             NamedSymbolNode(NamedSymbol.lookup("alpha")!),
             TextNode("a"),
@@ -701,7 +701,7 @@ struct DocumentViewTests {
     do {
       let rootNode = RootNode([
         EquationNode(
-          .block,
+          .display,
           [
             AttachNode(
               nuc: [TextNode("a")], lsub: [TextNode("b")], lsup: [TextNode("c")])
@@ -891,7 +891,7 @@ struct DocumentViewTests {
     do {
       let rootNode = RootNode([
         EquationNode(
-          .block,
+          .display,
           [
             RadicalNode([TextNode("a")], index: [TextNode("b")])
           ])
@@ -964,7 +964,7 @@ struct DocumentViewTests {
     func resetContent() {
       let rootNode = RootNode([
         EquationNode(
-          .block,
+          .display,
           [
             MatrixNode(
               .pmatrix,

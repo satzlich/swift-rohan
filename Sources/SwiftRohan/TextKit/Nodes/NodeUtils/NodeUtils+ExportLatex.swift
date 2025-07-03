@@ -457,15 +457,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     guard let nucleus = equation.nucleus.accept(self, context).success()
     else { return .failure(SatzError(.ExportLatexFailure)) }
 
-    let delimiter: MathSyntax.DelimiterType =
-      switch equation.subtype {
-      case .inline: .dollar
-      case .block: .bracket
-      }
+    let subtype = equation.subtype
+    switch subtype {
+    case .inline, .display:
+      let delimiter: MathSyntax.DelimiterType = (subtype == .inline) ? .dollar : .bracket
+      let mathSyntax = MathSyntax(delimiter: delimiter, content: nucleus)
+      let stream: Array<StreamletSyntax> = [.math(mathSyntax)]
+      return .success(StreamSyntax(stream))
 
-    let mathSyntax = MathSyntax(delimiter: delimiter, content: nucleus)
-    let stream: Array<StreamletSyntax> = [.math(mathSyntax)]
-    return .success(StreamSyntax(stream))
+    case .equation:
+      let envName = NameToken("equation")!
+      let envSyntax = EnvironmentSyntax(name: envName, wrapped: nucleus)
+      let stream: Array<StreamletSyntax> = [.environment(envSyntax)]
+      return .success(StreamSyntax(stream))
+    }
   }
 
   override func visit(

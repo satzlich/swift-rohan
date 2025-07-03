@@ -7,7 +7,7 @@ enum Snippets {
 
   nonisolated(unsafe) static let emphasis = CommandBody(TextStylesExpr(.emph), 1)
   nonisolated(unsafe) static let strong = CommandBody(TextStylesExpr(.textbf), 1)
-  nonisolated(unsafe) static let equation = CommandBody(EquationExpr(.block), 1)
+  nonisolated(unsafe) static let equation = CommandBody(EquationExpr(.display), 1)
   nonisolated(unsafe) static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 
   nonisolated(unsafe) static let wordJoiner = CommandBody("\u{2060}", .textText)
