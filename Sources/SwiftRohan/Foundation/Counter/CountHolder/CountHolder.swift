@@ -26,6 +26,7 @@ internal class CountHolder {
     return (initial, final)
   }
 
+  /// Insert a new holder before the next holder in the linked list.
   static func insert(_ holder: CountHolder, before next: CountHolder) {
     if let p = next.previous {
       holder.previous = p
@@ -37,6 +38,21 @@ internal class CountHolder {
       // `next` is the first holder in the linked list.
       holder.next = next
       next.previous = holder
+    }
+  }
+
+  /// Insert a new holder after the previous holder in the linked list.
+  static func insert(_ holder: CountHolder, after previous: CountHolder) {
+    if let n = previous.next {
+      holder.next = n
+      n.previous = holder
+      previous.next = holder
+      holder.previous = previous
+    }
+    else {
+      // `previous` is the last holder in the linked list.
+      previous.next = holder
+      holder.previous = previous
     }
   }
 
@@ -67,6 +83,36 @@ internal class CountHolder {
       let last = holders.last!
       last.next = next
       next.previous = last
+    }
+  }
+
+  static func insert(
+    contentsOf holders: some BidirectionalCollection<CountHolder>,
+    after previous: CountHolder
+  ) {
+    guard holders.isEmpty == false else { return }
+
+    if var n = previous.next {
+
+      for holder in holders.reversed() {
+        holder.next = n
+        n.previous = holder
+        n = holder
+      }
+
+      previous.next = n
+      n.previous = previous
+    }
+    else {
+      // `previous` is the last holder in the linked list.
+
+      for (p, q) in holders.adjacentPairs() {
+        q.previous = p
+        p.next = q
+      }
+      let first = holders.first!
+      first.previous = previous
+      previous.next = first
     }
   }
 
