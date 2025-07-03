@@ -471,8 +471,9 @@ internal class ElementNode: Node {
   internal final var _isDirty: Bool
 
   internal final var _counterSegment: CounterSegment?
-
   final override var counterSegment: CounterSegment? { _counterSegment }
+
+  internal final var _counterArray: CounterArray = CounterArray()
 
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
@@ -510,6 +511,12 @@ internal class ElementNode: Node {
   private final func _setUp() {
     for child in _children {
       child.setParent(self)
+    }
+
+    if self.shouldSynthesiseCounterSegment {
+      _counterArray.insert(contentsOf: _children.lazy.map(\.counterSegment), at: 0)
+      
+      // TODO: concatenate counter segments and synthesise an encompassing one.
     }
   }
 
