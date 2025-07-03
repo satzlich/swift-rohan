@@ -1,5 +1,5 @@
 {
-  "originHash" : "8ee325cc1093411fe8aaaa65ecf87a357db7011a4eba9bcb1cbaf9a3dbf3d6e4",
+  "originHash" : "46ba3118d753954e13ad6d70859a3458093d82a811bbc08af1eae0d72c7f6cd4",
   "pins" : [
     {
       "identity" : "satz-algorithms",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
-        "version" : "1.1.4"
+        "revision" : "c1805596154bb3a265fd91b8ac0c4433b4348fb0",
+        "version" : "1.2.0"
       }
     },
     {
@@ -40,7 +40,7 @@
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-syntax",
+      "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
         "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
         "version" : "510.0.3"
