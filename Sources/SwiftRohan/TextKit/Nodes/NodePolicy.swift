@@ -220,6 +220,16 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
+  /// True if counter segment is computed and should be updated when the content
+  /// of the node changes.
+  static func shouldUpdateCounterSegment(_ type: NodeType) -> Bool {
+    [
+      NodeType.itemList,
+      .paragraph,
+      .root,
+    ].contains(type)
+  }
+
   /// Content container cateogry of given node type, or nil if the value should
   /// be determined from contextual nodes.
   static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
