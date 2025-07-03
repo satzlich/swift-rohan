@@ -11,36 +11,50 @@ internal struct CounterArray {
     self._boolArray = BoolArray()
   }
 
-  var isEmpty: Bool { _boolArray.isEmpty }
-  var count: Int { _boolArray.count }
-  var trueCount: Int { _boolArray.trueCount }
+  @inline(__always) var isEmpty: Bool { _boolArray.isEmpty }
+  @inline(__always) var count: Int { _boolArray.count }
+  @inline(__always) var trueCount: Int { _boolArray.trueCount }
 
-  subscript(index: Int) -> Bool {
-    get { _boolArray[index] }
+  subscript(index: Int) -> Bool { @inline(__always) get { _boolArray[index] } }
+
+  @inline(__always)
+  func trueIndex(before position: Int) -> Int? {
+    _boolArray.trueIndex(before: position)
   }
 
+  @inline(__always)
+  func trueIndex(after position: Int) -> Int? {
+    _boolArray.trueIndex(after: position)
+  }
+
+  @inline(__always)
   mutating func insert(_ segment: CounterSegment?, at index: Int) {
     _boolArray.insert(segment != nil, at: index)
   }
 
+  @inline(__always)
   mutating func insert(
     contentsOf segments: some Collection<CounterSegment?>, at index: Int
   ) {
     _boolArray.insert(contentsOf: segments.lazy.map { $0 != nil }, at: index)
   }
 
+  @inline(__always)
   mutating func remove(at index: Int) -> Bool {
     _boolArray.remove(at: index)
   }
 
+  @inlinable
   mutating func removeSubrange(_ range: Range<Int>) {
     _boolArray.removeSubrange(range)
   }
 
+  @inlinable
   mutating func removeAll() {
     _boolArray.removeAll()
   }
 
+  @inlinable
   mutating func replaceSubrange(
     _ subrange: Range<Int>, with newElements: some Collection<CounterSegment?>
   ) {
