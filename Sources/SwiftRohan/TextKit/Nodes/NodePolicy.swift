@@ -220,9 +220,9 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
-  /// True if counter segment is computed and should be updated when the content
-  /// of the node changes.
-  static func shouldUpdateCounterSegment(_ type: NodeType) -> Bool {
+  /// True if counter segment should be computed from node content and be updated
+  /// when the node content changes.
+  static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [
       NodeType.itemList,
       .paragraph,

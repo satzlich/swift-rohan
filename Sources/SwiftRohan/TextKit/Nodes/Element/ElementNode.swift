@@ -632,9 +632,11 @@ extension ElementNode {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
 
-  /// Returns true if the node has a **synthesized** counter segment and should update
+  /// Returns true if the node has a **synthesised** counter segment and should update
   /// the counter segment when the node is modified.
-  final var shouldUpdateCounterSegment: Bool {
-    NodePolicy.shouldUpdateCounterSegment(type)
+  final var shouldSynthesiseCounterSegment: Bool { Self.shouldSynthesiseCounterSegment }
+
+  final class var shouldSynthesiseCounterSegment: Bool {
+    NodePolicy.shouldSynthesiseCounterSegment(type)
   }
 }
