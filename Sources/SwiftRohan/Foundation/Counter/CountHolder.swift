@@ -22,18 +22,27 @@ internal class CountHolder: CountPublisher {
     notifyObservers(markAsDirty: ())
   }
 
-  static func remove(_ holder: CountHolder) {
+  /// Remove the given count holder from the linked list.
+  /// - Returns: `true` if the linked list **is empty** after the removal.
+  static func remove(_ holder: CountHolder) -> Bool {
     if let p = holder.previous {
       p.next = holder.next
       holder.next?.previous = p
       holder.previous = nil
       holder.next = nil
+      return false
     }
     else {
       // `holder` is the first holder in the linked list.
-      guard let next = holder.next else { return }
-      next.previous = nil
-      holder.next = nil
+      if let next = holder.next {
+        next.previous = nil
+        holder.next = nil
+        return false
+      }
+      else {
+        // no-op, `holder` is the only holder in the linked list.
+        return true
+      }
     }
   }
 
@@ -55,9 +64,25 @@ internal class CountHolder: CountPublisher {
   }
 
   /// Remove the count holders in the closed range `[begin, end]`.
-  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) {
-    guard let end = end.next else { return }
-    removeSubrange(begin, end)
+  /// - Returns: `true` if the linked list **is empty** after the removal.
+  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) -> Bool {
+    if let end = end.next {
+      removeSubrange(begin, end)
+      return false
+    }
+    else {
+      // `end` is the last holder in the linked list.
+      if let p = begin.previous {
+        p.next = nil
+        return false
+      }
+      else {
+        // `[begin,end]` is the whole of the linked list.
+
+        // no-op
+        return true
+      }
+    }
   }
 
   // MARK: - Manipulation
@@ -307,7 +332,7 @@ internal class CountHolder: CountPublisher {
 
   private var _cache: Dictionary<CounterName, Int> = [:]
 
-  private var _observers = Set<WeakObserver>()
+  private var _observers = NSHashTable<AnyObject>(options: .weakMemory)
 
   init(_ name: CounterName) {
     self.counterName = name
@@ -316,33 +341,16 @@ internal class CountHolder: CountPublisher {
   // MARK: - Observer
 
   final func registerObserver(_ observer: any CountObserver) {
-    _observers.insert(WeakObserver(observer))
+    _observers.add(observer)
   }
 
   final func unregisterObserver(_ observer: any CountObserver) {
-    _observers.remove(WeakObserver(observer))
+    _observers.remove(observer)
   }
 
   final func notifyObservers(markAsDirty: Void) {
-    for observer in _observers {
-      observer.observer?.countObserver(markAsDirty: markAsDirty)
-    }
-  }
-
-  private struct WeakObserver: Equatable, Hashable {
-    weak var observer: (any CountObserver)?
-
-    init(_ observer: any CountObserver) {
-      self.observer = observer
-    }
-
-    static func == (lhs: WeakObserver, rhs: WeakObserver) -> Bool {
-      lhs.observer === rhs.observer
-    }
-
-    func hash(into hasher: inout Hasher) {
-      guard let observer = observer else { return }
-      hasher.combine(ObjectIdentifier(observer))
+    for case let observer as CountObserver in _observers.objectEnumerator() {
+      observer.countObserver(markAsDirty: markAsDirty)
     }
   }
 }

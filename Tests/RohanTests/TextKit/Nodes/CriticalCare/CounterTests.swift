@@ -28,7 +28,12 @@ struct CounterTests {
           TextNode("Emit HeadingNode with subsection")
         ]),
       ParagraphNode([
-        TextNode("Plaintext")
+        TextNode("Plaintext"),
+        EquationNode(
+          .equation,
+          [
+            TextNode("a=b+c")
+          ]),
       ]),
     ])
 
@@ -40,11 +45,13 @@ struct CounterTests {
     do {
       let begin = counterSegment.begin
       let end = counterSegment.end
-      #expect(CountHolder.countSubrange(begin, inclusive: end) == 2)
+      #expect(CountHolder.countSubrange(begin, inclusive: end) == 3)
       #expect(begin.value(forName: .section) == 1)
       #expect(begin.value(forName: .subsection) == 0)
+      #expect(begin.value(forName: .equation) == 0)
       #expect(end.value(forName: .section) == 1)
       #expect(end.value(forName: .subsection) == 1)
+      #expect(end.value(forName: .equation) == 1)
     }
   }
 }
