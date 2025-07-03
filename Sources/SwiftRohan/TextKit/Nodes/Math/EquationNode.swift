@@ -36,7 +36,7 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Layout)
 
-  final override var isBlock: Bool { subtype == .display }
+  final override var isBlock: Bool { subtype.isBlock }
   final override var isDirty: Bool { nucleus.isDirty }
 
   final override func layoutLength() -> Int { _layoutLength }
@@ -112,7 +112,9 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Storage)
 
-  private enum Tag: String, Codable, CaseIterable { case displaymath, inlinemath }
+  private enum Tag: String, Codable, CaseIterable {
+    case displaymath, inlinemath, equation
+  }
 
   final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
 
@@ -123,10 +125,12 @@ final class EquationNode: MathNode {
   final override func store() -> JSONValue {
     let nucleus = nucleus.store()
     switch subtype {
-    case .display:
-      return JSONValue.array([.string(Tag.displaymath.rawValue), nucleus])
     case .inline:
       return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
+    case .display:
+      return JSONValue.array([.string(Tag.displaymath.rawValue), nucleus])
+    case .equation:
+      return JSONValue.array([.string(Tag.equation.rawValue), nucleus])
     }
   }
 
@@ -305,6 +309,9 @@ final class EquationNode: MathNode {
   internal let subtype: EquationSubtype
   internal let nucleus: ContentNode
 
+  private var _counterSegment: CounterSegment?
+  final override var counterSegment: CounterSegment? { _counterSegment }
+
   private var _layoutLength: Int = 1
   private var _nodeFragment: MathListLayoutFragment? = nil
 
@@ -340,6 +347,14 @@ final class EquationNode: MathNode {
 
   private final func _setUp() {
     self.nucleus.setParent(self)
+
+    switch subtype {
+    case .equation:
+      let countHolder = BasicCountHolder(.equation)
+      self._counterSegment = CounterSegment(countHolder)
+    case _:
+      self._counterSegment = nil
+    }
   }
 
   internal static func selector(isBlock: Bool? = nil) -> TargetSelector {
