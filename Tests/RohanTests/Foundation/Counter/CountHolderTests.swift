@@ -52,6 +52,7 @@ struct CountHolderTests {
     do {
       CountHolder.insert(contentsOf: list, before: final_)
       list[0].propagateDirty()
+      #expect(final_.isDirty)
 
       #expect(section1.value(forName: .section) == 1)
       //
@@ -143,6 +144,29 @@ struct CountHolderTests {
   }
 
   @Test
+  func remove() {
+    let (initial, final_) = initPair()
+
+    do {
+      let isEmpty = CountHolder.remove(initial)
+      #expect(isEmpty == false)
+    }
+    do {
+      let isEmpty = CountHolder.remove(final_)
+      #expect(isEmpty == true)
+    }
+  }
+
+  @Test
+  func removeSubrange() {
+    do {
+      let (initial, final_) = initPair()
+      CountHolder.removeSubrange(initial, initial)
+      CountHolder.removeSubrange(initial, final_)
+    }
+  }
+
+  @Test
   func removeSubrangeClosed() {
     let (initial, final_) = initPair()
 
@@ -172,7 +196,13 @@ struct CountHolderTests {
     #expect(final_.value(forName: .subsection) == 0)
     #expect(final_.value(forName: .equation) == 0)
 
-    #expect(CountHolder.countSubrange(initial, final_) == 1)
+    #expect(CountHolder.countSubrange(initial, inclusive: final_) == 2)
+
+    do {
+      var isEmpty = CountHolder.removeSubrange(final_, inclusive: final_)
+      #expect(isEmpty == false)
+      isEmpty = CountHolder.removeSubrange(initial, inclusive: initial)
+      #expect(isEmpty == true)
+    }
   }
-  
 }
