@@ -70,18 +70,15 @@ internal class CountHolder {
   /// - Returns: The first holder in the linked list, or `nil` if the collection is empty.
   static func concate(
     contentsOf holders: some BidirectionalCollection<CountHolder>
-  ) -> CounterSegment? {
-    guard let first = holders.first else { return nil }
-
+  ) {
+    guard let first = holders.first else { return }
     var p = first
-
     for holder in holders.dropFirst() {
       p.next = holder
       holder.previous = p
       p = holder
     }
     p.next = nil
-    return CounterSegment(first, p)
   }
 
   /// Insert a new holder before the next holder in the linked list.
@@ -114,6 +111,7 @@ internal class CountHolder {
     }
   }
 
+  /// Insert the given count holders before the next holder in the linked list.
   static func insert(
     contentsOf holders: some BidirectionalCollection<CountHolder>,
     before next: CountHolder
@@ -127,7 +125,6 @@ internal class CountHolder {
         p.next = holder
         p = holder
       }
-
       next.previous = p
       p.next = next
     }
@@ -144,6 +141,7 @@ internal class CountHolder {
     }
   }
 
+  /// Insert the given count holders after the previous holder in the linked list.
   static func insert(
     contentsOf holders: some BidirectionalCollection<CountHolder>,
     after previous: CountHolder
@@ -157,7 +155,6 @@ internal class CountHolder {
         n.previous = holder
         n = holder
       }
-
       previous.next = n
       n.previous = previous
     }
@@ -175,12 +172,6 @@ internal class CountHolder {
   }
 
   // MARK: - Query
-
-  /// Returns the value for the given counter name.
-  /// - Postcondition: Call to this method clears the dirty state of the holder.
-  internal func value(forName name: CounterName) -> Int {
-    preconditionFailure("overriding required")
-  }
 
   /// Count the number of count holders in the half-open range `[begin, end)`.
   static func countSubrange(_ begin: CountHolder, _ end: CountHolder) -> Int {
@@ -238,5 +229,13 @@ internal class CountHolder {
     }
     result.append(try transform(end))
     return result
+  }
+
+  // MARK: - Counter Values
+
+  /// Returns the value for the given counter name.
+  /// - Postcondition: Call to this method clears the dirty state of the holder.
+  internal func value(forName name: CounterName) -> Int {
+    preconditionFailure("overriding required")
   }
 }
