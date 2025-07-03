@@ -42,7 +42,7 @@ struct MathExpression: CommandDeclarationProtocol {
 }
 
 extension MathExpression {
-  static let allCommands: Array<MathExpression> = [
+  nonisolated(unsafe) static let allCommands: Array<MathExpression> = [
     bmod,
     bot,
     colon,
@@ -56,58 +56,58 @@ extension MathExpression {
     varprojlim,
   ]
 
-  private static let _dictionary: Dictionary<String, MathExpression> =
+  private nonisolated(unsafe) static let _dictionary: Dictionary<String, MathExpression> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathExpression? {
     _dictionary[command]
   }
 
-  static let bmod = MathExpression(
+  nonisolated(unsafe) static let bmod = MathExpression(
     "bmod", MathAttributesExpr(.mathbin, [MathStylesExpr(.mathrm, [TextExpr("mod")])]),
     tag: .null)
 
   // \bot shares the same symbol with \perp, but is of Ord kind.
-  static let bot = MathExpression(
+  nonisolated(unsafe) static let bot = MathExpression(
     "bot", MathAttributesExpr(.mathord, [TextExpr("⊥")]), tag: .namedSymbol)
 
-  static let colon =
+  nonisolated(unsafe) static let colon =
     MathExpression(
       "colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]), tag: .null)
 
-  static let dagger =
+  nonisolated(unsafe) static let dagger =
     MathExpression(
       "dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]), tag: .namedSymbol)
 
-  static let ddagger =
+  nonisolated(unsafe) static let ddagger =
     MathExpression(
       "ddagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2021}")]),
       tag: .namedSymbol)
 
-  static let smallint =
+  nonisolated(unsafe) static let smallint =
     MathExpression(
       "smallint", MathStylesExpr(.toInlineStyle, [TextExpr("∫")]), tag: .null)
 
-  static let varDelta =
+  nonisolated(unsafe) static let varDelta =
     MathExpression(
       "varDelta", MathStylesExpr(.mathit, [TextExpr("Δ")]), tag: .namedSymbol)
 
-  static let varinjlim =
+  nonisolated(unsafe) static let varinjlim =
     MathExpression(
       "varinjlim", UnderOverExpr(._underrightarrow, [MathOperatorExpr(.lim)]),
       tag: .mathOperator)
 
-  static let varliminf =
+  nonisolated(unsafe) static let varliminf =
     MathExpression(
       "varliminf", UnderOverExpr(.underline, [MathOperatorExpr(.lim)]),
       tag: .mathOperator)
 
-  static let varlimsup =
+  nonisolated(unsafe) static let varlimsup =
     MathExpression(
       "varlimsup", UnderOverExpr(.overline, [MathOperatorExpr(.lim)]),
       tag: .mathOperator)
 
-  static let varprojlim =
+  nonisolated(unsafe) static let varprojlim =
     MathExpression(
       "varprojlim", UnderOverExpr(._underleftarrow, [MathOperatorExpr(.lim)]),
       tag: .mathOperator)

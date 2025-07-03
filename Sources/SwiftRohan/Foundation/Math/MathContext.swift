@@ -63,21 +63,21 @@ extension MathUtils {
   internal static let previewMathFont: String = "NewComputerModernMath"
   internal static let fallbackMathFont: String = "STIX Two Math"
 
-  nonisolated(unsafe) static func resolveMathContext(
+  static func resolveMathContext(
     for node: Node, _ styleSheet: StyleSheet
   ) -> MathContext {
     let properties = node.getProperties(styleSheet)
     return resolveMathContext(properties, styleSheet)
   }
 
-  nonisolated(unsafe) static func resolveMathContext(
+  static func resolveMathContext(
     _ properties: PropertyDictionary, _ styleSheet: StyleSheet
   ) -> MathContext {
     let key = MathContextKey.resolveKey(properties, styleSheet)
     return _mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
 
-  nonisolated(unsafe) static func fallbackMathContext(
+  static func fallbackMathContext(
     for mathContext: MathContext
   ) -> MathContext {
     let textSize = FontSize(mathContext.getFontSize(for: .text))

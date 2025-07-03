@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import CompilerPluginSupport
@@ -53,7 +53,6 @@ let package = Package(
       ],
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT"),
-        // .define("DECORATE_CONTENT_VIEW"),
         // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
         // .define("LOG_MARKED_TEXT"),
         .define("LOG_TEXT_SELECTION"),

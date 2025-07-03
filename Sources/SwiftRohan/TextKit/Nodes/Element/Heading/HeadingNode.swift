@@ -128,7 +128,7 @@ final class HeadingNode: ElementNodeImpl {
   }
 
   /// Returns **all** command records emitted by this heading class.
-  static let commandRecords: Array<CommandRecord> =
+  nonisolated(unsafe) static let commandRecords: Array<CommandRecord> =
     HeadingSubtype.allCases.map { subtype in
       CommandRecord(subtype.command, commandBody(forSubtype: subtype))
     }

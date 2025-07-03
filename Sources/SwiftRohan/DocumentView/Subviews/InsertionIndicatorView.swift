@@ -95,8 +95,8 @@ internal final class TextInsertionIndicator: NSView {
     }
   }
 
-  private var blinkTimer: Timer?
-  private var shouldDraw: Bool = true
+  private nonisolated(unsafe) var blinkTimer: Timer?
+  private nonisolated(unsafe) var shouldDraw: Bool = true
 
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
@@ -177,8 +177,10 @@ internal final class TextInsertionIndicator: NSView {
     blinkTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) {
       [weak self] _ in
       guard let self = self else { return }
-      self.shouldDraw = !self.shouldDraw
-      self.needsDisplay = true
+      Task { @MainActor in
+        self.shouldDraw = !self.shouldDraw
+        self.needsDisplay = true
+      }
     }
   }
 
@@ -188,7 +190,7 @@ internal final class TextInsertionIndicator: NSView {
     startBlinking()
   }
 
-  private func stopBlinking() {
+  private nonisolated func stopBlinking() {
     blinkTimer?.invalidate()
     blinkTimer = nil
     shouldDraw = true

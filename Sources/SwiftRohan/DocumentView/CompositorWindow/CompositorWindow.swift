@@ -3,7 +3,7 @@
 import AppKit
 
 class CompositorWindow: NSWindow {
-  private var eventMonitors: [Any?] = []
+  private nonisolated(unsafe) var eventMonitors: Array<Any?> = []
 
   override init(
     contentRect: NSRect, styleMask style: NSWindow.StyleMask,
@@ -54,7 +54,7 @@ class CompositorWindow: NSWindow {
     eventMonitors.append(mouseMonitor)
   }
 
-  private func removeEventMonitors() {
+  private nonisolated func removeEventMonitors() {
     for monitor in eventMonitors {
       guard let monitor = monitor else { continue }
       NSEvent.removeMonitor(monitor)
@@ -85,6 +85,6 @@ class CompositorWindow: NSWindow {
   override var canBecomeMain: Bool { return true }
 
   deinit {
-    removeEventMonitors()
+    self.removeEventMonitors()
   }
 }
