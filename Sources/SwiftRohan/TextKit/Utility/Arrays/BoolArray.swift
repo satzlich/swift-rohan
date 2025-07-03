@@ -90,17 +90,17 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
     }
   }
 
-  mutating func removeSubrange(_ bounds: Range<Int>) {
-    precondition(bounds.lowerBound >= 0 && bounds.upperBound <= _size)
+  mutating func removeSubrange(_ range: Range<Int>) {
+    precondition(range.lowerBound >= 0 && range.upperBound <= _size)
 
-    let size = bounds.count
+    let size = range.count
     _size -= size
 
-    let upperBound = Satz.lowerBound(_truePositions, bounds.upperBound)
+    let upperBound = Satz.lowerBound(_truePositions, range.upperBound)
     for i in upperBound..<_truePositions.count {
       _truePositions[i] -= size
     }
-    let lowerBound = Satz.lowerBound(_truePositions, bounds.lowerBound)
+    let lowerBound = Satz.lowerBound(_truePositions, range.lowerBound)
     _truePositions.removeSubrange(lowerBound..<upperBound)
   }
 
@@ -110,23 +110,23 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   }
 
   mutating func replaceSubrange(
-    _ bounds: Range<Int>, with newElements: some Collection<Bool>
+    _ range: Range<Int>, with newElements: some Collection<Bool>
   ) {
-    precondition(bounds.lowerBound >= 0 && bounds.upperBound <= _size)
+    precondition(range.lowerBound >= 0 && range.upperBound <= _size)
 
-    let delta = newElements.count - bounds.count
+    let delta = newElements.count - range.count
     _size += delta
 
     // make shift
-    let upperBound = Satz.lowerBound(_truePositions, bounds.upperBound)
+    let upperBound = Satz.lowerBound(_truePositions, range.upperBound)
     for i in upperBound..<_truePositions.count {
       _truePositions[i] += delta
     }
 
     // make replacement
-    let lowerBound = Satz.lowerBound(_truePositions, bounds.lowerBound)
+    let lowerBound = Satz.lowerBound(_truePositions, range.lowerBound)
     let positions = newElements.enumerated()
-      .compactMap { (offset, value) -> Int? in value ? bounds.lowerBound + offset : nil }
+      .compactMap { (offset, value) -> Int? in value ? range.lowerBound + offset : nil }
     _truePositions.replaceSubrange(lowerBound..<upperBound, with: positions)
   }
 

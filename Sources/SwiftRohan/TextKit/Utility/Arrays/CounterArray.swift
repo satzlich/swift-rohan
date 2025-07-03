@@ -44,17 +44,17 @@ internal struct CounterArray {
     _boolArray.remove(at: index)
   }
 
-  @inlinable
+  @inline(__always)
   mutating func removeSubrange(_ range: Range<Int>) {
     _boolArray.removeSubrange(range)
   }
 
-  @inlinable
+  @inline(__always)
   mutating func removeAll() {
     _boolArray.removeAll()
   }
 
-  @inlinable
+  @inline(__always)
   mutating func replaceSubrange(
     _ subrange: Range<Int>, with newElements: some Collection<CounterSegment?>
   ) {
