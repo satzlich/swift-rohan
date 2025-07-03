@@ -30,6 +30,7 @@ class TextKitTestsBase {
     return documentManager
   }
 
+  @MainActor
   func outputPDF(_ fileName: String, _ documentManager: DocumentManager) {
     TestUtils.outputPDF(folderName: folderName, fileName, pageSize, documentManager)
   }

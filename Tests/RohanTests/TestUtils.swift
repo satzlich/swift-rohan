@@ -48,6 +48,7 @@ enum TestUtils {
     }
   }
 
+  @MainActor
   static func outputPDF(
     folderName: String? = nil,
     _ fileName: String,
@@ -78,6 +79,7 @@ enum TestUtils {
     }
   }
 
+  @MainActor
   static func draw(
     _ bounds: CGRect, _ textLayoutManager: NSTextLayoutManager, _ cgContext: CGContext
   ) {
@@ -108,8 +110,9 @@ enum TestUtils {
       // draw text attachments
       for attachmentViewProvider in fragment.textAttachmentViewProviders {
         guard let attachmentView = attachmentViewProvider.view else { continue }
-        let attachmentFrame = fragment.frameForTextAttachment(
-          at: attachmentViewProvider.location)
+        let attachmentFrame =
+          fragment.frameForTextAttachment(at: attachmentViewProvider.location)
+
         attachmentView.setFrameOrigin(attachmentFrame.origin)
 
         cgContext.saveGState()

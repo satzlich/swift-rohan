@@ -11,7 +11,7 @@ final class TextSegmentTests: TextKitTestsBase {
     try super.init(createFolder: true)
   }
 
-  @Test
+  @Test @MainActor
   func testBasic() throws {
     let rootNode = RootNode([
       // #0 paragraph: arbitrary text
@@ -134,7 +134,7 @@ final class TextSegmentTests: TextKitTestsBase {
     }
   }
 
-  @Test
+  @Test @MainActor
   func testApplyNode() {
     let rootNode = RootNode([
       // #0 paragraph: arbitrary text
@@ -245,7 +245,7 @@ final class TextSegmentTests: TextKitTestsBase {
     }
   }
 
-  @Test
+  @Test @MainActor
   func testPlacerholder() {
     let rootNode = RootNode([
       HeadingNode(.sectionAst, [TextNode("H1")]),
@@ -359,6 +359,7 @@ final class TextSegmentTests: TextKitTestsBase {
     #expect(frames.count == 1)
   }
 
+  @MainActor
   private func outputPDF(
     _ fileName: String, _ point: CGRect, _ frames: Array<CGRect>,
     _ documentManager: DocumentManager

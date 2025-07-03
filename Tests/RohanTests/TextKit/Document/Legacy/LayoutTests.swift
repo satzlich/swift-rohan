@@ -12,7 +12,7 @@ final class LayoutTests: TextKitTestsBase {
     try super.init(createFolder: true)
   }
 
-  @Test
+  @Test @MainActor
   func testLayout() throws {
     // insert content
     let content = [
@@ -88,7 +88,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, 3)
   }
 
-  @Test
+  @Test @MainActor
   func testFraction() throws {
     // set up content
     let content = [
@@ -150,7 +150,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, 3)
   }
 
-  @Test
+  @Test @MainActor
   func testAttach() throws {
     // set up content
     let content = [
@@ -226,7 +226,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testAccent() {
     let content = [
       ParagraphNode([
@@ -249,7 +249,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testMatrix() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -342,7 +342,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testLeftRight() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -369,7 +369,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testUnderOverspreader() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -404,7 +404,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testRoot() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -429,7 +429,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testMathKind() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -454,7 +454,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testMathOperator() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -480,7 +480,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testMathVariant() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -508,7 +508,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testTextMode() {
     let content: Array<Node> = [
       ParagraphNode([
@@ -535,7 +535,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testEmptyElement() throws {
     let content = [
       HeadingNode(.sectionAst, [TextNode("H1")]),
@@ -564,7 +564,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(String(#function.dropLast(2)), documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func regress_PlaceholderBug() throws {
     // set up content
     let content: Array<Node> = [
@@ -592,7 +592,7 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(String(#function.dropLast(2)), documentManager)
   }
 
-  @Test
+  @Test @MainActor
   func testApply() throws {
     // set up content
     let content: Array<Node> = [

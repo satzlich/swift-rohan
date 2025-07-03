@@ -42,13 +42,12 @@ final class LayoutFragmentAttachment: NSTextAttachment {
   }
 }
 
-@MainActor
+extension LayoutFragmentAttachment: @unchecked Sendable {}
+
 private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewProvider {
   override public func loadView() {
     guard let attachment = textAttachment as? LayoutFragmentAttachment else { return }
-    MainActor.assumeIsolated {
-      self.view = LayoutFragmentView(attachment.fragment)
-    }
+    self.view = runOnMainThread { LayoutFragmentView(attachment.fragment) }
   }
 
   override public func attachmentBounds(
@@ -65,7 +64,7 @@ private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewPr
     // ensure bounds are up-to-date
     let actualBounds = attachment.fragment.bounds
 
-    MainActor.assumeIsolated {
+    runOnMainThread {
       if !actualBounds.isNearlyEqual(to: view.bounds) {
         // IMPORTANT: We must update the bounds of the view AFTER setting the frame size.
         // Otherwise, the view will have weird behaivour.

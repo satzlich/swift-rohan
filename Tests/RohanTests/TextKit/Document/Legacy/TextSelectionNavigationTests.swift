@@ -171,7 +171,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     }
   }
 
-  @Test
+  @Test @MainActor
   func testMoveUpDown() {
     let rootNode = RootNode([
       HeadingNode(.sectionAst, [TextNode("The quick brown fox jumps")]),
@@ -383,7 +383,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect("\(destinations[0])" == "([↓3,↓0,⇒0,↓0,⇒0,↓0]:3, upstream)")
       #expect("\(destinations[1])" == "([↓3,↓0,⇒0,↓0,⇒0,↓0]:1, downstream)")
       #expect("\(destinations[2])" == "([↓3,↓1]:14, downstream)")
-      #expect(        "\(destinations[3])"          == "([↓2,↓0,nuc,↓0]:2, downstream)")
+      #expect("\(destinations[3])" == "([↓2,↓0,nuc,↓0]:2, downstream)")
       #expect(
         "\(destinations[4])"
           == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2; focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, upstream; range: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2..<[↓3,↓0,⇒0,↓0,⇒0,↓0]:3)"

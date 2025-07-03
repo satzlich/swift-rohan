@@ -257,7 +257,7 @@ final class MousePickTests: TextKitTestsBase {
     }
   }
 
-  @Test
+  @Test @MainActor
   func regressMouseDrag() {
     let rootNode = RootNode([
       ParagraphNode([

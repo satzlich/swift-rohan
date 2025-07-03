@@ -97,15 +97,20 @@ extension DocumentView {
 
     if let textNode = nodes?.getOnlyElement() as? TextNode {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-        let string = textNode.string
-        let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
-        _ = target.performPostEditProcessing(result)
+        MainActor.assumeIsolated {
+          let string = textNode.string
+          let result = target.replaceCharacters(
+            in: range, with: string, registerUndo: true)
+          _ = target.performPostEditProcessing(result)
+        }
       }
     }
     else {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-        let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
-        _ = target.performPostEditProcessing(result)
+        MainActor.assumeIsolated {
+          let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
+          _ = target.performPostEditProcessing(result)
+        }
       }
     }
   }
@@ -199,8 +204,10 @@ extension DocumentView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-      let result = target._removeMathComponent(for: range, with: component)
-      _ = target.performPostEditProcessing(result)
+      MainActor.assumeIsolated {
+        let result = target._removeMathComponent(for: range, with: component)
+        _ = target.performPostEditProcessing(result)
+      }
     }
   }
 
@@ -211,9 +218,11 @@ extension DocumentView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-      let result =
-        target._attachOrGotoMathComponent(for: range, with: mathIndex, component)
-      _ = target.performPostEditProcessing(result)
+      MainActor.assumeIsolated {
+        let result =
+          target._attachOrGotoMathComponent(for: range, with: mathIndex, component)
+        _ = target.performPostEditProcessing(result)
+      }
     }
   }
 
@@ -334,8 +343,10 @@ extension DocumentView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-      let result = target._modifyGrid(range, instruction)
-      _ = target.performPostEditProcessing(result)
+      MainActor.assumeIsolated {
+        let result = target._modifyGrid(range, instruction)
+        _ = target.performPostEditProcessing(result)
+      }
     }
   }
 

@@ -33,12 +33,14 @@ final class ItemListNodeTests: TextKitTestsBase {
     return documentManager
   }
 
+  @MainActor
   @Test
   func layout() {
     let documentManager = _testingExample()
     outputPDF(#function, documentManager)
   }
 
+  @MainActor
   @Test("performLayout", arguments: [0, 1])
   func performLayout(_ k: Int) {  // Simple and Full variant.
     let documentManager = _testingExample()
