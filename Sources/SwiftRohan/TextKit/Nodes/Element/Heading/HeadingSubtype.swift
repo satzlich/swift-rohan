@@ -48,9 +48,9 @@ enum HeadingSubtype: String, Codable, CaseIterable {
     case .sectionAst: return nil
     case .subsectionAst: return nil
     case .subsubsectionAst: return nil
-    case .section: return BasicCountHolder(.section)
-    case .subsection: return BasicCountHolder(.subsection)
-    case .subsubsection: return BasicCountHolder(.subsubsection)
+    case .section: return CountHolder(.section)
+    case .subsection: return CountHolder(.subsection)
+    case .subsubsection: return CountHolder(.subsubsection)
     }
   }
 }

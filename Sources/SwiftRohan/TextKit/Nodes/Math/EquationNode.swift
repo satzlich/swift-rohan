@@ -350,7 +350,7 @@ final class EquationNode: MathNode {
 
     switch subtype {
     case .equation:
-      let countHolder = BasicCountHolder(.equation)
+      let countHolder = CountHolder(.equation)
       self._counterSegment = CounterSegment(countHolder)
     case _:
       self._counterSegment = nil

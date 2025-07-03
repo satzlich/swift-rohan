@@ -2,20 +2,25 @@
 
 import Foundation
 
-internal class CountHolder {
+internal class CountHolder: CountPublisher {
   /// The previous holder in the linked list.
   private(set) weak var previous: CountHolder?
   /// The next holder in the linked list.
   private(set) var next: CountHolder?
 
   /// True if the state of this holder is out-of-date and needs to be updated.
-  internal var isDirty: Bool { preconditionFailure("overriding required") }
+  final var isDirty: Bool { _isDirty }
 
   /// Mark this holder as dirty if applicable, and propagate the message to the
   /// next holder in the linked list.
   /// - Postcondition: All count holders after this one for which "mark dirty"
   ///     action is applicable become dirty.
-  internal func propagateDirty() { preconditionFailure("overriding required") }
+  final func propagateDirty() {
+    guard _isDirty == false else { return }
+    _isDirty = true
+    next?.propagateDirty()
+    notifyObservers(markAsDirty: ())
+  }
 
   static func remove(_ holder: CountHolder) {
     if let p = holder.previous {
@@ -55,14 +60,14 @@ internal class CountHolder {
     removeSubrange(begin, end)
   }
 
-  /// Initialize the linked list with an initial and final count holder.
-  static func initList() -> (initial: InitialCountHolder, final: FinalCountHolder) {
-    let initial = InitialCountHolder()
-    let final = FinalCountHolder()
-    initial.next = final
-    final.previous = initial
-    return (initial, final)
-  }
+//  /// Initialize the linked list with an initial and final count holder.
+//  static func initList() -> (initial: InitialCountHolder, final: FinalCountHolder) {
+//    let initial = InitialCountHolder()
+//    let final = FinalCountHolder()
+//    initial.next = final
+//    final.previous = initial
+//    return (initial, final)
+//  }
 
   // MARK: - Manipulation
 
@@ -241,7 +246,116 @@ internal class CountHolder {
 
   /// Returns the value for the given counter name.
   /// - Postcondition: Call to this method clears the dirty state of the holder.
-  internal func value(forName name: CounterName) -> Int {
-    preconditionFailure("overriding required")
+  final func value(forName name: CounterName) -> Int {
+    if _isDirty {
+      _cache.removeAll()
+      _isDirty = false
+      // FALL THROUGH
+    }
+    else if let cachedValue = _cache[name] {
+      return cachedValue
+    }
+
+    let value = computeValue(forName: name)
+    _cache[name] = value
+    return value
+  }
+
+  final func computeValue(forName name: CounterName) -> Int {
+    switch name {
+    case .section:
+      let previousValue = previous?.value(forName: .section) ?? 0
+      switch self.counterName {
+      case .section: return previousValue + 1
+      case _: return previousValue
+      }
+
+    case .subsection:
+      switch self.counterName {
+      case .section:
+        return 0
+      case .subsection:
+        let previousValue = previous?.value(forName: .subsection) ?? 0
+        return previousValue + 1
+      case _:
+        let previousValue = previous?.value(forName: .subsection) ?? 0
+        return previousValue
+      }
+
+    case .subsubsection:
+      switch self.counterName {
+      case .section, .subsection:
+        return 0
+      case .subsubsection:
+        let previousValue = previous?.value(forName: .subsubsection) ?? 0
+        return previousValue + 1
+      case _:
+        let previousValue = previous?.value(forName: .subsubsection) ?? 0
+        return previousValue
+      }
+
+    case .equation:
+      let previousValue = previous?.value(forName: .equation) ?? 0
+      switch self.counterName {
+      case .equation:
+        return previousValue + 1
+      case _:
+        return previousValue
+      }
+    }
+  }
+
+  // MARK: - State
+
+  /// The name of the counter this holder is responsible for.
+  let counterName: CounterName
+
+  /// - Important: To support early stop of propagation, default value must be
+  ///     false. Meanwhile, only use `propagateDirty()` to set this value to true.
+  private var _isDirty: Bool = false
+
+  private var _cache: Dictionary<CounterName, Int> = [:]
+
+  private var _observers = Set<WeakObserver>()
+
+  init(_ name: CounterName) {
+    self.counterName = name
+  }
+
+  // MARK: - Observer
+
+  final func registerObserver(_ observer: any CountObserver) {
+    /// We use a weak reference to avoid strong reference cycles.
+    _observers.insert(WeakObserver(observer))
+  }
+
+  final func unregisterObserver(_ observer: any CountObserver) {
+    _observers.remove(WeakObserver(observer))
+  }
+
+  final func notifyObservers(markAsDirty: Void) {
+    for observer in _observers {
+      observer.countObserver(markAsDirty: markAsDirty)
+    }
+  }
+
+  private struct WeakObserver: Equatable, Hashable {
+    private weak var observer: (any CountObserver)?
+
+    init(_ observer: any CountObserver) {
+      self.observer = observer
+    }
+
+    static func == (lhs: WeakObserver, rhs: WeakObserver) -> Bool {
+      lhs.observer === rhs.observer
+    }
+
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(ObjectIdentifier(observer!))
+    }
+
+    func countObserver(markAsDirty: Void) {
+      observer?.countObserver(markAsDirty: markAsDirty)
+    }
   }
 }
