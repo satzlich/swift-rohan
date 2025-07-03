@@ -470,14 +470,9 @@ internal class ElementNode: Node {
 
   internal final var _isDirty: Bool
 
-  final func childrenReadonly() -> ElementStore { _children }
+  internal final var _counterSegment: CounterSegment?
 
-  /// Returns true if node is allowed to be empty.
-  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
-
-  final func isMergeable(with other: ElementNode) -> Bool {
-    NodePolicy.isMergeableElements(self.type, other.type)
-  }
+  final override var counterSegment: CounterSegment? { _counterSegment }
 
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
@@ -622,5 +617,24 @@ internal class ElementNode: Node {
     _newlines.setValue(isBlock: node.isBlock, at: index)
 
     if inStorage { contentDidChange() }
+  }
+}
+
+extension ElementNode {
+  /// Returns the children of this node for read-only access.
+  final func childrenReadonly() -> ElementStore { _children }
+
+  /// Returns true if node is allowed to be empty.
+  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
+
+  /// Returns true if the node is mergeable with another element node.
+  final func isMergeable(with other: ElementNode) -> Bool {
+    NodePolicy.isMergeableElements(self.type, other.type)
+  }
+
+  /// Returns true if the node has a **synthesized** counter segment and should update
+  /// the counter segment when the node is modified.
+  final var shouldUpdateCounterSegment: Bool {
+    NodePolicy.shouldUpdateCounterSegment(type)
   }
 }
