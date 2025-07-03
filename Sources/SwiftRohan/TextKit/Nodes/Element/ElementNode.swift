@@ -631,4 +631,10 @@ extension ElementNode {
   final func isMergeable(with other: ElementNode) -> Bool {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
+
+  /// Returns true if the node has a **synthesized** counter segment and should update
+  /// the counter segment when the node is modified.
+  final var shouldUpdateCounterSegment: Bool {
+    NodePolicy.shouldUpdateCounterSegment(type)
+  }
 }
