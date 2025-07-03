@@ -1,5 +1,5 @@
 {
-  "originHash" : "46ba3118d753954e13ad6d70859a3458093d82a811bbc08af1eae0d72c7f6cd4",
+  "originHash" : "3a639e31f4b13d9018de84338cf2cda6ace5384e725a23fc046e58e896776fa2",
   "pins" : [
     {
       "identity" : "satz-algorithms",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
-        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
-        "version" : "510.0.3"
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
       }
     },
     {
@@ -52,7 +52,7 @@
       "location" : "https://github.com/satzlich/swift-ttf-parser",
       "state" : {
         "branch" : "main",
-        "revision" : "0c72fde41457bb5e7313827b43759174eae3c865"
+        "revision" : "37821aeaad5946138db12d0d80b2fd5c8f7310fc"
       }
     },
     {
