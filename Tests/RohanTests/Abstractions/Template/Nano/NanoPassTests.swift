@@ -398,7 +398,7 @@ struct NanoPassTests {
       parameters: ["x"],
       body: [
         EquationExpr(
-          .block,
+          .display,
           [
             AccentExpr(.dot, [CompiledVariableExpr(0)]),
             LeftRightExpr(.BRACE, [TextExpr("Brace")]),

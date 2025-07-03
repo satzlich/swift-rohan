@@ -35,7 +35,7 @@ final class LayoutTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("😀 The equation is "),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("f(n)+"),
             FractionNode(
@@ -46,7 +46,7 @@ final class LayoutTests: TextKitTestsBase {
         EquationNode(.inline, [TextNode("n")]),
         TextNode(" is a natural number."),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("f(n+2)=f(n+1)+f(n)")
           ]
@@ -158,7 +158,7 @@ final class LayoutTests: TextKitTestsBase {
         [
           TextNode("reference text"),
           EquationNode(
-            .block,
+            .display,
             [
               AttachNode(
                 nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
@@ -168,7 +168,7 @@ final class LayoutTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("reference text"),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("F=G"),
             FractionNode(
@@ -180,7 +180,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("t="),
             AttachNode(
@@ -190,7 +190,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("t="),
             AttachNode(
@@ -200,7 +200,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("t="),
             AttachNode(
@@ -210,7 +210,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("t="),
             AttachNode(nuc: [TextNode("f")], sup: [TextNode("\u{2032}")]),
@@ -231,7 +231,7 @@ final class LayoutTests: TextKitTestsBase {
     let content = [
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("x"),
             AccentNode(MathAccent.grave, nucleus: [TextNode("x")]),
@@ -257,7 +257,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             MatrixNode(
@@ -276,7 +276,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             AttachNode(nuc: [TextNode("e")], sub: [TextNode("1")]),
             TextNode("="),
@@ -297,7 +297,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             MatrixNode(
@@ -316,7 +316,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             MatrixNode(
@@ -350,7 +350,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             LeftRightNode(
@@ -377,7 +377,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             UnderOverNode(MathSpreader.overbrace, [TextNode("ab")]),
@@ -412,7 +412,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             RadicalNode([TextNode("n+1")]),
@@ -437,7 +437,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("f"),
             MathAttributesNode(.mathpunct, [TextNode(":")]),
@@ -462,7 +462,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             AttachNode(
@@ -488,7 +488,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("z="),
             MathStylesNode(.mathbb, [TextNode("Bb")]),
@@ -516,7 +516,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("f(n)"),
             TextModeNode([
@@ -634,7 +634,7 @@ final class LayoutTests: TextKitTestsBase {
         ]),
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             ApplyNode(
               MathTemplateSamples.bifun,

@@ -460,7 +460,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     let delimiter: MathSyntax.DelimiterType =
       switch equation.subtype {
       case .inline: .dollar
-      case .block: .bracket
+      case .display: .bracket
       }
 
     let mathSyntax = MathSyntax(delimiter: delimiter, content: nucleus)

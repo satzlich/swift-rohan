@@ -29,7 +29,7 @@ final class ExportLatexTests: TextKitTestsBase {
         TextStylesNode(.textbf, [TextNode("strong")]),
         TextNode("."),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("E=m"),
             AttachNode(nuc: [TextNode("c")], sup: [TextNode("2")]),
@@ -59,7 +59,7 @@ final class ExportLatexTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Mary has a little lamb, its fleece was white as snow."),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("M="),
             MatrixNode(
@@ -132,7 +132,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func accent() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           AccentNode(.acute, nucleus: [TextNode("n")]),
           TextNode("+"),
@@ -155,7 +155,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func attach() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           AttachNode(nuc: [TextNode("n")], sup: [TextNode("2")]),
           TextNode("+"),
@@ -177,7 +177,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func genFraction() {
     let exported = _simpleExport([
       EquationNode(
-        .block,
+        .display,
         [
           FractionNode(num: [TextNode("n")], denom: [TextNode("d")]),
           TextNode("+"),
@@ -198,7 +198,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func leftRight() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           LeftRightNode(.DOUBLE_VERT, [TextNode("a+b")])
         ])
@@ -219,7 +219,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func mathAttributes() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           // atom kind
           MathAttributesNode(.mathop, [TextNode("+")]),
@@ -257,7 +257,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func mathExpression() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           TextNode("f"),
           MathExpressionNode(.colon),
@@ -281,7 +281,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func mathOperator() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           MathOperatorNode(.max),
           TextNode("x+"),
@@ -305,7 +305,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func mathStyles() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           MathStylesNode(.mathbb, [TextNode("x")]),
           TextNode("+"),
@@ -327,7 +327,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func matrix() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           MatrixNode(
             .pmatrix,
@@ -395,7 +395,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func sqrt() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           RadicalNode([TextNode("n")]),
           TextNode("+"),
@@ -418,7 +418,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func textMode() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           TextModeNode([TextNode("This is text mode")]),
           TextNode("+"),
@@ -439,7 +439,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func underOver() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           UnderOverNode(.overbrace, [TextNode("abc")]),
           TextNode("+"),
@@ -468,7 +468,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func apply() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           ApplyNode(MathTemplate.pmod, [[TextNode("2m+n")]])!
         ])
@@ -499,7 +499,7 @@ final class ExportLatexTests: TextKitTestsBase {
   func regress_min() {
     let content: ElementStore = [
       EquationNode(
-        .block,
+        .display,
         [
           AttachNode(nuc: [MathOperatorNode(.min)], sub: [TextNode("x")]),
           TextNode("+"),

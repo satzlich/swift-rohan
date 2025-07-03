@@ -81,7 +81,7 @@ struct MathNodeTests {
     do {
       let fraction = FractionNode(
         num: [TextNode("m+n")], denom: [TextNode("n")])
-      let equation = EquationNode(.block, [fraction])
+      let equation = EquationNode(.display, [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)

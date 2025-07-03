@@ -2,5 +2,5 @@
 
 enum EquationSubtype: String, Codable {
   case inline
-  case block
+  case display
 }

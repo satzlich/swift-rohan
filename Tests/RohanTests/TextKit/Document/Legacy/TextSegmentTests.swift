@@ -181,7 +181,7 @@ final class TextSegmentTests: TextKitTestsBase {
       // #4
       ParagraphNode([
         EquationNode(
-          .block,
+          .display,
           [
             ApplyNode(
               MathTemplateSamples.bifun,
@@ -331,7 +331,7 @@ final class TextSegmentTests: TextKitTestsBase {
   func testArrayNode() {
     let rootNode = RootNode([
       EquationNode(
-        .block,
+        .display,
         [
           MatrixNode(
             .pmatrix,

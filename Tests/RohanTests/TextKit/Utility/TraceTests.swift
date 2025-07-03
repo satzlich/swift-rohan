@@ -74,7 +74,7 @@ struct TraceTests {
   @Test
   func rootNodeWithEquation() {
     let rootNode = RootNode([
-      EquationNode(.block, [TextNode("x")])
+      EquationNode(.display, [TextNode("x")])
     ])
     do {
       let location = TextLocation.parse("[]:1")!
@@ -99,7 +99,7 @@ struct TraceTests {
   func matrix() {
     let rootNode = RootNode([
       EquationNode(
-        .block,
+        .display,
         [
           MatrixNode(
             .pmatrix,
@@ -132,7 +132,7 @@ struct TraceTests {
   func applyNodeWithMultipleArguments() {
     let rootNode = RootNode([
       EquationNode(
-        .block,
+        .display,
         [
           ApplyNode(
             MathTemplate.stackrel,

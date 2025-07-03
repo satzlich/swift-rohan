@@ -36,7 +36,7 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Layout)
 
-  final override var isBlock: Bool { subtype == .block }
+  final override var isBlock: Bool { subtype == .display }
   final override var isDirty: Bool { nucleus.isDirty }
 
   final override func layoutLength() -> Int { _layoutLength }
@@ -123,7 +123,7 @@ final class EquationNode: MathNode {
   final override func store() -> JSONValue {
     let nucleus = nucleus.store()
     switch subtype {
-    case .block:
+    case .display:
       return JSONValue.array([.string(Tag.displaymath.rawValue), nucleus])
     case .inline:
       return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
@@ -285,7 +285,7 @@ final class EquationNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let subtype = (tag == .displaymath) ? EquationSubtype.block : EquationSubtype.inline
+    let subtype = (tag == .displaymath) ? EquationSubtype.display : EquationSubtype.inline
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
 
     switch nucleus {

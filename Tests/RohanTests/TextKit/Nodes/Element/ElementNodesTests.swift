@@ -86,7 +86,7 @@ struct ElementNodeTests {
       .sectionAst,
       [
         TextNode("a😀b"),
-        EquationNode(.block, [TextNode("a+b")]),
+        EquationNode(.display, [TextNode("a+b")]),
       ])
     TestUtils.updateLayoutLength(heading)
     #expect(heading.layoutLength() == 6)

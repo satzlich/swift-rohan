@@ -192,7 +192,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("The law states:"),
           EquationNode(
-            .block,
+            .display,
             [
               TextNode("F=m"),
               FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
@@ -799,7 +799,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            .block,
+            .display,
             [
               ApplyNode(
                 MathTemplateSamples.bifun,

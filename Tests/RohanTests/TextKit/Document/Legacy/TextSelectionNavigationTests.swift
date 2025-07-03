@@ -17,7 +17,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("c"),
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("d+"),
             FractionNode(num: [TextNode("e")], denom: [TextNode("f")]),
@@ -31,7 +31,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
             [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("h")]])!]
           ])!,
         EquationNode(
-          .block,
+          .display,
           [
             TextNode("i"),
             ApplyNode(
