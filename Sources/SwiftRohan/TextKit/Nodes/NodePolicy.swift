@@ -220,7 +220,7 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
-  /// True if counter segment should be computed from node content and be updated
+  /// True if a counter segment should be computed from child nodes and be updated
   /// when the node content changes.
   static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [

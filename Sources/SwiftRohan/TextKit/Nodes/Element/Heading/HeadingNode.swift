@@ -108,6 +108,8 @@ final class HeadingNode: ElementNodeImpl {
   }
 
   private final func _setUp() {
+    precondition(self.shouldSynthesiseCounterSegment == false)
+
     if let countHolder = subtype.createCountHolder() {
       _counterSegment = CounterSegment(countHolder)
     }
