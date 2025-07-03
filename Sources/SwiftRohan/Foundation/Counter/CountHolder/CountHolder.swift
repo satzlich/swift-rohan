@@ -115,7 +115,7 @@ internal class CountHolder {
   }
 
   /// Count the number of count holders in the half-open range `[begin, end)`.
-  static func count(_ begin: CountHolder, _ end: CountHolder) -> Int {
+  static func countSubrange(_ begin: CountHolder, _ end: CountHolder) -> Int {
     var count = 0
     var holder: CountHolder? = begin
 
@@ -126,4 +126,8 @@ internal class CountHolder {
     return count
   }
 
+  /// Count the number of count holders in the closed range `[begin, end]`.
+  static func countSubrange(_ begin: CountHolder, inclusive end: CountHolder) -> Int {
+    countSubrange(begin, end) + 1
+  }
 }

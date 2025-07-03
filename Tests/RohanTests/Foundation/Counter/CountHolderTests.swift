@@ -149,7 +149,7 @@ struct CountHolderTests {
     }
     initial.propagateDirty()
 
-    #expect(CountHolder.count(initial, final_) == 4)
+    #expect(CountHolder.countSubrange(initial, final_) == 4)
 
     // remove subrange
     CountHolder.removeSubrange(section1, inclusive: equation1)
@@ -159,6 +159,6 @@ struct CountHolderTests {
     #expect(final_.value(forName: .subsection) == 0)
     #expect(final_.value(forName: .equation) == 0)
 
-    #expect(CountHolder.count(initial, final_) == 1)
+    #expect(CountHolder.countSubrange(initial, final_) == 1)
   }
 }
