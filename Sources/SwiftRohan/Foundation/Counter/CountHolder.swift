@@ -22,18 +22,27 @@ internal class CountHolder: CountPublisher {
     notifyObservers(markAsDirty: ())
   }
 
-  static func remove(_ holder: CountHolder) {
+  /// Remove the given count holder from the linked list.
+  /// - Returns: `true` if the linked list **is empty** after the removal.
+  static func remove(_ holder: CountHolder) -> Bool {
     if let p = holder.previous {
       p.next = holder.next
       holder.next?.previous = p
       holder.previous = nil
       holder.next = nil
+      return false
     }
     else {
       // `holder` is the first holder in the linked list.
-      guard let next = holder.next else { return }
-      next.previous = nil
-      holder.next = nil
+      if let next = holder.next {
+        next.previous = nil
+        holder.next = nil
+        return false
+      }
+      else {
+        // no-op, `holder` is the only holder in the linked list.
+        return true
+      }
     }
   }
 
@@ -55,9 +64,25 @@ internal class CountHolder: CountPublisher {
   }
 
   /// Remove the count holders in the closed range `[begin, end]`.
-  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) {
-    guard let end = end.next else { return }
-    removeSubrange(begin, end)
+  /// - Returns: `true` if the linked list **is empty** after the removal.
+  static func removeSubrange(_ begin: CountHolder, inclusive end: CountHolder) -> Bool {
+    if let end = end.next {
+      removeSubrange(begin, end)
+      return false
+    }
+    else {
+      // `end` is the last holder in the linked list.
+      if let p = begin.previous {
+        p.next = nil
+        return false
+      }
+      else {
+        // `[begin,end]` is the whole of the linked list.
+
+        // no-op
+        return true
+      }
+    }
   }
 
   // MARK: - Manipulation

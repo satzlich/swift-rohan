@@ -76,18 +76,24 @@ struct BoolArrayTests {
     var boolArray: BoolArray = [false, true, false, true, true]
 
     // remove at index 3
-    boolArray.remove(at: 3)
-    #expect(boolArray.count == 4)
-    #expect(!boolArray.isEmpty)
-    #expect(boolArray.trueCount == 2)
-    #expect(boolArray == [false, true, false, true])
+    do {
+      let removed = boolArray.remove(at: 3)
+      #expect(removed == true)
+      #expect(boolArray.count == 4)
+      #expect(!boolArray.isEmpty)
+      #expect(boolArray.trueCount == 2)
+      #expect(boolArray == [false, true, false, true])
+    }
 
     // remove at index 0
-    boolArray.remove(at: 0)
-    #expect(boolArray.count == 3)
-    #expect(!boolArray.isEmpty)
-    #expect(boolArray.trueCount == 2)
-    #expect(boolArray == [true, false, true])
+    do {
+      let removed = boolArray.remove(at: 0)
+      #expect(removed == false)
+      #expect(boolArray.count == 3)
+      #expect(!boolArray.isEmpty)
+      #expect(boolArray.trueCount == 2)
+      #expect(boolArray == [true, false, true])
+    }
 
     // remove range [0,2)
     boolArray.removeSubrange(0..<2)

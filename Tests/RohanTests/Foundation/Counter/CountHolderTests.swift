@@ -131,8 +131,11 @@ struct CountHolderTests {
     #expect(observer2.count == 1)
 
     // remove holders
-    CountHolder.remove(subsection1)
-    initial.propagateDirty()
+    do {
+      let isEmpty = CountHolder.remove(subsection1)
+      initial.propagateDirty()
+      #expect(isEmpty == false)
+    }
 
     #expect(section1.value(forName: .section) == 1)
     #expect(equation1.value(forName: .subsection) == 0)
@@ -159,8 +162,11 @@ struct CountHolderTests {
     #expect(CountHolder.countSubrange(initial, final_) == 4)
 
     // remove subrange
-    CountHolder.removeSubrange(section1, inclusive: equation1)
-    initial.propagateDirty()
+    do {
+      let isEmpty = CountHolder.removeSubrange(section1, inclusive: equation1)
+      initial.propagateDirty()
+      #expect(isEmpty == false)
+    }
 
     #expect(final_.value(forName: .section) == 0)
     #expect(final_.value(forName: .subsection) == 0)
@@ -168,4 +174,5 @@ struct CountHolderTests {
 
     #expect(CountHolder.countSubrange(initial, final_) == 1)
   }
+  
 }
