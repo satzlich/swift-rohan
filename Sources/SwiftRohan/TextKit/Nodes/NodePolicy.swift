@@ -12,13 +12,13 @@ enum NodePolicy {
   /// - Note: A characterising property of **transparent node** is: insertion any
   ///     content into the interior of a transparent node can split the node into
   ///     two nodes, with the inserted content in between.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isTransparent(_ nodeType: NodeType) -> Bool {
     [.paragraph, .text].contains(nodeType)
   }
 
   /// Returns true if a node of given kind is a block element.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     [
       .heading,
@@ -29,7 +29,7 @@ enum NodePolicy {
   }
 
   /// Returns true if a node of given kind can be a top-level node in a document.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isTopLevelNode(_ node: Node) -> Bool {
     [NodeType.heading, .paragraph].contains(node.type)
   }
@@ -43,7 +43,7 @@ enum NodePolicy {
   ///     2) the node is ApplyNode. In this case, the layout context remains the
   ///       same, but the layout offset behaviours is peculiar due to the nature
   ///       of ApplyNode, and requires special handling.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [
       .apply,
@@ -64,7 +64,7 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isPlaceholderEnabled(_ nodeType: NodeType) -> Bool {
     // must be element node
     [
@@ -77,20 +77,20 @@ enum NodePolicy {
     .contains(nodeType)
   }
 
-  @inline(__always)
+  @inlinable @inline(__always)
   static func placeholder(for nodeType: NodeType) -> Character {
     // ZWSP or dotted square
     nodeType == .paragraph ? "\u{200B}" : "⬚"
   }
 
   /// Returns true if the node is inline-math.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isInlineMath(_ node: Node) -> Bool {
     isEquationNode(node) && node.isBlock == false
   }
 
   /// Returns true if the node is paragraph content other than inline math compatible.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isOtherArbitraryParagraphContent(_ node: Node) -> Bool {
     [
       .linebreak,
@@ -101,7 +101,7 @@ enum NodePolicy {
       || (isEquationNode(node) && node.isBlock)  // block math
   }
 
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isStrictToplevelParagraphContent(_ node: Node) -> Bool {
     .itemList == node.type
   }
@@ -117,20 +117,20 @@ enum NodePolicy {
   }
 
   /// Returns true if a node of given kind can be empty.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isVoidableElement(_ nodeType: NodeType) -> Bool { true }
 
   // MARK: - Cursor and Selection
 
   /// Returns true if cursor is allowed (immediately) in the given node.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isCursorAllowed(in node: Node) -> Bool {
     isElementNode(node) || isTextNode(node) || isArgumentNode(node)
   }
 
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
     // NOTE: update `shouldIncreaseLevel(_:)` if this is changed.
 
@@ -144,7 +144,7 @@ enum NodePolicy {
   }
 
   /// Returns true if a node of given kind should increase the nested level.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func shouldIncreaseLevel(_ nodeType: NodeType) -> Bool {
     // NOTE: update `needsVisualDelimiter(_:)` if this is changed.
     [
@@ -158,7 +158,7 @@ enum NodePolicy {
   // MARK: - Relations
 
   /// Returns true if two nodes of given kinds are elements that can be merged.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
     case .paragraph: return rhs == .paragraph
@@ -170,7 +170,7 @@ enum NodePolicy {
 
   /// Returns true if it can be determined from the type of a node that the node
   /// can be inserted into math list.
-  @inline(__always)
+  @inlinable @inline(__always)
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
@@ -193,9 +193,11 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
+  @inlinable @inline(__always)
   static func isMathOnlyContent(_ node: Node) -> Bool {
     return isMathOnlyContent(node.type) || isMathSymbol(node)
 
+    @inline(__always)
     func isMathSymbol(_ node: Node) -> Bool {
       (node as? NamedSymbolNode)?.namedSymbol.subtype == .math
     }
@@ -222,6 +224,7 @@ enum NodePolicy {
 
   /// True if a counter segment should be computed from child nodes and be updated
   /// when the node content changes.
+  @inlinable @inline(__always)
   static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [
       NodeType.itemList,
