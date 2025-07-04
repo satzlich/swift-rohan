@@ -639,9 +639,7 @@ extension ElementNode {
     NodePolicy.isMergeableElements(self.type, other.type)
   }
 
-  final var shouldSynthesiseCounterSegment: Bool { Self.shouldSynthesiseCounterSegment }
-
-  final class var shouldSynthesiseCounterSegment: Bool {
+  final var shouldSynthesiseCounterSegment: Bool {
     NodePolicy.shouldSynthesiseCounterSegment(type)
   }
 }
