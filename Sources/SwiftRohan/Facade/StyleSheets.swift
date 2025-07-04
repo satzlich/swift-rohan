@@ -91,7 +91,6 @@ public enum StyleSheets {
 
     let emphasisColor = Color.brown
     let strongColor = Color.brown
-    let monoColor = Color.blue
 
     let styleRules: StyleRules = [
       // H1
