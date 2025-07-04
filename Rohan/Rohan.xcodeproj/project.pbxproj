@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A9016E822E176D870008042C /* SwiftRohan in Frameworks */ = {isa = PBXBuildFile; productRef = A9016E812E176D870008042C /* SwiftRohan */; };
 		A96E7D6D2DB37CF400426F32 /* SwiftRohan in Frameworks */ = {isa = PBXBuildFile; productRef = A96E7D6C2DB37CF400426F32 /* SwiftRohan */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A96E7D6D2DB37CF400426F32 /* SwiftRohan in Frameworks */,
+				A9016E822E176D870008042C /* SwiftRohan in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +133,7 @@
 			name = Rohan;
 			packageProductDependencies = (
 				A96E7D6C2DB37CF400426F32 /* SwiftRohan */,
+				A9016E812E176D870008042C /* SwiftRohan */,
 			);
 			productName = Rohan;
 			productReference = A97289A12DB2A4F300BA57EE /* Rohan.app */;
@@ -215,7 +218,7 @@
 			mainGroup = A97289982DB2A4F300BA57EE;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				A96E7D6B2DB37CF400426F32 /* XCLocalSwiftPackageReference "../../swift-rohan" */,
+				A9016E802E176D870008042C /* XCLocalSwiftPackageReference "../../swift-rohan" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A97289A22DB2A4F300BA57EE /* Products */;
@@ -583,13 +586,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A96E7D6B2DB37CF400426F32 /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
+		A9016E802E176D870008042C /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../swift-rohan";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A9016E812E176D870008042C /* SwiftRohan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftRohan;
+		};
 		A96E7D6C2DB37CF400426F32 /* SwiftRohan */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftRohan;
