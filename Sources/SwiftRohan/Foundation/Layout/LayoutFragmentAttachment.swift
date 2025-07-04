@@ -42,6 +42,7 @@ final class LayoutFragmentAttachment: NSTextAttachment {
   }
 }
 
+// This class is not thread-safe, so we mark it as `@unchecked Sendable`.
 extension LayoutFragmentAttachment: @unchecked Sendable {}
 
 private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewProvider {

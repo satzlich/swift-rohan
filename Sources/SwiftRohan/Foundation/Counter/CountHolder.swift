@@ -2,7 +2,7 @@
 
 import Foundation
 
-internal class CountHolder: CountPublisher {
+final class CountHolder: CountPublisher {
   /// The previous holder in the linked list.
   private(set) weak var previous: CountHolder?
   /// The next holder in the linked list.
@@ -215,47 +215,6 @@ internal class CountHolder: CountPublisher {
   /// Count the number of count holders in the closed range `[begin, end]`.
   static func countSubrange(_ begin: CountHolder, inclusive end: CountHolder) -> Int {
     countSubrange(begin, end) + 1
-  }
-
-  /// Map the count holders in the half-open range `[begin, end)` to an array.
-  static func mapSubrange<T>(
-    _ begin: CountHolder, _ end: CountHolder,
-    _ transform: (CountHolder) throws -> T
-  ) rethrows -> Array<T> {
-    var result: Array<T> = []
-    var holder: CountHolder = begin
-
-    while holder !== end {
-      result.append(try transform(holder))
-      if let next = holder.next {
-        holder = next
-      }
-      else {
-        break
-      }
-    }
-    return result
-  }
-
-  /// Map the count holders in the closed range `[begin, end]` to an array.
-  static func mapSubrange<T>(
-    _ begin: CountHolder, inclusive end: CountHolder,
-    _ transform: (CountHolder) throws -> T
-  ) rethrows -> Array<T> {
-    var result: Array<T> = []
-    var holder: CountHolder = begin
-
-    while holder !== end {
-      result.append(try transform(holder))
-      if let next = holder.next {
-        holder = next
-      }
-      else {
-        break
-      }
-    }
-    result.append(try transform(end))
-    return result
   }
 
   // MARK: - Counter Values

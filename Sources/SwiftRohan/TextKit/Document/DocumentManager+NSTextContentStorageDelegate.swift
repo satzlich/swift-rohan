@@ -2,7 +2,7 @@
 
 import AppKit
 
-extension DocumentManager: @preconcurrency NSTextContentStorageDelegate {
+extension DocumentManager: NSTextContentStorageDelegate {
   public func textContentStorage(
     _ textContentStorage: NSTextContentStorage, textParagraphWith range: NSRange
   ) -> NSTextParagraph? {

@@ -2,7 +2,7 @@
 
 import AppKit
 
-extension DocumentManager: @preconcurrency NSTextLayoutManagerDelegate {
+extension DocumentManager: NSTextLayoutManagerDelegate {
   public func textLayoutManager(
     _ textLayoutManager: NSTextLayoutManager,
     textLayoutFragmentFor location: NSTextLocation, in textElement: NSTextElement
