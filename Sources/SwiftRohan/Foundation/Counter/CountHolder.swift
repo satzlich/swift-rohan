@@ -87,21 +87,6 @@ final class CountHolder: CountPublisher {
 
   // MARK: - Manipulation
 
-  /// Concatenate the given count holders into a linked list.
-  /// - Returns: The first holder in the linked list, or `nil` if the collection is empty.
-  static func concate(
-    contentsOf holders: some BidirectionalCollection<CountHolder>
-  ) {
-    guard let first = holders.first else { return }
-    var p = first
-    for holder in holders.dropFirst() {
-      p.next = holder
-      holder.previous = p
-      p = holder
-    }
-    p.next = nil
-  }
-
   @inlinable @inline(__always)
   static func connect(_ first: CountHolder, _ second: CountHolder) {
     first.next = second
@@ -110,35 +95,16 @@ final class CountHolder: CountPublisher {
 
   /// Insert a new holder before the next holder in the linked list.
   static func insert(_ holder: CountHolder, before next: CountHolder) {
-    if let p = next.previous {
-      holder.previous = p
-      p.next = holder
-      next.previous = holder
-      holder.next = next
-    }
-    else {
-      // `next` is the first holder in the linked list.
-      holder.next = next
-      next.previous = holder
-    }
+    insert(contentsOf: CollectionOfOne(holder), before: next)
   }
 
   /// Insert a new holder after the previous holder in the linked list.
   static func insert(_ holder: CountHolder, after previous: CountHolder) {
-    if let n = previous.next {
-      holder.next = n
-      n.previous = holder
-      previous.next = holder
-      holder.previous = previous
-    }
-    else {
-      // `previous` is the last holder in the linked list.
-      previous.next = holder
-      holder.previous = previous
-    }
+    insert(contentsOf: CollectionOfOne(holder), after: previous)
   }
 
   /// Insert the given count holders before the next holder in the linked list.
+  @inlinable
   static func insert(
     contentsOf holders: some BidirectionalCollection<CountHolder>,
     before next: CountHolder
@@ -146,7 +112,6 @@ final class CountHolder: CountPublisher {
     guard holders.isEmpty == false else { return }
 
     if var p = next.previous {
-
       for holder in holders {
         holder.previous = p
         p.next = holder
@@ -157,7 +122,6 @@ final class CountHolder: CountPublisher {
     }
     else {
       // `next` is the first holder in the linked list.
-
       for (p, q) in holders.adjacentPairs() {
         p.next = q
         q.previous = p
@@ -169,6 +133,7 @@ final class CountHolder: CountPublisher {
   }
 
   /// Insert the given count holders after the previous holder in the linked list.
+  @inlinable
   static func insert(
     contentsOf holders: some BidirectionalCollection<CountHolder>,
     after previous: CountHolder
