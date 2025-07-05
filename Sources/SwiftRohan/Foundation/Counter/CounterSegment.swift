@@ -60,4 +60,10 @@ extension CounterSegment {
       CountHolder.connect(previous.end, segment.begin)
     }
   }
+
+  /// Remove the counter segment from the count holder list.
+  /// - Returns: `true` if the linked list is empty after the removal.
+  static func remove(_ segment: CounterSegment) -> Bool {
+    CountHolder.removeSubrange(segment.begin, inclusive: segment.end)
+  }
 }
