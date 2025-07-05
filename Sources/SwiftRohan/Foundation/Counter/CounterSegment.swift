@@ -19,6 +19,10 @@ struct CounterSegment {
 }
 
 extension CounterSegment {
+
+  /// Concatenate a collection of `CounterSegment`s.
+  /// - Returns: a counter segment that encompasses all the segments in the collection,
+  ///     or `nil` if the collection is empty.
   static func concate(
     contentsOf segments: some Collection<CounterSegment>
   ) -> CounterSegment? {
@@ -33,11 +37,27 @@ extension CounterSegment {
     return CounterSegment(first.begin, i.end)
   }
 
+  /// Insert `segment` before `next` segment.
   static func insert(_ segment: CounterSegment, before next: CounterSegment) {
-    preconditionFailure("TODO: implement CounterSegment.insert(before:)")
+    if let previous = next.begin.previous {
+      CountHolder.connect(previous, segment.begin)
+      CountHolder.connect(segment.end, next.begin)
+    }
+    else {
+      // `next` is the first segment, so we can just insert `segment` before it.
+      CountHolder.connect(segment.end, next.begin)
+    }
   }
 
+  /// Insert `segment` after `previous` segment.
   static func insert(_ segment: CounterSegment, after previous: CounterSegment) {
-    preconditionFailure("TODO: implement CounterSegment.insert(after:)")
+    if let next = previous.end.next {
+      CountHolder.connect(previous.end, segment.begin)
+      CountHolder.connect(segment.end, next)
+    }
+    else {
+      // `previous` is the last segment, so we can just insert `segment` after it.
+      CountHolder.connect(previous.end, segment.begin)
+    }
   }
 }

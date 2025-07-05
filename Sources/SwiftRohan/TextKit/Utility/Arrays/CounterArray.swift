@@ -36,6 +36,11 @@ internal struct CounterArray {
   }
 
   @inlinable @inline(__always)
+  func trueLowerBound(for position: Int) -> Int? {
+    _boolArray.trueLowerBound(for: position)
+  }
+
+  @inlinable @inline(__always)
   mutating func insert(_ segment: CounterSegment?, at index: Int) {
     _boolArray.insert(segment != nil, at: index)
   }

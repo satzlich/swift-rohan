@@ -3,6 +3,7 @@
 import Foundation
 import SatzAlgorithms
 
+/// **Sparse** boolean array.
 struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   private var _size: Int
   private var _truePositions: Array<Int> = []
@@ -148,6 +149,15 @@ struct BoolArray: Equatable, Hashable, ExpressibleByArrayLiteral {
   func trueIndex(after position: Int) -> Int? {
     guard position < _size else { return nil }
     let index = Satz.upperBound(_truePositions, position)
+    if index < _truePositions.count {
+      return _truePositions[index]
+    }
+    return nil
+  }
+
+  /// Returns the first index greater than or equal to the given position and contains true.
+  func trueLowerBound(for position: Int) -> Int? {
+    let index = Satz.lowerBound(_truePositions, position)
     if index < _truePositions.count {
       return _truePositions[index]
     }
