@@ -3,9 +3,8 @@
 enum CounterChange {
   /// No change to the counter segment.
   case unchanged
-
-  /// The counter segment is modified but needs no further action.
-  case modified
+  /// The interior of the counter segment is modified.
+  case interiorModified
 
   /// Brand new counter segment is created.
   case newAdded(CounterSegment)
