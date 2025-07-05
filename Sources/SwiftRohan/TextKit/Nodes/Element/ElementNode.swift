@@ -573,19 +573,14 @@ internal class ElementNode: Node {
     precondition(shouldSynthesiseCounterSegment)
 
     @inline(__always)
-    func indexOf(_ child: Node) -> Int? {
+    func indexOf(_ child: Node) -> Int {
       if let index = index {
         assert(_children[index] === child)
         return index
       }
       // TODO: The search operation can be costly. Optimise it if needed.
-      else if let index = _children.firstIndex(where: { $0 === child }) {
-        return index
-      }
-      else {
-        assertionFailure("Child not found in children")
-        return nil
-      }
+      let index = _children.firstIndex(where: { $0 === child })
+      return index!
     }
 
     // Invariant maintenance:
@@ -601,7 +596,7 @@ internal class ElementNode: Node {
       self.contentDidChange()
 
     case .newAdded(let childSegment):
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == false)
       _counterArray[index] = true
 
@@ -644,7 +639,7 @@ internal class ElementNode: Node {
       }
 
     case .leftAdded(let childSegment):
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(before: index) != nil {
@@ -660,7 +655,7 @@ internal class ElementNode: Node {
       }
 
     case .rightAdded(let childSegment):
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(after: index) != nil {
@@ -676,7 +671,7 @@ internal class ElementNode: Node {
       }
 
     case .allRemoved:
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
       _counterArray[index] = false
 
@@ -706,7 +701,7 @@ internal class ElementNode: Node {
       }
 
     case .leftRemoved(let childSegment):
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(before: index) != nil {
@@ -720,7 +715,7 @@ internal class ElementNode: Node {
       }
 
     case .rightRemoved(let childSegment):
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(after: index) != nil {
@@ -734,7 +729,7 @@ internal class ElementNode: Node {
       }
 
     case .replaced(let childSegment):
-      let index = indexOf(child)!
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       let previous = _counterArray.trueIndex(before: index)
