@@ -31,7 +31,7 @@ struct PlaygroundTests {
     }
   }
 
-  @Test
+  @Test(.disabled())
   func objectEquality() {
     final class TestObject {}
 

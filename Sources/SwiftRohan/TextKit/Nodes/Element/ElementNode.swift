@@ -48,34 +48,25 @@ internal class ElementNode: Node {
     parent?.contentDidChange()
   }
 
-  final override func contentDidChange(
-    _ counterChange: CounterChange, _ child: Node
-  ) {
-    _contentDidChange(counterChange, child)
+  final override func contentDidChange(_ counterChange: CounterChange, _ child: Node) {
+    precondition(shouldSynthesiseCounterSegment)
+    _contentDidChange(counterChange, child, index: nil)
   }
 
   /// Deal with change notification when a child has changed.
   private final func _contentDidChange(
-    _ counterChange: CounterChange, _ child: Node, index: Int? = nil
+    _ counterChange: CounterChange, _ child: Node, index: Int?
   ) {
-    if shouldSynthesiseCounterSegment {
-      _isDirty = true
-      _processCounterChange(counterChange, child, index: index)
-    }
-    else {
-      self.contentDidChange()
-    }
+    precondition(shouldSynthesiseCounterSegment)
+    _isDirty = true
+    _processCounterChange(counterChange, child, index: index)
   }
 
   /// Deal with change notification when all change has been processed locally.
   private final func _contentDidChangeLocally(_ counterChange: CounterChange) {
-    if shouldSynthesiseCounterSegment {
-      _isDirty = true
-      parent?.contentDidChange(counterChange, self)
-    }
-    else {
-      self.contentDidChange()
-    }
+    precondition(shouldSynthesiseCounterSegment)
+    _isDirty = true
+    parent?.contentDidChange(counterChange, self)
   }
 
   final override func layoutLength() -> Int { _layoutLength }
@@ -1010,9 +1001,9 @@ internal class ElementNode: Node {
 
     if inStorage { makeSnapshotOnce() }
 
-    let subrangeSegment: Void? =
+    let subrangeSegment: CounterSegment? =
       shouldSynthesiseCounterSegment
-      ? _children[index].counterSegment.map { _ in () }
+      ? _children[index].counterSegment
       : nil
 
     _children[index].clearParent()
