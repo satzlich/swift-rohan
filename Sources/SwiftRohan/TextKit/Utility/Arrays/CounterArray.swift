@@ -20,7 +20,10 @@ internal struct CounterArray {
   @inlinable @inline(__always) var trueCount: Int { _boolArray.trueCount }
 
   @inlinable @inline(__always)
-  subscript(index: Int) -> Bool { _boolArray[index] }
+  subscript(index: Int) -> Bool {
+    get { _boolArray[index] }
+    set { _boolArray[index] = newValue }
+  }
 
   @inlinable @inline(__always)
   func trueIndex(before position: Int) -> Int? {

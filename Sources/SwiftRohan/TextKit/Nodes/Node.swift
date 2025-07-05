@@ -125,6 +125,16 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Notify the node that the content has changed.
+  /// - Parameters:
+  ///   - counterChange: the counter change that has occurred, if any.
+  ///   - child: the child node that has changed
+  internal func contentDidChange(
+    _ counterChange: CounterChange, _ child: Node
+  ) {
+    self.contentDidChange()
+  }
+
   /// How many length units the node contributes to the layout context.
   /// - Invariant: For nodes whose layout length can be known since instantiation,
   ///     this method must always return the same value. For the rest, this method

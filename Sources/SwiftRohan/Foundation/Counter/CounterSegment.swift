@@ -32,4 +32,12 @@ extension CounterSegment {
     }
     return CounterSegment(first.begin, i.end)
   }
+
+  static func insert(_ segment: CounterSegment, before next: CounterSegment) {
+    preconditionFailure("TODO: implement CounterSegment.insert(before:)")
+  }
+
+  static func insert(_ segment: CounterSegment, after previous: CounterSegment) {
+    preconditionFailure("TODO: implement CounterSegment.insert(after:)")
+  }
 }
