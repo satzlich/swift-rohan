@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import DequeModule
 import Testing
 
 @testable import SwiftRohan
@@ -28,5 +29,32 @@ struct PlaygroundTests {
       let attrString = NSAttributedString(string: "\u{3000}", attributes: attributes)
       #expect(attrString.size().width.isNearlyEqual(to: 9.941634241245136))
     }
+  }
+
+  @Test
+  func objectEquality() {
+    final class TestObject {}
+
+    let obj1 = TestObject()
+    var objects = Deque<TestObject>()
+    let n = 10000
+    for _ in 0..<n {
+      let obj2 = TestObject()
+      objects.append(obj2)
+    }
+    objects.append(obj1)
+
+    // measure time
+    let clock = ContinuousClock()
+
+    let count = 100
+    let elapsed = clock.measure {
+      for _ in 0..<count - 1 {
+        _ = objects.firstIndex(where: { $0 === obj1 })
+      }
+      let index = objects.firstIndex(where: { $0 === obj1 })
+      #expect(index == n)
+    }
+    print("Average time for \(count) iterations: \(elapsed / Double(count)) seconds")
   }
 }
