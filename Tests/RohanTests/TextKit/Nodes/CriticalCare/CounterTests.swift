@@ -72,8 +72,11 @@ struct CounterTests {
   @Test
   func takeChildren() {
     let (rootNode, emphasisNode) = _takeChildrenExample()
+    #expect(rootNode.counterSegment?.holderCount() == 1)
     _ = emphasisNode.takeChildren(inStorage: true)
+    #expect(rootNode.counterSegment?.holderCount() == 1)
     _ = rootNode.takeChildren(inStorage: true)
+    #expect(rootNode.counterSegment?.holderCount() == nil)
   }
 
   @Test
@@ -81,6 +84,7 @@ struct CounterTests {
     do {
       let (rootNode, emphasisNode) = _takeChildrenExample()
       withExtendedLifetime(rootNode) {
+        _ = emphasisNode.takeSubrange(1..<1, inStorage: true)
         _ = emphasisNode.takeSubrange(0..<2, inStorage: true)
       }
     }
@@ -89,6 +93,12 @@ struct CounterTests {
       withExtendedLifetime(rootNode) {
         _ = emphasisNode.takeSubrange(0..<1, inStorage: true)
       }
+    }
+    do {
+      let (rootNode, _) = _takeChildrenExample()
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      _ = rootNode.takeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == nil)
     }
   }
 
@@ -104,11 +114,34 @@ struct CounterTests {
   @Test
   func replaceChild() {
     let (rootNode, paragraphNode) = _replaceChildExample()
-    withExtendedLifetime(rootNode) {
-      paragraphNode.replaceChild(EquationNode(.equation), at: 0, inStorage: true)
-      rootNode.replaceChild(
-        HeadingNode(.subsection, [TextNode("subsection")]), at: 1, inStorage: true)
-      paragraphNode.replaceChild(TextNode("plaintext"), at: 0, inStorage: true)
-    }
+
+    #expect(rootNode.counterSegment?.holderCount() == 1)
+    #expect(paragraphNode.counterSegment?.holderCount() == nil)
+
+    paragraphNode.replaceChild(EquationNode(.equation), at: 0, inStorage: true)
+
+    #expect(rootNode.counterSegment?.holderCount() == 2)
+    #expect(paragraphNode.counterSegment?.holderCount() == 1)
+
+    rootNode.replaceChild(
+      HeadingNode(.subsection, [TextNode("subsection")]), at: 1, inStorage: true)
+
+    #expect(rootNode.counterSegment?.holderCount() == 2)
+    #expect(paragraphNode.counterSegment?.holderCount() == 1)
+
+    paragraphNode.replaceChild(TextNode("plaintext"), at: 0, inStorage: true)
+
+    #expect(rootNode.counterSegment?.holderCount() == 1)
+    #expect(paragraphNode.counterSegment?.holderCount() == nil)
+  }
+
+  @Test
+  func insertChildren() {
+
+  }
+
+  @Test
+  func removeSubrange() {
+
   }
 }

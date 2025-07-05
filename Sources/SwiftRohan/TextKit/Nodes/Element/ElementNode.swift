@@ -1019,7 +1019,10 @@ internal class ElementNode: Node {
         _contentDidChange(.newAdded(newSegment), node, index: index)
       case (.some, .none):
         _contentDidChange(.allRemoved, node, index: index)
-      case (.some, .some(let newSegment)):
+      case (.some(let oldSegment), .some(let newSegment)):
+        CounterSegment.insert(newSegment, after: oldSegment)
+        _ = CounterSegment.remove(oldSegment)
+        newSegment.begin.propagateDirty()
         _contentDidChange(.replaced(newSegment), node, index: index)
       }
     }
