@@ -53,15 +53,6 @@ internal class ElementNode: Node {
     _contentDidChange(counterChange, child, index: nil)
   }
 
-  /// Deal with change notification when a child has changed.
-  private final func _contentDidChange(
-    _ counterChange: CounterChange, _ child: Node, index: Int?
-  ) {
-    precondition(shouldSynthesiseCounterSegment)
-    _isDirty = true
-    _processCounterChange(counterChange, child, index: index)
-  }
-
   /// Deal with change notification when all change has been processed locally.
   private final func _contentDidChangeLocally(_ counterChange: CounterChange) {
     precondition(shouldSynthesiseCounterSegment)
@@ -567,7 +558,7 @@ internal class ElementNode: Node {
   ///   - child: the child that changed.
   ///   - index: the index of the child, if known.
   ///   - successorsNotified: true if the successors of the child have been notified.
-  private final func _processCounterChange(
+  private final func _contentDidChange(
     _ counterChange: CounterChange, _ child: Node, index: Int? = nil
   ) {
     precondition(shouldSynthesiseCounterSegment)
@@ -596,6 +587,8 @@ internal class ElementNode: Node {
       self.contentDidChange()
 
     case .newAdded(let childSegment):
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == false)
       _counterArray[index] = true
@@ -639,6 +632,8 @@ internal class ElementNode: Node {
       }
 
     case .leftAdded(let childSegment):
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == true)
 
@@ -655,6 +650,8 @@ internal class ElementNode: Node {
       }
 
     case .rightAdded(let childSegment):
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == true)
 
@@ -671,6 +668,8 @@ internal class ElementNode: Node {
       }
 
     case .allRemoved:
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == true)
       _counterArray[index] = false
@@ -701,6 +700,8 @@ internal class ElementNode: Node {
       }
 
     case .leftRemoved(let childSegment):
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == true)
 
@@ -715,6 +716,8 @@ internal class ElementNode: Node {
       }
 
     case .rightRemoved(let childSegment):
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == true)
 
@@ -729,6 +732,8 @@ internal class ElementNode: Node {
       }
 
     case .replaced(let childSegment):
+      _isDirty = true
+
       let index = indexOf(child)
       assert(_counterArray[index] == true)
 
