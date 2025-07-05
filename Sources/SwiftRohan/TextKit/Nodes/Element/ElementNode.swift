@@ -507,6 +507,7 @@ internal class ElementNode: Node {
     // remove the segment from the linked list.
     let isEmpty = CounterSegment.remove(subrangeSegment)
 
+    // isEmpty => previous and next are both nil.
     assert(!isEmpty || (previous == nil && next == nil))
 
     switch (previous, next) {
