@@ -16,7 +16,9 @@ final class CountHolder: CountPublisher {
   /// - Postcondition: All count holders after this one for which "mark dirty"
   ///     action is applicable become dirty.
   final func propagateDirty() {
+    // stop early if this holder is already dirty.
     guard _isDirty == false else { return }
+
     _isDirty = true
     next?.propagateDirty()
     notifyObservers(markAsDirty: ())
