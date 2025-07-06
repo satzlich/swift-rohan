@@ -108,10 +108,15 @@ final class HeadingNode: ElementNodeImpl {
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
   }
 
+  @inline(__always)
   private final func _setUp() {
+    // heading nodes do not synthesise counter segment from children, instead
+    // they produce their own counter segment.
     precondition(self.shouldSynthesiseCounterSegment == false)
 
     if let countHolder = subtype.createCountHolder() {
+      // Register the count holder as an observer.
+      countHolder.registerObserver(self)
       _counterSegment = CounterSegment(countHolder)
     }
     else {
@@ -160,4 +165,10 @@ final class HeadingNode: ElementNodeImpl {
     HeadingSubtype.allCases.map { subtype in
       CommandRecord(subtype.command, commandBody(forSubtype: subtype))
     }
+}
+
+extension HeadingNode: CountObserver {
+  final func countObserver(markAsDirty: Void) {
+    self.contentDidChange()
+  }
 }

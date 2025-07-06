@@ -126,12 +126,12 @@ internal class ElementNodeImpl: ElementNode {
 
       /*
        Invariant:
-        (a) segmentLength maintains accumulated length since entry or previous newline.
-        (b) isCandidate is true if the segment is candidate for paragraph style.
-        (c) sum maintains the total length inserted so far.
-        (d) every segment (separated by leading newlines) is applied with paragraph
-            style when downstream edge is reached with the exception of (e).
-        (e) block child nodes are skipped for paragraph style.
+       (a) segmentLength maintains accumulated length since entry or previous newline.
+       (b) isCandidate is true if the segment is candidate for paragraph style.
+       (c) sum maintains the total length inserted so far.
+       (d) every segment (separated by leading newlines) is applied with paragraph
+       style when downstream edge is reached with the exception of (e).
+       (e) block child nodes are skipped for paragraph style.
        */
       for i in _children.indices {
         let leadingNewline = _newlines.value(before: i)
@@ -190,12 +190,12 @@ internal class ElementNodeImpl: ElementNode {
 
       /*
        Invariant:
-        (a) segmentLength maintains accumulated length since entry or previous newline.
-        (b) isCandidate is true if the segment is candidate for paragraph style.
-        (c) sum maintains the total length inserted so far.
-        (d) every segment (separated by leading newlines) is applied with paragraph
-            style when downstream edge is reached with the exception of (e).
-        (e) block child nodes are skipped for paragraph style.
+       (a) segmentLength maintains accumulated length since entry or previous newline.
+       (b) isCandidate is true if the segment is candidate for paragraph style.
+       (c) sum maintains the total length inserted so far.
+       (d) every segment (separated by leading newlines) is applied with paragraph
+       style when downstream edge is reached with the exception of (e).
+       (e) block child nodes are skipped for paragraph style.
        */
 
       for i in _children.indices {
@@ -268,12 +268,12 @@ internal class ElementNodeImpl: ElementNode {
 
       /*
        Invariant:
-        (a) segmentLength maintains accumulated length since entry or previous newline.
-        (b) isCandidate is true if the segment is candidate for paragraph style.
-        (c) sum maintains the total length inserted so far.
-        (d) every segment (separated by leading newlines) is applied with paragraph
-            style when downstream edge is reached with the exception of (e).
-        (e) block child nodes are skipped for paragraph style.
+       (a) segmentLength maintains accumulated length since entry or previous newline.
+       (b) isCandidate is true if the segment is candidate for paragraph style.
+       (c) sum maintains the total length inserted so far.
+       (d) every segment (separated by leading newlines) is applied with paragraph
+       style when downstream edge is reached with the exception of (e).
+       (e) block child nodes are skipped for paragraph style.
        */
       for i in _children.indices {
         // process deleted in a batch if any.
@@ -409,37 +409,11 @@ internal class ElementNodeImpl: ElementNode {
   }
 
   @inline(__always)
-  private final func _computeExtendedRecords() -> (
-    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
-  ) {
-    // ID's of current children
-    let currentIds = Set(_children.map(\.id))
-    // ID's of the dirty part of current children
-    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-    // ID's of original children
-    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
-
-    let current =
-      _children.indices.map { i in
-        let node = _children[i]
-        let insertNewline = _newlines[i]
-        let newlineBefore = _newlines.value(before: i)
-        let mark: LayoutMark =
-          !originalIds.contains(node.id)
-          ? .added
-          : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline, leadingNewline: newlineBefore)
-      }
-
-    let original =
-      _snapshotRecords!.map { record in
-        !currentIds.contains(record.nodeId)
-          ? ExtendedRecord(.deleted, record)
-          : dirtyIds.contains(record.nodeId)
-            ? ExtendedRecord(.dirty, record)
-            : ExtendedRecord(.none, record)
-      }
-    return (current, original)
+  private final func _computeExtendedRecords()
+    -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>)
+  {
+    precondition(_snapshotRecords != nil)
+    return ElementNodeImpl.computeExtendedRecords(_children, _newlines, _snapshotRecords!)
   }
 
   final override func getLayoutOffset(_ index: Int) -> Int? {
@@ -456,6 +430,42 @@ internal class ElementNodeImpl: ElementNode {
       let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
       return s1 + s2
     }
+  }
+
+  /// Compute the current and original records for layout.
+  @inline(__always)
+  static func computeExtendedRecords(
+    _ children: ElementStore, _ newlines: NewlineArray,
+    _ snapshotRecords: Array<SnapshotRecord>
+  ) -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>) {
+    // ID's of current children
+    let currentIds = Set(children.map(\.id))
+    // ID's of the dirty part of current children
+    let dirtyIds = Set(children.lazy.filter(\.isDirty).map(\.id))
+    // ID's of original children
+    let originalIds = Set(snapshotRecords.map(\.nodeId))
+
+    let current =
+      children.indices.map { i in
+        let node = children[i]
+        let insertNewline = newlines[i]
+        let newlineBefore = newlines.value(before: i)
+        let mark: LayoutMark =
+          !originalIds.contains(node.id)
+          ? .added
+          : (node.isDirty ? .dirty : .none)
+        return ExtendedRecord(mark, node, insertNewline, leadingNewline: newlineBefore)
+      }
+
+    let original =
+      snapshotRecords.map { record in
+        !currentIds.contains(record.nodeId)
+          ? ExtendedRecord(.deleted, record)
+          : dirtyIds.contains(record.nodeId)
+            ? ExtendedRecord(.dirty, record)
+            : ExtendedRecord(.none, record)
+      }
+    return (current, original)
   }
 
   // MARK: - Facilities for Layout

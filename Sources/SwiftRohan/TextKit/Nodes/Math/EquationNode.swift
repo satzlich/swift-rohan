@@ -37,7 +37,7 @@ final class EquationNode: MathNode {
   // MARK: - Node(Layout)
 
   final override var isBlock: Bool { subtype.isBlock }
-  final override var isDirty: Bool { nucleus.isDirty }
+  final override var isDirty: Bool { nucleus.isDirty || _isCounterDirty }
 
   final override func layoutLength() -> Int { _layoutLength }
 
@@ -315,6 +315,9 @@ final class EquationNode: MathNode {
   private var _layoutLength: Int = 1
   private var _nodeFragment: MathListLayoutFragment? = nil
 
+  private var _isCounterDirty: Bool = false
+  private var _equationNumber: Int = 0
+
   /// True if the layout of the equation should be reflowed.
   final var isReflowActive: Bool {
     NodePolicy.isInlineMathReflowEnabled && subtype == .inline
@@ -351,6 +354,8 @@ final class EquationNode: MathNode {
     switch subtype {
     case .equation:
       let countHolder = CountHolder(.equation)
+      // register the equation node as an observer of the count holder.
+      countHolder.registerObserver(self)
       self._counterSegment = CounterSegment(countHolder)
     case _:
       self._counterSegment = nil
@@ -377,5 +382,12 @@ final class EquationNode: MathNode {
     let mathContext =
       LayoutUtils.initMathListLayoutContext(for: component, fragment, parent: context)
     return MathReflowLayoutContext(context, mathContext, self, layoutOffset)
+  }
+}
+
+extension EquationNode: CountObserver {
+  final func countObserver(markAsDirty: Void) {
+    self.contentDidChange()
+    _isCounterDirty = true
   }
 }
