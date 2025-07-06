@@ -49,6 +49,12 @@ extension CounterSegment {
     }
   }
 
+  /// Insert `segment` before `next` segment and mark it dirty.
+  static func insertAndMark(_ segment: CounterSegment, before next: CounterSegment) {
+    insert(segment, before: next)
+    segment.begin.propagateDirty()
+  }
+
   /// Insert `segment` after `previous` segment.
   static func insert(_ segment: CounterSegment, after previous: CounterSegment) {
     if let next = previous.end.next {
@@ -61,10 +67,23 @@ extension CounterSegment {
     }
   }
 
+  /// Insert `segment` after `previous` segment and mark it dirty.
+  static func insertAndMark(_ segment: CounterSegment, after previous: CounterSegment) {
+    insert(segment, after: previous)
+    segment.begin.propagateDirty()
+  }
+
   /// Remove the counter segment from the count holder list.
   /// - Returns: `true` if the linked list is empty after the removal.
   static func remove(_ segment: CounterSegment) -> Bool {
     CountHolder.removeSubrange(segment.begin, inclusive: segment.end)
+  }
+
+  /// Remove the counter segment from the count holder list and mark its successor dirty.
+  static func removeAndMark(_ segment: CounterSegment) -> Bool {
+    let isEmpty = remove(segment)
+    segment.end.next?.propagateDirty()
+    return isEmpty
   }
 
   /// Returns the number of `CountHolder`s in the segment.
