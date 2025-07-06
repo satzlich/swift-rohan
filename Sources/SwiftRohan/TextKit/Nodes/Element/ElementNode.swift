@@ -572,6 +572,7 @@ internal class ElementNode: Node {
         return index
       }
       // TODO: The search operation can be costly. Optimise it if needed.
+      // Timing: for n = 10000, it takes 1.7ms to finish.
       let index = _children.firstIndex(where: { $0 === child })
       return index!
     }
