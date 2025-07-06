@@ -43,7 +43,9 @@ internal class ElementNode: Node {
   // MARK: - Node(Layout)
 
   final override func contentDidChange() {
+    // stop early if propagation is redundant.
     guard _isDirty == false else { return }
+
     _isDirty = true
     parent?.contentDidChange()
   }
