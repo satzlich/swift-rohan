@@ -7,7 +7,8 @@ import Testing
 
 @testable import SwiftRohan
 
-struct CounterTests {
+/// Test the counter maintenance logic in the node tree.
+struct CounterMaintenanceTests {
   @Test
   func construction() {
     let rootNode = RootNode([
