@@ -115,6 +115,8 @@ final class HeadingNode: ElementNodeImpl {
     precondition(self.shouldSynthesiseCounterSegment == false)
 
     if let countHolder = subtype.createCountHolder() {
+      // Register the count holder as an observer.
+      countHolder.registerObserver(self)
       _counterSegment = CounterSegment(countHolder)
     }
     else {
@@ -163,4 +165,10 @@ final class HeadingNode: ElementNodeImpl {
     HeadingSubtype.allCases.map { subtype in
       CommandRecord(subtype.command, commandBody(forSubtype: subtype))
     }
+}
+
+extension HeadingNode: CountObserver {
+  final func countObserver(markAsDirty: Void) {
+    self.contentDidChange()
+  }
 }
