@@ -66,4 +66,9 @@ extension CounterSegment {
   static func remove(_ segment: CounterSegment) -> Bool {
     CountHolder.removeSubrange(segment.begin, inclusive: segment.end)
   }
+
+  /// Returns the number of `CountHolder`s in the segment.
+  func holderCount() -> Int {
+    CountHolder.countSubrange(begin, inclusive: end)
+  }
 }

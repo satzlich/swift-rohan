@@ -43,39 +43,23 @@ internal class ElementNode: Node {
   // MARK: - Node(Layout)
 
   final override func contentDidChange() {
+    // stop early if propagation is redundant.
     guard _isDirty == false else { return }
+
     _isDirty = true
     parent?.contentDidChange()
   }
 
-  final override func contentDidChange(
-    _ counterChange: CounterChange, _ child: Node
-  ) {
-    _contentDidChange(counterChange, child)
-  }
-
-  /// Deal with change notification when a child has changed.
-  private final func _contentDidChange(
-    _ counterChange: CounterChange, _ child: Node, index: Int? = nil
-  ) {
-    if shouldSynthesiseCounterSegment {
-      _isDirty = true
-      _processCounterChange(counterChange, child, index: index)
-    }
-    else {
-      self.contentDidChange()
-    }
+  final override func contentDidChange(_ counterChange: CounterChange, _ child: Node) {
+    precondition(shouldSynthesiseCounterSegment)
+    _contentDidChange(counterChange, child, index: nil)
   }
 
   /// Deal with change notification when all change has been processed locally.
   private final func _contentDidChangeLocally(_ counterChange: CounterChange) {
-    if shouldSynthesiseCounterSegment {
-      _isDirty = true
-      parent?.contentDidChange(counterChange, self)
-    }
-    else {
-      self.contentDidChange()
-    }
+    precondition(shouldSynthesiseCounterSegment)
+    _isDirty = true
+    parent?.contentDidChange(counterChange, self)
   }
 
   final override func layoutLength() -> Int { _layoutLength }
@@ -495,9 +479,9 @@ internal class ElementNode: Node {
   ) -> CounterChange {
     precondition(shouldSynthesiseCounterSegment)
 
-    let previous = _counterArray.trueIndex(before: range.lowerBound)
-    let next = _counterArray.trueIndex(after: range.upperBound - 1)
     _counterArray.removeSubrange(range)
+    let previous = _counterArray.trueIndex(before: range.lowerBound)
+    let next = _counterArray.trueLowerBound(for: range.lowerBound)
 
     guard let subrangeSegment = subrangeSegment else {
       // if no subrange segment, just return unchanged.
@@ -507,6 +491,7 @@ internal class ElementNode: Node {
     // remove the segment from the linked list.
     let isEmpty = CounterSegment.remove(subrangeSegment)
 
+    // isEmpty => previous and next are both nil.
     assert(!isEmpty || (previous == nil && next == nil))
 
     switch (previous, next) {
@@ -528,7 +513,7 @@ internal class ElementNode: Node {
 
     case (.some, .some):
       // both previous and next exist, just notify modified.
-      return .modified
+      return .interiorModified
     }
   }
 
@@ -537,7 +522,7 @@ internal class ElementNode: Node {
   ) -> CounterChange {
     precondition(shouldSynthesiseCounterSegment)
 
-    _counterArray.insert(contentsOf: segments, at: index)
+    _counterArray.insert(contentsOf: segments.lazy.map { $0 != nil }, at: index)
 
     guard let concated = CounterSegment.concate(contentsOf: segments.compacted())
     else { return .unchanged }
@@ -565,7 +550,7 @@ internal class ElementNode: Node {
 
     case (.some(let previous), .some):
       CounterSegment.insert(concated, after: previous)
-      return .modified
+      return .interiorModified
     }
   }
 
@@ -575,25 +560,20 @@ internal class ElementNode: Node {
   ///   - child: the child that changed.
   ///   - index: the index of the child, if known.
   ///   - successorsNotified: true if the successors of the child have been notified.
-  private final func _processCounterChange(
+  private final func _contentDidChange(
     _ counterChange: CounterChange, _ child: Node, index: Int? = nil
   ) {
     precondition(shouldSynthesiseCounterSegment)
 
     @inline(__always)
-    func indexOf(_ child: Node) -> Int? {
+    func indexOf(_ child: Node) -> Int {
       if let index = index {
         assert(_children[index] === child)
         return index
       }
       // TODO: The search operation can be costly. Optimise it if needed.
-      else if let index = _children.firstIndex(where: { $0 === child }) {
-        return index
-      }
-      else {
-        assertionFailure("Child not found in children")
-        return nil
-      }
+      let index = _children.firstIndex(where: { $0 === child })
+      return index!
     }
 
     // Invariant maintenance:
@@ -605,11 +585,13 @@ internal class ElementNode: Node {
     case .unchanged:
       self.contentDidChange()
 
-    case .modified:
+    case .interiorModified:
       self.contentDidChange()
 
     case .newAdded(let childSegment):
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == false)
       _counterArray[index] = true
 
@@ -648,16 +630,18 @@ internal class ElementNode: Node {
         childSegment.begin.propagateDirty()
 
         // both previous and next exist, just notify modified.
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
 
     case .leftAdded(let childSegment):
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(before: index) != nil {
         // if previous exists, just notify modified.
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
       else {
         // no previous, just set the segment.
@@ -668,12 +652,14 @@ internal class ElementNode: Node {
       }
 
     case .rightAdded(let childSegment):
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(after: index) != nil {
         // if next exists, just notify modified.
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
       else {
         // no next, just set the segment.
@@ -684,7 +670,9 @@ internal class ElementNode: Node {
       }
 
     case .allRemoved:
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
       _counterArray[index] = false
 
@@ -710,15 +698,17 @@ internal class ElementNode: Node {
         parent?.contentDidChange(.rightRemoved(newSegment), self)
 
       case (.some, .some):
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
 
     case .leftRemoved(let childSegment):
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(before: index) != nil {
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
       else {
         let old = _counterSegment!
@@ -728,11 +718,13 @@ internal class ElementNode: Node {
       }
 
     case .rightRemoved(let childSegment):
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       if _counterArray.trueIndex(after: index) != nil {
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
       else {
         let old = _counterSegment!
@@ -742,7 +734,9 @@ internal class ElementNode: Node {
       }
 
     case .replaced(let childSegment):
-      let index = indexOf(child)!
+      _isDirty = true
+
+      let index = indexOf(child)
       assert(_counterArray[index] == true)
 
       let previous = _counterArray.trueIndex(before: index)
@@ -766,7 +760,7 @@ internal class ElementNode: Node {
 
       case (.some, .some):
         // both previous and next exist, just notify modified.
-        parent?.contentDidChange(.modified, self)
+        parent?.contentDidChange(.interiorModified, self)
       }
     }
   }
@@ -813,7 +807,7 @@ internal class ElementNode: Node {
   internal final var _counterSegment: CounterSegment?
   final override var counterSegment: CounterSegment? { _counterSegment }
 
-  internal final var _counterArray: CounterArray = CounterArray()
+  internal final var _counterArray: BoolArray = BoolArray()
 
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
@@ -854,7 +848,8 @@ internal class ElementNode: Node {
     }
 
     if self.shouldSynthesiseCounterSegment {
-      _counterArray.insert(contentsOf: _children.lazy.map(\.counterSegment), at: 0)
+      _counterArray.insert(
+        contentsOf: _children.lazy.map { $0.counterSegment != nil }, at: 0)
       _counterSegment =
         CounterSegment.concate(contentsOf: _children.lazy.compactMap(\.counterSegment))
     }
@@ -890,8 +885,6 @@ internal class ElementNode: Node {
   final func takeChildren(inStorage: Bool) -> ElementStore {
     if inStorage { makeSnapshotOnce() }
 
-    let shouldSynthesiseCounterSegment = self.shouldSynthesiseCounterSegment
-
     for child in _children {
       child.clearParent()
     }
@@ -899,7 +892,7 @@ internal class ElementNode: Node {
     _newlines.removeAll()
     _counterArray.removeAll()
 
-    if shouldSynthesiseCounterSegment {
+    if self.shouldSynthesiseCounterSegment {
       let counterChange = _counterSegment != nil ? CounterChange.allRemoved : .unchanged
       _counterSegment = nil
       _counterArray.removeAll()
@@ -1011,9 +1004,9 @@ internal class ElementNode: Node {
 
     if inStorage { makeSnapshotOnce() }
 
-    let subrangeSegment: Void? =
+    let subrangeSegment: CounterSegment? =
       shouldSynthesiseCounterSegment
-      ? _children[index].counterSegment.map { _ in () }
+      ? _children[index].counterSegment
       : nil
 
     _children[index].clearParent()
@@ -1029,7 +1022,10 @@ internal class ElementNode: Node {
         _contentDidChange(.newAdded(newSegment), node, index: index)
       case (.some, .none):
         _contentDidChange(.allRemoved, node, index: index)
-      case (.some, .some(let newSegment)):
+      case (.some(let oldSegment), .some(let newSegment)):
+        CounterSegment.insert(newSegment, after: oldSegment)
+        _ = CounterSegment.remove(oldSegment)
+        newSegment.begin.propagateDirty()
         _contentDidChange(.replaced(newSegment), node, index: index)
       }
     }
