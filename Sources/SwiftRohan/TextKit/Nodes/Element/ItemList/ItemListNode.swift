@@ -389,37 +389,11 @@ final class ItemListNode: ElementNode {
   }
 
   @inline(__always)
-  private final func _computeExtendedRecords() -> (
-    current: Array<ExtendedRecord>, original: Array<ExtendedRecord>
-  ) {
-    // ID's of current children
-    let currentIds = Set(_children.map(\.id))
-    // ID's of the dirty part of current children
-    let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
-    // ID's of original children
-    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
-
-    let current =
-      _children.indices.map { i in
-        let node = _children[i]
-        let insertNewline = _newlines[i]
-        let newlineBefore = _newlines.value(before: i)
-        let mark: LayoutMark =
-          !originalIds.contains(node.id)
-          ? .added
-          : (node.isDirty ? .dirty : .none)
-        return ExtendedRecord(mark, node, insertNewline, leadingNewline: newlineBefore)
-      }
-
-    let original =
-      _snapshotRecords!.map { record in
-        !currentIds.contains(record.nodeId)
-          ? ExtendedRecord(.deleted, record)
-          : dirtyIds.contains(record.nodeId)
-            ? ExtendedRecord(.dirty, record)
-            : ExtendedRecord(.none, record)
-      }
-    return (current, original)
+  private final func _computeExtendedRecords()
+    -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>)
+  {
+    precondition(_snapshotRecords != nil)
+    return ElementNodeImpl.computeExtendedRecords(_children, _newlines, _snapshotRecords!)
   }
 
   @inline(__always)
