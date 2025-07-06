@@ -167,8 +167,18 @@ internal class ElementNode: Node {
         _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
       ) -> Bool {
         var correctedFrame = segmentFrame.offsetBy(originCorrection)
-        // apply leading correction
+        // full match with layout range
         if let firstNode = firstNode,
+          let lastNode = lastNode,
+          range == layoutRange,
+          let trailingCursorPos = lastNode.trailingCursorPosition()
+        {
+          let cursorCorrection = firstNode.leadingCursorCorrection()
+          correctedFrame.origin.x += cursorCorrection
+          correctedFrame.size.width = trailingCursorPos - correctedFrame.origin.x
+        }
+        // match leading edge
+        else if let firstNode = firstNode,
           range?.lowerBound == layoutRange.lowerBound
         {
           let cursorCorrection = firstNode.leadingCursorCorrection()
@@ -177,8 +187,8 @@ internal class ElementNode: Node {
             correctedFrame.size.width -= cursorCorrection
           }
         }
-        // apply trailing correction
-        if let lastNode = lastNode,
+        // match trailing edge
+        else if let lastNode = lastNode,
           range?.upperBound == layoutRange.upperBound,
           let trailingCursorPos = lastNode.trailingCursorPosition()
         {
