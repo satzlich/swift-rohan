@@ -477,9 +477,9 @@ internal class ElementNode: Node {
   ) -> CounterChange {
     precondition(shouldSynthesiseCounterSegment)
 
-    let previous = _counterArray.trueIndex(before: range.lowerBound)
-    let next = _counterArray.trueIndex(after: range.upperBound - 1)
     _counterArray.removeSubrange(range)
+    let previous = _counterArray.trueIndex(before: range.lowerBound)
+    let next = _counterArray.trueLowerBound(for: range.lowerBound)
 
     guard let subrangeSegment = subrangeSegment else {
       // if no subrange segment, just return unchanged.

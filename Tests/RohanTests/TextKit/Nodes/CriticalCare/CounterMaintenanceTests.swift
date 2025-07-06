@@ -56,7 +56,7 @@ struct CounterMaintenanceTests {
     }
   }
 
-  private func _takeChildrenExample() -> (RootNode, ElementNode) {
+  private func _takeChildrenExample() -> (RootNode, TextStylesNode) {
     let emphasisNode = TextStylesNode(
       .emph,
       [
@@ -103,7 +103,7 @@ struct CounterMaintenanceTests {
     }
   }
 
-  private func _replaceChildExample() -> (RootNode, ElementNode) {
+  private func _replaceChildExample() -> (RootNode, ParagraphNode) {
     let paragraphNode = ParagraphNode([TextNode("Plaintext")])
     let rootNode = RootNode([
       paragraphNode,
@@ -136,13 +136,125 @@ struct CounterMaintenanceTests {
     #expect(paragraphNode.counterSegment?.holderCount() == nil)
   }
 
+  private func _insertChildrenExample() -> RootNode {
+    let rootNode = RootNode([
+      ParagraphNode([
+        TextNode("Plaintext")
+      ]),
+      ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ]),
+      ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("d=e+f")]),
+      ]),
+    ])
+    return rootNode
+  }
+
   @Test
   func insertChildren() {
 
+    func createChildren() -> Array<Node> {
+      [
+        EquationNode(.equation, [TextNode("x=y+z")]),
+        TextNode("More plaintext"),
+        EquationNode(.equation, [TextNode("p=q+r")]),
+      ]
+    }
+
+    // insert into empty
+    do {
+      let rootNode = _insertChildrenExample()
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      let paragraphNode = rootNode.getChild(0) as! ParagraphNode
+      paragraphNode.insertChildren(contentsOf: createChildren(), at: 0, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 5)
+    }
+
+    // insert to the left
+    do {
+      let rootNode = _insertChildrenExample()
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      let paragraphNode = rootNode.getChild(1) as! ParagraphNode
+      paragraphNode.insertChildren(contentsOf: createChildren(), at: 0, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 5)
+    }
+
+    // insert to the right
+    do {
+      let rootNode = _insertChildrenExample()
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      let paragraphNode = rootNode.getChild(1) as! ParagraphNode
+      paragraphNode.insertChildren(contentsOf: createChildren(), at: 2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 5)
+    }
+    
+    // insert to the interior
+    do {
+      let rootNode = _insertChildrenExample()
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      let paragraphNode = rootNode.getChild(2) as! ParagraphNode
+      paragraphNode.insertChildren(contentsOf: createChildren(), at: 2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 5)
+    }
+  }
+
+  private func _removeSubrangeExample() -> (RootNode, ParagraphNode) {
+    let paragraphNode = ParagraphNode([
+      TextNode("abc"),
+      EquationNode(.equation, [TextNode("a=b+c")]),
+      TextNode("def"),
+      EquationNode(.equation, [TextNode("d=e+f")]),
+      TextNode("ghi"),
+      EquationNode(.equation, [TextNode("g=h+i")]),
+      TextNode("jkl"),
+    ])
+    let rootNode = RootNode([
+      paragraphNode,
+      HeadingNode(.section, [TextNode("Heading")]),
+    ])
+    return (rootNode, paragraphNode)
   }
 
   @Test
   func removeSubrange() {
-
+    // remove all
+    do {
+      let (rootNode, paragraphNode) = _removeSubrangeExample()
+      #expect(rootNode.counterSegment?.holderCount() == 4)
+      paragraphNode.removeSubrange(1..<6, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+    // remove left
+    do {
+      let (rootNode, paragraphNode) = _removeSubrangeExample()
+      #expect(rootNode.counterSegment?.holderCount() == 4)
+      paragraphNode.removeSubrange(1..<4, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+    // remove right
+    do {
+      let (rootNode, paragraphNode) = _removeSubrangeExample()
+      #expect(rootNode.counterSegment?.holderCount() == 4)
+      paragraphNode.removeSubrange(3..<6, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+    // remove interior
+    do {
+      let (rootNode, paragraphNode) = _removeSubrangeExample()
+      #expect(rootNode.counterSegment?.holderCount() == 4)
+      paragraphNode.removeSubrange(3..<4, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+    }
+  }
+  
+  @Test
+  func contentDidChange() {
+    
   }
 }
