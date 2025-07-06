@@ -489,7 +489,7 @@ internal class ElementNode: Node {
     }
 
     // remove the segment from the linked list.
-    let isEmpty = CounterSegment.remove(subrangeSegment)
+    let isEmpty = CounterSegment.removeAndMark(subrangeSegment)
 
     // isEmpty => previous and next are both nil.
     assert(!isEmpty || (previous == nil && next == nil))
@@ -539,17 +539,17 @@ internal class ElementNode: Node {
       return .newAdded(concated)
 
     case (.none, .some(let next)):
-      CounterSegment.insert(concated, before: next)
+      CounterSegment.insertAndMark(concated, before: next)
       _counterSegment = CounterSegment(concated.begin, _counterSegment!.end)
       return .leftAdded(_counterSegment!)
 
     case (.some(let previous), .none):
-      CounterSegment.insert(concated, after: previous)
+      CounterSegment.insertAndMark(concated, after: previous)
       _counterSegment = CounterSegment(_counterSegment!.begin, concated.end)
       return .rightAdded(_counterSegment!)
 
     case (.some(let previous), .some):
-      CounterSegment.insert(concated, after: previous)
+      CounterSegment.insertAndMark(concated, after: previous)
       return .interiorModified
     }
   }
@@ -572,6 +572,7 @@ internal class ElementNode: Node {
         return index
       }
       // TODO: The search operation can be costly. Optimise it if needed.
+      // Timing: for n = 10000, it takes 1.7ms to finish.
       let index = _children.firstIndex(where: { $0 === child })
       return index!
     }
@@ -608,8 +609,8 @@ internal class ElementNode: Node {
         }
 
       case (.none, .some(let next)):
-        CounterSegment.insert(childSegment, before: _children[next].counterSegment!)
-        childSegment.begin.propagateDirty()
+        CounterSegment.insertAndMark(
+          childSegment, before: _children[next].counterSegment!)
 
         let old = _counterSegment!
         let newSegment = CounterSegment(childSegment.begin, old.end)
@@ -617,8 +618,8 @@ internal class ElementNode: Node {
         parent?.contentDidChange(.leftAdded(newSegment), self)
 
       case (.some(let previous), .none):
-        CounterSegment.insert(childSegment, after: _children[previous].counterSegment!)
-        childSegment.begin.propagateDirty()
+        CounterSegment.insertAndMark(
+          childSegment, after: _children[previous].counterSegment!)
 
         let old = _counterSegment!
         let newSegment = CounterSegment(old.begin, childSegment.end)
@@ -626,8 +627,8 @@ internal class ElementNode: Node {
         parent?.contentDidChange(.rightAdded(newSegment), self)
 
       case (.some(let previous), .some):
-        CounterSegment.insert(childSegment, after: _children[previous].counterSegment!)
-        childSegment.begin.propagateDirty()
+        CounterSegment.insertAndMark(
+          childSegment, after: _children[previous].counterSegment!)
 
         // both previous and next exist, just notify modified.
         parent?.contentDidChange(.interiorModified, self)
@@ -893,10 +894,18 @@ internal class ElementNode: Node {
     _counterArray.removeAll()
 
     if self.shouldSynthesiseCounterSegment {
-      let counterChange = _counterSegment != nil ? CounterChange.allRemoved : .unchanged
-      _counterSegment = nil
-      _counterArray.removeAll()
-      _contentDidChangeLocally(counterChange)
+      if let counterSegment = _counterSegment {
+        // remove the counter segment from the linked list.
+        _ = CounterSegment.removeAndMark(counterSegment)
+
+        _counterSegment = nil
+        _counterArray.removeAll()
+        _contentDidChangeLocally(.allRemoved)
+      }
+      else {
+        _counterArray.removeAll()
+        _contentDidChangeLocally(.unchanged)
+      }
     }
     else {
       self.contentDidChange()
@@ -1018,14 +1027,18 @@ internal class ElementNode: Node {
       switch (subrangeSegment, node.counterSegment) {
       case (.none, .none):
         _contentDidChange(.unchanged, node, index: index)
+
       case (.none, .some(let newSegment)):
         _contentDidChange(.newAdded(newSegment), node, index: index)
-      case (.some, .none):
+
+      case (.some(let oldSegment), .none):
+        _ = CounterSegment.removeAndMark(oldSegment)
         _contentDidChange(.allRemoved, node, index: index)
+
       case (.some(let oldSegment), .some(let newSegment)):
-        CounterSegment.insert(newSegment, after: oldSegment)
+        CounterSegment.insertAndMark(newSegment, after: oldSegment)
         _ = CounterSegment.remove(oldSegment)
-        newSegment.begin.propagateDirty()
+
         _contentDidChange(.replaced(newSegment), node, index: index)
       }
     }

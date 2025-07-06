@@ -144,6 +144,15 @@ struct CountHolderTests {
   }
 
   @Test
+  func insert() {
+    let (initial, final_) = initPair()
+
+    let section1 = CountHolder(.section)
+    let subsection1 = CountHolder(.subsection)
+    CountHolder.insert(contentsOf: [section1, subsection1], before: initial)
+  }
+
+  @Test
   func remove() {
     let (initial, final_) = initPair()
 

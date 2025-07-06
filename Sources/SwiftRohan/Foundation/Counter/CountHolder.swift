@@ -16,10 +16,54 @@ final class CountHolder: CountPublisher {
   /// - Postcondition: All count holders after this one for which "mark dirty"
   ///     action is applicable become dirty.
   final func propagateDirty() {
+    // stop early if this holder is already dirty.
     guard _isDirty == false else { return }
+
     _isDirty = true
     next?.propagateDirty()
     notifyObservers(markAsDirty: ())
+  }
+
+  // MARK: - Manipulation
+
+  @inlinable @inline(__always)
+  static func connect(_ first: CountHolder, _ second: CountHolder) {
+    first.next = second
+    second.previous = first
+  }
+
+  /// Insert a new holder before the next holder in the linked list.
+  static func insert(_ holder: CountHolder, before next: CountHolder) {
+    insert(contentsOf: CollectionOfOne(holder), before: next)
+  }
+
+  /// Insert the given count holders before the next holder in the linked list.
+  @inlinable
+  static func insert(
+    contentsOf holders: some BidirectionalCollection<CountHolder>,
+    before next: CountHolder
+  ) {
+    guard holders.isEmpty == false else { return }
+
+    if var p = next.previous {
+      for holder in holders {
+        holder.previous = p
+        p.next = holder
+        p = holder
+      }
+      next.previous = p
+      p.next = next
+    }
+    else {
+      // `next` is the first holder in the linked list.
+      for (p, q) in holders.adjacentPairs() {
+        p.next = q
+        q.previous = p
+      }
+      let last = holders.last!
+      last.next = next
+      next.previous = last
+    }
   }
 
   /// Remove the given count holder from the linked list.
@@ -85,84 +129,6 @@ final class CountHolder: CountPublisher {
     }
   }
 
-  // MARK: - Manipulation
-
-  @inlinable @inline(__always)
-  static func connect(_ first: CountHolder, _ second: CountHolder) {
-    first.next = second
-    second.previous = first
-  }
-
-  /// Insert a new holder before the next holder in the linked list.
-  static func insert(_ holder: CountHolder, before next: CountHolder) {
-    insert(contentsOf: CollectionOfOne(holder), before: next)
-  }
-
-  /// Insert a new holder after the previous holder in the linked list.
-  static func insert(_ holder: CountHolder, after previous: CountHolder) {
-    insert(contentsOf: CollectionOfOne(holder), after: previous)
-  }
-
-  /// Insert the given count holders before the next holder in the linked list.
-  @inlinable
-  static func insert(
-    contentsOf holders: some BidirectionalCollection<CountHolder>,
-    before next: CountHolder
-  ) {
-    guard holders.isEmpty == false else { return }
-
-    if var p = next.previous {
-      for holder in holders {
-        holder.previous = p
-        p.next = holder
-        p = holder
-      }
-      next.previous = p
-      p.next = next
-    }
-    else {
-      // `next` is the first holder in the linked list.
-      for (p, q) in holders.adjacentPairs() {
-        p.next = q
-        q.previous = p
-      }
-      let last = holders.last!
-      last.next = next
-      next.previous = last
-    }
-  }
-
-  /// Insert the given count holders after the previous holder in the linked list.
-  @inlinable
-  static func insert(
-    contentsOf holders: some BidirectionalCollection<CountHolder>,
-    after previous: CountHolder
-  ) {
-    guard holders.isEmpty == false else { return }
-
-    if var n = previous.next {
-
-      for holder in holders.reversed() {
-        holder.next = n
-        n.previous = holder
-        n = holder
-      }
-      previous.next = n
-      n.previous = previous
-    }
-    else {
-      // `previous` is the last holder in the linked list.
-
-      for (p, q) in holders.adjacentPairs() {
-        q.previous = p
-        p.next = q
-      }
-      let first = holders.first!
-      first.previous = previous
-      previous.next = first
-    }
-  }
-
   // MARK: - Query
 
   /// Count the number of count holders in the half-open range `[begin, end)`.
@@ -178,6 +144,7 @@ final class CountHolder: CountPublisher {
   }
 
   /// Count the number of count holders in the closed range `[begin, end]`.
+  @inlinable @inline(__always)
   static func countSubrange(_ begin: CountHolder, inclusive end: CountHolder) -> Int {
     countSubrange(begin, end) + 1
   }

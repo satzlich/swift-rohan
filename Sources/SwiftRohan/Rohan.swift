@@ -83,8 +83,8 @@ extension Rohan {
 }
 
 /// Returns the duplicates in the given sequence of strings.
-internal func findDuplicates<T: Hashable & Equatable, S: Sequence<T>>(
-  in sequences: S
+internal func findDuplicates<T: Hashable & Equatable>(
+  in sequences: some Sequence<T>
 ) -> Array<T> {
   var seen = Set<T>()
   var duplicates = Set<T>()
