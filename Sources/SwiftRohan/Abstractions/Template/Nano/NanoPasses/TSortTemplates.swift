@@ -23,15 +23,16 @@ extension Nano {
       _ templates: Array<AnnotatedTemplate<TemplateNames>>
     ) -> Array<AnnotatedTemplate<TemplateNames>> {
       // obtain sorted names
-      let sorted: Array<TemplateName>? = {
+      let sorted: Array<TemplateName>?
+      do {
         let vertices = Set(templates.map(\.name))
         let edges = templates.flatMap { template in
           template.annotation.map { callee in
             Arc(callee, template.name)
           }
         }
-        return Satz.tsort(vertices, edges)
-      }()
+        sorted = Satz.tsort(vertices, edges)
+      }
       guard let sorted else { return [] }
 
       // obtain sorted templates
