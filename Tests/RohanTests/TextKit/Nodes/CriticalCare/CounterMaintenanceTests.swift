@@ -193,7 +193,7 @@ struct CounterMaintenanceTests {
       paragraphNode.insertChildren(contentsOf: createChildren(), at: 2, inStorage: true)
       #expect(rootNode.counterSegment?.holderCount() == 5)
     }
-    
+
     // insert to the interior
     do {
       let rootNode = _insertChildrenExample()
@@ -252,9 +252,173 @@ struct CounterMaintenanceTests {
       #expect(rootNode.counterSegment?.holderCount() == 3)
     }
   }
+
+  @Test
+  func contentDidChange_newAdded() {
+    // add new to empty with propagation
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext")
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ])
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == nil)
+      paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+
+    // previous is empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext")
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.subsection, [TextNode("Subsection")]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // next is empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext")
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, [TextNode("section")]),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // previous, next are non-empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext")
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, [TextNode("section")]),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, [TextNode("section")]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+    }
+  }
+
+  @Test
+  func contentDidChange_leftAdded_rightAdded() {
+    func testingExample1() -> (RootNode, ParagraphNode) {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ])
+      ])
+      return (rootNode, paragraphNode)
+    }
+
+    // left added
+    do {
+      let (rootNode, paragraphNode) = testingExample1()
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // right added
+    do {
+      let (rootNode, paragraphNode) = testingExample1()
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      paragraphNode.insertChild(EquationNode(.equation), at: 2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // left added -> interior modified
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, [TextNode("section")]),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+    }
+
+    // right added -> interior modified
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, [TextNode("section")]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.insertChild(EquationNode(.equation), at: 2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+    }
+  }
   
   @Test
-  func contentDidChange() {
+  func contentDidChange_allRemoved() {
     
   }
 }
