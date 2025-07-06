@@ -108,7 +108,10 @@ final class HeadingNode: ElementNodeImpl {
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
   }
 
+  @inline(__always)
   private final func _setUp() {
+    // heading nodes do not synthesise counter segment from children, instead
+    // they produce their own counter segment.
     precondition(self.shouldSynthesiseCounterSegment == false)
 
     if let countHolder = subtype.createCountHolder() {
