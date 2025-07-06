@@ -4,12 +4,12 @@
 internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Positioning)
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  internal override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
   }
 
-  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+  internal override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0..._layoutLength ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
@@ -36,7 +36,7 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Node(Layout)
 
-  final override func performLayout(
+  internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     if fromScratch {
@@ -53,6 +53,23 @@ internal class ElementNodeImpl: ElementNode {
 
     _isDirty = false
     return _layoutLength
+  }
+
+  // MARK: - ElementNode
+
+  internal override func getLayoutOffset(_ index: Int) -> Int? {
+    guard index <= childCount else { return nil }
+    if _children.isEmpty {
+      // "0" whether placeholder is active or not.
+      return 0
+    }
+    else {
+      assert(isPlaceholderActive == false)
+      let range = 0..<index
+      let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
+      let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
+      return s1 + s2
+    }
   }
 
   // MARK: - Layout Impl.
@@ -414,22 +431,6 @@ internal class ElementNodeImpl: ElementNode {
   {
     precondition(_snapshotRecords != nil)
     return ElementNodeImpl.computeExtendedRecords(_children, _newlines, _snapshotRecords!)
-  }
-
-  final override func getLayoutOffset(_ index: Int) -> Int? {
-    guard index <= childCount else { return nil }
-    let range = 0..<index
-
-    if _children.isEmpty {
-      // "0" whether placeholder is active or not.
-      return 0
-    }
-    else {
-      assert(isPlaceholderActive == false)
-      let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
-      let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-      return s1 + s2
-    }
   }
 
   /// Compute the current and original records for layout.

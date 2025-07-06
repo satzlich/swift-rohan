@@ -62,7 +62,7 @@ internal class ElementNode: Node {
     parent?.contentDidChange(counterChange, self)
   }
 
-  final override func layoutLength() -> Int { _layoutLength }
+  internal override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
@@ -807,7 +807,8 @@ internal class ElementNode: Node {
 
   internal final var _children: ElementStore
 
-  /// layout length contributed by the node.
+  /// layout length contributed by the children, excluding potential
+  /// preamble/postamble provided by the node itself.
   internal final var _layoutLength: Int
 
   /// true if a newline should be added after i-th child.
