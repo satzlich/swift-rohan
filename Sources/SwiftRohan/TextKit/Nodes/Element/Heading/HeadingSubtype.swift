@@ -8,6 +8,7 @@ enum HeadingSubtype: String, Codable, CaseIterable {
   case subsection
   case subsubsection
 
+  @inlinable @inline(__always)
   var level: Int {
     switch self {
     case .sectionAst: return 1
@@ -19,6 +20,7 @@ enum HeadingSubtype: String, Codable, CaseIterable {
     }
   }
 
+  @inlinable @inline(__always)
   var command: String {
     switch self {
     case .sectionAst: return "section*"
@@ -30,6 +32,7 @@ enum HeadingSubtype: String, Codable, CaseIterable {
     }
   }
 
+  @inlinable @inline(__always)
   static func fromCommand(_ command: String) -> HeadingSubtype? {
     switch command {
     case "section*": return .sectionAst
@@ -43,6 +46,7 @@ enum HeadingSubtype: String, Codable, CaseIterable {
   }
 
   /// Returns a new instance of `CountHolder` for this heading subtype.
+  @inlinable @inline(__always)
   func createCountHolder() -> CountHolder? {
     switch self {
     case .sectionAst: return nil

@@ -89,6 +89,7 @@ final class HeadingNode: ElementNodeImpl {
 
   var level: Int { subtype.level }
   let subtype: HeadingSubtype
+  private var _preamble: String = ""  // default value
 
   init(_ subtype: HeadingSubtype, _ children: ElementStore) {
     self.subtype = subtype
@@ -115,6 +116,33 @@ final class HeadingNode: ElementNodeImpl {
     }
     else {
       _counterSegment = nil
+    }
+  }
+
+  /// Compute the preamble for the heading given the count holder.
+  private func _computePreamble(_ countHolder: CountHolder?) -> String {
+    switch subtype {
+    case .sectionAst: return ""
+    case .subsectionAst: return ""
+    case .subsubsectionAst: return ""
+
+    case .section:
+      guard let countHolder else { return "" }
+      let section = countHolder.value(forName: .section)
+      return "\(section) "
+
+    case .subsection:
+      guard let countHolder else { return "" }
+      let section = countHolder.value(forName: .section)
+      let subsection = countHolder.value(forName: .subsection)
+      return "\(section).\(subsection) "
+
+    case .subsubsection:
+      guard let countHolder else { return "" }
+      let section = countHolder.value(forName: .section)
+      let subsection = countHolder.value(forName: .subsection)
+      let subsubsection = countHolder.value(forName: .subsubsection)
+      return "\(section).\(subsection).\(subsubsection) "
     }
   }
 
