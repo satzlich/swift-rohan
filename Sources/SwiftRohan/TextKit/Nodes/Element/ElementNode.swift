@@ -522,7 +522,7 @@ internal class ElementNode: Node {
   ) -> CounterChange {
     precondition(shouldSynthesiseCounterSegment)
 
-    _counterArray.insert(contentsOf: segments, at: index)
+    _counterArray.insert(contentsOf: segments.lazy.map { $0 != nil }, at: index)
 
     guard let concated = CounterSegment.concate(contentsOf: segments.compacted())
     else { return .unchanged }
@@ -807,7 +807,7 @@ internal class ElementNode: Node {
   internal final var _counterSegment: CounterSegment?
   final override var counterSegment: CounterSegment? { _counterSegment }
 
-  internal final var _counterArray: CounterArray = CounterArray()
+  internal final var _counterArray: BoolArray = BoolArray()
 
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
@@ -848,7 +848,8 @@ internal class ElementNode: Node {
     }
 
     if self.shouldSynthesiseCounterSegment {
-      _counterArray.insert(contentsOf: _children.lazy.map(\.counterSegment), at: 0)
+      _counterArray.insert(
+        contentsOf: _children.lazy.map { $0.counterSegment != nil }, at: 0)
       _counterSegment =
         CounterSegment.concate(contentsOf: _children.lazy.compactMap(\.counterSegment))
     }
