@@ -338,7 +338,7 @@ struct CounterMaintenanceTests {
 
   @Test
   func contentDidChange_leftAdded_rightAdded() {
-    func testingExample1() -> (RootNode, ParagraphNode) {
+    func sharedExample() -> (RootNode, ParagraphNode) {
       let paragraphNode = ParagraphNode([
         TextNode("Plaintext"),
         EquationNode(.equation, [TextNode("a=b+c")]),
@@ -358,7 +358,7 @@ struct CounterMaintenanceTests {
 
     // left added
     do {
-      let (rootNode, paragraphNode) = testingExample1()
+      let (rootNode, paragraphNode) = sharedExample()
       #expect(rootNode.counterSegment?.holderCount() == 1)
       paragraphNode.insertChild(EquationNode(.equation), at: 1, inStorage: true)
       #expect(rootNode.counterSegment?.holderCount() == 2)
@@ -366,7 +366,7 @@ struct CounterMaintenanceTests {
 
     // right added
     do {
-      let (rootNode, paragraphNode) = testingExample1()
+      let (rootNode, paragraphNode) = sharedExample()
       #expect(rootNode.counterSegment?.holderCount() == 1)
       paragraphNode.insertChild(EquationNode(.equation), at: 2, inStorage: true)
       #expect(rootNode.counterSegment?.holderCount() == 2)
@@ -416,9 +416,265 @@ struct CounterMaintenanceTests {
       #expect(rootNode.counterSegment?.holderCount() == 3)
     }
   }
-  
+
   @Test
   func contentDidChange_allRemoved() {
-    
+    // remove the only one.
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ])
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      paragraphNode.removeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == nil)
+    }
+
+    // one remaining to the right.
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, [TextNode("section")]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.removeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+
+    // one remaining to the left.
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, [TextNode("section")]),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.removeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+
+    // one remaining to each side.
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, [TextNode("section")]),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, [TextNode("section")]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      paragraphNode.removeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+  }
+
+  @Test
+  func contentDidChange_leftRemoved_rightRemoved() {
+    func sharedExample() -> (RootNode, ParagraphNode) {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ])
+      ])
+      return (rootNode, paragraphNode)
+    }
+
+    // left removed
+    do {
+      let (rootNode, paragraphNode) = sharedExample()
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.removeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+    // right removed
+    do {
+      let (rootNode, paragraphNode) = sharedExample()
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.removeSubrange(3..<4, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+
+    // left removed -> interior modified
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, [TextNode("section")]),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      paragraphNode.removeSubrange(1..<2, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // right removed -> interior modified
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, [TextNode("section")]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      paragraphNode.removeSubrange(3..<4, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+  }
+
+  @Test
+  func contentDidChange_replaced() {
+    // replaced with left/right empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ])
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+      paragraphNode.replaceChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 1)
+    }
+
+    // replaced with left empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, []),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.replaceChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // replaced with right empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, []),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+      paragraphNode.replaceChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 2)
+    }
+
+    // replaced with left/right non-empty
+    do {
+      let paragraphNode = ParagraphNode([
+        TextNode("Plaintext"),
+        EquationNode(.equation, [TextNode("a=b+c")]),
+      ])
+      let rootNode = RootNode([
+        HeadingNode(.section, []),
+        ParagraphNode([
+          ItemListNode(
+            .itemize,
+            [
+              paragraphNode
+            ])
+        ]),
+        HeadingNode(.section, []),
+      ])
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+      paragraphNode.replaceChild(EquationNode(.equation), at: 1, inStorage: true)
+      #expect(rootNode.counterSegment?.holderCount() == 3)
+    }
   }
 }
