@@ -17,8 +17,8 @@ enum StringUtils {
   /// let result = StringUtils.splice(source, 7, placement)
   /// print(result) // "Hello, beautiful world!"
   /// ```
-  static func splice<S: Collection<Character>>(
-    _ source: BigString, _ offset: Int, _ placement: S
+  static func splice(
+    _ source: BigString, _ offset: Int, _ placement: some Collection<Character>
   ) -> BigString {
     precondition(0...source.utf16.count ~= offset)
     guard !placement.isEmpty else { return source }
