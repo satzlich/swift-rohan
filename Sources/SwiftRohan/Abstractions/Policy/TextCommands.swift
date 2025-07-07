@@ -10,7 +10,8 @@ enum TextCommands {
     var result: Array<CommandRecord> = []
 
     result.append(CommandRecord("wordjoiner", Snippets.wordJoiner))
-    result.append(CommandRecord("equation*", Snippets.equation))
+    result.append(CommandRecord("equation*", Snippets.equationAst))
+    result.append(CommandRecord("equation", Snippets.equation))
     result.append(contentsOf: HeadingNode.commandRecords)
     result.append(contentsOf: ItemListNode.commandRecords)
     result.append(contentsOf: TextStylesNode.commandRecords)

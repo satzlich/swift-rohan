@@ -30,6 +30,15 @@ extension DocumentManager: NSTextLayoutManagerDelegate {
           itemMarker: itemMarker, indent: indent)
         return fragment
       }
+      else if let equationNumber =
+        attribute(forKey: .rhEquationNumber) as? NSAttributedString,
+        let horizontalBounds = attribute(forKey: .rhHorizontalBounds) as? HorizontalBounds
+      {
+        let fragment = EquationTextLayoutFragment(
+          textElement: textElement, range: textElement.elementRange,
+          equationNumber: equationNumber, horizontalBounds: horizontalBounds)
+        return fragment
+      }
     }
 
     return NSTextLayoutFragment(textElement: textElement, range: textElement.elementRange)

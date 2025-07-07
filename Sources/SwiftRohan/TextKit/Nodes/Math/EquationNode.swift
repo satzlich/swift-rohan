@@ -46,19 +46,58 @@ final class EquationNode: MathNode {
   ) -> Int {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
+    return !isReflowActive
+      ? _performLayout(context, fromScratch: fromScratch)
+      : _performLayoutReflow(context, fromScratch: fromScratch)
+  }
+
+  private final func _performLayout(
+    _ context: TextLayoutContext, fromScratch: Bool
+  ) -> Int {
+    // Invariant Maintenance: (a) layout length; (b) _isCounterDirty.
 
     if fromScratch {
+      // set up properties before layout.
+      _setupNodeProperties(context)
+      // block => fixed attributes is not nil
+      assert(subtype == .inline || _cachedAttributes != nil)
       let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       _nodeFragment = nodeFragment
+      // insert the node fragment into the context
+      context.insertFragment(nodeFragment, self)
+      if self.isBlock {
+        _addAttributesBackwards(1, context)
+        _isCounterDirty = false
+      }
+      _layoutLength = 1
+    }
+    else {
+      guard let nodeFragment = _nodeFragment else {
+        assertionFailure("expected _nodeFragment to be non-nil")
+        return _layoutLength
+      }
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
+      context.invalidateForward(1)
+      if subtype == .equation && _isCounterDirty {
+        _addAttributesBackwards(1, context)
+        _isCounterDirty = false
+      }
+      _layoutLength = 1
+    }
+    return _layoutLength
+  }
 
-      if !isReflowActive {
-        context.insertFragment(nodeFragment, self)
-        if self.isBlock { context.addParagraphStyleBackward(forSegment: 1, self) }
-        _layoutLength = 1
-      }
-      else {
-        _layoutLength = emitReflowSegments(nodeFragment)
-      }
+  private final func _performLayoutReflow(
+    _ context: TextLayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      // set up properties before layout.
+      _setupNodeProperties(context)
+      // block => fixed attributes is not nil
+      assert(subtype == .inline || _cachedAttributes != nil)
+      let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      _nodeFragment = nodeFragment
+      _layoutLength = emitReflowSegments(nodeFragment)
     }
     else {
       guard let nodeFragment = _nodeFragment else {
@@ -68,15 +107,9 @@ final class EquationNode: MathNode {
 
       LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
 
-      if !isReflowActive {
-        context.invalidateForward(1)
-        _layoutLength = 1
-      }
-      else {
-        // delete segments emitted in previous layout, and emit new segments
-        context.deleteForward(_layoutLength)
-        _layoutLength = emitReflowSegments(nodeFragment)
-      }
+      // delete segments emitted in previous layout, and emit new segments
+      context.deleteForward(_layoutLength)
+      _layoutLength = emitReflowSegments(nodeFragment)
     }
 
     return _layoutLength
@@ -88,6 +121,82 @@ final class EquationNode: MathNode {
       nodeFragment.performReflow()
       context.insertFragments(contentsOf: nodeFragment.reflowSegments, self)
       return nodeFragment.reflowSegments.count
+    }
+  }
+
+  /// Add paragraph attributes backwards for the equation node.
+  private final func _addAttributesBackwards(
+    _ segment: Int, _ context: some LayoutContext
+  ) {
+    switch subtype {
+    case .inline:
+      break
+
+    case .display:
+      guard let fixedAttributes = _cachedAttributes else {
+        assertionFailure("expected _fixedAttributes to be non-nil")
+        return
+      }
+      let begin = context.layoutCursor - segment
+      let end = context.layoutCursor
+      context.addAttributes(fixedAttributes, begin..<end)
+
+    case .equation:
+      guard _cachedAttributes != nil else {
+        assertionFailure("expected _fixedAttributes to be non-nil")
+        return
+      }
+      if let countHolder = countHolder {
+        let equationNumber = countHolder.value(forName: .equation)
+        _cachedAttributes![.rhEquationNumber] =
+          NSAttributedString(
+            string: "(\(equationNumber))", attributes: _cachedAttributes!)
+      }
+
+      let begin = context.layoutCursor - segment
+      let end = context.layoutCursor
+      context.addAttributes(_cachedAttributes!, begin..<end)
+    }
+  }
+
+  private final func _setupNodeProperties(_ context: some LayoutContext) {
+    switch subtype {
+    case .inline:
+      break
+
+    case .display:
+      let styleSheet = context.styleSheet
+      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+      _cachedAttributes = paragraphProperty.getAttributes()
+
+    case .equation:
+      let styleSheet = context.styleSheet
+      let properties = self.getProperties(styleSheet)
+
+      @inline(__always)
+      func resolveValue(_ key: PropertyKey) -> PropertyValue {
+        key.resolveValue(properties, styleSheet)
+      }
+
+      let containerWidth = PageProperty.resolveContentContainerWidth(styleSheet).ptValue
+
+      // set _fixedAttributes
+      do {
+        // paragraph
+        let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+        var attributes = paragraphProperty.getAttributes()
+        // horizontal bounds
+        do {
+          let x: CGFloat = paragraphProperty.headIndent
+          let width: CGFloat = containerWidth - x - 5
+          attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
+        }
+        // text property
+        let textProperty: TextProperty = resolveAggregate(styleSheet)
+        attributes.merge(textProperty.getAttributes(), uniquingKeysWith: { $1 })
+
+        _cachedAttributes = attributes
+      }
     }
   }
 
@@ -114,6 +223,14 @@ final class EquationNode: MathNode {
 
   private enum Tag: String, Codable, CaseIterable {
     case displaymath, inlinemath, equation
+
+    var subtype: EquationSubtype {
+      switch self {
+      case .displaymath: return .display
+      case .inlinemath: return .inline
+      case .equation: return .equation
+      }
+    }
   }
 
   final override class var storageTags: Array<String> { Tag.allCases.map(\.rawValue) }
@@ -289,7 +406,7 @@ final class EquationNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let subtype = (tag == .displaymath) ? EquationSubtype.display : EquationSubtype.inline
+    let subtype = tag.subtype
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as NodeLoaded<ContentNode>
 
     switch nucleus {
@@ -308,15 +425,19 @@ final class EquationNode: MathNode {
 
   internal let subtype: EquationSubtype
   internal let nucleus: ContentNode
-
-  private var _counterSegment: CounterSegment?
-  final override var counterSegment: CounterSegment? { _counterSegment }
-
   private var _layoutLength: Int = 1
   private var _nodeFragment: MathListLayoutFragment? = nil
 
   private var _isCounterDirty: Bool = false
-  private var _equationNumber: Int = 0
+
+  private var _counterSegment: CounterSegment?
+  final override var counterSegment: CounterSegment? { _counterSegment }
+  /// Count holder provided by the heading node.
+  @inline(__always)
+  private final var countHolder: CountHolder? { _counterSegment?.begin }
+
+  /// attributes that can be cached.
+  private var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
 
   /// True if the layout of the equation should be reflowed.
   final var isReflowActive: Bool {

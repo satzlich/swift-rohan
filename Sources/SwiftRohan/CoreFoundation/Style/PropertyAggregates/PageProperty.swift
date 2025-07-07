@@ -31,6 +31,18 @@ internal struct PageProperty: PropertyAggregate {
     rightMargin,
   ]
 
+  /// Resolve the content container width of the page.
+  static func resolveContentContainerWidth(_ styleSheet: StyleSheet) -> AbsLength {
+    @inline(__always)
+    func resolveValue(_ key: PropertyKey) -> PropertyValue {
+      styleSheet.resolveDefault(key)
+    }
+    let pageWidth = resolveValue(PageProperty.width).absLength()!
+    let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!
+    let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!
+    return pageWidth - leftMargin - rightMargin
+  }
+
   // MARK: - Implementation
 
   public let width: AbsLength

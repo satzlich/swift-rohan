@@ -32,7 +32,7 @@ struct CommandPolicyTests {
 
     #expect(sum == 603)  // + 2 ("\sqrt", "\text").
     #expect(CommandDeclaration.allCommands.count == sum)
-    #expect(CommandRecords.allCases.count == 624)
+    #expect(CommandRecords.allCases.count == 625)
   }
 
   @Test

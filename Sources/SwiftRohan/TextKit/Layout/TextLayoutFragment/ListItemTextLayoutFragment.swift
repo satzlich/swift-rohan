@@ -4,8 +4,9 @@ import AppKit
 
 final class ListItemTextLayoutFragment: NSTextLayoutFragment {
 
-  let itemMarker: NSAttributedString
-  let indent: CGFloat
+  private let itemMarker: NSAttributedString
+  private let _precomputedPosition: CGPoint
+  private let indent: CGFloat
 
   final override var renderingSurfaceBounds: CGRect {
     var bounds = super.renderingSurfaceBounds
@@ -15,12 +16,14 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
   }
 
   final override func draw(at point: CGPoint, in context: CGContext) {
-    // draw the item marker
-    context.saveGState()
-    itemMarker.draw(at: point.with(xDelta: -itemMarker.size().width))
-    context.restoreGState()
-
     super.draw(at: point, in: context)
+
+    context.saveGState()
+    var position = _precomputedPosition
+    position.x += point.x
+    position.y += point.y
+    itemMarker.draw(at: position)
+    context.restoreGState()
   }
 
   init(
@@ -29,6 +32,7 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
   ) {
     self.itemMarker = itemMarker
     self.indent = indent
+    _precomputedPosition = CGPoint(x: -itemMarker.size().width, y: 0)
     super.init(textElement: textElement, range: range)
   }
 
