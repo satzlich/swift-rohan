@@ -60,7 +60,7 @@ final class EquationNode: MathNode {
       // set up properties before layout.
       _setupNodeProperties(context)
       // block => fixed attributes is not nil
-      assert(subtype == .inline || _fixedAttributes != nil)
+      assert(subtype == .inline || _cachedAttributes != nil)
       let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       _nodeFragment = nodeFragment
       // insert the node fragment into the context
@@ -94,7 +94,7 @@ final class EquationNode: MathNode {
       // set up properties before layout.
       _setupNodeProperties(context)
       // block => fixed attributes is not nil
-      assert(subtype == .inline || _fixedAttributes != nil)
+      assert(subtype == .inline || _cachedAttributes != nil)
       let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       _nodeFragment = nodeFragment
       _layoutLength = emitReflowSegments(nodeFragment)
@@ -133,7 +133,7 @@ final class EquationNode: MathNode {
       break
 
     case .display:
-      guard let fixedAttributes = _fixedAttributes else {
+      guard let fixedAttributes = _cachedAttributes else {
         assertionFailure("expected _fixedAttributes to be non-nil")
         return
       }
@@ -142,19 +142,20 @@ final class EquationNode: MathNode {
       context.addAttributes(fixedAttributes, begin..<end)
 
     case .equation:
-      guard _fixedAttributes != nil else {
+      guard _cachedAttributes != nil else {
         assertionFailure("expected _fixedAttributes to be non-nil")
         return
       }
       if let countHolder = countHolder {
         let equationNumber = countHolder.value(forName: .equation)
-        _fixedAttributes![.rhEquationNumber] =
-          NSAttributedString(string: "(\(equationNumber))", attributes: _fixedAttributes!)
+        _cachedAttributes![.rhEquationNumber] =
+          NSAttributedString(
+            string: "(\(equationNumber))", attributes: _cachedAttributes!)
       }
 
       let begin = context.layoutCursor - segment
       let end = context.layoutCursor
-      context.addAttributes(_fixedAttributes!, begin..<end)
+      context.addAttributes(_cachedAttributes!, begin..<end)
     }
   }
 
@@ -166,7 +167,7 @@ final class EquationNode: MathNode {
     case .display:
       let styleSheet = context.styleSheet
       let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
-      _fixedAttributes = paragraphProperty.getAttributes()
+      _cachedAttributes = paragraphProperty.getAttributes()
 
     case .equation:
       let styleSheet = context.styleSheet
@@ -177,21 +178,25 @@ final class EquationNode: MathNode {
         key.resolveValue(properties, styleSheet)
       }
 
-      // paragraph
-      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
-      var attributes = paragraphProperty.getAttributes()
+      let containerWidth = PageProperty.resolveContentContainerWidth(styleSheet).ptValue
 
-      // horizontal bounds
-      let x: CGFloat = paragraphProperty.headIndent
-      let width: CGFloat =
-        PageProperty.resolveContentContainerWidth(context.styleSheet).ptValue - x - 5
-      attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
+      // set _fixedAttributes
+      do {
+        // paragraph
+        let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+        var attributes = paragraphProperty.getAttributes()
+        // horizontal bounds
+        do {
+          let x: CGFloat = paragraphProperty.headIndent
+          let width: CGFloat = containerWidth - x - 5
+          attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
+        }
+        // text property
+        let textProperty: TextProperty = resolveAggregate(styleSheet)
+        attributes.merge(textProperty.getAttributes(), uniquingKeysWith: { $1 })
 
-      // text property
-      let textProperty: TextProperty = resolveAggregate(styleSheet)
-      attributes.merge(textProperty.getAttributes(), uniquingKeysWith: { _, new in new })
-
-      _fixedAttributes = attributes
+        _cachedAttributes = attributes
+      }
     }
   }
 
@@ -352,14 +357,6 @@ final class EquationNode: MathNode {
       layoutOffset: 0)
   }
 
-  final override var needsTrailingCursorCorrection: Bool {
-    switch subtype {
-    case .inline: return false
-    case .display: return false
-    case .equation: return true
-    }
-  }
-
   // MARK: - MathNode(Component)
 
   final override func enumerateComponents() -> Array<MathNode.Component> {
@@ -438,11 +435,9 @@ final class EquationNode: MathNode {
   /// Count holder provided by the heading node.
   @inline(__always)
   private final var countHolder: CountHolder? { _counterSegment?.begin }
-  /// Cached equation number.
-  private var _equationNumber: Int = -1
 
-  /// fixed paragraph attributes that can be cached.
-  private var _fixedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
+  /// attributes that can be cached.
+  private var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
 
   /// True if the layout of the equation should be reflowed.
   final var isReflowActive: Bool {
