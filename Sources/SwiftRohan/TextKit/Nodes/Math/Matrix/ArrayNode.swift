@@ -252,7 +252,7 @@ class ArrayNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation(
+  internal override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {

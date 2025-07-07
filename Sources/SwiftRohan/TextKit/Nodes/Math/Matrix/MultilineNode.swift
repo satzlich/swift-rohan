@@ -99,6 +99,30 @@ final class MultilineNode: ArrayNode {
   final override var needsTrailingCursorCorrection: Bool { subtype.shouldProvideCounter }
   final override func trailingCursorPosition() -> Double? { _trailingCursorPosition }
 
+  final override func resolveTextLocation(
+    with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
+    trace: inout Trace, affinity: inout SelectionAffinity
+  ) -> Bool {
+    if subtype.shouldProvideCounter {
+      if let trailingCursorPosition = _trailingCursorPosition,
+        point.x >= trailingCursorPosition - 0.5  // allow small tolerance
+      {
+        // cursor position is after the equation, no need to resolve.
+        return false
+      }
+      else {
+        return super.resolveTextLocation(
+          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+          affinity: &affinity)
+      }
+    }
+    else {
+      return super.resolveTextLocation(
+        with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+        affinity: &affinity)
+    }
+  }
+
   // MARK: - Node(Counter)
 
   final override var counterSegment: CounterSegment? { _counterSegment }
@@ -189,8 +213,9 @@ final class MultilineNode: ArrayNode {
   }
 
   final override func contentDidChange(nonCell: Void) {
-    _isCounterDirty = true
     super.contentDidChange(nonCell: ())
+    // due to early stop mechanism, we have to mark dirty after propagation.
+    _isCounterDirty = true
   }
 
   /// Get the width of the content container for this array node.

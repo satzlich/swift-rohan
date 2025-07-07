@@ -343,14 +343,7 @@ final class EquationNode: MathNode {
       layoutOffset: 0)
   }
 
-  final override var needsTrailingCursorCorrection: Bool {
-    switch subtype {
-    case .inline: return false
-    case .display: return false
-    case .equation: return true
-    }
-  }
-
+  final override var needsTrailingCursorCorrection: Bool { subtype.shouldProvideCounter }
   final override func trailingCursorPosition() -> Double? { _trailingCursorPosition }
 
   // MARK: - MathNode(Component)
