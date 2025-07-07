@@ -12,14 +12,14 @@ final class EquationTextLayoutFragment: NSTextLayoutFragment {
   final override func draw(at point: CGPoint, in context: CGContext) {
     super.draw(at: point, in: context)
 
+    let glyphOrigin = self.textLineFragments.first?.glyphOrigin ?? .zero
     let fragment = layoutFragmentFrame
-    let number = _equationNumber.size()
+    let number = _equationNumber.boundingRect(with: .zero, options: [], context: nil)
 
-    Rohan.logger.debug("equation fragment: \(fragment.height) \(number.height)")
     let x =
       point.x - fragment.origin.x + _horizontalBounds.x + _horizontalBounds.width
       - number.width
-    let y = point.y + fragment.height / 2 - number.height / 2
+    let y = point.y + glyphOrigin.y - number.origin.y - number.height
     _equationNumber.draw(at: CGPoint(x: x, y: y))
   }
 

@@ -158,7 +158,7 @@ final class EquationNode: MathNode {
         let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
         let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
         let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
-        width = pageWidth - leftMargin - rightMargin - x
+        width = pageWidth - leftMargin - rightMargin - x - 5 // 5pt for padding
       }
       attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
 
