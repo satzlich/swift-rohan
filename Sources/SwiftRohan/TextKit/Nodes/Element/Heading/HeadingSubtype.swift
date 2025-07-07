@@ -57,4 +57,32 @@ enum HeadingSubtype: String, Codable, CaseIterable {
     case .subsubsection: return CountHolder(.subsubsection)
     }
   }
+
+  func computePreamble(_ countHolder: CountHolder?) -> String {
+    let defaultPreamble = "\u{200B}"  // Zero-width space
+
+    switch self {
+    case .sectionAst: return defaultPreamble
+    case .subsectionAst: return defaultPreamble
+    case .subsubsectionAst: return defaultPreamble
+
+    case .section:
+      guard let countHolder = countHolder else { return defaultPreamble }
+      let section = countHolder.value(forName: .section)
+      return "\(section) "
+
+    case .subsection:
+      guard let countHolder = countHolder else { return defaultPreamble }
+      let section = countHolder.value(forName: .section)
+      let subsection = countHolder.value(forName: .subsection)
+      return "\(section).\(subsection) "
+
+    case .subsubsection:
+      guard let countHolder = countHolder else { return defaultPreamble }
+      let section = countHolder.value(forName: .section)
+      let subsection = countHolder.value(forName: .subsection)
+      let subsubsection = countHolder.value(forName: .subsubsection)
+      return "\(section).\(subsection).\(subsubsection) "
+    }
+  }
 }

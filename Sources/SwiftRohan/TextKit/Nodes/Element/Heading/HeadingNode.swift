@@ -28,7 +28,7 @@ final class HeadingNode: ElementNodeImpl {
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     if layoutOffset < _preamble.length {
-      return .null  // position before the preamble
+      return .terminal(value: .index(0), target: _preamble.length)
     }
     else {
       let result = super.getPosition(layoutOffset - _preamble.length)
@@ -46,6 +46,26 @@ final class HeadingNode: ElementNodeImpl {
   // MARK: - Node(Layout)
 
   final override func layoutLength() -> Int { _preamble.length + _layoutLength }
+
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      _preamble = subtype.computePreamble(countHolder)
+      let n = StringReconciler.insertForward(new: _preamble, context: context, self)
+      // layout the children after the preamble
+      let m = super.performLayout(context, fromScratch: true)
+      return n + m
+    }
+    else {
+      let preamble = subtype.computePreamble(countHolder)
+      defer { _preamble = preamble }
+      let n = StringReconciler.reconcileForward(
+        dirty: (_preamble, preamble), context: context, self)
+      let m = super.performLayout(context, fromScratch: false)
+      return n + m
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -137,6 +157,10 @@ final class HeadingNode: ElementNodeImpl {
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
   }
 
+  /// Count holder provided by the heading node.
+  @inline(__always)
+  private final var countHolder: CountHolder? { _counterSegment?.begin }
+
   @inline(__always)
   private final func _setUp() {
     // heading nodes do not synthesise counter segment from children, instead
@@ -150,33 +174,6 @@ final class HeadingNode: ElementNodeImpl {
     }
     else {
       _counterSegment = nil
-    }
-  }
-
-  /// Compute the preamble for the heading given the count holder.
-  private func _computePreamble(_ countHolder: CountHolder?) -> String {
-    switch subtype {
-    case .sectionAst: return ""
-    case .subsectionAst: return ""
-    case .subsubsectionAst: return ""
-
-    case .section:
-      guard let countHolder else { return "" }
-      let section = countHolder.value(forName: .section)
-      return "\(section) "
-
-    case .subsection:
-      guard let countHolder else { return "" }
-      let section = countHolder.value(forName: .section)
-      let subsection = countHolder.value(forName: .subsection)
-      return "\(section).\(subsection) "
-
-    case .subsubsection:
-      guard let countHolder else { return "" }
-      let section = countHolder.value(forName: .section)
-      let subsection = countHolder.value(forName: .subsection)
-      let subsubsection = countHolder.value(forName: .subsubsection)
-      return "\(section).\(subsection).\(subsubsection) "
     }
   }
 
