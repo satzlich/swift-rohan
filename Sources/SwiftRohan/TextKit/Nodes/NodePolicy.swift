@@ -69,7 +69,7 @@ enum NodePolicy {
     // must be element node
     [
       NodeType.content,
-//      .heading,
+      .heading,
       .paragraph,
       .textStyles,
       .variable,

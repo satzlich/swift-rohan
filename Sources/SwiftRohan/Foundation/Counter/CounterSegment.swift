@@ -81,9 +81,8 @@ extension CounterSegment {
 
   /// Remove the counter segment from the count holder list and mark its successor dirty.
   static func removeAndMark(_ segment: CounterSegment) -> Bool {
-    let isEmpty = remove(segment)
     segment.end.next?.propagateDirty()
-    return isEmpty
+    return remove(segment)
   }
 
   /// Returns the number of `CountHolder`s in the segment.

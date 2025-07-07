@@ -140,7 +140,8 @@ internal class ElementNode: Node {
     if self.isPlaceholderActive {
       assert(path.count == 1 && endPath.count == 1)
       assert(index == endIndex && index == 0)
-      let layoutRange = layoutOffset..<layoutOffset + 1
+      let offset = layoutOffset + (self.getLayoutOffset(0) ?? 0)
+      let layoutRange = offset..<offset + 1
 
       func placeholderBlock(
         _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
@@ -429,7 +430,6 @@ internal class ElementNode: Node {
 
       // apply horizontal shift for placeholder.
       if isPlaceholderActive {
-        assert(localOffset == 0)
         if let segmentFrame = context.getSegmentFrame(layoutOffset + 1, .upstream) {
           result.position.x = (result.position.x + segmentFrame.frame.origin.x) / 2
         }
