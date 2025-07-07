@@ -19,7 +19,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   private var _columns: Array<Array<MathListLayoutFragment>>
   private var _composition: MathComposition
   /// The width of the content container.
-  private let _containerWidth: Double
+  private var _containerWidth: Double
 
   /// y-coordinates of the (top) row edges from 0 to rowCount
   private var _rowEdges: Array<Double>
@@ -60,6 +60,11 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     self.glyphOrigin = .zero
     self._rowEdges = []
     self._columnEdges = []
+  }
+
+  internal func setContainerWidth(_ width: Double) {
+    precondition(subtype.isMultline)
+    self._containerWidth = width
   }
 
   // MARK: - Frame
