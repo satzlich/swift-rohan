@@ -322,7 +322,11 @@ final class EquationNode: MathNode {
         if !modified { trace.emplaceBack(component, .index(0)) }
         return true
       }
-      break
+      else {
+        return super.resolveTextLocation(
+          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+          affinity: &affinity)
+      }
 
     case .equation:
       if let trailingCursorPosition = _trailingCursorPosition,
@@ -331,15 +335,17 @@ final class EquationNode: MathNode {
         // cursor position is after the equation, no need to resolve.
         return false
       }
-      break
+      else {
+        return super.resolveTextLocation(
+          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+          affinity: &affinity)
+      }
 
     case .display:
-      break
+      return super.resolveTextLocation(
+        with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+        affinity: &affinity)
     }
-
-    return super.resolveTextLocation(
-      with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
-      affinity: &affinity)
   }
 
   final override func rayshoot(
