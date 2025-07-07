@@ -330,7 +330,7 @@ final class EquationNode: MathNode {
 
     case .equation:
       if let trailingCursorPosition = _trailingCursorPosition,
-        point.x >= trailingCursorPosition
+        point.x >= trailingCursorPosition - 0.5  // allow small tolerance
       {
         // cursor position is after the equation, no need to resolve.
         return false
