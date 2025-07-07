@@ -17,6 +17,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case gather
     case gathered
     case matrix(DelimiterPair)
+    case multline
     case multlineAst
     case substack
 
@@ -26,8 +27,11 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     }
 
     var isMultline: Bool {
-      if case .multlineAst = self { return true }
-      return false
+      switch self {
+      case .multline: true
+      case .multlineAst: true
+      case _: false
+      }
     }
 
     var isMultiColumnEnabled: Bool {
@@ -36,7 +40,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
       case .cases: true
       case .gather, .gathered: false
       case .matrix: true
-      case .multlineAst: false
+      case .multline, .multlineAst: false
       case .substack: false
       }
     }
@@ -49,6 +53,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
       case .gather: true
       case .gathered: false
       case .matrix: false
+      case .multline: true
       case .multlineAst: false
       case .substack: false
       }
@@ -71,7 +76,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return DelimiterPair.LBRACE
     case .gather, .gathered: return DelimiterPair.NONE
     case .matrix(let delimiters): return delimiters
-    case .multlineAst: return DelimiterPair.NONE
+    case .multline, .multlineAst: return DelimiterPair.NONE
     case .substack: return DelimiterPair.NONE
     }
   }
@@ -87,7 +92,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return MATRIX_ROW_GAP
     case .gather, .gathered: return ALIGN_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
-    case .multlineAst: return ALIGN_ROW_GAP
+    case .multline, .multlineAst: return ALIGN_ROW_GAP
     case .substack: return SUBSTACK_ROW_GAP
     }
   }
@@ -98,7 +103,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return FixedCellAlignmentProvider(.start)
     case .gather, .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
-    case .multlineAst: return MultlineCellAlignmentProvider(rowCount)
+    case .multline, .multlineAst: return MultlineCellAlignmentProvider(rowCount)
     case .substack: return FixedCellAlignmentProvider(.center)
     }
   }
@@ -113,7 +118,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .cases: return MatrixColumnGapProvider()
     case .gather, .gathered: return PlaceholderColumnGapProvider()  // unused
     case .matrix: return MatrixColumnGapProvider()
-    case .multlineAst: return PlaceholderColumnGapProvider()  // unused
+    case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
     case .substack: return PlaceholderColumnGapProvider()  // unused
     }
   }
@@ -144,6 +149,7 @@ extension MathArray {
     alignAst,
     gather,
     gatherAst,
+    multline,
     multlineAst,
   ]
 
@@ -175,6 +181,7 @@ extension MathArray {
   static let alignAst = MathArray("align*", .aligned)
   static let gather = MathArray("gather", .gather)
   static let gatherAst = MathArray("gather*", .gathered)
+  static let multline = MathArray("multline", .multline)
   static let multlineAst = MathArray("multline*", .multlineAst)
 }
 

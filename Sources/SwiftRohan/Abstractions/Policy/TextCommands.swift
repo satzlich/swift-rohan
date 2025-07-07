@@ -23,6 +23,7 @@ enum TextCommands {
         (MathArray.alignAst, "aligned"),  // recycle "aligned"
         (MathArray.gather, "gathered"),  // recycle "gathered"
         (MathArray.gatherAst, "gathered"),  // recycle "gathered"
+        (MathArray.multline, "multline"),
         (MathArray.multlineAst, "multline"),
       ]
       assert(multilines.count == MathArray.blockMathCommands.count)
