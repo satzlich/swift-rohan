@@ -69,20 +69,20 @@ enum HeadingSubtype: String, Codable, CaseIterable {
     case .section:
       guard let countHolder = countHolder else { return defaultPreamble }
       let section = countHolder.value(forName: .section)
-      return "\(section) "
+      return "\(section)\u{2003}"
 
     case .subsection:
       guard let countHolder = countHolder else { return defaultPreamble }
       let section = countHolder.value(forName: .section)
       let subsection = countHolder.value(forName: .subsection)
-      return "\(section).\(subsection) "
+      return "\(section).\(subsection)\u{2003}"
 
     case .subsubsection:
       guard let countHolder = countHolder else { return defaultPreamble }
       let section = countHolder.value(forName: .section)
       let subsection = countHolder.value(forName: .subsection)
       let subsubsection = countHolder.value(forName: .subsubsection)
-      return "\(section).\(subsection).\(subsubsection) "
+      return "\(section).\(subsection).\(subsubsection)\u{2003}"
     }
   }
 }
