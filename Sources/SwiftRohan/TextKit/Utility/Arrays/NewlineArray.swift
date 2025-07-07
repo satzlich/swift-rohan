@@ -20,6 +20,7 @@ struct NewlineArray: Equatable, Hashable {
   public var count: Int { _insertNewline.count }
   public subscript(index: Int) -> Bool { _insertNewline[index] }
 
+  @inlinable @inline(__always)
   internal func value(before index: Int) -> Bool {
     precondition(0 <= index && index < _insertNewline.count)
     if index == 0 { return false }

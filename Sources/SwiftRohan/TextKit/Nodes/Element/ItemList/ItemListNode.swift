@@ -526,9 +526,12 @@ final class ItemListNode: ElementNode {
   }
 
   /// String used to fill the initial space of each item.
-  private func _initialFiller(forIndex index: Int) -> String { "\u{200B}" }
+  @inline(__always)
+  private final func _initialFiller(forIndex index: Int) -> String {
+    "\u{200B}"  // zero-width space
+  }
 
-  private func _bakeItemAttributes(
+  private final func _bakeItemAttributes(
     _ styleSheet: StyleSheet
   ) -> Dictionary<NSAttributedString.Key, Any> {
     // NOTE: we have to add paragraph properties to item attributes, otherwise
@@ -539,17 +542,17 @@ final class ItemListNode: ElementNode {
     return attributes
   }
 
-  static var commandRecords: Array<CommandRecord> {
+  nonisolated(unsafe) static let commandRecords: Array<CommandRecord> =
     ItemListSubtype.allCases.map { subtype in
       //      let expr = ItemListExpr(subtype, [ParagraphExpr()])
       let expr = ItemListExpr(subtype, [])
       return CommandRecord(subtype.command, CommandBody(expr, 1))
     }
-  }
 
   /// Distance from text container edge to paragraph beginning for given list
   /// level (1-based).
   /// - Note: There is a 0.5em gap between item marker and paragraph beginning.
+  @inlinable @inline(__always)
   internal static func indent(forLevel level: Int) -> Em {
     precondition(level >= 1)
     return Em(2.5 + 2 * Double(level - 1))
