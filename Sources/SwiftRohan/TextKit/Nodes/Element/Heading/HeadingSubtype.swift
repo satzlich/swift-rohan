@@ -59,7 +59,7 @@ enum HeadingSubtype: String, Codable, CaseIterable {
   }
 
   func computePreamble(_ countHolder: CountHolder?) -> String {
-    let defaultPreamble = "\u{200B}"  // Zero-width space
+    let defaultPreamble = ""
 
     switch self {
     case .sectionAst: return defaultPreamble
