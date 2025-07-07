@@ -97,41 +97,77 @@ final class EquationNode: MathNode {
   private final func _addAttributesBackwards(
     _ segment: Int, _ context: some LayoutContext
   ) {
-    if _fixedAttributes == nil {
-      _setupFixedAttributes(context)
+    switch subtype {
+    case .inline:
+      break
+
+    case .display:
+      if _fixedAttributes == nil {
+        _setupFixedAttributes(context)
+      }
+      assert(_fixedAttributes != nil)
+      let begin = context.layoutCursor - segment
+      let end = context.layoutCursor
+      context.addAttributes(_fixedAttributes!, begin..<end)
+
+    case .equation:
+      if _fixedAttributes == nil {
+        _setupFixedAttributes(context)
+      }
+      assert(_fixedAttributes != nil)
+
+      if let countHolder = countHolder {
+        let equationNumber = countHolder.value(forName: .equation)
+        _fixedAttributes![.rhEquationNumber] =
+          NSAttributedString(string: "(\(equationNumber))", attributes: _fixedAttributes!)
+      }
+
+      let begin = context.layoutCursor - segment
+      let end = context.layoutCursor
+      context.addAttributes(_fixedAttributes!, begin..<end)
     }
-    assert(_fixedAttributes != nil)
-
-    let equationNumber = NSAttributedString(string: "(1)")
-    _fixedAttributes![.rhEquationNumber] = equationNumber
-
-    let begin = context.layoutCursor - segment
-    let end = context.layoutCursor
-    context.addAttributes(_fixedAttributes!, begin..<end)
   }
 
   private final func _setupFixedAttributes(_ context: some LayoutContext) {
-    let styleSheet = context.styleSheet
-    let properties = self.getProperties(styleSheet)
+    switch subtype {
+    case .inline:
+      break
 
-    @inline(__always) func resolveValue(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, styleSheet)
+    case .display:
+      let styleSheet = context.styleSheet
+      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+      _fixedAttributes = paragraphProperty.getAttributes()
+
+    case .equation:
+      let styleSheet = context.styleSheet
+      let properties = self.getProperties(styleSheet)
+
+      @inline(__always)
+      func resolveValue(_ key: PropertyKey) -> PropertyValue {
+        key.resolveValue(properties, styleSheet)
+      }
+
+      // paragraph
+      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+      var attributes = paragraphProperty.getAttributes()
+
+      // horizontal bounds
+      let x: CGFloat = paragraphProperty.headIndent
+      let width: CGFloat
+      do {
+        let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
+        let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
+        let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
+        width = pageWidth - leftMargin - rightMargin - x
+      }
+      attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
+
+      // text property
+      let textProperty: TextProperty = resolveAggregate(styleSheet)
+      attributes.merge(textProperty.getAttributes(), uniquingKeysWith: { _, new in new })
+
+      _fixedAttributes = attributes
     }
-
-    let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
-    var attributes = paragraphProperty.getAttributes()
-
-    let x: CGFloat = paragraphProperty.headIndent
-    let width: CGFloat
-    do {
-      let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
-      let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
-      let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
-      width = pageWidth - leftMargin - rightMargin - x
-    }
-    attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
-
-    _fixedAttributes = attributes
   }
 
   // MARK: - Node(Codable)
@@ -351,15 +387,18 @@ final class EquationNode: MathNode {
 
   internal let subtype: EquationSubtype
   internal let nucleus: ContentNode
-
-  private var _counterSegment: CounterSegment?
-  final override var counterSegment: CounterSegment? { _counterSegment }
-
   private var _layoutLength: Int = 1
   private var _nodeFragment: MathListLayoutFragment? = nil
 
   private var _isCounterDirty: Bool = false
-  private var _equationNumber: Int = 0
+
+  private var _counterSegment: CounterSegment?
+  final override var counterSegment: CounterSegment? { _counterSegment }
+  /// Count holder provided by the heading node.
+  @inline(__always)
+  private final var countHolder: CountHolder? { _counterSegment?.begin }
+  /// Cached equation number.
+  private var _equationNumber: Int = -1
 
   /// fixed paragraph attributes that can be cached.
   private var _fixedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
