@@ -198,7 +198,11 @@ internal class ElementNodeImpl: ElementNode {
   @inline(__always)
   private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
-    precondition(_children.isEmpty == false)
+    precondition(isPlaceholderActive == false)
+
+    guard !_children.isEmpty else {
+      return _performLayoutEmpty(context)
+    }
 
     switch self.isBlock {
     case true:
