@@ -188,7 +188,7 @@ final class EquationNode: MathNode {
         // horizontal bounds
         do {
           let x: CGFloat = paragraphProperty.headIndent
-          let width: CGFloat = containerWidth - x - 5
+          let width: CGFloat = containerWidth - x - Rohan.fragmentPadding
           attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
         }
         // text property
@@ -197,6 +197,7 @@ final class EquationNode: MathNode {
 
         _cachedAttributes = attributes
       }
+      _trailingCursorPosition = containerWidth - Rohan.fragmentPadding
     }
   }
 
@@ -298,31 +299,53 @@ final class EquationNode: MathNode {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
 
-    guard isReflowActive else {
+    switch subtype {
+    case .inline:
+      if isReflowActive {
+        // set component, fragment, and index
+        let index = MathIndex.nuc
+        let component = nucleus
+        guard let fragment = _nodeFragment else { return false }
+        // append to trace
+        trace.emplaceBack(self, .mathIndex(index))
+
+        let newContext =
+          createReflowContext(
+            component, fragment, parent: context, layoutOffset: layoutOffset)
+
+        // recurse
+        let modified = component.resolveTextLocation(
+          with: point, context: newContext,
+          // reset layoutOffset to "0".
+          layoutOffset: 0, trace: &trace, affinity: &affinity)
+        // fix accordingly
+        if !modified { trace.emplaceBack(component, .index(0)) }
+        return true
+      }
+      else {
+        return super.resolveTextLocation(
+          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+          affinity: &affinity)
+      }
+
+    case .equation:
+      if let trailingCursorPosition = _trailingCursorPosition,
+        point.x >= trailingCursorPosition
+      {
+        // cursor position is after the equation, no need to resolve.
+        return false
+      }
+      else {
+        return super.resolveTextLocation(
+          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
+          affinity: &affinity)
+      }
+
+    case .display:
       return super.resolveTextLocation(
         with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
         affinity: &affinity)
     }
-
-    // set component, fragment, and index
-    let index = MathIndex.nuc
-    let component = nucleus
-    guard let fragment = _nodeFragment else { return false }
-    // append to trace
-    trace.emplaceBack(self, .mathIndex(index))
-
-    let newContext =
-      createReflowContext(
-        component, fragment, parent: context, layoutOffset: layoutOffset)
-
-    // recurse
-    let modified = component.resolveTextLocation(
-      with: point, context: newContext,
-      // reset layoutOffset to "0".
-      layoutOffset: 0, trace: &trace, affinity: &affinity)
-    // fix accordingly
-    if !modified { trace.emplaceBack(component, .index(0)) }
-    return true
   }
 
   final override func rayshoot(
@@ -356,6 +379,16 @@ final class EquationNode: MathNode {
       // reset layoutOffset to "0"
       layoutOffset: 0)
   }
+
+  final override var needsTrailingCursorCorrection: Bool {
+    switch subtype {
+    case .inline: return false
+    case .display: return false
+    case .equation: return true
+    }
+  }
+
+  final override func trailingCursorPosition() -> Double? { _trailingCursorPosition }
 
   // MARK: - MathNode(Component)
 
@@ -438,6 +471,8 @@ final class EquationNode: MathNode {
 
   /// attributes that can be cached.
   private var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
+
+  private var _trailingCursorPosition: Double? = nil
 
   /// True if the layout of the equation should be reflowed.
   final var isReflowActive: Bool {

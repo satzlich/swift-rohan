@@ -138,7 +138,7 @@ final class MultilineNode: ArrayNode {
     let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
     let containerWidth = pageWidth - leftMargin - rightMargin - headIndent
     // 10pt for text container inset, 1em for leading padding.
-    return containerWidth - 10 - fontSize
+    return containerWidth - Rohan.fragmentPadding * 2 - fontSize
   }
 
   final override func _reconcileMathListLayoutFragment(

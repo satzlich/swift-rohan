@@ -512,7 +512,8 @@ final class ItemListNode: ElementNode {
       Self.indent(forLevel: listLevel).floatValue * textProperty.size.floatValue
     // prepare trailing cursor position
     self._trailingCursorPosition =
-      PageProperty.resolveContentContainerWidth(styleSheet).ptValue - 5
+      PageProperty.resolveContentContainerWidth(styleSheet).ptValue
+      - Rohan.fragmentPadding
   }
 
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {

@@ -54,8 +54,8 @@ let package = Package(
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT"),
         // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
-        .define("LOG_TEXT_SELECTION")
-        // .define("LOG_PICKING_POINT"),
+        .define("LOG_TEXT_SELECTION"),
+        .define("LOG_PICKING_POINT"),
       ],
     ),
     .target(
