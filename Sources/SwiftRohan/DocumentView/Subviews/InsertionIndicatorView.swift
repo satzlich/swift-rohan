@@ -5,8 +5,7 @@ import Foundation
 
 @MainActor
 final class InsertionIndicatorView: RohanView {
-  private typealias InsertionIndicator =
-    TextInsertionIndicator  // alternative: NSTextInsertionIndicator
+  private typealias InsertionIndicator = CustomWidthInsertionIndicator
 
   private let primaryIndicator: InsertionIndicator
   private var secondaryIndicators: Array<InsertionIndicator>
@@ -14,8 +13,8 @@ final class InsertionIndicatorView: RohanView {
   /// The width of the vertical indicator
   var indicatorWidth: CGFloat = 1.0 {
     didSet {
-      primaryIndicator.width = indicatorWidth
-      secondaryIndicators.forEach { $0.width = indicatorWidth }
+      primaryIndicator.indicatorWidth = indicatorWidth
+      secondaryIndicators.forEach { $0.indicatorWidth = indicatorWidth }
       needsDisplay = true
     }
   }
@@ -28,13 +27,16 @@ final class InsertionIndicatorView: RohanView {
     assert(clipsToBounds == false)
 
     primaryIndicator.isHidden = true
-    primaryIndicator.width = indicatorWidth
+    primaryIndicator.indicatorWidth = indicatorWidth
     addSubview(primaryIndicator)
   }
 
   func showPrimaryIndicator(_ frame: CGRect) {
     primaryIndicator.frame = frame
     primaryIndicator.isHidden = false
+
+    // restart blinking cycle.
+    primaryIndicator.displayMode = primaryIndicator.displayMode
   }
 
   func hidePrimaryIndicator() {
@@ -43,7 +45,7 @@ final class InsertionIndicatorView: RohanView {
 
   func addSecondaryIndicator(_ frame: CGRect) {
     let subview = InsertionIndicator(frame: frame)
-    subview.width = indicatorWidth
+    subview.indicatorWidth = indicatorWidth
     subview.color = primaryIndicator.color.withAlphaComponent(0.5)
     secondaryIndicators.append(subview)
     addSubview(subview)
@@ -71,132 +73,10 @@ final class InsertionIndicatorView: RohanView {
   }
 }
 
-internal final class TextInsertionIndicator: NSView {
-  typealias DisplayMode = NSTextInsertionIndicator.DisplayMode
-
-  /// The current display mode
-  var displayMode: DisplayMode = .automatic {
-    didSet {
-      updateVisibility()
-    }
-  }
-
-  /// The color of the indicator (defaults to system insertion point color)
-  var color: NSColor = .textInsertionPointColor {
+final class CustomWidthInsertionIndicator: NSTextInsertionIndicator {
+  var indicatorWidth: CGFloat = 1.0 {
     didSet {
       needsDisplay = true
     }
-  }
-
-  /// The width of the vertical indicator
-  var width: CGFloat = 1.0 {
-    didSet {
-      needsDisplay = true
-    }
-  }
-
-  private nonisolated(unsafe) var blinkTimer: Timer?
-  private nonisolated(unsafe) var shouldDraw: Bool = true
-
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    commonInit()
-    startBlinking()
-  }
-
-  @available(*, unavailable)
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    commonInit()
-    startBlinking()
-  }
-
-  convenience init() {
-    self.init(frame: .zero)
-  }
-
-  private func commonInit() {
-    self.wantsLayer = true
-    self.layer?.masksToBounds = false
-    updateVisibility()
-  }
-
-  override var frame: NSRect {
-    didSet {
-      if displayMode == .automatic {
-        restartBlinking()
-      }
-      needsDisplay = true
-    }
-  }
-
-  override func draw(_ dirtyRect: NSRect) {
-    super.draw(dirtyRect)
-
-    guard shouldDraw else { return }
-
-    color.set()
-
-    let path = NSBezierPath()
-    let xPos = bounds.midX - width / 2
-
-    path.lineCapStyle = .round
-    path.lineWidth = width
-
-    path.move(to: NSPoint(x: xPos, y: bounds.minY + width / 2))
-    path.line(to: NSPoint(x: xPos, y: bounds.maxY - width / 2))
-    path.stroke()
-  }
-
-  private func updateVisibility() {
-    stopBlinking()
-
-    switch displayMode {
-    case .automatic:
-      isHidden = false
-      startBlinking()
-    case .hidden:
-      isHidden = true
-    case .visible:
-      isHidden = false
-      shouldDraw = true
-    @unknown default:
-      assertionFailure("Unknown display mode: \(displayMode)")
-      isHidden = false
-      shouldDraw = true
-    }
-
-    needsDisplay = true
-  }
-
-  private func startBlinking() {
-    guard displayMode == .automatic else { return }
-
-    stopBlinking()
-    shouldDraw = true
-    blinkTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) {
-      [weak self] _ in
-      guard let self = self else { return }
-      Task { @MainActor in
-        self.shouldDraw = !self.shouldDraw
-        self.needsDisplay = true
-      }
-    }
-  }
-
-  private func restartBlinking() {
-    shouldDraw = true
-    needsDisplay = true
-    startBlinking()
-  }
-
-  private nonisolated func stopBlinking() {
-    blinkTimer?.invalidate()
-    blinkTimer = nil
-    shouldDraw = true
-  }
-
-  deinit {
-    stopBlinking()
   }
 }
