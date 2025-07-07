@@ -13,6 +13,9 @@ internal enum Rohan {
 
   /// True if text in math mode should be auto-italicised.
   static let autoItalic: Bool = true
+
+  /// leading padding for text layout fragments. This should be fixed.
+  static let fragmentPadding: Double = 5
 }
 
 extension Rohan {
