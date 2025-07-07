@@ -28,7 +28,9 @@ final class HeadingNode: ElementNodeImpl {
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     if layoutOffset < _preamble.length {
-      return .terminal(value: .index(0), target: _preamble.length)
+      return layoutOffset == 0
+        ? .null
+        : .terminal(value: .index(0), target: _preamble.length)
     }
     else {
       let result = super.getPosition(layoutOffset - _preamble.length)

@@ -124,8 +124,12 @@ extension Trace {
         current = next
 
       case .null:
-        assertionFailure("unexpected case")
-        return .null
+        if trace.isEmpty {
+          return .null
+        }
+        else {
+          return .terminal(value: trace, target: accumulated)
+        }
 
       case .failure(let satzError):
         assert(satzError.code == .InvalidLayoutOffset)
