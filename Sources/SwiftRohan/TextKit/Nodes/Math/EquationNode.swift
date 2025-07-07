@@ -591,7 +591,7 @@ extension EquationNode: CountObserver {
 
   static func fetchEquationNumber(
     _ countHolder: CountHolder, _ attributes: Dictionary<NSAttributedString.Key, Any>
-  ) -> NSAttributedString? {
+  ) -> NSAttributedString {
     let n = countHolder.value(forName: .equation)
     return NSAttributedString(string: "(\(n))", attributes: attributes)
   }

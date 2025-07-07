@@ -67,13 +67,26 @@ final class MultilineNode: ArrayNode {
       return sum
     }
     else {
-      let sum = super.performLayout(context, fromScratch: false)
-      if _countProviderState?.isCounterDirty == true {
+      _updateNodeProperties()
+      if _countProviderState != nil {
         assert(subtype.shouldProvideCounter)
-        _addAttributesBackwards(1, context)
-        _countProviderState?.isCounterDirty = false
+        if _countProviderState!.isCounterDirty {
+          let containerWidth =
+            _countProviderState!.computeContainerWidth(_constantContainerWidth)
+          _nodeFragment?.setContainerWidth(containerWidth)
+
+          let sum = super.performLayout(context, fromScratch: false)
+          _addAttributesBackwards(1, context)
+          _countProviderState!.isCounterDirty = false
+          return sum
+        }
+        else {
+          return super.performLayout(context, fromScratch: false)
+        }
       }
-      return sum
+      else {
+        return super.performLayout(context, fromScratch: false)
+      }
     }
   }
 
@@ -196,6 +209,7 @@ final class MultilineNode: ArrayNode {
 
   private final var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
   private final var _countProviderState: _CountProviderState? = nil
+  private final var _constantContainerWidth: Double = 0
 
   override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
@@ -228,16 +242,46 @@ final class MultilineNode: ArrayNode {
   private final func _setupNodeProperties(_ context: some LayoutContext) {
     let styleSheet = context.styleSheet
 
+    _constantContainerWidth = _computeContainerWidth(styleSheet)
+
     if subtype.shouldProvideCounter {
       let (attributes, trailingCursorPosition) =
         EquationNode.computeAttributesForCounterProvider(self, styleSheet)
       _cachedAttributes = attributes
       _countProviderState?.trailingCursorPosition = trailingCursorPosition
+      let countHolder = countHolder!
+      _countProviderState?.equationNumber =
+        EquationNode.fetchEquationNumber(countHolder, _cachedAttributes!)
     }
     else {
       let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
       _cachedAttributes = paragraphProperty.getAttributes()
     }
+  }
+
+  private final func _updateNodeProperties() {
+    if subtype.shouldProvideCounter {
+      let countHolder = countHolder!
+      _countProviderState?.equationNumber =
+        EquationNode.fetchEquationNumber(countHolder, _cachedAttributes!)
+    }
+    else {
+      return
+    }
+  }
+
+  private final func _computeContainerWidth(_ styleSheet: StyleSheet) -> Double {
+    guard subtype.isMultline else { return 0 }
+
+    let properties = self.getProperties(styleSheet)
+    @inline(__always)
+    func resolveValue(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, styleSheet)
+    }
+    let globalContainerWidth =
+      PageProperty.resolveContentContainerWidth(styleSheet).ptValue
+    let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
+    return globalContainerWidth - headIndent - Rohan.fragmentPadding * 2
   }
 
   internal static func selector(isMultline: Bool) -> TargetSelector {
@@ -248,24 +292,6 @@ final class MultilineNode: ArrayNode {
     super.contentDidChange(nonCell: ())
     // due to early stop mechanism, we have to mark dirty after propagation.
     _countProviderState?.isCounterDirty = true
-  }
-
-  /// Get the width of the content container for this array node.
-  private func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
-    guard subtype.isMultline else { return 0 }
-    let properties = self.getProperties(styleSheet)
-    @inline(__always)
-    func resolveValue(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, styleSheet)
-    }
-
-    let globalContainerWidth =
-      PageProperty.resolveContentContainerWidth(styleSheet).ptValue
-    let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
-
-    let containerWidth = globalContainerWidth - headIndent
-    // 10pt for text container inset, 1em for leading padding.
-    return containerWidth - Rohan.fragmentPadding
   }
 
   final override func _reconcileMathListLayoutFragment(
@@ -282,7 +308,10 @@ final class MultilineNode: ArrayNode {
   final override func _createMathArrayLayoutFragment(
     _ context: LayoutContext, _ mathContext: MathContext
   ) -> MathArrayLayoutFragment {
-    let containerWidth = _getContainerWidth(context.styleSheet)
+    let containerWidth =
+      _countProviderState?.computeContainerWidth(_constantContainerWidth)
+      ?? _constantContainerWidth
+
     return MathArrayLayoutFragment(
       rowCount: rowCount, columnCount: columnCount, subtype: subtype,
       mathContext, containerWidth)
@@ -298,5 +327,19 @@ extension MultilineNode: CountObserver {
     self.contentDidChange(nonCell: ())
   }
 
-  typealias _CountProviderState = EquationNode._CountProviderState
+  struct _CountProviderState {
+    let counterSegment: CounterSegment
+    var isCounterDirty: Bool = false
+    var trailingCursorPosition: Double = 0
+    var equationNumber: NSAttributedString = NSAttributedString()
+
+    init(_ countHolder: CountHolder) {
+      self.counterSegment = CounterSegment(countHolder)
+    }
+
+    /// Get the width of the content container for this array node.
+    func computeContainerWidth(_ containerWidth: Double) -> Double {
+      containerWidth - equationNumber.size().width - 10  // 10pt padding.
+    }
+  }
 }

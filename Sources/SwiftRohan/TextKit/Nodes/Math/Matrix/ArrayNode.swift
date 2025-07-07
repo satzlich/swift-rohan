@@ -121,10 +121,10 @@ class ArrayNode: Node {
 
       // save metrics before any layout changes
       let oldMetrics = nodeFragment.boxMetrics
-      var needsFixLayout = false
+      var needsFixLayout = nodeFragment.needsLayout
 
       // play edit log
-      needsFixLayout = _applyEditLogToFragment(nodeFragment)
+      needsFixLayout = needsFixLayout || _applyEditLogToFragment(nodeFragment)
 
       // layout each element
       if _isCellDirty {

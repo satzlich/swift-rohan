@@ -11,6 +11,9 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
   /// Re-establish the layout from the constituent fragments.
   func fixLayout(_ mathContext: MathContext)
 
+  var needsLayout: Bool { get }
+  func setNeedsLayout()
+
   func debugPrint(_ name: String) -> Array<String>
 
   /// Get the kern value at a specific height. (Optional)
@@ -31,5 +34,11 @@ extension MathLayoutFragment {
   var boxDescription: String {
     let origin = self.glyphOrigin.formatted(2)
     return "\(origin) \(boxMetrics)"
+  }
+
+  var needsLayout: Bool { false }
+
+  func setNeedsLayout() {
+    // No-op by default.
   }
 }

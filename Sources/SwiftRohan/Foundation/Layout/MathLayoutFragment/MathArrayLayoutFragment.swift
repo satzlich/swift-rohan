@@ -20,11 +20,12 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   private var _composition: MathComposition
   /// The width of the content container.
   private var _containerWidth: Double
-
   /// y-coordinates of the (top) row edges from 0 to rowCount
   private var _rowEdges: Array<Double>
   /// x-coordinates of the (left) column edges from 0 to columnCount
   private var _columnEdges: Array<Double>
+
+  private var _needsLayout: Bool = false
 
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
@@ -64,6 +65,9 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
   internal func setContainerWidth(_ width: Double) {
     precondition(subtype.isMultline)
+    if _containerWidth.isNearlyEqual(to: width) == false {
+      setNeedsLayout()
+    }
     self._containerWidth = width
   }
 
@@ -111,7 +115,16 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       : (column.lazy.map(\.width).max() ?? 0)
   }
 
+  var needsLayout: Bool { _needsLayout }
+
+  func setNeedsLayout() {
+    _needsLayout = true
+  }
+
   func fixLayout(_ mathContext: MathContext) {
+
+    defer { _needsLayout = false }
+
     let font = mathContext.getFont()
     let table = mathContext.table
     let constants = mathContext.constants
