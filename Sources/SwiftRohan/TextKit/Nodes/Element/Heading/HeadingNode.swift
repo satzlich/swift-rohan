@@ -18,6 +18,35 @@ final class HeadingNode: ElementNodeImpl {
     HeadingNode.selector(level: level)
   }
 
+  // MARK: - Node(Positioning)
+
+  final override func getLayoutOffset(_ index: Int) -> Int? {
+    super.getLayoutOffset(index).map { offset in
+      _preamble.length + offset
+    }
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    if layoutOffset < _preamble.length {
+      return .null  // position before the preamble
+    }
+    else {
+      let result = super.getPosition(layoutOffset - _preamble.length)
+      switch result {
+      case let .terminal(value: value, target: target):
+        return .terminal(value: value, target: target + _preamble.length)
+      case let .halfway(value: value, consumed: consumed):
+        return .halfway(value: value, consumed: consumed + _preamble.length)
+      case .failure: return result
+      case .null: return result
+      }
+    }
+  }
+
+  // MARK: - Node(Layout)
+
+  final override func layoutLength() -> Int { _preamble.length + _layoutLength }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case subtype }

@@ -4,7 +4,8 @@
 internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Positioning)
 
-  internal override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  // Override `getLayoutOffset(_ index: Int)` instead of this method.
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
   }
