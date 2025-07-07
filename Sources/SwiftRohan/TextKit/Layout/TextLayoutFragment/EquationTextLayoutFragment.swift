@@ -15,6 +15,7 @@ final class EquationTextLayoutFragment: NSTextLayoutFragment {
     let fragment = layoutFragmentFrame
     let number = _equationNumber.size()
 
+    Rohan.logger.debug("equation fragment: \(fragment.height) \(number.height)")
     let x =
       point.x - fragment.origin.x + _horizontalBounds.x + _horizontalBounds.width
       - number.width
