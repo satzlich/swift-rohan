@@ -76,8 +76,8 @@ final class CustomInsertionIndicator: NSView {
       isHidden = true
       _stopBlinking()
 
-    default:
-      assertionFailure("Unsupported display mode: \(displayMode)")
+    @unknown default:
+      assertionFailure("Unknown display mode: \(displayMode)")
       break
     }
   }
