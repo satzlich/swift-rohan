@@ -46,21 +46,58 @@ final class EquationNode: MathNode {
   ) -> Int {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
+    return !isReflowActive
+      ? _preformLayout(context, fromScratch: fromScratch)
+      : _performLayoutReflow(context, fromScratch: fromScratch)
+  }
+
+  private final func _preformLayout(
+    _ context: TextLayoutContext, fromScratch: Bool
+  ) -> Int {
+    // Invariant Maintenance: (a) layout length; (b) _isCounterDirty.
 
     if fromScratch {
+      // set up properties before layout.
+      _setupNodeProperties(context)
+      // block => fixed attributes is not nil
+      assert(subtype == .inline || _fixedAttributes != nil)
       let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       _nodeFragment = nodeFragment
+      // insert the node fragment into the context
+      context.insertFragment(nodeFragment, self)
+      if self.isBlock {
+        _addAttributesBackwards(1, context)
+        _isCounterDirty = false
+      }
+      _layoutLength = 1
+    }
+    else {
+      guard let nodeFragment = _nodeFragment else {
+        assertionFailure("expected _nodeFragment to be non-nil")
+        return _layoutLength
+      }
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
+      context.invalidateForward(1)
+      if subtype == .equation && _isCounterDirty {
+        _addAttributesBackwards(1, context)
+        _isCounterDirty = false
+      }
+      _layoutLength = 1
+    }
+    return _layoutLength
+  }
 
-      if !isReflowActive {
-        context.insertFragment(nodeFragment, self)
-        if self.isBlock {
-          _addAttributesBackwards(1, context)
-        }
-        _layoutLength = 1
-      }
-      else {
-        _layoutLength = emitReflowSegments(nodeFragment)
-      }
+  private final func _performLayoutReflow(
+    _ context: TextLayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      // set up properties before layout.
+      _setupNodeProperties(context)
+      // block => fixed attributes is not nil
+      assert(subtype == .inline || _fixedAttributes != nil)
+      let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      _nodeFragment = nodeFragment
+      _layoutLength = emitReflowSegments(nodeFragment)
     }
     else {
       guard let nodeFragment = _nodeFragment else {
@@ -70,15 +107,9 @@ final class EquationNode: MathNode {
 
       LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
 
-      if !isReflowActive {
-        context.invalidateForward(1)
-        _layoutLength = 1
-      }
-      else {
-        // delete segments emitted in previous layout, and emit new segments
-        context.deleteForward(_layoutLength)
-        _layoutLength = emitReflowSegments(nodeFragment)
-      }
+      // delete segments emitted in previous layout, and emit new segments
+      context.deleteForward(_layoutLength)
+      _layoutLength = emitReflowSegments(nodeFragment)
     }
 
     return _layoutLength
@@ -102,20 +133,19 @@ final class EquationNode: MathNode {
       break
 
     case .display:
-      if _fixedAttributes == nil {
-        _setupFixedAttributes(context)
+      guard let fixedAttributes = _fixedAttributes else {
+        assertionFailure("expected _fixedAttributes to be non-nil")
+        return
       }
-      assert(_fixedAttributes != nil)
       let begin = context.layoutCursor - segment
       let end = context.layoutCursor
-      context.addAttributes(_fixedAttributes!, begin..<end)
+      context.addAttributes(fixedAttributes, begin..<end)
 
     case .equation:
-      if _fixedAttributes == nil {
-        _setupFixedAttributes(context)
+      guard _fixedAttributes != nil else {
+        assertionFailure("expected _fixedAttributes to be non-nil")
+        return
       }
-      assert(_fixedAttributes != nil)
-
       if let countHolder = countHolder {
         let equationNumber = countHolder.value(forName: .equation)
         _fixedAttributes![.rhEquationNumber] =
@@ -128,7 +158,7 @@ final class EquationNode: MathNode {
     }
   }
 
-  private final func _setupFixedAttributes(_ context: some LayoutContext) {
+  private final func _setupNodeProperties(_ context: some LayoutContext) {
     switch subtype {
     case .inline:
       break
@@ -320,6 +350,14 @@ final class EquationNode: MathNode {
       context: newContext,
       // reset layoutOffset to "0"
       layoutOffset: 0)
+  }
+
+  final override var needsTrailingCursorCorrection: Bool {
+    switch subtype {
+    case .inline: return false
+    case .display: return false
+    case .equation: return true
+    }
   }
 
   // MARK: - MathNode(Component)
