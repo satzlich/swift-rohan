@@ -31,7 +31,7 @@ final class EquationTextLayoutFragment: NSTextLayoutFragment {
   ) {
     self._equationNumber = equationNumber
     do {
-      let number = _equationNumber.boundingRect(with: .zero, options: [], context: nil)
+      let number = _equationNumber.boundingRect(with: .zero, context: nil)
       let x = horizontalBounds.x + horizontalBounds.width - number.width
       let y = -number.origin.y - number.height
       _precomputedPosition = CGPoint(x: x, y: y)
