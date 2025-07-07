@@ -11,8 +11,8 @@ final class CountHolder: CountPublisher {
   /// True if the state of this holder is out-of-date and needs to be updated.
   final var isDirty: Bool { _isDirty }
 
-  /// Mark this holder as dirty if applicable, and propagate the message to the
-  /// next holder in the linked list.
+  /// Mark this holder as dirty if applicable, and propagate the message to
+  /// subsequent holders in the linked list.
   /// - Postcondition: All count holders after this one for which "mark dirty"
   ///     action is applicable become dirty.
   final func propagateDirty() {
