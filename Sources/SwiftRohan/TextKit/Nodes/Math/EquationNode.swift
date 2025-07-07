@@ -53,7 +53,9 @@ final class EquationNode: MathNode {
 
       if !isReflowActive {
         context.insertFragment(nodeFragment, self)
-        if self.isBlock { context.addParagraphStyleBackward(forSegment: 1, self) }
+        if self.isBlock {
+          _addAttributesBackwards(1, context)
+        }
         _layoutLength = 1
       }
       else {
@@ -89,6 +91,47 @@ final class EquationNode: MathNode {
       context.insertFragments(contentsOf: nodeFragment.reflowSegments, self)
       return nodeFragment.reflowSegments.count
     }
+  }
+
+  /// Add paragraph attributes backwards for the equation node.
+  private final func _addAttributesBackwards(
+    _ segment: Int, _ context: some LayoutContext
+  ) {
+    if _fixedAttributes == nil {
+      _setupFixedAttributes(context)
+    }
+    assert(_fixedAttributes != nil)
+
+    let equationNumber = NSAttributedString(string: "(1)")
+    _fixedAttributes![.rhEquationNumber] = equationNumber
+
+    let begin = context.layoutCursor - segment
+    let end = context.layoutCursor
+    context.addAttributes(_fixedAttributes!, begin..<end)
+  }
+
+  private final func _setupFixedAttributes(_ context: some LayoutContext) {
+    let styleSheet = context.styleSheet
+    let properties = self.getProperties(styleSheet)
+
+    @inline(__always) func resolveValue(_ key: PropertyKey) -> PropertyValue {
+      key.resolveValue(properties, styleSheet)
+    }
+
+    let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+    var attributes = paragraphProperty.getAttributes()
+
+    let x: CGFloat = paragraphProperty.headIndent
+    let width: CGFloat
+    do {
+      let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
+      let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
+      let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
+      width = pageWidth - leftMargin - rightMargin - x
+    }
+    attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
+
+    _fixedAttributes = attributes
   }
 
   // MARK: - Node(Codable)
@@ -317,6 +360,9 @@ final class EquationNode: MathNode {
 
   private var _isCounterDirty: Bool = false
   private var _equationNumber: Int = 0
+
+  /// fixed paragraph attributes that can be cached.
+  private var _fixedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
 
   /// True if the layout of the equation should be reflowed.
   final var isReflowActive: Bool {

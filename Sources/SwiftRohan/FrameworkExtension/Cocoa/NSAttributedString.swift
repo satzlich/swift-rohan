@@ -8,4 +8,7 @@ extension NSAttributedString.Key {
   static let rhItemMarker = NSAttributedString.Key("rhItemMarker")  // NSAttributedString
   static let rhListLevel = NSAttributedString.Key("rhListLevel")  // Int
   static let rhTextAlignment = NSAttributedString.Key("rhTextAlignment")  // NSTextAlignment
+
+  static let rhEquationNumber = NSAttributedString.Key("rhEquationNumber")  // NSAttributedString
+  static let rhHorizontalBounds = NSAttributedString.Key("rhHorizontalBounds")  // HorizontalBounds
 }
