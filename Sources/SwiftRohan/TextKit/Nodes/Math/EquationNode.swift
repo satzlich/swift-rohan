@@ -47,11 +47,11 @@ final class EquationNode: MathNode {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext
     return !isReflowActive
-      ? _preformLayout(context, fromScratch: fromScratch)
+      ? _performLayout(context, fromScratch: fromScratch)
       : _performLayoutReflow(context, fromScratch: fromScratch)
   }
 
-  private final func _preformLayout(
+  private final func _performLayout(
     _ context: TextLayoutContext, fromScratch: Bool
   ) -> Int {
     // Invariant Maintenance: (a) layout length; (b) _isCounterDirty.

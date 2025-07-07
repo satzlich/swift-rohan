@@ -17,7 +17,7 @@ final class EquationTextLayoutFragment: NSTextLayoutFragment {
     position.y += point.y + glyphOrigin.y
 
     context.saveGState()
-    _equationNumber.draw(at: position.translated(by: point))
+    _equationNumber.draw(at: position)
     context.restoreGState()
   }
 
