@@ -38,7 +38,34 @@ final class MultilineNode: ArrayNode {
     _ context: any LayoutContext, fromScratch: Bool
   ) -> Int {
     precondition(context is TextLayoutContext)
-    return super.performLayout(context, fromScratch: fromScratch)
+    defer { assert(self.isDirty == false) }
+
+    if fromScratch {
+      _setupNodeProperties(context)
+
+      let sum = super.performLayout(context, fromScratch: true)
+      _addAttributesBackwards(1, context)
+      _isCounterDirty = false
+      return sum
+    }
+    else {
+      let sum = super.performLayout(context, fromScratch: false)
+      if _isCounterDirty {
+        assert(subtype.shouldProvideCounter)
+        _addAttributesBackwards(1, context)
+        _isCounterDirty = false
+      }
+      return sum
+    }
+  }
+
+  /// Add paragraph attributes backwards for the equation node.
+  private final func _addAttributesBackwards(
+    _ segment: Int, _ context: some LayoutContext
+  ) {
+    EquationNode.addAttributesBackwards(
+      shouldProvideCounter: subtype.shouldProvideCounter, segment, context,
+      &_cachedAttributes, countHolder)
   }
 
   // MARK: - Node(Codable)
@@ -66,6 +93,11 @@ final class MultilineNode: ArrayNode {
     let json = JSONValue.array([.string(subtype.command), .array(rows)])
     return json
   }
+
+  // MARK: - Node(Tree API)
+
+  final override var needsTrailingCursorCorrection: Bool { subtype.shouldProvideCounter }
+  final override func trailingCursorPosition() -> Double? { _trailingCursorPosition }
 
   // MARK: - Node(Counter)
 
@@ -107,6 +139,8 @@ final class MultilineNode: ArrayNode {
 
   private final var _counterSegment: CounterSegment?
   private final var _isCounterDirty: Bool = false
+  private final var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
+  private final var _trailingCursorPosition: Double? = nil
 
   override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
@@ -133,6 +167,20 @@ final class MultilineNode: ArrayNode {
     }
     else {
       _counterSegment = nil
+    }
+  }
+
+  private final func _setupNodeProperties(_ context: some LayoutContext) {
+    let styleSheet = context.styleSheet
+
+    if subtype.shouldProvideCounter {
+      _cachedAttributes =
+        EquationNode.computeAttributesForCounterProvider(
+          self, styleSheet, trailingCursorPosition: &_trailingCursorPosition)
+    }
+    else {
+      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+      _cachedAttributes = paragraphProperty.getAttributes()
     }
   }
 
