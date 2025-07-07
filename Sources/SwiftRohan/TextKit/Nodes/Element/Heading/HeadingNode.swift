@@ -54,18 +54,25 @@ final class HeadingNode: ElementNodeImpl {
   ) -> Int {
     if fromScratch {
       _preamble = subtype.computePreamble(countHolder)
-      let n = StringReconciler.insertForward(new: _preamble, context: context, self)
-      // layout the children after the preamble
-      let m = super.performLayout(context, fromScratch: true)
-      return n + m
+      // reconcile layout
+      var sum = 0
+      sum += StringReconciler.insertForward(new: _preamble, context: context, self)
+      sum += super.performLayout(context, fromScratch: true)
+      // update paragraph style
+      context.addParagraphStyleBackward(forSegment: sum, self)
+      return sum
     }
     else {
       let preamble = subtype.computePreamble(countHolder)
       defer { _preamble = preamble }
-      let n = StringReconciler.reconcileForward(
+      // reconcile layout
+      var sum = 0
+      sum += StringReconciler.reconcileForward(
         dirty: (_preamble, preamble), context: context, self)
-      let m = super.performLayout(context, fromScratch: false)
-      return n + m
+      sum += super.performLayout(context, fromScratch: false)
+      // update paragraph style
+      context.addParagraphStyleBackward(forSegment: sum, self)
+      return sum
     }
   }
 
