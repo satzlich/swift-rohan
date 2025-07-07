@@ -90,11 +90,11 @@ final class EquationNode: MathNode {
   private final func _performLayoutReflow(
     _ context: TextLayoutContext, fromScratch: Bool
   ) -> Int {
+    precondition(isReflowActive)
+
     if fromScratch {
       // set up properties before layout.
       _setupNodeProperties(context)
-      // block => fixed attributes is not nil
-      assert(subtype == .inline || _cachedAttributes != nil)
       let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       _nodeFragment = nodeFragment
       _layoutLength = emitReflowSegments(nodeFragment)
