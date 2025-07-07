@@ -496,8 +496,8 @@ final class ItemListNode: ElementNode {
   /// Set up properties for layout.
   private func _setupNodeProperties(_ styleSheet: StyleSheet) {
     let properties = self.getProperties(styleSheet)
-
-    @inline(__always) func resolveValue(_ key: PropertyKey) -> PropertyValue {
+    @inline(__always)
+    func resolveValue(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, styleSheet)
     }
 
@@ -511,13 +511,8 @@ final class ItemListNode: ElementNode {
     self._listIndent =
       Self.indent(forLevel: listLevel).floatValue * textProperty.size.floatValue
     // prepare trailing cursor position
-    do {
-      let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
-      let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
-      let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
-      // "5" for padding.
-      self._trailingCursorPosition = pageWidth - leftMargin - rightMargin - 5
-    }
+    self._trailingCursorPosition =
+      PageProperty.resolveContentContainerWidth(styleSheet).ptValue - 5
   }
 
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {

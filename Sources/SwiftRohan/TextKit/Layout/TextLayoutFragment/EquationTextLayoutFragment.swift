@@ -6,29 +6,36 @@ typealias HorizontalBounds = (x: CGFloat, width: CGFloat)
 
 final class EquationTextLayoutFragment: NSTextLayoutFragment {
   private let _equationNumber: NSAttributedString
-  /// The horizontal bounds from paragraph indent to the end of the equation number.
-  private let _horizontalBounds: HorizontalBounds
+  private let _precomputedPosition: CGPoint
 
   final override func draw(at point: CGPoint, in context: CGContext) {
     super.draw(at: point, in: context)
 
+    var position = _precomputedPosition
     let glyphOrigin = self.textLineFragments.first?.glyphOrigin ?? .zero
-    let fragment = layoutFragmentFrame
-    let number = _equationNumber.boundingRect(with: .zero, options: [], context: nil)
+    position.x += point.x - layoutFragmentFrame.origin.x
+    position.y += point.y + glyphOrigin.y
 
-    let x =
-      point.x - fragment.origin.x + _horizontalBounds.x + _horizontalBounds.width
-      - number.width
-    let y = point.y + glyphOrigin.y - number.origin.y - number.height
-    _equationNumber.draw(at: CGPoint(x: x, y: y))
+    context.saveGState()
+    _equationNumber.draw(at: position.translated(by: point))
+    context.restoreGState()
   }
 
+  /// - Parameters:
+  ///   - equationNumber: The equation number to be displayed.
+  ///   - horizontalBounds: The horizontal bounds from paragraph indent to the
+  ///       end of the equation number.
   init(
     textElement: NSTextElement, range: NSTextRange? = nil,
     equationNumber: NSAttributedString, horizontalBounds: HorizontalBounds,
   ) {
     self._equationNumber = equationNumber
-    self._horizontalBounds = horizontalBounds
+    do {
+      let number = _equationNumber.boundingRect(with: .zero, options: [], context: nil)
+      let x = horizontalBounds.x + horizontalBounds.width - number.width
+      let y = -number.origin.y - number.height
+      _precomputedPosition = CGPoint(x: x, y: y)
+    }
     super.init(textElement: textElement, range: range)
   }
 

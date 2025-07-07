@@ -153,13 +153,8 @@ final class EquationNode: MathNode {
 
       // horizontal bounds
       let x: CGFloat = paragraphProperty.headIndent
-      let width: CGFloat
-      do {
-        let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
-        let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
-        let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
-        width = pageWidth - leftMargin - rightMargin - x - 5 // 5pt for padding
-      }
+      let width: CGFloat =
+        PageProperty.resolveContentContainerWidth(context.styleSheet).ptValue - x - 5
       attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
 
       // text property
