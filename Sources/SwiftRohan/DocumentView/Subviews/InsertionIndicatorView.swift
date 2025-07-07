@@ -26,18 +26,18 @@ final class InsertionIndicatorView: RohanView {
 
     assert(clipsToBounds == false)
 
-    primaryIndicator.isHidden = true
+    primaryIndicator.displayMode = .hidden
     primaryIndicator.indicatorWidth = indicatorWidth
     addSubview(primaryIndicator)
   }
 
   func showPrimaryIndicator(_ frame: CGRect) {
     primaryIndicator.frame = frame
-    primaryIndicator.isHidden = false
+    primaryIndicator.displayMode = .automatic
   }
 
   func hidePrimaryIndicator() {
-    primaryIndicator.isHidden = true
+    primaryIndicator.displayMode = .hidden
   }
 
   func addSecondaryIndicator(_ frame: CGRect) {
@@ -53,33 +53,27 @@ final class InsertionIndicatorView: RohanView {
     secondaryIndicators.removeAll()
   }
 
-  /// Stops blinking of the insertion indicators if they are visible.
-  func stopBlinking() {
-    if !primaryIndicator.isHidden {
-      primaryIndicator.displayMode = .visible
-      secondaryIndicators.forEach { $0.displayMode = .visible }
-    }
-  }
-
   /// Starts blinking of the insertion indicators if they are visible.
   func startBlinking() {
-    if !primaryIndicator.isHidden {
-      primaryIndicator.displayMode = .automatic
-      secondaryIndicators.forEach { $0.displayMode = .automatic }
-    }
+    guard primaryIndicator.displayMode != .hidden else { return }
+    primaryIndicator.displayMode = .automatic
+    secondaryIndicators.forEach { $0.displayMode = .automatic }
+  }
+
+  /// Stops blinking of the insertion indicators if they are visible.
+  func stopBlinking() {
+    guard primaryIndicator.displayMode != .hidden else { return }
+    primaryIndicator.displayMode = .visible
+    secondaryIndicators.forEach { $0.displayMode = .visible }
   }
 }
 
-private final class CustomInsertionIndicator: NSView {
+final class CustomInsertionIndicator: NSView {
   typealias DisplayMode = NSTextInsertionIndicator.DisplayMode
 
-  private var timer: Timer?
-
-  var color: NSColor = .textInsertionPointColor
-
-  var displayMode: DisplayMode = .automatic {
+  var color: NSColor = .textInsertionPointColor {
     didSet {
-      _restartCycle()
+      needsDisplay = true
     }
   }
 
@@ -89,42 +83,39 @@ private final class CustomInsertionIndicator: NSView {
     }
   }
 
+  var displayMode: DisplayMode = .automatic {
+    didSet {
+      _restartCycle()
+    }
+  }
+
   override var frame: NSRect {
     didSet {
       _restartCycle()
     }
   }
 
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    _restartCycle()
-  }
-
-  @available(*, unavailable)
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
-
     color.set()
 
     let path = NSBezierPath()
-    let xPos = bounds.midX - indicatorWidth / 2
-
     path.lineCapStyle = .round
     path.lineWidth = indicatorWidth
 
-    path.move(to: NSPoint(x: xPos, y: bounds.minY + indicatorWidth / 2))
-    path.line(to: NSPoint(x: xPos, y: bounds.maxY - indicatorWidth / 2))
+    let x0 = bounds.midX
+    let halfWidth = indicatorWidth / 2
+    let y0 = bounds.minY + halfWidth
+    let y1 = bounds.maxY - halfWidth
+    path.move(to: NSPoint(x: x0, y: y0))
+    path.line(to: NSPoint(x: x0, y: y1))
     path.stroke()
   }
 
   private func _startBlinking() {
-    guard timer == nil else { return }
+    guard _timer == nil else { return }
 
-    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+    _timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
       Task { @MainActor in
         self?.isHidden.toggle()
       }
@@ -132,8 +123,8 @@ private final class CustomInsertionIndicator: NSView {
   }
 
   private func _stopBlinking() {
-    timer?.invalidate()
-    timer = nil
+    _timer?.invalidate()
+    _timer = nil
   }
 
   private func _restartCycle() {
@@ -155,6 +146,20 @@ private final class CustomInsertionIndicator: NSView {
       assertionFailure("Unsupported display mode: \(displayMode)")
       break
     }
+  }
+
+  // MARK: - State
+
+  private var _timer: Timer?
+
+  override init(frame frameRect: NSRect) {
+    super.init(frame: frameRect)
+    _restartCycle()
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 }
 
