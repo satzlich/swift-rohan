@@ -71,14 +71,21 @@ class ArrayNode: Node {
   // MARK: - Node(Layout)
 
   final override func contentDidChange() {
-    guard _isDirty == false else { return }
-    _isDirty = true
+    guard _isCellDirty == false else { return }
+
+    _isCellDirty = true
+    parent?.contentDidChange()
+  }
+
+  /// Content did change but not for a cell.
+  internal func contentDidChange(nonCell: Void) {
+    guard self.isDirty == false else { return }
     parent?.contentDidChange()
   }
 
   final override func layoutLength() -> Int { 1 }
 
-  final override var isDirty: Bool { _isDirty }
+  internal override var isDirty: Bool { _isCellDirty }
 
   internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
@@ -125,7 +132,7 @@ class ArrayNode: Node {
       needsFixLayout = _applyEditLogToFragment(nodeFragment)
 
       // layout each element
-      if _isDirty {
+      if _isCellDirty {
         for i in (0..<rowCount) {
           for j in (0..<columnCount) {
             let element = getElement(i, j)
@@ -164,7 +171,7 @@ class ArrayNode: Node {
     }
 
     // clear
-    _isDirty = false
+    _isCellDirty = false
     _editLog.removeAll()
     _addedNodes.removeAll()
 
@@ -382,7 +389,9 @@ class ArrayNode: Node {
   let subtype: MathArray
   internal var _rows: Array<Row> = []
 
-  internal var _isDirty: Bool = false
+  /// True if any of the cells is dirty.
+  internal var _isCellDirty: Bool = false
+
   internal var _nodeFragment: MathArrayLayoutFragment? = nil
   final var layoutFragment: MathLayoutFragment? { _nodeFragment }
 

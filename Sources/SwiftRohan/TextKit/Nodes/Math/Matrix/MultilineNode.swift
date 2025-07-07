@@ -31,6 +31,7 @@ final class MultilineNode: ArrayNode {
 
   // MARK: - Node(Layout)
 
+  final override var isDirty: Bool { _isCounterDirty || super.isDirty }
   final override var isBlock: Bool { true }
 
   final override func performLayout(
@@ -44,6 +45,7 @@ final class MultilineNode: ArrayNode {
 
   required init(from decoder: any Decoder) throws {
     try super.init(from: decoder)
+    _setUp()
   }
 
   // MARK: - Node(Storage)
@@ -67,7 +69,6 @@ final class MultilineNode: ArrayNode {
 
   // MARK: - Node(Counter)
 
-  private var _counterSegment: CounterSegment?
   final override var counterSegment: CounterSegment? { _counterSegment }
   /// Count holder provided by the heading node.
   @inline(__always)
@@ -104,17 +105,23 @@ final class MultilineNode: ArrayNode {
 
   // MARK: - MultilineNode
 
+  private final var _counterSegment: CounterSegment?
+  private final var _isCounterDirty: Bool = false
+
   override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
+    _setUp()
   }
 
   init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
     let rows = rows.map { Row($0) }
     super.init(subtype, rows)
+    _setUp()
   }
 
   private init(deepCopyOf multilineNode: MultilineNode) {
     super.init(deepCopyOf: multilineNode)
+    _setUp()
   }
 
   private final func _setUp() {
@@ -131,6 +138,11 @@ final class MultilineNode: ArrayNode {
 
   internal static func selector(isMultline: Bool) -> TargetSelector {
     TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline)))
+  }
+
+  final override func contentDidChange(nonCell: Void) {
+    _isCounterDirty = true
+    super.contentDidChange(nonCell: ())
   }
 
   /// Get the width of the content container for this array node.
@@ -154,7 +166,8 @@ final class MultilineNode: ArrayNode {
 
   final override func _reconcileMathListLayoutFragment(
     _ element: ContentNode, _ fragment: MathListLayoutFragment,
-    parent context: any LayoutContext, fromScratch: Bool, previousClass: MathClass? = nil
+    parent context: any LayoutContext, fromScratch: Bool,
+    previousClass: MathClass? = nil
   ) {
     let context = context as! TextLayoutContext
     return LayoutUtils.reconcileMathListLayoutFragment(
@@ -177,7 +190,7 @@ final class MultilineNode: ArrayNode {
 }
 
 extension MultilineNode: CountObserver {
-  func countObserver(markAsDirty: Void) {
-
+  final func countObserver(markAsDirty: Void) {
+    self.contentDidChange(nonCell: ())
   }
 }
