@@ -5,7 +5,7 @@ import Foundation
 
 @MainActor
 final class InsertionIndicatorView: RohanView {
-  private typealias InsertionIndicator = CustomWidthInsertionIndicator
+  private typealias InsertionIndicator = CustomInsertionIndicator
 
   private let primaryIndicator: InsertionIndicator
   private var secondaryIndicators: Array<InsertionIndicator>
@@ -34,9 +34,6 @@ final class InsertionIndicatorView: RohanView {
   func showPrimaryIndicator(_ frame: CGRect) {
     primaryIndicator.frame = frame
     primaryIndicator.isHidden = false
-
-    // restart blinking cycle.
-    primaryIndicator.displayMode = primaryIndicator.displayMode
   }
 
   func hidePrimaryIndicator() {
@@ -73,7 +70,95 @@ final class InsertionIndicatorView: RohanView {
   }
 }
 
-final class CustomWidthInsertionIndicator: NSTextInsertionIndicator {
+private final class CustomInsertionIndicator: NSView {
+  typealias DisplayMode = NSTextInsertionIndicator.DisplayMode
+
+  private var timer: Timer?
+
+  var color: NSColor = .textInsertionPointColor
+
+  var displayMode: DisplayMode = .automatic {
+    didSet {
+      _restartCycle()
+    }
+  }
+
+  var indicatorWidth: CGFloat = 1.0 {
+    didSet {
+      needsDisplay = true
+    }
+  }
+
+  override var frame: NSRect {
+    didSet {
+      _restartCycle()
+    }
+  }
+
+  override init(frame frameRect: NSRect) {
+    super.init(frame: frameRect)
+    _restartCycle()
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  override func draw(_ dirtyRect: NSRect) {
+    super.draw(dirtyRect)
+
+    color.set()
+
+    let path = NSBezierPath()
+    let xPos = bounds.midX - indicatorWidth / 2
+
+    path.lineCapStyle = .round
+    path.lineWidth = indicatorWidth
+
+    path.move(to: NSPoint(x: xPos, y: bounds.minY + indicatorWidth / 2))
+    path.line(to: NSPoint(x: xPos, y: bounds.maxY - indicatorWidth / 2))
+    path.stroke()
+  }
+
+  private func _startBlinking() {
+    guard timer == nil else { return }
+
+    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+      Task { @MainActor in
+        self?.isHidden.toggle()
+      }
+    }
+  }
+
+  private func _stopBlinking() {
+    timer?.invalidate()
+    timer = nil
+  }
+
+  private func _restartCycle() {
+    switch displayMode {
+    case .visible:
+      isHidden = false
+      _stopBlinking()
+
+    case .automatic:
+      isHidden = false
+      _stopBlinking()
+      _startBlinking()
+
+    case .hidden:
+      isHidden = true
+      _stopBlinking()
+
+    default:
+      assertionFailure("Unsupported display mode: \(displayMode)")
+      break
+    }
+  }
+}
+
+private final class InsertionIndicatorAdaptor: NSTextInsertionIndicator {
   var indicatorWidth: CGFloat = 1.0 {
     didSet {
       needsDisplay = true
