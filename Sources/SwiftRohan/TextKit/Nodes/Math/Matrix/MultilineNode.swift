@@ -117,6 +117,18 @@ final class MultilineNode: ArrayNode {
     super.init(deepCopyOf: multilineNode)
   }
 
+  private final func _setUp() {
+    if subtype.shouldProvideCounter {
+      let countHolder = CountHolder(.equation)
+      // Register the count holder as an observer.
+      countHolder.registerObserver(self)
+      _counterSegment = CounterSegment(countHolder)
+    }
+    else {
+      _counterSegment = nil
+    }
+  }
+
   internal static func selector(isMultline: Bool) -> TargetSelector {
     TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline)))
   }
@@ -161,5 +173,11 @@ final class MultilineNode: ArrayNode {
 
   final override func _previousClass(_ rowIndex: Int, _ columnIndex: Int) -> MathClass? {
     subtype.isMultline ? (rowIndex > 0 ? MathClass.Normal : nil) : nil
+  }
+}
+
+extension MultilineNode: CountObserver {
+  func countObserver(markAsDirty: Void) {
+
   }
 }

@@ -102,7 +102,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
   private func _columnWidth(_ column: Array<MathListLayoutFragment>) -> Double {
     switch subtype.subtype {
-    case .multline: _containerWidth
+    case .multlineAst: _containerWidth
     case _: column.lazy.map(\.width).max() ?? 0
     }
   }

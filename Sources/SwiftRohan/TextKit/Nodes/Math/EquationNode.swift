@@ -76,9 +76,15 @@ final class EquationNode: MathNode {
         assertionFailure("expected _nodeFragment to be non-nil")
         return _layoutLength
       }
-      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nodeFragment, parent: context)
+
+      if nucleus.isDirty {
+        LayoutUtils.reconcileMathListLayoutFragment(
+          nucleus, nodeFragment, parent: context)
+      }
       context.invalidateForward(1)
-      if subtype == .equation && _isCounterDirty {
+
+      if _isCounterDirty {
+        assert(subtype == .equation)
         _addAttributesBackwards(1, context)
         _isCounterDirty = false
       }
@@ -504,16 +510,17 @@ final class EquationNode: MathNode {
     EquationNode(subtype, nucleus)
   }
 
+  @inline(__always)
   private final func _setUp() {
     self.nucleus.setParent(self)
 
-    switch subtype {
-    case .equation:
+    if subtype.shouldProvideCounter {
       let countHolder = CountHolder(.equation)
       // register the equation node as an observer of the count holder.
       countHolder.registerObserver(self)
       self._counterSegment = CounterSegment(countHolder)
-    case _:
+    }
+    else {
       self._counterSegment = nil
     }
   }

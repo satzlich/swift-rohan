@@ -19,7 +19,9 @@ enum TextCommands {
     // multiline
     do {
       let multilines: Array<(MathArray, String)> = [
+        (MathArray.align, "aligned"),  // recycle "aligned"
         (MathArray.alignAst, "aligned"),  // recycle "aligned"
+        (MathArray.gather, "gathered"),  // recycle "gathered"
         (MathArray.gatherAst, "gathered"),  // recycle "gathered"
         (MathArray.multlineAst, "multline"),
       ]

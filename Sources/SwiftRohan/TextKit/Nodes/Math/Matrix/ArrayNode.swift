@@ -27,7 +27,7 @@ class ArrayNode: Node {
           switch subtype.subtype {
           case .align, .aligned: MathUtils.alignedStyle(for: value)
           case .gather, .gathered: MathUtils.gatheredStyle(for: value)
-          case .multline: MathUtils.multlineStyle(for: value)
+          case .multlineAst: MathUtils.multlineStyle(for: value)
 
           case .cases: MathUtils.matrixStyle(for: value)
           case .matrix: MathUtils.matrixStyle(for: value)
