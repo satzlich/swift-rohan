@@ -33,11 +33,11 @@ struct InsertionIndicatorViewTests {
     view.hidePrimaryIndicator()
     view.clearSecondaryIndicators()
   }
-  
+
   @Test
   func textInsertionIndicator() {
-    let textInsertionIndicator = TextInsertionIndicator()
-    
-    textInsertionIndicator.display()
+    let textInsertionIndicator = CustomInsertionIndicator()
+
+    textInsertionIndicator.draw(.infinite)
   }
 }

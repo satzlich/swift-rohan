@@ -4,7 +4,8 @@
 internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Positioning)
 
-  internal override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  // Override `getLayoutOffset(_ index: Int)` instead of this method.
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let index = index.index() else { return nil }
     return getLayoutOffset(index)
   }
@@ -197,7 +198,18 @@ internal class ElementNodeImpl: ElementNode {
   @inline(__always)
   private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
-    precondition(_children.isEmpty == false)
+
+    if _children.isEmpty {
+      if self.isPlaceholderActive {
+        let placeholder = String(NodePolicy.placeholder(for: self.type))
+        return StringReconciler.skipForward(current: placeholder, context: context)
+      }
+      else {
+        return 0
+      }
+    }
+
+    assert(_children.isEmpty == false)
 
     switch self.isBlock {
     case true:

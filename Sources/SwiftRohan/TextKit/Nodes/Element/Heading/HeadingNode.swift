@@ -18,6 +18,64 @@ final class HeadingNode: ElementNodeImpl {
     HeadingNode.selector(level: level)
   }
 
+  // MARK: - Node(Positioning)
+
+  final override func getLayoutOffset(_ index: Int) -> Int? {
+    super.getLayoutOffset(index).map { offset in
+      _preamble.length + offset
+    }
+  }
+
+  final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
+    if layoutOffset < _preamble.length {
+      return layoutOffset == 0
+        ? .null
+        : .terminal(value: .index(0), target: _preamble.length)
+    }
+    else {
+      let result = super.getPosition(layoutOffset - _preamble.length)
+      switch result {
+      case let .terminal(value: value, target: target):
+        return .terminal(value: value, target: target + _preamble.length)
+      case let .halfway(value: value, consumed: consumed):
+        return .halfway(value: value, consumed: consumed + _preamble.length)
+      case .failure: return result
+      case .null: return result
+      }
+    }
+  }
+
+  // MARK: - Node(Layout)
+
+  final override func layoutLength() -> Int { _preamble.length + _layoutLength }
+
+  final override func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool
+  ) -> Int {
+    if fromScratch {
+      _preamble = subtype.computePreamble(countHolder)
+      // reconcile layout
+      var sum = 0
+      sum += StringReconciler.insertForward(new: _preamble, context: context, self)
+      sum += super.performLayout(context, fromScratch: true)
+      // update paragraph style
+      context.addParagraphStyleBackward(forSegment: sum, self)
+      return sum
+    }
+    else {
+      let preamble = subtype.computePreamble(countHolder)
+      defer { _preamble = preamble }
+      // reconcile layout
+      var sum = 0
+      sum += StringReconciler.reconcileForward(
+        dirty: (_preamble, preamble), context: context, self)
+      sum += super.performLayout(context, fromScratch: false)
+      // update paragraph style
+      context.addParagraphStyleBackward(forSegment: sum, self)
+      return sum
+    }
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case subtype }
@@ -108,6 +166,10 @@ final class HeadingNode: ElementNodeImpl {
     return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
   }
 
+  /// Count holder provided by the heading node.
+  @inline(__always)
+  private final var countHolder: CountHolder? { _counterSegment?.begin }
+
   @inline(__always)
   private final func _setUp() {
     // heading nodes do not synthesise counter segment from children, instead
@@ -121,33 +183,6 @@ final class HeadingNode: ElementNodeImpl {
     }
     else {
       _counterSegment = nil
-    }
-  }
-
-  /// Compute the preamble for the heading given the count holder.
-  private func _computePreamble(_ countHolder: CountHolder?) -> String {
-    switch subtype {
-    case .sectionAst: return ""
-    case .subsectionAst: return ""
-    case .subsubsectionAst: return ""
-
-    case .section:
-      guard let countHolder else { return "" }
-      let section = countHolder.value(forName: .section)
-      return "\(section) "
-
-    case .subsection:
-      guard let countHolder else { return "" }
-      let section = countHolder.value(forName: .section)
-      let subsection = countHolder.value(forName: .subsection)
-      return "\(section).\(subsection) "
-
-    case .subsubsection:
-      guard let countHolder else { return "" }
-      let section = countHolder.value(forName: .section)
-      let subsection = countHolder.value(forName: .subsection)
-      let subsubsection = countHolder.value(forName: .subsubsection)
-      return "\(section).\(subsection).\(subsubsection) "
     }
   }
 
