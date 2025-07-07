@@ -16,14 +16,14 @@ final class MultilineNode: ArrayNode {
   final override class var type: NodeType { .multiline }
 
   final override func selector() -> TargetSelector {
-    MultilineNode.selector(isMultline: _isMultline())
+    MultilineNode.selector(isMultline: subtype.isMultline)
   }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
       current[ParagraphProperty.textAlignment] =
-        self._isMultline() ? .textAlignment(.right) : .textAlignment(.center)
+        subtype.isMultline ? .textAlignment(.right) : .textAlignment(.center)
       _cachedProperties = current
     }
     return _cachedProperties!
@@ -64,6 +64,14 @@ final class MultilineNode: ArrayNode {
     let json = JSONValue.array([.string(subtype.command), .array(rows)])
     return json
   }
+
+  // MARK: - Node(Counter)
+
+  private var _counterSegment: CounterSegment?
+  final override var counterSegment: CounterSegment? { _counterSegment }
+  /// Count holder provided by the heading node.
+  @inline(__always)
+  private final var countHolder: CountHolder? { _counterSegment?.begin }
 
   // MARK: - ArrayNode
 
@@ -113,17 +121,9 @@ final class MultilineNode: ArrayNode {
     TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline)))
   }
 
-  /// Returns true if this node corresponds to a `{multline}` environment.
-  private func _isMultline() -> Bool {
-    switch subtype.subtype {
-    case .multline: return true
-    default: return false
-    }
-  }
-
   /// Get the width of the content container for this array node.
   private func _getContainerWidth(_ styleSheet: StyleSheet) -> Double {
-    guard _isMultline() else { return 0 }
+    guard subtype.isMultline else { return 0 }
 
     let properties = self.getProperties(styleSheet)
 
@@ -131,12 +131,11 @@ final class MultilineNode: ArrayNode {
     func resolveValue(_ key: PropertyKey) -> PropertyValue {
       key.resolveValue(properties, styleSheet)
     }
-    let pageWidth = resolveValue(PageProperty.width).absLength()!.ptValue
-    let leftMargin = resolveValue(PageProperty.leftMargin).absLength()!.ptValue
-    let rightMargin = resolveValue(PageProperty.rightMargin).absLength()!.ptValue
     let fontSize = resolveValue(TextProperty.size).fontSize()!.floatValue
     let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
-    let containerWidth = pageWidth - leftMargin - rightMargin - headIndent
+    let globalContainerWidth =
+      PageProperty.resolveContentContainerWidth(styleSheet).ptValue
+    let containerWidth = globalContainerWidth - headIndent
     // 10pt for text container inset, 1em for leading padding.
     return containerWidth - Rohan.fragmentPadding * 2 - fontSize
   }
@@ -161,8 +160,6 @@ final class MultilineNode: ArrayNode {
   }
 
   final override func _previousClass(_ rowIndex: Int, _ columnIndex: Int) -> MathClass? {
-    _isMultline()
-      ? (rowIndex > 0 ? MathClass.Normal : nil)
-      : nil
+    subtype.isMultline ? (rowIndex > 0 ? MathClass.Normal : nil) : nil
   }
 }

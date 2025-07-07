@@ -11,8 +11,10 @@ private let SUBSTACK_ROW_GAP = Em.zero
 
 struct MathArray: Codable, CommandDeclarationProtocol {
   enum Subtype: Codable {
+    case align
     case aligned
     case cases
+    case gather
     case gathered
     case matrix(DelimiterPair)
     case multline
@@ -23,11 +25,16 @@ struct MathArray: Codable, CommandDeclarationProtocol {
       return false
     }
 
+    var isMultline: Bool {
+      if case .multline = self { return true }
+      return false
+    }
+
     var isMultiColumnEnabled: Bool {
       switch self {
-      case .aligned: true
+      case .align, .aligned: true
       case .cases: true
-      case .gathered: false
+      case .gather, .gathered: false
       case .matrix: true
       case .multline: false
       case .substack: false
@@ -41,13 +48,14 @@ struct MathArray: Codable, CommandDeclarationProtocol {
   let subtype: Subtype
 
   var isMatrix: Bool { subtype.isMatrix }
+  var isMultline: Bool { subtype.isMultline }
   var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
 
   var delimiters: DelimiterPair {
     switch subtype {
-    case .aligned: return DelimiterPair.NONE
+    case .align, .aligned: return DelimiterPair.NONE
     case .cases: return DelimiterPair.LBRACE
-    case .gathered: return DelimiterPair.NONE
+    case .gather, .gathered: return DelimiterPair.NONE
     case .matrix(let delimiters): return delimiters
     case .multline: return DelimiterPair.NONE
     case .substack: return DelimiterPair.NONE
@@ -61,9 +69,9 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 
   func getRowGap() -> Em {
     switch subtype {
-    case .aligned: return ALIGN_ROW_GAP
+    case .align, .aligned: return ALIGN_ROW_GAP
     case .cases: return MATRIX_ROW_GAP
-    case .gathered: return ALIGN_ROW_GAP
+    case .gather, .gathered: return ALIGN_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
     case .multline: return ALIGN_ROW_GAP
     case .substack: return SUBSTACK_ROW_GAP
@@ -72,9 +80,9 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 
   func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
     switch subtype {
-    case .aligned: return AlternateCellAlignmentProvider()
+    case .align, .aligned: return AlternateCellAlignmentProvider()
     case .cases: return FixedCellAlignmentProvider(.start)
-    case .gathered: return FixedCellAlignmentProvider(.center)
+    case .gather, .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
     case .multline: return MultlineCellAlignmentProvider(rowCount)
     case .substack: return FixedCellAlignmentProvider(.center)
@@ -87,9 +95,9 @@ struct MathArray: Codable, CommandDeclarationProtocol {
   ) -> ColumnGapProvider {
     let alignments = getCellAlignments(columns.first?.count ?? 0)
     switch subtype {
-    case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
+    case .align, .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
     case .cases: return MatrixColumnGapProvider()
-    case .gathered: return PlaceholderColumnGapProvider()  // unused
+    case .gather, .gathered: return PlaceholderColumnGapProvider()  // unused
     case .matrix: return MatrixColumnGapProvider()
     case .multline: return PlaceholderColumnGapProvider()  // unused
     case .substack: return PlaceholderColumnGapProvider()  // unused
@@ -118,7 +126,9 @@ extension MathArray {
 
   /// - Note: These commands are used by MultilineNode.
   static let blockMathCommands: Array<MathArray> = [
+    align,
     alignAst,
+    gather,
     gatherAst,
     multlineAst,
   ]
@@ -147,7 +157,9 @@ extension MathArray {
   // block math commands
 
   //
+  static let align = MathArray("align", .align)
   static let alignAst = MathArray("align*", .aligned)
+  static let gather = MathArray("gather", .gather)
   static let gatherAst = MathArray("gather*", .gathered)
   static let multlineAst = MathArray("multline*", .multline)
 }
