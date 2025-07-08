@@ -42,9 +42,11 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 extension MathArray {
   enum Subtype: Codable {
     case align
+    case alignAst
     case aligned
     case cases
     case gather
+    case gatherAst
     case gathered
     case matrix(DelimiterPair)
     case multline
@@ -55,19 +57,12 @@ extension MathArray {
       switch self {
       case .aligned, .cases, .gathered, .matrix, .substack:
         return true
-      case .align, .gather, .multline, .multlineAst:
+      case .align, .alignAst, .gather, .gatherAst, .multline, .multlineAst:
         return false
       }
     }
 
-    var isMultilineNodeCompatible: Bool {
-      switch self {
-      case .align, .aligned, .gather, .gathered, .multline, .multlineAst:
-        return true
-      case .cases, .matrix, .substack:
-        return false
-      }
-    }
+    var isMultilineNodeCompatible: Bool { !isMatrixNodeCompatible }
 
     var isMatrix: Bool {
       switch self {
@@ -85,9 +80,9 @@ extension MathArray {
 
     var isMultiColumnEnabled: Bool {
       switch self {
-      case .align, .aligned: true
+      case .align, .alignAst, .aligned: true
       case .cases: true
-      case .gather, .gathered: false
+      case .gather, .gatherAst, .gathered: false
       case .matrix: true
       case .multline, .multlineAst: false
       case .substack: false
@@ -97,9 +92,11 @@ extension MathArray {
     var shouldProvideCounter: Bool {
       switch self {
       case .align: true
+      case .alignAst: false
       case .aligned: false
       case .cases: false
       case .gather: true
+      case .gatherAst: false
       case .gathered: false
       case .matrix: false
       case .multline: true
@@ -110,8 +107,8 @@ extension MathArray {
 
     func mathStyle(for value: MathStyle) -> MathStyle {
       switch self {
-      case .align, .aligned: MathUtils.alignedStyle(for: value)
-      case .gather, .gathered: MathUtils.gatheredStyle(for: value)
+      case .align, .alignAst, .aligned: MathUtils.alignedStyle(for: value)
+      case .gather, .gatherAst, .gathered: MathUtils.gatheredStyle(for: value)
       case .multline, .multlineAst: MathUtils.multlineStyle(for: value)
       case .cases: MathUtils.matrixStyle(for: value)
       case .matrix: MathUtils.matrixStyle(for: value)
@@ -121,9 +118,9 @@ extension MathArray {
 
     var delimiters: DelimiterPair {
       switch self {
-      case .align, .aligned: return DelimiterPair.NONE
+      case .align, .alignAst, .aligned: return DelimiterPair.NONE
       case .cases: return DelimiterPair.LBRACE
-      case .gather, .gathered: return DelimiterPair.NONE
+      case .gather, .gatherAst, .gathered: return DelimiterPair.NONE
       case .matrix(let delimiters): return delimiters
       case .multline, .multlineAst: return DelimiterPair.NONE
       case .substack: return DelimiterPair.NONE
@@ -186,9 +183,9 @@ extension MathArray {
 
   //
   static let align = MathArray("align", .align)
-  static let alignAst = MathArray("align*", .aligned)
+  static let alignAst = MathArray("align*", .alignAst)
   static let gather = MathArray("gather", .gather)
-  static let gatherAst = MathArray("gather*", .gathered)
+  static let gatherAst = MathArray("gather*", .gatherAst)
   static let multline = MathArray("multline", .multline)
   static let multlineAst = MathArray("multline*", .multlineAst)
 }

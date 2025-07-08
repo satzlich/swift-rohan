@@ -23,6 +23,7 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
     position.x += point.x
     position.y += point.y
     itemMarker.draw(at: position)
+    context.textMatrix = .identity
     context.restoreGState()
   }
 

@@ -327,28 +327,55 @@ final class TextSegmentTests: TextKitTestsBase {
     }
   }
 
-  @Test
-  func testArrayNode() {
-    let rootNode = RootNode([
-      EquationNode(
-        .display,
+  private func _createArrayNodeExample(_ subtype: MathArray) -> (Node, RhTextRange) {
+    if subtype.isMatrixNodeCompatible {
+      let node =
+        EquationNode(
+          .equation,
+          [
+            MatrixNode(
+              subtype,
+              [
+                MatrixNode.Row([
+                  ContentNode([TextNode("a")]),
+                  ContentNode([TextNode("beef")]),
+                ]),
+                MatrixNode.Row([
+                  ContentNode([TextNode("c")]),
+                  ContentNode([TextNode("d")]),
+                ]),
+              ])
+          ])
+
+      let range =
+        RhTextRange.parse("[↓0,↓0,nuc,↓0,(0,1),↓0]:0..<[↓0,↓0,nuc,↓0,(0,1),↓0]:3")!
+      return (node, range)
+    }
+    else {
+      assert(subtype.isMultilineNodeCompatible)
+      let node = MultilineNode(
+        subtype,
         [
-          MatrixNode(
-            .pmatrix,
-            [
-              MatrixNode.Row([
-                ContentNode([TextNode("a")]),
-                ContentNode([TextNode("beef")]),
-              ]),
-              MatrixNode.Row([
-                ContentNode([TextNode("c")]),
-                ContentNode([TextNode("d")]),
-              ]),
-            ])
+          MultilineNode.Row([
+            ContentNode([TextNode("a")]),
+            ContentNode([TextNode("beef")]),
+          ]),
+          MultilineNode.Row([
+            ContentNode([TextNode("c")]),
+            ContentNode([TextNode("d")]),
+          ]),
         ])
-    ])
+      let range =
+        RhTextRange.parse("[↓0,↓0,(0,1),↓0]:0..<[↓0,↓0,(0,1),↓0]:3")!
+      return (node, range)
+    }
+  }
+
+  @Test("matrix and multiline", arguments: [MathArray.bmatrix, .align])
+  func testArrayNode(_ subtype: MathArray) {
+    let (node, range) = _createArrayNodeExample(subtype)
+    let rootNode = RootNode([ParagraphNode([node])])
     let documentManager = createDocumentManager(rootNode)
-    let range = RhTextRange.parse("[↓0,nuc,↓0,(0,1),↓0]:0..<[↓0,nuc,↓0,(0,1),↓0]:3")!
 
     var frames: Array<CGRect> = []
     documentManager.enumerateTextSegments(in: range, type: .standard) {

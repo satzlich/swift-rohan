@@ -5,9 +5,9 @@ import Foundation
 extension MathArray.Subtype {
   func getRowGap() -> Em {
     switch self {
-    case .align, .aligned: return ALIGN_ROW_GAP
+    case .align, .alignAst, .aligned: return ALIGN_ROW_GAP
     case .cases: return MATRIX_ROW_GAP
-    case .gather, .gathered: return ALIGN_ROW_GAP
+    case .gather, .gatherAst, .gathered: return ALIGN_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
     case .multline, .multlineAst: return ALIGN_ROW_GAP
     case .substack: return SUBSTACK_ROW_GAP
@@ -16,9 +16,9 @@ extension MathArray.Subtype {
 
   func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
     switch self {
-    case .align, .aligned: return AlternateCellAlignmentProvider()
+    case .align, .alignAst, .aligned: return AlternateCellAlignmentProvider()
     case .cases: return FixedCellAlignmentProvider(.start)
-    case .gather, .gathered: return FixedCellAlignmentProvider(.center)
+    case .gather, .gatherAst, .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
     case .multline, .multlineAst: return MultlineCellAlignmentProvider(rowCount)
     case .substack: return FixedCellAlignmentProvider(.center)
@@ -31,10 +31,10 @@ extension MathArray.Subtype {
   ) -> ColumnGapProvider {
     let alignments = getCellAlignments(columns.first?.count ?? 0)
     switch self {
-    case .align, .aligned:
+    case .align, .alignAst, .aligned:
       return AlignColumnGapProvider(columns, alignments, mathContext)
     case .cases: return MatrixColumnGapProvider()
-    case .gather, .gathered: return PlaceholderColumnGapProvider()  // unused
+    case .gather, .gatherAst, .gathered: return PlaceholderColumnGapProvider()  // unused
     case .matrix: return MatrixColumnGapProvider()
     case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
     case .substack: return PlaceholderColumnGapProvider()  // unused

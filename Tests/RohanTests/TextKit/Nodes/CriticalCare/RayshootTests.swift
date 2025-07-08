@@ -83,7 +83,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =        "([↓0,↓0,nuc,↓0,(1,1),↓0,denom,↓0,nuc,↓0]:1, upstream)"
+      let expected1 = "([↓0,↓0,nuc,↓0,(1,1),↓0,denom,↓0,nuc,↓0]:1, upstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -98,7 +98,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =        "([↓0,↓0,nuc,↓0,(0,1),↓0]:0, downstream)"
+      let expected1 = "([↓0,↓0,nuc,↓0,(0,1),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -114,13 +114,12 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =        "([↓0,↓0,nuc,↓0,(1,0),↓0]:0, downstream)"
+      let expected1 = "([↓0,↓0,nuc,↓0,(1,0),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
       }
       #expect("\(result1)" == expected1)
-
     }
   }
 
