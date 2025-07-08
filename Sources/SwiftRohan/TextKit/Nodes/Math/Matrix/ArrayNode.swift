@@ -23,15 +23,7 @@ class ArrayNode: Node {
       do {
         let key = MathProperty.style
         let value = key.resolveValue(current, styleSheet).mathStyle()!
-        let mathStyle =
-          switch subtype.subtype {
-          case .align, .aligned: MathUtils.alignedStyle(for: value)
-          case .gather, .gathered: MathUtils.gatheredStyle(for: value)
-          case .multline, .multlineAst: MathUtils.multlineStyle(for: value)
-          case .cases: MathUtils.matrixStyle(for: value)
-          case .matrix: MathUtils.matrixStyle(for: value)
-          case .substack: MathUtils.matrixStyle(for: value)
-          }
+        let mathStyle = subtype.mathStyle(for: value)
         current[key] = .mathStyle(mathStyle)
       }
 

@@ -10,6 +10,40 @@ private let MATRIX_COL_GAP = Em(0.8)
 private let SUBSTACK_ROW_GAP = Em.zero
 
 struct MathArray: Codable, CommandDeclarationProtocol {
+  let command: String
+  var tag: CommandTag { .null }
+  var source: CommandSource { .preBuilt }
+  let subtype: Subtype
+
+  init(_ command: String, _ subtype: Subtype) {
+    self.command = command
+    self.subtype = subtype
+  }
+
+  var delimiters: DelimiterPair { subtype.delimiters }
+
+  var isMatrix: Bool { subtype.isMatrix }
+  var isMultline: Bool { subtype.isMultline }
+  var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
+  var shouldProvideCounter: Bool { subtype.shouldProvideCounter }
+
+  func mathStyle(for value: MathStyle) -> MathStyle { subtype.mathStyle(for: value) }
+
+  func getRowGap() -> Em { subtype.getRowGap() }
+
+  func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
+    subtype.getCellAlignments(rowCount)
+  }
+
+  func getColumnGapCalculator(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ mathContext: MathContext
+  ) -> ColumnGapProvider {
+    subtype.getColumnGapCalculator(columns, mathContext)
+  }
+}
+
+extension MathArray {
   enum Subtype: Codable {
     case align
     case aligned
@@ -58,68 +92,65 @@ struct MathArray: Codable, CommandDeclarationProtocol {
       case .substack: false
       }
     }
-  }
 
-  let command: String
-  var tag: CommandTag { .null }
-  var source: CommandSource { .preBuilt }
-  let subtype: Subtype
-
-  var isMatrix: Bool { subtype.isMatrix }
-  var isMultline: Bool { subtype.isMultline }
-  var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
-  var shouldProvideCounter: Bool { subtype.shouldProvideCounter }
-
-  var delimiters: DelimiterPair {
-    switch subtype {
-    case .align, .aligned: return DelimiterPair.NONE
-    case .cases: return DelimiterPair.LBRACE
-    case .gather, .gathered: return DelimiterPair.NONE
-    case .matrix(let delimiters): return delimiters
-    case .multline, .multlineAst: return DelimiterPair.NONE
-    case .substack: return DelimiterPair.NONE
+    func mathStyle(for value: MathStyle) -> MathStyle {
+      switch self {
+      case .align, .aligned: MathUtils.alignedStyle(for: value)
+      case .gather, .gathered: MathUtils.gatheredStyle(for: value)
+      case .multline, .multlineAst: MathUtils.multlineStyle(for: value)
+      case .cases: MathUtils.matrixStyle(for: value)
+      case .matrix: MathUtils.matrixStyle(for: value)
+      case .substack: MathUtils.matrixStyle(for: value)
+      }
     }
-  }
 
-  init(_ command: String, _ subtype: Subtype) {
-    self.command = command
-    self.subtype = subtype
-  }
-
-  func getRowGap() -> Em {
-    switch subtype {
-    case .align, .aligned: return ALIGN_ROW_GAP
-    case .cases: return MATRIX_ROW_GAP
-    case .gather, .gathered: return ALIGN_ROW_GAP
-    case .matrix: return MATRIX_ROW_GAP
-    case .multline, .multlineAst: return ALIGN_ROW_GAP
-    case .substack: return SUBSTACK_ROW_GAP
+    var delimiters: DelimiterPair {
+      switch self {
+      case .align, .aligned: return DelimiterPair.NONE
+      case .cases: return DelimiterPair.LBRACE
+      case .gather, .gathered: return DelimiterPair.NONE
+      case .matrix(let delimiters): return delimiters
+      case .multline, .multlineAst: return DelimiterPair.NONE
+      case .substack: return DelimiterPair.NONE
+      }
     }
-  }
 
-  func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
-    switch subtype {
-    case .align, .aligned: return AlternateCellAlignmentProvider()
-    case .cases: return FixedCellAlignmentProvider(.start)
-    case .gather, .gathered: return FixedCellAlignmentProvider(.center)
-    case .matrix: return FixedCellAlignmentProvider(.center)
-    case .multline, .multlineAst: return MultlineCellAlignmentProvider(rowCount)
-    case .substack: return FixedCellAlignmentProvider(.center)
+    func getRowGap() -> Em {
+      switch self {
+      case .align, .aligned: return ALIGN_ROW_GAP
+      case .cases: return MATRIX_ROW_GAP
+      case .gather, .gathered: return ALIGN_ROW_GAP
+      case .matrix: return MATRIX_ROW_GAP
+      case .multline, .multlineAst: return ALIGN_ROW_GAP
+      case .substack: return SUBSTACK_ROW_GAP
+      }
     }
-  }
 
-  func getColumnGapCalculator(
-    _ columns: Array<Array<MathListLayoutFragment>>,
-    _ mathContext: MathContext
-  ) -> ColumnGapProvider {
-    let alignments = getCellAlignments(columns.first?.count ?? 0)
-    switch subtype {
-    case .align, .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
-    case .cases: return MatrixColumnGapProvider()
-    case .gather, .gathered: return PlaceholderColumnGapProvider()  // unused
-    case .matrix: return MatrixColumnGapProvider()
-    case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
-    case .substack: return PlaceholderColumnGapProvider()  // unused
+    func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
+      switch self {
+      case .align, .aligned: return AlternateCellAlignmentProvider()
+      case .cases: return FixedCellAlignmentProvider(.start)
+      case .gather, .gathered: return FixedCellAlignmentProvider(.center)
+      case .matrix: return FixedCellAlignmentProvider(.center)
+      case .multline, .multlineAst: return MultlineCellAlignmentProvider(rowCount)
+      case .substack: return FixedCellAlignmentProvider(.center)
+      }
+    }
+
+    func getColumnGapCalculator(
+      _ columns: Array<Array<MathListLayoutFragment>>,
+      _ mathContext: MathContext
+    ) -> ColumnGapProvider {
+      let alignments = getCellAlignments(columns.first?.count ?? 0)
+      switch self {
+      case .align, .aligned:
+        return AlignColumnGapProvider(columns, alignments, mathContext)
+      case .cases: return MatrixColumnGapProvider()
+      case .gather, .gathered: return PlaceholderColumnGapProvider()  // unused
+      case .matrix: return MatrixColumnGapProvider()
+      case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
+      case .substack: return PlaceholderColumnGapProvider()  // unused
+      }
     }
   }
 }

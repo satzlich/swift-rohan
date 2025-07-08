@@ -67,13 +67,16 @@ final class MultilineNode: ArrayNode {
       return sum
     }
     else {
+      assert(_nodeFragment != nil)
+
       _updateNodeProperties()
+
       if _countProviderState != nil {
         assert(subtype.shouldProvideCounter)
         if _countProviderState!.isCounterDirty {
           let containerWidth =
             _countProviderState!.computeContainerWidth(_constantContainerWidth)
-          _nodeFragment?.setContainerWidth(containerWidth)
+          _nodeFragment!.setContainerWidth(containerWidth)
 
           let sum = super.performLayout(context, fromScratch: false)
           _addAttributesBackwards(1, context)
@@ -243,12 +246,15 @@ final class MultilineNode: ArrayNode {
     _constantContainerWidth = _computeContainerWidth(styleSheet)
 
     if subtype.shouldProvideCounter {
+      assert(_countProviderState != nil)
+
       let (attributes, trailingCursorPosition) =
         EquationNode.computeAttributesForCounterProvider(self, styleSheet)
       _cachedAttributes = attributes
-      _countProviderState?.trailingCursorPosition = trailingCursorPosition
+      _countProviderState!.trailingCursorPosition = trailingCursorPosition
+
       let countHolder = countHolder!
-      _countProviderState?.equationNumber =
+      _countProviderState!.equationNumber =
         EquationNode.composeEquationNumber(countHolder, _cachedAttributes!)
     }
     else {
@@ -259,12 +265,15 @@ final class MultilineNode: ArrayNode {
 
   private final func _updateNodeProperties() {
     if subtype.shouldProvideCounter {
-      let countHolder = countHolder!
-      _countProviderState?.equationNumber =
+      guard let countHolder = countHolder,
+        _cachedAttributes != nil,
+        _countProviderState != nil
+      else { return }
+      _countProviderState!.equationNumber =
         EquationNode.composeEquationNumber(countHolder, _cachedAttributes!)
     }
     else {
-      return
+      // no-op
     }
   }
 
