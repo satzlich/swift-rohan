@@ -69,7 +69,7 @@ class ArrayNode: Node {
   }
 
   /// Content did change but not for a cell.
-  internal func contentDidChange(nonCell: Void) {
+  internal func contentDidChangeOutsideCell() {
     guard self.isDirty == false else { return }
     parent?.contentDidChange()
   }

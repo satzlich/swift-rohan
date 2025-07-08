@@ -287,8 +287,8 @@ final class MultilineNode: ArrayNode {
     TargetSelector(.multiline, PropertyMatcher(.isMultline, .bool(isMultline)))
   }
 
-  final override func contentDidChange(nonCell: Void) {
-    super.contentDidChange(nonCell: ())
+  final override func contentDidChangeOutsideCell() {
+    super.contentDidChangeOutsideCell()
     // due to early stop mechanism, we have to mark dirty **after** propagation.
     _countProviderState?.isCounterDirty = true
   }
@@ -325,7 +325,7 @@ final class MultilineNode: ArrayNode {
 
 extension MultilineNode: CountObserver {
   final func countObserver(markAsDirty: Void) {
-    self.contentDidChange(nonCell: ())
+    self.contentDidChangeOutsideCell()
   }
 
   struct _CountProviderState {
