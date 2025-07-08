@@ -134,23 +134,23 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     let cellAlignments = subtype.getCellAlignments(self.rowCount)
     let colGapCalculator = subtype.getColumnGapCalculator(_columns, mathContext)
 
-    // We pad ascent and descent with the ascent and descent of the paren
-    // to ensure that normal matrices are aligned with others unless they are
-    // way too big.
-    let paren = GlyphFragment("(", font, table)!
     // This variable stores the maximum ascent and descent for each row.
     let heights: Array<AscentDescent>
     do {
+      // We pad ascent and descent with the ascent and descent of the paren
+      // to ensure that normal matrices are aligned with others unless they are
+      // way too big.
+      let paren = GlyphFragment("(", font, table)!
       let value = AscentDescent(paren.ascent, paren.descent)
-      var heights_ = Array(repeating: value, count: rowCount)
+      var hs = Array(repeating: value, count: rowCount)
       for i in 0..<rowCount {
         for j in 0..<columnCount {
           let fragment = getElement(i, j)
-          heights_[i].ascent = max(heights_[i].ascent, fragment.ascent)
-          heights_[i].descent = max(heights_[i].descent, fragment.descent)
+          hs[i].ascent = max(hs[i].ascent, fragment.ascent)
+          hs[i].descent = max(hs[i].descent, fragment.descent)
         }
       }
-      heights = heights_
+      heights = hs
     }
 
     // For each row, combine maximum ascent and descent into a row height.
@@ -185,8 +185,10 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     }
 
     // layout delimiters
-    let (left, right) = layoutDelimiters(total_height, mathContext)
-    assert(!subtype.isMultline || (left == nil && right == nil))
+    let (left, right) =
+      subtype.delimiters.isNull == false
+      ? layoutDelimiters(total_height, mathContext)
+      : (nil, nil)
 
     // x, y offsets for the matrix element
     let xDelta = left?.width ?? 0

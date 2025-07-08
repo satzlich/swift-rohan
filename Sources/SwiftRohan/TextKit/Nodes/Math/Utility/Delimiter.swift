@@ -17,6 +17,13 @@ enum Delimiter: Codable {
     }
   }
 
+  var isNull: Bool {
+    switch self {
+    case .null: true
+    default: false
+    }
+  }
+
   init() { self = .null }
 
   init?(_ char: Character) {

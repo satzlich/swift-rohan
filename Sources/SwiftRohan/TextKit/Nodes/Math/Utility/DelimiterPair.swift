@@ -38,6 +38,10 @@ struct DelimiterPair: Codable {
     else { return nil }
     return DelimiterPair(open, close)
   }
+
+  var isNull: Bool {
+    open.isNull && close.isNull
+  }
 }
 
 extension DelimiterPair {
