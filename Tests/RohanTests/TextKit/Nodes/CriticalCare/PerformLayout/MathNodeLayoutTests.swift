@@ -44,30 +44,36 @@ struct MathNodeLayoutTests {
     }
   }
 
-  private func createMathTestScene<T: Node>(
-    _ node: T
-  ) -> (ContentNode, MathListLayoutContext) {
+  private func createTestScene<T: Node, C: LayoutContext>(
+    _ node: T, _ createContext: (ContentNode, StyleSheet) -> C
+  ) -> (ContentNode, C) {
     let styleSheet = StyleSheetTests.testingStyleSheet()
     let contentNode = ContentNode([node])
-    let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
-    let fragment = MathListLayoutFragment(mathContext)
-    let context = MathListLayoutContext(styleSheet, mathContext, fragment)
+    let context = createContext(contentNode, styleSheet)
     context.beginEditing()
     _ = contentNode.performLayout(context, fromScratch: true)
     context.endEditing()
     return (contentNode, context)
   }
 
+  private func createMathTestScene<T: Node>(
+    _ node: T
+  ) -> (ContentNode, MathListLayoutContext) {
+    createTestScene(node) { contentNode, styleSheet in
+      let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)
+      let fragment = MathListLayoutFragment(mathContext)
+      let context = MathListLayoutContext(styleSheet, mathContext, fragment)
+      return context
+    }
+  }
+
   private func createTextTestScene<T: Node>(
     _ node: T
   ) -> (ContentNode, TextLayoutContext) {
-    let styleSheet = StyleSheetTests.testingStyleSheet()
-    let contentNode = ContentNode([node])
-    let textContext = TextLayoutContext(styleSheet)
-    textContext.beginEditing()
-    _ = contentNode.performLayout(textContext, fromScratch: true)
-    textContext.endEditing()
-    return (contentNode, textContext)
+    createTestScene(node) { _, styleSheet in
+      let textContext = TextLayoutContext(styleSheet)
+      return textContext
+    }
   }
 
   private func performLayout<T: LayoutContext>(_ context: T, _ contentNode: ContentNode) {
@@ -328,7 +334,7 @@ struct MathNodeLayoutTests {
       return (multiline, contentNode, context)
     }
   }
-  
+
   @Test
   func equationNode_dirtyCount() {
     let equationNode = EquationNode(.equation, [TextNode("x")])
@@ -338,7 +344,7 @@ struct MathNodeLayoutTests {
       performLayout(context, contentNode)
     }
   }
-  
+
   @Test("arrayNode", arguments: [MathArray.bmatrix, .align, .multline])
   func arrayNode(_ subtype: MathArray) {
     let (arrayNode, contentNode, context) = _createTestScene(subtype)
