@@ -135,7 +135,9 @@ final class EquationNode: MathNode {
   }
 
   private final func _setupNodeProperties(_ context: some LayoutContext) {
-    // Invariant Maintenance: _cachedAttributes, trailingCursorPosition.
+    // Invariant Maintenance:
+    //   isBlock => _cachedAttributes != nil
+    //   shouldProvideCounter => trailingCursorPosition is set.
 
     let styleSheet = context.styleSheet
 
@@ -273,48 +275,32 @@ final class EquationNode: MathNode {
     let context = context as! TextLayoutContext
 
     switch subtype {
-    case .inline:
-      if isReflowActive {
-        // set component, fragment, and index
-        let index = MathIndex.nuc
-        let component = nucleus
-        guard let fragment = _nodeFragment else { return false }
-        // append to trace
-        trace.emplaceBack(self, .mathIndex(index))
+    case .inline where self.isReflowActive:
+      // set component, fragment, and index
+      let index = MathIndex.nuc
+      let component = nucleus
+      let nodeFragment = _nodeFragment!
+      // append to trace
+      trace.emplaceBack(self, .mathIndex(index))
 
-        let newContext =
-          createReflowContext(
-            component, fragment, parent: context, layoutOffset: layoutOffset)
+      let newContext =
+        createReflowContext(
+          component, nodeFragment, parent: context, layoutOffset: layoutOffset)
 
-        // recurse
-        let modified = component.resolveTextLocation(
-          with: point, context: newContext,
-          // reset layoutOffset to "0".
-          layoutOffset: 0, trace: &trace, affinity: &affinity)
-        // fix accordingly
-        if !modified { trace.emplaceBack(component, .index(0)) }
-        return true
-      }
-      else {
-        return super.resolveTextLocation(
-          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
-          affinity: &affinity)
-      }
+      // recurse
+      let modified = component.resolveTextLocation(
+        with: point, context: newContext,
+        // reset layoutOffset to "0".
+        layoutOffset: 0, trace: &trace, affinity: &affinity)
+      // fix accordingly
+      if !modified { trace.emplaceBack(component, .index(0)) }
+      return true
 
-    case .equation:
-      if let trailingCursorPosition = _countProviderState?.trailingCursorPosition,
-        point.x >= trailingCursorPosition - 0.5  // allow small tolerance
-      {
-        // cursor position is after the equation, no need to resolve.
-        return false
-      }
-      else {
-        return super.resolveTextLocation(
-          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
-          affinity: &affinity)
-      }
+    case .equation where point.x > _countProviderState!.trailingCursorPosition - 0.5:
+      // cursor position is after the equation, no need to resolve.
+      return false
 
-    case .display:
+    case .display, _:
       return super.resolveTextLocation(
         with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
         affinity: &affinity)
