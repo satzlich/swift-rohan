@@ -328,7 +328,17 @@ struct MathNodeLayoutTests {
       return (multiline, contentNode, context)
     }
   }
-
+  
+  @Test
+  func equationNode_dirtyCount() {
+    let equationNode = EquationNode(.equation, [TextNode("x")])
+    let (contentNode, context) = createTextTestScene(equationNode)
+    do {
+      equationNode.counterSegment?.begin.propagateDirty()
+      performLayout(context, contentNode)
+    }
+  }
+  
   @Test("arrayNode", arguments: [MathArray.bmatrix, .align, .multline])
   func arrayNode(_ subtype: MathArray) {
     let (arrayNode, contentNode, context) = _createTestScene(subtype)

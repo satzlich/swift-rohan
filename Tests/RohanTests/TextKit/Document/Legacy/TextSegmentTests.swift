@@ -327,14 +327,14 @@ final class TextSegmentTests: TextKitTestsBase {
     }
   }
 
-  private func _createArrayNodeExample(_ i: Int) -> (Node, RhTextRange) {
-    if i == 0 {
+  private func _createArrayNodeExample(_ subtype: MathArray) -> (Node, RhTextRange) {
+    if subtype.isMatrixNodeCompatible {
       let node =
         EquationNode(
           .equation,
           [
             MatrixNode(
-              .pmatrix,
+              subtype,
               [
                 MatrixNode.Row([
                   ContentNode([TextNode("a")]),
@@ -352,8 +352,9 @@ final class TextSegmentTests: TextKitTestsBase {
       return (node, range)
     }
     else {
+      assert(subtype.isMultilineNodeCompatible)
       let node = MultilineNode(
-        .align,
+        subtype,
         [
           MultilineNode.Row([
             ContentNode([TextNode("a")]),
@@ -370,9 +371,9 @@ final class TextSegmentTests: TextKitTestsBase {
     }
   }
 
-  @Test("matrix and multiline", arguments: [0, 1])
-  func testArrayNode(_ i: Int) {
-    let (node, range) = _createArrayNodeExample(i)
+  @Test("matrix and multiline", arguments: [MathArray.bmatrix, .align])
+  func testArrayNode(_ subtype: MathArray) {
+    let (node, range) = _createArrayNodeExample(subtype)
     let rootNode = RootNode([ParagraphNode([node])])
     let documentManager = createDocumentManager(rootNode)
 
