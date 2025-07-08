@@ -162,15 +162,14 @@ final class EquationNode: MathNode {
   ) {
     switch subtype {
     case .equation:
-      let countHolder = self.countHolder!
-      let cachedAttributes = _cachedAttributes!
       let equationNumber =
-        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
-      EquationNode.addAttributesBackwards(
-        segment, context, &_cachedAttributes!, equationNumber)
+        EquationNode.composeEquationNumber(countHolder!, _cachedAttributes!)
+      _cachedAttributes![.rhEquationNumber] = equationNumber
+
+      context.addAttributesBackward(segment, _cachedAttributes!)
 
     case .display:
-      EquationNode.addAttributesBackwards(segment, context, _cachedAttributes!)
+      context.addAttributesBackward(segment, _cachedAttributes!)
 
     case .inline: break
     }
@@ -542,37 +541,6 @@ extension EquationNode {
     let trailingCursorPosition = containerWidth - Rohan.fragmentPadding
 
     return (attributes, trailingCursorPosition)
-  }
-
-  /// Add attributes backwards.
-  /// - Parameters:
-  ///   - segment: The length of the segment to add attributes backwards.
-  ///   - context: The layout context.
-  ///   - attributes: The attributes to add.
-  ///   - equationNumber: The equation number to add.
-  @inlinable @inline(__always)
-  static func addAttributesBackwards(
-    _ segment: Int, _ context: some LayoutContext,
-    _ attributes: inout Dictionary<NSAttributedString.Key, Any>,
-    _ equationNumber: NSAttributedString
-  ) {
-    attributes[.rhEquationNumber] = equationNumber
-    addAttributesBackwards(segment, context, attributes)
-  }
-
-  /// Add attributes backwards.
-  /// - Parameters:
-  ///   - segment: The length of the segment to add attributes backwards.
-  ///   - context: The layout context.
-  ///   - attributes: The attributes to add.
-  @inlinable @inline(__always)
-  static func addAttributesBackwards(
-    _ segment: Int, _ context: some LayoutContext,
-    _ attributes: Dictionary<NSAttributedString.Key, Any>
-  ) {
-    let begin = context.layoutCursor - segment
-    let end = context.layoutCursor
-    context.addAttributes(attributes, begin..<end)
   }
 
   /// Compose equation number from the count holder.

@@ -99,16 +99,11 @@ final class MultilineNode: ArrayNode {
     _ segment: Int, _ context: some LayoutContext
   ) {
     if subtype.shouldProvideCounter {
-      let countHolder = countHolder!
-      let cachedAttributes = _cachedAttributes!
       let equationNumber =
-        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
-      EquationNode.addAttributesBackwards(
-        segment, context, &_cachedAttributes!, equationNumber)
+        EquationNode.composeEquationNumber(countHolder!, _cachedAttributes!)
+      _cachedAttributes![.rhEquationNumber] = equationNumber
     }
-    else {
-      EquationNode.addAttributesBackwards(segment, context, _cachedAttributes!)
-    }
+    context.addAttributesBackward(segment, _cachedAttributes!)
   }
 
   // MARK: - Node(Codable)

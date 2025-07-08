@@ -23,9 +23,6 @@ protocol LayoutContext {
   /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
 
-  /// Add paragraph style to the segment before current cursor.
-  func addParagraphStyleBackward(forSegment segment: Int, _ source: Node)
-
   /// Add attributes to the given range.
   func addAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>)
@@ -118,21 +115,34 @@ extension LayoutContext {
     // defeault implementation does nothing.
   }
 
-  func addParagraphStyleBackward(forSegment segment: Int, _ source: Node) {
-    precondition(isEditing)
-    // defeault implementation does nothing.
-  }
-
   func addAttributes(
     _ attributes: Dictionary<NSAttributedString.Key, Any>, _ range: Range<Int>
   ) {
     precondition(isEditing)
     // defeault implementation does nothing.
   }
+}
 
+extension LayoutContext {
   func insertFragments(contentsOf fragments: Array<LayoutFragment>, _ source: Node) {
     for fragment in fragments {
       insertFragment(fragment, source)
     }
+  }
+
+  func addParagraphStyleBackward(_ segment: Int, _ source: Node) {
+    precondition(isEditing)
+    let begin = layoutCursor - segment
+    let end = layoutCursor
+    addParagraphStyle(source, begin..<end)
+  }
+
+  func addAttributesBackward(
+    _ segment: Int, _ attributes: Dictionary<NSAttributedString.Key, Any>
+  ) {
+    precondition(isEditing)
+    let begin = layoutCursor - segment
+    let end = layoutCursor
+    addAttributes(attributes, begin..<end)
   }
 }

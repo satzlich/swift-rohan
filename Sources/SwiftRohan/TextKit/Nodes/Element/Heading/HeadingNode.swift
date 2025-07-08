@@ -59,7 +59,7 @@ final class HeadingNode: ElementNodeImpl {
       sum += StringReconciler.insertForward(new: _preamble, context: context, self)
       sum += super.performLayout(context, fromScratch: true)
       // update paragraph style
-      context.addParagraphStyleBackward(forSegment: sum, self)
+      context.addParagraphStyleBackward(sum, self)
       return sum
     }
     else {
@@ -71,7 +71,7 @@ final class HeadingNode: ElementNodeImpl {
         dirty: (_preamble, preamble), context: context, self)
       sum += super.performLayout(context, fromScratch: false)
       // update paragraph style
-      context.addParagraphStyleBackward(forSegment: sum, self)
+      context.addParagraphStyleBackward(sum, self)
       return sum
     }
   }
