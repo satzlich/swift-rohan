@@ -72,7 +72,8 @@ struct NodeStoreUtilsTests {
       "mathbin", "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop",
       "mathopen", "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf",
       "mathtt", "matrix", "max", "measuredangle", "medspace", "mho", "mid", "min",
-      "models", "mp", "mu", "multimap", "multline*", "nLeftarrow", "nLeftrightarrow",
+      "models", "mp", "mu", "multimap", "multline", "multline*", "nLeftarrow",
+      "nLeftrightarrow",
       "nRightarrow", "nVDash", "nVdash", "nabla", "natural", "ncong", "ne", "nearrow",
       "neg", "neq", "nexists", "ngeq", "ngtr", "ni", "nleftarrow", "nleftrightarrow",
       "nleq", "nless", "nmid", "nolimits", "notin", "nparallel", "nprec", "npreceq",
@@ -116,7 +117,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 623)
+    #expect(tags.count == 624)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
