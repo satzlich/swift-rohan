@@ -9,23 +9,35 @@ import _RopeModule
 
 class TextKitTestsBase {
   private let folderName: String
-  private let textContainer: NSTextContainer
   private let pageSize: CGSize
+  private let textContainer: NSTextContainer
 
   init(createFolder: Bool = false) throws {
     self.folderName = String("\(type(of: self))")
     if createFolder {
       try TestUtils.touchDirectory(folderName)
     }
+    // Default text container size, lots of tests depend on this.
     self.textContainer = NSTextContainer(size: CGSize(width: 250, height: 0))
-    self.pageSize = CGSize(width: 300, height: 300)
+    self.pageSize = CGSize(width: 450, height: 300)
   }
 
   func createDocumentManager(
-    _ rootNode: RootNode, _ styleSheet: StyleSheet = StyleSheetTests.testingStyleSheet()
+    _ rootNode: RootNode,
+    _ styleSheet: StyleSheet = StyleSheetTests.testingStyleSheet(),
+    usingPageProperty: Bool = false
   ) -> DocumentManager {
     let documentManager = DocumentManager(rootNode, styleSheet)
-    documentManager.textContainer = textContainer
+
+    if usingPageProperty {
+      let width = PageProperty.resolveContentContainerWidth(styleSheet).ptValue
+      let height = 400.0
+      let size = CGSize(width: width, height: height)
+      documentManager.textContainer = NSTextContainer(size: size)
+    }
+    else {
+      documentManager.textContainer = textContainer
+    }
     documentManager.reconcileLayout(scope: .document)
     return documentManager
   }

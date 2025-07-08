@@ -81,51 +81,20 @@ enum TestUtils {
 
   @MainActor
   static func draw(
-    _ bounds: CGRect, _ textLayoutManager: NSTextLayoutManager, _ cgContext: CGContext
+    _ bounds: CGRect, _ textLayoutManager: NSTextLayoutManager, _ context: CGContext
   ) {
-    cgContext.saveGState()
-    defer { cgContext.restoreGState() }
+    context.saveGState()
+    defer { context.restoreGState() }
 
     // fill usage bounds
-    cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
-    cgContext.fill(textLayoutManager.usageBoundsForTextContainer)
+    context.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
+    context.fill(textLayoutManager.usageBoundsForTextContainer)
 
     // draw fragments
     let startLocation = textLayoutManager.documentRange.location
     textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragment in
-      // draw fragment
-      fragment.draw(at: fragment.layoutFragmentFrame.origin, in: cgContext)
-      #if DEBUG && DECORATE_LAYOUT_FRAGMENT
-      let frame = fragment.layoutFragmentFrame
-      cgContext.setStrokeColor(NSColor.systemOrange.cgColor)
-      cgContext.setLineWidth(0.5)
-      cgContext.stroke(frame)
-      // draw coordinate
-      cgContext.saveGState()
-      drawString("\(frame.formatted(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
-      cgContext.restoreGState()
-      cgContext.textMatrix = .identity
-      #endif
-
-      // draw text attachments
-      for attachmentViewProvider in fragment.textAttachmentViewProviders {
-        guard let attachmentView = attachmentViewProvider.view else { continue }
-        let attachmentFrame =
-          fragment.frameForTextAttachment(at: attachmentViewProvider.location)
-
-        attachmentView.setFrameOrigin(attachmentFrame.origin)
-
-        cgContext.saveGState()
-        cgContext.translateBy(
-          x: fragment.layoutFragmentFrame.origin.x,
-          y: fragment.layoutFragmentFrame.origin.y)
-        cgContext.translateBy(x: attachmentFrame.origin.x, y: attachmentFrame.origin.y)
-        // NOTE: important to negate
-        cgContext.translateBy(
-          x: -attachmentView.bounds.origin.x, y: -attachmentView.bounds.origin.y)
-        attachmentView.draw(.infinite)
-        cgContext.restoreGState()
-      }
+      decoreateTextLayoutFragment(fragment, context)
+      drawTextLayoutFragment(fragment, in: context, withAttachmentViews: true)
       return true  // continue
     }
   }
@@ -146,5 +115,54 @@ enum TestUtils {
     layoutContext.beginEditing()
     _ = node.performLayout(layoutContext, fromScratch: true)
     layoutContext.endEditing()
+  }
+
+  @MainActor
+  static func drawTextLayoutFragment(
+    _ fragment: NSTextLayoutFragment, in context: CGContext, withAttachmentViews: Bool
+  ) {
+    context.saveGState()
+    let fragmentFrame = fragment.layoutFragmentFrame
+    context.translateBy(x: fragmentFrame.origin.x, y: fragmentFrame.origin.y)
+    fragment.draw(at: .zero, in: context)
+    if withAttachmentViews {
+      drawAttachmentViews(for: fragment, in: context)
+    }
+    context.restoreGState()
+  }
+
+  @MainActor
+  static func drawAttachmentViews(
+    for fragment: NSTextLayoutFragment, in context: CGContext
+  ) {
+    for attachmentViewProvider in fragment.textAttachmentViewProviders {
+      guard let attachmentView = attachmentViewProvider.view else { continue }
+
+      let attachmentFrame =
+        fragment.frameForTextAttachment(at: attachmentViewProvider.location)
+      let attachmentBounds = attachmentView.bounds
+
+      context.saveGState()
+      context.translateBy(
+        x: attachmentFrame.origin.x - attachmentBounds.origin.x,
+        y: attachmentFrame.origin.y - attachmentBounds.origin.y)
+      attachmentView.layer?.render(in: context)
+      context.restoreGState()
+    }
+  }
+
+  @MainActor
+  static func decoreateTextLayoutFragment(
+    _ fragment: NSTextLayoutFragment, _ context: CGContext
+  ) {
+    let frame = fragment.layoutFragmentFrame
+    context.setStrokeColor(NSColor.systemOrange.cgColor)
+    context.setLineWidth(0.5)
+    context.stroke(frame)
+    // draw coordinate
+    context.saveGState()
+    drawString("\(frame.formatted(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
+    context.restoreGState()
+    context.textMatrix = .identity
   }
 }
