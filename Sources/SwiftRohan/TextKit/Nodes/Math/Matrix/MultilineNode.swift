@@ -100,10 +100,10 @@ final class MultilineNode: ArrayNode {
   ) {
     if subtype.shouldProvideCounter {
       let equationNumber =
-        EquationNode.composeEquationNumber(countHolder!, _cachedAttributes!)
-      _cachedAttributes![.rhEquationNumber] = equationNumber
+        EquationNode.composeEquationNumber(countHolder!, _cachedAttributes)
+      _cachedAttributes[.rhEquationNumber] = equationNumber
     }
-    context.addAttributesBackward(segment, _cachedAttributes!)
+    context.addAttributesBackward(segment, _cachedAttributes)
   }
 
   // MARK: - Node(Codable)
@@ -197,7 +197,7 @@ final class MultilineNode: ArrayNode {
 
   // MARK: - MultilineNode
 
-  private final var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
+  private final var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>!
   private final var _countProviderState: _CountProviderState? = nil
   /// The container width without taking the equation number into account.
   private final var _constContainerWidth: Double = 0
@@ -247,9 +247,8 @@ final class MultilineNode: ArrayNode {
       _countProviderState!.trailingCursorPosition = trailingCursorPosition
 
       let countHolder = countHolder!
-      let cachedAttributes = _cachedAttributes!
       _countProviderState!.equationNumber =
-        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
+        EquationNode.composeEquationNumber(countHolder, _cachedAttributes)
     }
     else {
       let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
@@ -262,9 +261,8 @@ final class MultilineNode: ArrayNode {
 
     if subtype.shouldProvideCounter {
       let countHolder = countHolder!
-      let cachedAttributes = _cachedAttributes!
       _countProviderState!.equationNumber =
-        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
+        EquationNode.composeEquationNumber(countHolder, _cachedAttributes)
     }
     else {
       // no-op
