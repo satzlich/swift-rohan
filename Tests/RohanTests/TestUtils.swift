@@ -93,7 +93,7 @@ enum TestUtils {
     // draw fragments
     let startLocation = textLayoutManager.documentRange.location
     textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragment in
-      decoreateTextLayoutFragment(fragment, context)
+      decorateTextLayoutFragment(fragment, context)
       drawTextLayoutFragment(fragment, in: context, withAttachmentViews: true)
       return true  // continue
     }
@@ -151,7 +151,7 @@ enum TestUtils {
   }
 
   @MainActor
-  static func decoreateTextLayoutFragment(
+  static func decorateTextLayoutFragment(
     _ fragment: NSTextLayoutFragment, _ context: CGContext
   ) {
     let frame = fragment.layoutFragmentFrame
