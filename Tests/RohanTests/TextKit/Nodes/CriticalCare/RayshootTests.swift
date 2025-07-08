@@ -83,7 +83,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =        "([↓0,↓0,nuc,↓0,(1,1),↓0,denom,↓0,nuc,↓0]:1, upstream)"
+      let expected1 = "([↓0,↓0,nuc,↓0,(1,1),↓0,denom,↓0,nuc,↓0]:1, upstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -98,7 +98,7 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =        "([↓0,↓0,nuc,↓0,(0,1),↓0]:0, downstream)"
+      let expected1 = "([↓0,↓0,nuc,↓0,(0,1),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
@@ -114,13 +114,12 @@ final class RayshootTests: TextKitTestsBase {
       let result1 =
         navigation.destinationSelection(
           for: selection, direction: .up, destination: .character, extending: false)
-      let expected1 =        "([↓0,↓0,nuc,↓0,(1,0),↓0]:0, downstream)"
+      let expected1 = "([↓0,↓0,nuc,↓0,(1,0),↓0]:0, downstream)"
       guard let result1 = result1 else {
         Issue.record("No result found")
         return
       }
       #expect("\(result1)" == expected1)
-
     }
   }
 
@@ -146,6 +145,59 @@ final class RayshootTests: TextKitTestsBase {
     for node in chain(mathNodes, [equationNode]) {
       _ = node.rayshoot(from: CGPoint(x: 5, y: 5), .nuc, in: .up)
       _ = node.rayshoot(from: CGPoint(x: 5, y: 5), .nuc, in: .down)
+    }
+  }
+
+  @Test
+  func multilineNode_rayshoot() {
+    let rootNode = RootNode([
+      ParagraphNode([
+        MultilineNode(
+          .multline,
+          [
+            [ContentNode([TextNode("a")])],
+            [ContentNode()],
+            [ContentNode([TextNode("c")])],
+          ])
+      ])
+    ])
+    let documentManager = self.createDocumentManager(rootNode)
+    let navigation = documentManager.textSelectionNavigation
+
+    do {
+      let point = CGPoint(x: 5, y: 5)
+      let result = navigation.textSelection(
+        interactingAt: point, anchors: nil, modifiers: [], selecting: false,
+        bounds: .infinite)
+      guard let result = result else {
+        Issue.record("No result found")
+        return
+      }
+      let expected = "([↓0,↓0,(0,0),↓0]:0, downstream)"
+      #expect("\(result)" == expected)
+    }
+
+    do {
+      let point = CGPoint(x: 10000, y: 5)  // use very large x to avoid hitting any node.
+      let result = navigation.textSelection(
+        interactingAt: point, anchors: nil, modifiers: [], selecting: false,
+        bounds: .infinite)
+      guard let result = result else {
+        Issue.record("No result found")
+        return
+      }
+      let expected = "([↓0]:1, upstream)"
+      #expect("\(result)" == expected)
+    }
+
+    do {
+      let location = TextLocation.parse("[↓0]:1")!
+      let rect = documentManager.primaryInsertionIndicatorFrame(at: location, .upstream)
+      guard let rect = rect else {
+        Issue.record("No rect found")
+        return
+      }
+      #expect(rect.formatted(2) == "(448.54, 0.00, 0.00, 47.88)")
     }
   }
 }
