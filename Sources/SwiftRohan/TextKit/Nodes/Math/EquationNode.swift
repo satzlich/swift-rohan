@@ -61,16 +61,22 @@ final class EquationNode: MathNode {
     if fromScratch {
       // set up properties before layout.
       _setupNodeProperties(context)
-      // block => fixed attributes is not nil
+
+      // block => cache attributes is non-nil.
       assert(subtype == .inline || _cachedAttributes != nil)
+
       let nodeFragment = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       _nodeFragment = nodeFragment
+
       // insert the node fragment into the context
       context.insertFragment(nodeFragment, self)
+
+      // add paragraph attributes backwards.
       if self.isBlock {
         _addAttributesBackwards(1, context)
         _countProviderState?.isCounterDirty = false
       }
+
       _layoutLength = 1
     }
     else {
@@ -88,7 +94,7 @@ final class EquationNode: MathNode {
       if _countProviderState?.isCounterDirty == true {
         assert(subtype == .equation)
         _addAttributesBackwards(1, context)
-        _countProviderState?.isCounterDirty = false
+        _countProviderState!.isCounterDirty = false
       }
       _layoutLength = 1
     }
@@ -132,16 +138,31 @@ final class EquationNode: MathNode {
     }
   }
 
+  private final func _setupNodeProperties(_ context: some LayoutContext) {
+    let styleSheet = context.styleSheet
+
+    switch subtype {
+    case .equation:
+      let (attributes, trailingCursorPosition) =
+        EquationNode.computeAttributesForCounterProvider(self, styleSheet)
+
+      _cachedAttributes = attributes
+      assert(_countProviderState != nil)
+      _countProviderState?.trailingCursorPosition = trailingCursorPosition
+
+    case .display:
+      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
+      _cachedAttributes = paragraphProperty.getAttributes()
+
+    case .inline: break
+    }
+  }
+
   /// Add paragraph attributes backwards for the equation node.
   private final func _addAttributesBackwards(
     _ segment: Int, _ context: some LayoutContext
   ) {
     switch subtype {
-    case .inline:
-      break
-    case .display:
-      EquationNode.addAttributesBackwards(segment, context, &_cachedAttributes, nil)
-
     case .equation:
       if let countHolder = countHolder,
         let cachedAttributes = _cachedAttributes
@@ -149,30 +170,14 @@ final class EquationNode: MathNode {
         let equationNumber =
           EquationNode.composeEquationNumber(countHolder, cachedAttributes)
         EquationNode.addAttributesBackwards(
-          segment, context, &_cachedAttributes, equationNumber)
+          segment, context, &_cachedAttributes!, equationNumber)
       }
-      else {
-        EquationNode.addAttributesBackwards(segment, context, &_cachedAttributes, nil)
-      }
-    }
-  }
-
-  private final func _setupNodeProperties(_ context: some LayoutContext) {
-    switch subtype {
-    case .inline:
-      break
+      fallthrough
 
     case .display:
-      let styleSheet = context.styleSheet
-      let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
-      _cachedAttributes = paragraphProperty.getAttributes()
+      EquationNode.addAttributesBackwards(segment, context, _cachedAttributes!)
 
-    case .equation:
-      let styleSheet = context.styleSheet
-      let (attributes, trailingCursorPosition) =
-        EquationNode.computeAttributesForCounterProvider(self, styleSheet)
-      _cachedAttributes = attributes
-      _countProviderState?.trailingCursorPosition = trailingCursorPosition
+    case .inline: break
     }
   }
 
@@ -479,7 +484,6 @@ final class EquationNode: MathNode {
 
     if subtype.shouldProvideCounter {
       let countHolder = CountHolder(.equation)
-      // register the equation node as an observer of the count holder.
       countHolder.registerObserver(self)
       _countProviderState = _CountProviderState(countHolder)
     }
@@ -514,8 +518,14 @@ final class EquationNode: MathNode {
 extension EquationNode: CountObserver {
   final func countObserver(markAsDirty: Void) {
     self.contentDidChange()
+
+    // due to early stop mechanism, dirty should be set after propagation.
+    assert(_countProviderState != nil)
     _countProviderState?.isCounterDirty = true
   }
+}
+
+extension EquationNode {
 
   struct _CountProviderState {
     let counterSegment: CounterSegment
@@ -533,16 +543,12 @@ extension EquationNode: CountObserver {
   ) -> (Dictionary<NSAttributedString.Key, Any>, Double) {
     let properties = node.getProperties(styleSheet)
 
-    @inline(__always)
-    func resolveValue(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, styleSheet)
-    }
-
     let containerWidth = PageProperty.resolveContentContainerWidth(styleSheet).ptValue
 
     // paragraph
     let paragraphProperty = ParagraphProperty.resolveAggregate(properties, styleSheet)
     var attributes = paragraphProperty.getAttributes()
+
     // horizontal bounds
     do {
       let x: CGFloat = paragraphProperty.headIndent
@@ -559,28 +565,24 @@ extension EquationNode: CountObserver {
     return (attributes, trailingCursorPosition)
   }
 
-  /// Add attributes backwards for the equation node.
-  /// - Parameters:
-  ///   - shouldProvideCounter: Whether the equation node should provide counter.
-  ///   - segment: The segment length to add attributes backwards.
-  ///   - context: The layout context to add attributes.
-  ///   - cachedAttributes: The cached attributes to use.
-  ///   - countHolder: The count holder to use, if any.
+  @inlinable @inline(__always)
   static func addAttributesBackwards(
     _ segment: Int, _ context: some LayoutContext,
-    _ cachedAttributes: inout Dictionary<NSAttributedString.Key, Any>?,
-    _ equationNumber: NSAttributedString?
+    _ cachedAttributes: inout Dictionary<NSAttributedString.Key, Any>,
+    _ equationNumber: NSAttributedString
   ) {
-    guard cachedAttributes != nil else {
-      assertionFailure("expected cachedAttributes to be non-nil")
-      return
-    }
-    if let equationNumber = equationNumber {
-      cachedAttributes![.rhEquationNumber] = equationNumber
-    }
+    cachedAttributes[.rhEquationNumber] = equationNumber
+    addAttributesBackwards(segment, context, cachedAttributes)
+  }
+
+  @inlinable @inline(__always)
+  static func addAttributesBackwards(
+    _ segment: Int, _ context: some LayoutContext,
+    _ cachedAttributes: Dictionary<NSAttributedString.Key, Any>
+  ) {
     let begin = context.layoutCursor - segment
     let end = context.layoutCursor
-    context.addAttributes(cachedAttributes!, begin..<end)
+    context.addAttributes(cachedAttributes, begin..<end)
   }
 
   static func composeEquationNumber(

@@ -100,10 +100,10 @@ final class MultilineNode: ArrayNode {
       let equationNumber = EquationNode.composeEquationNumber(
         countHolder, cachedAttributes)
       EquationNode.addAttributesBackwards(
-        segment, context, &_cachedAttributes, equationNumber)
+        segment, context, &_cachedAttributes!, equationNumber)
     }
     else {
-      EquationNode.addAttributesBackwards(segment, context, &_cachedAttributes, nil)
+      EquationNode.addAttributesBackwards(segment, context, _cachedAttributes!)
     }
   }
 
