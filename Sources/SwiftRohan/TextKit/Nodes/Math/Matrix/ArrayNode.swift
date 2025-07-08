@@ -18,16 +18,16 @@ class ArrayNode: Node {
 
   internal override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
+      var properties = super.getProperties(styleSheet)
 
       do {
         let key = MathProperty.style
-        let value = key.resolveValue(current, styleSheet).mathStyle()!
+        let value = key.resolveValue(properties, styleSheet).mathStyle()!
         let mathStyle = subtype.mathStyle(for: value)
-        current[key] = .mathStyle(mathStyle)
+        properties[key] = .mathStyle(mathStyle)
       }
 
-      _cachedProperties = current
+      _cachedProperties = properties
     }
     return _cachedProperties!
   }
@@ -102,13 +102,10 @@ class ArrayNode: Node {
             fromScratch: true, previousClass: _previousClass(i, j))
         }
       }
-      // layout the matrix
       nodeFragment.fixLayout(mathContext)
-      // insert the matrix fragment
       context.insertFragment(nodeFragment, self)
     }
     else {
-      assert(_nodeFragment != nil)
       let nodeFragment = _nodeFragment!
 
       // save metrics before any layout changes

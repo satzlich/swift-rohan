@@ -21,26 +21,27 @@ final class MultilineNode: ArrayNode {
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
+      var properties = super.getProperties(styleSheet)
+
       @inline(__always)
       func resolveValue(_ key: PropertyKey) -> PropertyValue {
-        key.resolveValue(current, styleSheet)
+        key.resolveValue(properties, styleSheet)
       }
 
       if subtype.isMultline {
         let fontSize = resolveValue(TextProperty.size).fontSize()!.floatValue
         let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
         let newHeadIndent = headIndent + fontSize  // +1em space.
-        current[ParagraphProperty.firstLineHeadIndent] = .float(newHeadIndent)
-        current[ParagraphProperty.headIndent] = .float(newHeadIndent)
+        properties[ParagraphProperty.firstLineHeadIndent] = .float(newHeadIndent)
+        properties[ParagraphProperty.headIndent] = .float(newHeadIndent)
 
-        current[ParagraphProperty.textAlignment] = .textAlignment(.left)
+        properties[ParagraphProperty.textAlignment] = .textAlignment(.left)
       }
       else {
-        current[ParagraphProperty.textAlignment] = .textAlignment(.center)
+        properties[ParagraphProperty.textAlignment] = .textAlignment(.center)
       }
 
-      _cachedProperties = current
+      _cachedProperties = properties
     }
     return _cachedProperties!
   }
@@ -62,8 +63,11 @@ final class MultilineNode: ArrayNode {
       _setupNodeProperties(context)
 
       let sum = super.performLayout(context, fromScratch: true)
+
+      assert(self.isBlock)
       _addAttributesBackwards(1, context)
       _countProviderState?.isCounterDirty = false
+
       return sum
     }
     else {
@@ -71,21 +75,18 @@ final class MultilineNode: ArrayNode {
 
       _updateNodeProperties()
 
-      if _countProviderState != nil {
+      if _countProviderState != nil && _countProviderState!.isCounterDirty {
         assert(subtype.shouldProvideCounter)
-        if _countProviderState!.isCounterDirty {
-          let containerWidth =
-            _countProviderState!.computeContainerWidth(_constantContainerWidth)
-          _nodeFragment!.setContainerWidth(containerWidth)
+        let containerWidth =
+          _countProviderState!.computeContainerWidth(_constContainerWidth)
+        _nodeFragment!.setContainerWidth(containerWidth)
 
-          let sum = super.performLayout(context, fromScratch: false)
-          _addAttributesBackwards(1, context)
-          _countProviderState!.isCounterDirty = false
-          return sum
-        }
-        else {
-          return super.performLayout(context, fromScratch: false)
-        }
+        let sum = super.performLayout(context, fromScratch: false)
+
+        _addAttributesBackwards(1, context)
+        _countProviderState!.isCounterDirty = false
+
+        return sum
       }
       else {
         return super.performLayout(context, fromScratch: false)
@@ -97,11 +98,11 @@ final class MultilineNode: ArrayNode {
   private final func _addAttributesBackwards(
     _ segment: Int, _ context: some LayoutContext
   ) {
-    if let countHolder = countHolder,
-      let cachedAttributes = _cachedAttributes
-    {
-      let equationNumber = EquationNode.composeEquationNumber(
-        countHolder, cachedAttributes)
+    if subtype.shouldProvideCounter {
+      let countHolder = countHolder!
+      let cachedAttributes = _cachedAttributes!
+      let equationNumber =
+        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
       EquationNode.addAttributesBackwards(
         segment, context, &_cachedAttributes!, equationNumber)
     }
@@ -139,6 +140,7 @@ final class MultilineNode: ArrayNode {
   // MARK: - Node(Tree API)
 
   final override var needsTrailingCursorCorrection: Bool { subtype.shouldProvideCounter }
+
   final override func trailingCursorPosition() -> Double? {
     _countProviderState?.trailingCursorPosition
   }
@@ -147,18 +149,10 @@ final class MultilineNode: ArrayNode {
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
-    if subtype.shouldProvideCounter {
-      if let trailingCursorPosition = _countProviderState?.trailingCursorPosition,
-        point.x >= trailingCursorPosition - 0.5  // allow small tolerance
-      {
-        // cursor position is after the equation, no need to resolve.
-        return false
-      }
-      else {
-        return super.resolveTextLocation(
-          with: point, context: context, layoutOffset: layoutOffset, trace: &trace,
-          affinity: &affinity)
-      }
+    if subtype.shouldProvideCounter,
+      point.x >= _countProviderState!.trailingCursorPosition - 0.5
+    {
+      return false
     }
     else {
       return super.resolveTextLocation(
@@ -210,7 +204,8 @@ final class MultilineNode: ArrayNode {
 
   private final var _cachedAttributes: Dictionary<NSAttributedString.Key, Any>? = nil
   private final var _countProviderState: _CountProviderState? = nil
-  private final var _constantContainerWidth: Double = 0
+  /// The container width without taking the equation number into account.
+  private final var _constContainerWidth: Double = 0
 
   override init(_ subtype: MathArray, _ rows: Array<Row>) {
     super.init(subtype, rows)
@@ -229,6 +224,8 @@ final class MultilineNode: ArrayNode {
   }
 
   private final func _setUp() {
+    // Invariant: shouldProvideCounter <=> _countProviderState != nil
+
     if subtype.shouldProvideCounter {
       let countHolder = CountHolder(.equation)
       // Register the count holder as an observer.
@@ -243,19 +240,21 @@ final class MultilineNode: ArrayNode {
   private final func _setupNodeProperties(_ context: some LayoutContext) {
     let styleSheet = context.styleSheet
 
-    _constantContainerWidth = _computeContainerWidth(styleSheet)
+    // Maintenance: (a) constant container width (required by multiline nodes).
+    // (b) cached attributes. (c) count provider state (if applicable).
+
+    _constContainerWidth = _computeContainerWidth(styleSheet)
 
     if subtype.shouldProvideCounter {
-      assert(_countProviderState != nil)
-
       let (attributes, trailingCursorPosition) =
         EquationNode.computeAttributesForCounterProvider(self, styleSheet)
       _cachedAttributes = attributes
       _countProviderState!.trailingCursorPosition = trailingCursorPosition
 
       let countHolder = countHolder!
+      let cachedAttributes = _cachedAttributes!
       _countProviderState!.equationNumber =
-        EquationNode.composeEquationNumber(countHolder, _cachedAttributes!)
+        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
     }
     else {
       let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
@@ -264,13 +263,13 @@ final class MultilineNode: ArrayNode {
   }
 
   private final func _updateNodeProperties() {
+    // Maintenance: (a) equation number.
+
     if subtype.shouldProvideCounter {
-      guard let countHolder = countHolder,
-        _cachedAttributes != nil,
-        _countProviderState != nil
-      else { return }
+      let countHolder = countHolder!
+      let cachedAttributes = _cachedAttributes!
       _countProviderState!.equationNumber =
-        EquationNode.composeEquationNumber(countHolder, _cachedAttributes!)
+        EquationNode.composeEquationNumber(countHolder, cachedAttributes)
     }
     else {
       // no-op
@@ -279,16 +278,9 @@ final class MultilineNode: ArrayNode {
 
   private final func _computeContainerWidth(_ styleSheet: StyleSheet) -> Double {
     guard subtype.isMultline else { return 0 }
-
-    let properties = self.getProperties(styleSheet)
-    @inline(__always)
-    func resolveValue(_ key: PropertyKey) -> PropertyValue {
-      key.resolveValue(properties, styleSheet)
-    }
-    let globalContainerWidth =
-      PageProperty.resolveContentContainerWidth(styleSheet).ptValue
-    let headIndent = resolveValue(ParagraphProperty.headIndent).float()!
-    return globalContainerWidth - headIndent - Rohan.fragmentPadding * 2
+    let containerWidth = PageProperty.resolveContentContainerWidth(styleSheet).ptValue
+    let headIndent = resolveValue(ParagraphProperty.headIndent, styleSheet).float()!
+    return containerWidth - headIndent - Rohan.fragmentPadding * 2
   }
 
   internal static func selector(isMultline: Bool) -> TargetSelector {
@@ -297,7 +289,7 @@ final class MultilineNode: ArrayNode {
 
   final override func contentDidChange(nonCell: Void) {
     super.contentDidChange(nonCell: ())
-    // due to early stop mechanism, we have to mark dirty after propagation.
+    // due to early stop mechanism, we have to mark dirty **after** propagation.
     _countProviderState?.isCounterDirty = true
   }
 
@@ -316,16 +308,18 @@ final class MultilineNode: ArrayNode {
     _ context: LayoutContext, _ mathContext: MathContext
   ) -> MathArrayLayoutFragment {
     let containerWidth =
-      _countProviderState?.computeContainerWidth(_constantContainerWidth)
-      ?? _constantContainerWidth
+      subtype.shouldProvideCounter
+      ? _countProviderState!.computeContainerWidth(_constContainerWidth)
+      : _constContainerWidth
 
     return MathArrayLayoutFragment(
       rowCount: rowCount, columnCount: columnCount, subtype: subtype,
       mathContext, containerWidth)
   }
 
+  @inline(__always)
   final override func _previousClass(_ rowIndex: Int, _ columnIndex: Int) -> MathClass? {
-    subtype.isMultline ? (rowIndex > 0 ? MathClass.Normal : nil) : nil
+    subtype.isMultline && rowIndex > 0 ? MathClass.Normal : nil
   }
 }
 
@@ -346,7 +340,7 @@ extension MultilineNode: CountObserver {
 
     /// Get the width of the content container for this array node.
     func computeContainerWidth(_ containerWidth: Double) -> Double {
-      containerWidth - equationNumber.size().width - 10  // 10pt padding.
+      containerWidth - equationNumber.size().width - 12  // 12pt padding before equation number.
     }
   }
 }
