@@ -42,8 +42,15 @@ struct ArrayNodeTests {
 
   static func allSamples() -> Array<ArrayNode> {
     [
+      _createMatrix(.aligned),
       _createMatrix(.Bmatrix),
       _createMatrix(.cases),
+      _createMatrix(.gathered),
+      _createMatrix(.substack),
+      _createMultiline(.align),
+      _createMultiline(.alignAst),
+      _createMultiline(.gather),
+      _createMultiline(.gatherAst),
       _createMultiline(.multline),
       _createMultiline(.multlineAst),
     ]
@@ -51,20 +58,34 @@ struct ArrayNodeTests {
 
   private static func _createMatrix(_ subtype: MathArray) -> MatrixNode {
     precondition(subtype.isMatrixNodeCompatible)
-    return MatrixNode(
-      subtype,
-      [
-        MatrixNode.Row([
-          MatrixNode.Cell([TextNode("1")]),
-          MatrixNode.Cell([TextNode("2")]),
-          MatrixNode.Cell([TextNode("3")]),
-        ]),
-        MatrixNode.Row([
-          MatrixNode.Cell([TextNode("4")]),
-          MatrixNode.Cell([TextNode("5")]),
-          MatrixNode.Cell([TextNode("6")]),
-        ]),
-      ])
+    if subtype.isMultiColumnEnabled {
+      return MatrixNode(
+        subtype,
+        [
+          MatrixNode.Row([
+            MatrixNode.Cell([TextNode("1")]),
+            MatrixNode.Cell([TextNode("2")]),
+            MatrixNode.Cell([TextNode("3")]),
+          ]),
+          MatrixNode.Row([
+            MatrixNode.Cell([TextNode("4")]),
+            MatrixNode.Cell([TextNode("5")]),
+            MatrixNode.Cell([TextNode("6")]),
+          ]),
+        ])
+    }
+    else {
+      return MatrixNode(
+        subtype,
+        [
+          MatrixNode.Row([
+            MatrixNode.Cell([TextNode("1")])
+          ]),
+          MatrixNode.Row([
+            MatrixNode.Cell([TextNode("4")])
+          ]),
+        ])
+    }
   }
 
   private static func _createMultiline(_ subtype: MathArray) -> MultilineNode {
