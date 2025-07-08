@@ -565,6 +565,41 @@ final class LayoutTests: TextKitTestsBase {
   }
 
   @Test @MainActor
+  func testEquationNumbers() {
+    let content: Array<Node> = [
+      ParagraphNode([
+        TextNode("The quick brown fox jumps over the lazy dog."),
+        EquationNode(
+          .equation,
+          [
+            TextNode("a=b+c")
+          ])
+      ]),
+      ParagraphNode([
+        MultilineNode(
+          .multline,
+          [
+            MultilineNode.Row([
+              MultilineNode.Cell([
+                TextNode("a=b+c")
+              ])
+            ]),
+            MultilineNode.Row([
+              MultilineNode.Cell([
+                TextNode("+d=e+f")
+              ])
+            ]),
+          ])
+      ]),
+    ]
+
+    let documentManager = createDocumentManager(RootNode(), usingPageProperty: true)
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(String(#function.dropLast(2)), documentManager)
+  }
+
+  @Test @MainActor
   func regress_PlaceholderBug() throws {
     // set up content
     let content: Array<Node> = [

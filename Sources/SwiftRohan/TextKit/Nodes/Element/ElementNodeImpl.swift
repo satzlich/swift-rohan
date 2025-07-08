@@ -110,7 +110,7 @@ internal class ElementNodeImpl: ElementNode {
         let placeholder = String(NodePolicy.placeholder(for: self.type))
         let sum =
           StringReconciler.insertForward(new: placeholder, context: context, self)
-        context.addParagraphStyleBackward(forSegment: sum, self)
+        context.addParagraphStyleBackward(sum, self)
         return sum
       }
       else {
@@ -156,7 +156,7 @@ internal class ElementNodeImpl: ElementNode {
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
-          context.addParagraphStyleBackward(forSegment: segmentLength, self)
+          context.addParagraphStyleBackward(segmentLength, self)
           // reset
           segmentLength = 0
           isCandidate = false
@@ -179,7 +179,7 @@ internal class ElementNodeImpl: ElementNode {
         }
       }
       if isCandidate && segmentLength > 0 {
-        context.addParagraphStyleBackward(forSegment: segmentLength, self)
+        context.addParagraphStyleBackward(segmentLength, self)
       }
       sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
       return sum
@@ -232,7 +232,7 @@ internal class ElementNodeImpl: ElementNode {
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
-          context.addParagraphStyleBackward(forSegment: segmentLength, self)
+          context.addParagraphStyleBackward(segmentLength, self)
           // reset
           segmentLength = 0
           isCandidate = false
@@ -258,7 +258,7 @@ internal class ElementNodeImpl: ElementNode {
         }
       }
       if isCandidate && segmentLength > 0 {
-        context.addParagraphStyleBackward(forSegment: segmentLength, self)
+        context.addParagraphStyleBackward(segmentLength, self)
       }
       sum += NewlineReconciler.skipForward(current: _newlines.last!, context: context)
       return sum
@@ -317,7 +317,7 @@ internal class ElementNodeImpl: ElementNode {
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
-          context.addParagraphStyleBackward(forSegment: segmentLength, self)
+          context.addParagraphStyleBackward(segmentLength, self)
           // reset
           segmentLength = 0
           isCandidate = false
@@ -374,7 +374,7 @@ internal class ElementNodeImpl: ElementNode {
       }
       assert(j == originalCount)
       if isCandidate, segmentLength > 0 {
-        context.addParagraphStyleBackward(forSegment: segmentLength, self)
+        context.addParagraphStyleBackward(segmentLength, self)
       }
       do {
         let old = original.last?.trailingNewline ?? false

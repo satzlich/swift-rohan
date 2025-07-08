@@ -9,16 +9,18 @@ final class EquationTextLayoutFragment: NSTextLayoutFragment {
   private let _precomputedPosition: CGPoint
 
   final override func draw(at point: CGPoint, in context: CGContext) {
+    context.saveGState()
+    defer { context.restoreGState() }
+
     super.draw(at: point, in: context)
 
     var position = _precomputedPosition
     let glyphOrigin = self.textLineFragments.first?.glyphOrigin ?? .zero
     position.x += point.x - layoutFragmentFrame.origin.x
     position.y += point.y + glyphOrigin.y
-
-    context.saveGState()
     _equationNumber.draw(at: position)
-    context.restoreGState()
+    // reset text matrix to identity after NSAttributedString drawing.
+    context.textMatrix = .identity
   }
 
   /// - Parameters:
