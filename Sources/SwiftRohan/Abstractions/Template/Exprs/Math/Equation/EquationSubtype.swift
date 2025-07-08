@@ -15,4 +15,12 @@ enum EquationSubtype: String, Codable {
     case .equation: true
     }
   }
+
+  var shouldProvideCounter: Bool {
+    switch self {
+    case .inline: false
+    case .display: false
+    case .equation: true
+    }
+  }
 }

@@ -10,12 +10,49 @@ private let MATRIX_COL_GAP = Em(0.8)
 private let SUBSTACK_ROW_GAP = Em.zero
 
 struct MathArray: Codable, CommandDeclarationProtocol {
+  let command: String
+  var tag: CommandTag { .null }
+  var source: CommandSource { .preBuilt }
+  let subtype: Subtype
+
+  init(_ command: String, _ subtype: Subtype) {
+    self.command = command
+    self.subtype = subtype
+  }
+
+  var delimiters: DelimiterPair { subtype.delimiters }
+
+  var isMatrix: Bool { subtype.isMatrix }
+  var isMultline: Bool { subtype.isMultline }
+  var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
+  var shouldProvideCounter: Bool { subtype.shouldProvideCounter }
+
+  func mathStyle(for value: MathStyle) -> MathStyle { subtype.mathStyle(for: value) }
+
+  func getRowGap() -> Em { subtype.getRowGap() }
+
+  func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
+    subtype.getCellAlignments(rowCount)
+  }
+
+  func getColumnGapCalculator(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ mathContext: MathContext
+  ) -> ColumnGapProvider {
+    subtype.getColumnGapCalculator(columns, mathContext)
+  }
+}
+
+extension MathArray {
   enum Subtype: Codable {
+    case align
     case aligned
     case cases
+    case gather
     case gathered
     case matrix(DelimiterPair)
     case multline
+    case multlineAst
     case substack
 
     var isMatrix: Bool {
@@ -23,76 +60,97 @@ struct MathArray: Codable, CommandDeclarationProtocol {
       return false
     }
 
+    var isMultline: Bool {
+      switch self {
+      case .multline: true
+      case .multlineAst: true
+      case _: false
+      }
+    }
+
     var isMultiColumnEnabled: Bool {
       switch self {
-      case .aligned: true
+      case .align, .aligned: true
       case .cases: true
-      case .gathered: false
+      case .gather, .gathered: false
       case .matrix: true
-      case .multline: false
+      case .multline, .multlineAst: false
       case .substack: false
       }
     }
-  }
 
-  let command: String
-  var tag: CommandTag { .null }
-  var source: CommandSource { .preBuilt }
-  let subtype: Subtype
-
-  var isMatrix: Bool { subtype.isMatrix }
-  var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
-
-  var delimiters: DelimiterPair {
-    switch subtype {
-    case .aligned: return DelimiterPair.NONE
-    case .cases: return DelimiterPair.LBRACE
-    case .gathered: return DelimiterPair.NONE
-    case .matrix(let delimiters): return delimiters
-    case .multline: return DelimiterPair.NONE
-    case .substack: return DelimiterPair.NONE
+    var shouldProvideCounter: Bool {
+      switch self {
+      case .align: true
+      case .aligned: false
+      case .cases: false
+      case .gather: true
+      case .gathered: false
+      case .matrix: false
+      case .multline: true
+      case .multlineAst: false
+      case .substack: false
+      }
     }
-  }
 
-  init(_ command: String, _ subtype: Subtype) {
-    self.command = command
-    self.subtype = subtype
-  }
-
-  func getRowGap() -> Em {
-    switch subtype {
-    case .aligned: return ALIGN_ROW_GAP
-    case .cases: return MATRIX_ROW_GAP
-    case .gathered: return ALIGN_ROW_GAP
-    case .matrix: return MATRIX_ROW_GAP
-    case .multline: return ALIGN_ROW_GAP
-    case .substack: return SUBSTACK_ROW_GAP
+    func mathStyle(for value: MathStyle) -> MathStyle {
+      switch self {
+      case .align, .aligned: MathUtils.alignedStyle(for: value)
+      case .gather, .gathered: MathUtils.gatheredStyle(for: value)
+      case .multline, .multlineAst: MathUtils.multlineStyle(for: value)
+      case .cases: MathUtils.matrixStyle(for: value)
+      case .matrix: MathUtils.matrixStyle(for: value)
+      case .substack: MathUtils.matrixStyle(for: value)
+      }
     }
-  }
 
-  func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
-    switch subtype {
-    case .aligned: return AlternateCellAlignmentProvider()
-    case .cases: return FixedCellAlignmentProvider(.start)
-    case .gathered: return FixedCellAlignmentProvider(.center)
-    case .matrix: return FixedCellAlignmentProvider(.center)
-    case .multline: return MultlineCellAlignmentProvider(rowCount)
-    case .substack: return FixedCellAlignmentProvider(.center)
+    var delimiters: DelimiterPair {
+      switch self {
+      case .align, .aligned: return DelimiterPair.NONE
+      case .cases: return DelimiterPair.LBRACE
+      case .gather, .gathered: return DelimiterPair.NONE
+      case .matrix(let delimiters): return delimiters
+      case .multline, .multlineAst: return DelimiterPair.NONE
+      case .substack: return DelimiterPair.NONE
+      }
     }
-  }
 
-  func getColumnGapCalculator(
-    _ columns: Array<Array<MathListLayoutFragment>>,
-    _ mathContext: MathContext
-  ) -> ColumnGapProvider {
-    let alignments = getCellAlignments(columns.first?.count ?? 0)
-    switch subtype {
-    case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
-    case .cases: return MatrixColumnGapProvider()
-    case .gathered: return PlaceholderColumnGapProvider()  // unused
-    case .matrix: return MatrixColumnGapProvider()
-    case .multline: return PlaceholderColumnGapProvider()  // unused
-    case .substack: return PlaceholderColumnGapProvider()  // unused
+    func getRowGap() -> Em {
+      switch self {
+      case .align, .aligned: return ALIGN_ROW_GAP
+      case .cases: return MATRIX_ROW_GAP
+      case .gather, .gathered: return ALIGN_ROW_GAP
+      case .matrix: return MATRIX_ROW_GAP
+      case .multline, .multlineAst: return ALIGN_ROW_GAP
+      case .substack: return SUBSTACK_ROW_GAP
+      }
+    }
+
+    func getCellAlignments(_ rowCount: Int) -> CellAlignmentProvider {
+      switch self {
+      case .align, .aligned: return AlternateCellAlignmentProvider()
+      case .cases: return FixedCellAlignmentProvider(.start)
+      case .gather, .gathered: return FixedCellAlignmentProvider(.center)
+      case .matrix: return FixedCellAlignmentProvider(.center)
+      case .multline, .multlineAst: return MultlineCellAlignmentProvider(rowCount)
+      case .substack: return FixedCellAlignmentProvider(.center)
+      }
+    }
+
+    func getColumnGapCalculator(
+      _ columns: Array<Array<MathListLayoutFragment>>,
+      _ mathContext: MathContext
+    ) -> ColumnGapProvider {
+      let alignments = getCellAlignments(columns.first?.count ?? 0)
+      switch self {
+      case .align, .aligned:
+        return AlignColumnGapProvider(columns, alignments, mathContext)
+      case .cases: return MatrixColumnGapProvider()
+      case .gather, .gathered: return PlaceholderColumnGapProvider()  // unused
+      case .matrix: return MatrixColumnGapProvider()
+      case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
+      case .substack: return PlaceholderColumnGapProvider()  // unused
+      }
     }
   }
 }
@@ -118,8 +176,11 @@ extension MathArray {
 
   /// - Note: These commands are used by MultilineNode.
   static let blockMathCommands: Array<MathArray> = [
+    align,
     alignAst,
+    gather,
     gatherAst,
+    multline,
     multlineAst,
   ]
 
@@ -147,9 +208,12 @@ extension MathArray {
   // block math commands
 
   //
+  static let align = MathArray("align", .align)
   static let alignAst = MathArray("align*", .aligned)
+  static let gather = MathArray("gather", .gather)
   static let gatherAst = MathArray("gather*", .gathered)
-  static let multlineAst = MathArray("multline*", .multline)
+  static let multline = MathArray("multline", .multline)
+  static let multlineAst = MathArray("multline*", .multlineAst)
 }
 
 protocol CellAlignmentProvider {

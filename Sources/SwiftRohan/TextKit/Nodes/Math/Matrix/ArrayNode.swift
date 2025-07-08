@@ -18,25 +18,16 @@ class ArrayNode: Node {
 
   internal override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
+      var properties = super.getProperties(styleSheet)
 
       do {
         let key = MathProperty.style
-        let value = key.resolveValue(current, styleSheet).mathStyle()!
-        let mathStyle =
-          switch subtype.subtype {
-          case .aligned: MathUtils.alignedStyle(for: value)
-          case .gathered: MathUtils.gatheredStyle(for: value)
-          case .multline: MathUtils.multlineStyle(for: value)
-
-          case .cases: MathUtils.matrixStyle(for: value)
-          case .matrix: MathUtils.matrixStyle(for: value)
-          case .substack: MathUtils.matrixStyle(for: value)
-          }
-        current[key] = .mathStyle(mathStyle)
+        let value = key.resolveValue(properties, styleSheet).mathStyle()!
+        let mathStyle = subtype.mathStyle(for: value)
+        properties[key] = .mathStyle(mathStyle)
       }
 
-      _cachedProperties = current
+      _cachedProperties = properties
     }
     return _cachedProperties!
   }
@@ -71,14 +62,21 @@ class ArrayNode: Node {
   // MARK: - Node(Layout)
 
   final override func contentDidChange() {
-    guard _isDirty == false else { return }
-    _isDirty = true
+    guard _isCellDirty == false else { return }
+
+    _isCellDirty = true
+    parent?.contentDidChange()
+  }
+
+  /// Content did change but not for a cell.
+  internal func contentDidChangeOutsideCell() {
+    guard self.isDirty == false else { return }
     parent?.contentDidChange()
   }
 
   final override func layoutLength() -> Int { 1 }
 
-  final override var isDirty: Bool { _isDirty }
+  internal override var isDirty: Bool { _isCellDirty }
 
   internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool
@@ -104,28 +102,21 @@ class ArrayNode: Node {
             fromScratch: true, previousClass: _previousClass(i, j))
         }
       }
-      // layout the matrix
       nodeFragment.fixLayout(mathContext)
-      // insert the matrix fragment
       context.insertFragment(nodeFragment, self)
-
-      if self.isBlock {
-        context.addParagraphStyleBackward(forSegment: 1, self)
-      }
     }
     else {
-      assert(_nodeFragment != nil)
       let nodeFragment = _nodeFragment!
 
       // save metrics before any layout changes
       let oldMetrics = nodeFragment.boxMetrics
-      var needsFixLayout = false
+      var needsFixLayout = nodeFragment.needsLayout
 
       // play edit log
-      needsFixLayout = _applyEditLogToFragment(nodeFragment)
+      needsFixLayout = needsFixLayout || _applyEditLogToFragment(nodeFragment)
 
       // layout each element
-      if _isDirty {
+      if _isCellDirty {
         for i in (0..<rowCount) {
           for j in (0..<columnCount) {
             let element = getElement(i, j)
@@ -164,7 +155,7 @@ class ArrayNode: Node {
     }
 
     // clear
-    _isDirty = false
+    _isCellDirty = false
     _editLog.removeAll()
     _addedNodes.removeAll()
 
@@ -249,7 +240,7 @@ class ArrayNode: Node {
       type: type, options: options, using: block)
   }
 
-  final override func resolveTextLocation(
+  internal override func resolveTextLocation(
     with point: CGPoint, context: any LayoutContext, layoutOffset: Int,
     trace: inout Trace, affinity: inout SelectionAffinity
   ) -> Bool {
@@ -382,7 +373,9 @@ class ArrayNode: Node {
   let subtype: MathArray
   internal var _rows: Array<Row> = []
 
-  internal var _isDirty: Bool = false
+  /// True if any of the cells is dirty.
+  internal var _isCellDirty: Bool = false
+
   internal var _nodeFragment: MathArrayLayoutFragment? = nil
   final var layoutFragment: MathLayoutFragment? { _nodeFragment }
 

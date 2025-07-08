@@ -25,7 +25,8 @@ struct NodeStoreUtilsTests {
       "Longrightarrow", "Lsh", "Omega", "P", "Phi", "Pi", "Pr", "Psi", "Re", "Rightarrow",
       "Rrightarrow", "Rsh", "S", "Sigma", "Subset", "Supset", "Theta", "Uparrow",
       "Updownarrow", "Upsilon", "Vdash", "Vert", "Vmatrix", "Vvdash", "Xi", "acute",
-      "aleph", "align*", "aligned", "alpha", "amalg", "angle", "approx", "approxeq",
+      "aleph", "align", "align*", "aligned", "alpha", "amalg", "angle", "approx",
+      "approxeq",
       "arccos", "arcsin", "arctan", "arg", "ast", "asymp", "atop", "attach", "backdprime",
       "backepsilon", "backprime", "backsim", "backsimeq", "backslash", "backtrprime",
       "bar", "barwedge", "because", "beta", "beth", "between", "bigcap", "bigcirc",
@@ -49,7 +50,8 @@ struct NodeStoreUtilsTests {
       "enspace", "enumerate", "epsilon", "eqcirc", "eqsim", "eqslantgtr", "eqslantless",
       "equation", "equiv",
       "eta", "eth", "exists", "exp", "fallingdotseq", "flat", "forall", "frac", "frown",
-      "fullouterjoin", "gamma", "gather*", "gathered", "gcd", "ge", "geq", "geqq",
+      "fullouterjoin", "gamma", "gather", "gather*", "gathered", "gcd", "ge", "geq",
+      "geqq",
       "geqslant", "gets", "gg", "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq",
       "gnsim", "grave", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless",
       "gtrsim", "hat", "hbar", "heartsuit", "hom",
@@ -70,7 +72,8 @@ struct NodeStoreUtilsTests {
       "mathbin", "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop",
       "mathopen", "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf",
       "mathtt", "matrix", "max", "measuredangle", "medspace", "mho", "mid", "min",
-      "models", "mp", "mu", "multimap", "multline*", "nLeftarrow", "nLeftrightarrow",
+      "models", "mp", "mu", "multimap", "multline", "multline*", "nLeftarrow",
+      "nLeftrightarrow",
       "nRightarrow", "nVDash", "nVdash", "nabla", "natural", "ncong", "ne", "nearrow",
       "neg", "neq", "nexists", "ngeq", "ngtr", "ni", "nleftarrow", "nleftrightarrow",
       "nleq", "nless", "nmid", "nolimits", "notin", "nparallel", "nprec", "npreceq",
@@ -114,7 +117,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 621)
+    #expect(tags.count == 624)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

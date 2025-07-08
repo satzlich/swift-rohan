@@ -20,11 +20,9 @@ extension DocumentManager: NSTextLayoutManagerDelegate {
 
       if let listLevel = attribute(forKey: .rhListLevel) as? Int,
         listLevel > 0,  // list level must be greater than 0.
-        let indent = attribute(forKey: .rhHeadIndent) as? CGFloat
+        let indent = attribute(forKey: .rhHeadIndent) as? CGFloat,
+        let itemMarker = attribute(forKey: .rhItemMarker) as? NSAttributedString
       {
-        let itemMarker =
-          attribute(forKey: .rhItemMarker) as? NSAttributedString
-          ?? NSAttributedString(string: "")
         let fragment = ListItemTextLayoutFragment(
           textElement: textElement, range: textElement.elementRange,
           itemMarker: itemMarker, indent: indent)

@@ -19,12 +19,13 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   private var _columns: Array<Array<MathListLayoutFragment>>
   private var _composition: MathComposition
   /// The width of the content container.
-  private let _containerWidth: Double
-
+  private var _containerWidth: Double
   /// y-coordinates of the (top) row edges from 0 to rowCount
   private var _rowEdges: Array<Double>
   /// x-coordinates of the (left) column edges from 0 to columnCount
   private var _columnEdges: Array<Double>
+
+  private var _needsLayout: Bool = false
 
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
@@ -60,6 +61,14 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     self.glyphOrigin = .zero
     self._rowEdges = []
     self._columnEdges = []
+  }
+
+  internal func setContainerWidth(_ width: Double) {
+    precondition(subtype.isMultline)
+    if _containerWidth.isNearlyEqual(to: width) == false {
+      setNeedsLayout()
+    }
+    self._containerWidth = width
   }
 
   // MARK: - Frame
@@ -101,13 +110,21 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   }
 
   private func _columnWidth(_ column: Array<MathListLayoutFragment>) -> Double {
-    switch subtype.subtype {
-    case .multline: _containerWidth
-    case _: column.lazy.map(\.width).max() ?? 0
-    }
+    subtype.isMultline
+      ? _containerWidth
+      : (column.lazy.map(\.width).max() ?? 0)
+  }
+
+  var needsLayout: Bool { _needsLayout }
+
+  func setNeedsLayout() {
+    _needsLayout = true
   }
 
   func fixLayout(_ mathContext: MathContext) {
+
+    defer { _needsLayout = false }
+
     let font = mathContext.getFont()
     let table = mathContext.table
     let constants = mathContext.constants
@@ -117,23 +134,23 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     let cellAlignments = subtype.getCellAlignments(self.rowCount)
     let colGapCalculator = subtype.getColumnGapCalculator(_columns, mathContext)
 
-    // We pad ascent and descent with the ascent and descent of the paren
-    // to ensure that normal matrices are aligned with others unless they are
-    // way too big.
-    let paren = GlyphFragment("(", font, table)!
     // This variable stores the maximum ascent and descent for each row.
     let heights: Array<AscentDescent>
     do {
+      // We pad ascent and descent with the ascent and descent of the paren
+      // to ensure that normal matrices are aligned with others unless they are
+      // way too big.
+      let paren = GlyphFragment("(", font, table)!
       let value = AscentDescent(paren.ascent, paren.descent)
-      var heights_ = Array(repeating: value, count: rowCount)
+      var hs = Array(repeating: value, count: rowCount)
       for i in 0..<rowCount {
         for j in 0..<columnCount {
           let fragment = getElement(i, j)
-          heights_[i].ascent = max(heights_[i].ascent, fragment.ascent)
-          heights_[i].descent = max(heights_[i].descent, fragment.descent)
+          hs[i].ascent = max(hs[i].ascent, fragment.ascent)
+          hs[i].descent = max(hs[i].descent, fragment.descent)
         }
       }
-      heights = heights_
+      heights = hs
     }
 
     // For each row, combine maximum ascent and descent into a row height.
@@ -141,8 +158,17 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     let total_height =
       heights.lazy.map { $0.ascent + $0.descent }.reduce(0, +)
       + Double(rowCount - 1) * rowGap
-    var total_ascent = total_height / 2 + axisHeight
-    var total_descent = total_height - total_ascent
+
+    let total_ascent: Double
+    let total_descent: Double
+    if subtype.isMultline {
+      total_descent = heights.last?.descent ?? 0
+      total_ascent = total_height - total_descent
+    }
+    else {
+      total_ascent = total_height / 2 + axisHeight
+      total_descent = total_height - total_ascent
+    }
 
     // compute row edges
     do {
@@ -159,11 +185,14 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     }
 
     // layout delimiters
-    let (left, right) = layoutDelimiters(total_height, mathContext)
+    let (left, right) =
+      subtype.delimiters.isNull == false
+      ? layoutDelimiters(total_height, mathContext)
+      : (nil, nil)
 
     // x, y offsets for the matrix element
     let xDelta = left?.width ?? 0
-    let yDelta = -(axisHeight + total_height / 2)
+    let yDelta = -total_ascent
 
     var items: Array<MathComposition.Item> = []
     _columnEdges.removeAll(keepingCapacity: true)
@@ -204,27 +233,39 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     _columnEdges.append(x)
     assert(_columnEdges.count == columnCount + 1)
 
-    if let left = left {
-      items.append((left, CGPoint.zero))
-
-      // ignore adjusting x as it is already done
-
-      // update total ascent and descent
-      total_ascent = max(total_ascent, left.ascent)
-      total_descent = max(total_descent, left.descent)
+    if subtype.isMultline {
+      assert(left == nil && right == nil)
+      // for multline, the baseline is at the bottom of the array.
+      _composition =
+        MathComposition(
+          width: x, ascent: total_ascent, descent: total_descent, items: items)
     }
-    if let right = right {
-      items.append((right, CGPoint(x: x, y: 0)))
+    else {
+      var total_ascent = total_ascent
+      var total_descent = total_descent
 
-      // adjust x
-      x += right.width
-      // update total ascent and descent
-      total_ascent = max(total_ascent, right.ascent)
-      total_descent = max(total_descent, right.descent)
+      if let left = left {
+        items.append((left, CGPoint.zero))
+
+        // ignore adjusting x as it is already done
+
+        // update total ascent and descent
+        total_ascent = max(total_ascent, left.ascent)
+        total_descent = max(total_descent, left.descent)
+      }
+      if let right = right {
+        items.append((right, CGPoint(x: x, y: 0)))
+
+        // adjust x
+        x += right.width
+        // update total ascent and descent
+        total_ascent = max(total_ascent, right.ascent)
+        total_descent = max(total_descent, right.descent)
+      }
+      _composition =
+        MathComposition(
+          width: x, ascent: total_ascent, descent: total_descent, items: items)
     }
-
-    _composition = MathComposition(
-      width: x, ascent: total_ascent, descent: total_descent, items: items)
   }
 
   private func layoutDelimiters(
