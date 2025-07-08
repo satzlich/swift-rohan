@@ -75,10 +75,12 @@ final class MultilineNode: ArrayNode {
       _updateNodeProperties()
 
       if _countProviderState != nil && _countProviderState!.isCounterDirty {
-        assert(subtype.shouldProvideCounter)
-        let containerWidth =
-          _countProviderState!.computeContainerWidth(_constContainerWidth)
-        _nodeFragment!.setContainerWidth(containerWidth)
+        // for {multline}, we need to recompute the container width.
+        if subtype.isMultline {
+          let containerWidth =
+            _countProviderState!.computeContainerWidth(_constContainerWidth)
+          _nodeFragment!.setContainerWidth(containerWidth)
+        }
 
         let sum = super.performLayout(context, fromScratch: false)
 

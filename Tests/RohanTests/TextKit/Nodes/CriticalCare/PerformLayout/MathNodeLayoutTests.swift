@@ -44,7 +44,7 @@ struct MathNodeLayoutTests {
     }
   }
 
-  private func createTestScene<T: Node>(
+  private func createMathTestScene<T: Node>(
     _ node: T
   ) -> (ContentNode, MathListLayoutContext) {
     let styleSheet = StyleSheetTests.testingStyleSheet()
@@ -58,9 +58,19 @@ struct MathNodeLayoutTests {
     return (contentNode, context)
   }
 
-  private func performLayout(
-    _ context: MathListLayoutContext, _ contentNode: ContentNode
-  ) {
+  private func createTextTestScene<T: Node>(
+    _ node: T
+  ) -> (ContentNode, TextLayoutContext) {
+    let styleSheet = StyleSheetTests.testingStyleSheet()
+    let contentNode = ContentNode([node])
+    let textContext = TextLayoutContext(styleSheet)
+    textContext.beginEditing()
+    _ = contentNode.performLayout(textContext, fromScratch: true)
+    textContext.endEditing()
+    return (contentNode, textContext)
+  }
+
+  private func performLayout<T: LayoutContext>(_ context: T, _ contentNode: ContentNode) {
     context.resetCursor()
     context.beginEditing()
     _ = contentNode.performLayout(context, fromScratch: false)
@@ -70,7 +80,7 @@ struct MathNodeLayoutTests {
   @Test
   func accent() {
     let accentNode = AccentNode(.overleftarrow, nucleus: [TextNode("x")])
-    let (contentNode, context) = createTestScene(accentNode)
+    let (contentNode, context) = createMathTestScene(accentNode)
     do {
       accentNode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
       performLayout(context, contentNode)
@@ -87,7 +97,7 @@ struct MathNodeLayoutTests {
       nuc: [TextNode("a")], lsub: [TextNode("1")], lsup: [TextNode("2")],
       sub: [TextNode("3")], sup: [TextNode("4")]
     )
-    let (contentNode, context) = createTestScene(attachNode)
+    let (contentNode, context) = createMathTestScene(attachNode)
     // dirty
     do {
       attachNode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -149,7 +159,7 @@ struct MathNodeLayoutTests {
   func fraction() {
     let fractionNode =
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .frac)
-    let (contentNode, context) = createTestScene(fractionNode)
+    let (contentNode, context) = createMathTestScene(fractionNode)
 
     do {
       fractionNode.numerator.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -170,7 +180,7 @@ struct MathNodeLayoutTests {
   @Test
   func leftRight() {
     let leftRightNode = LeftRightNode(DelimiterPair.BRACE, [TextNode("x")])
-    let (contentNode, context) = createTestScene(leftRightNode)
+    let (contentNode, context) = createMathTestScene(leftRightNode)
 
     do {
       leftRightNode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -185,7 +195,7 @@ struct MathNodeLayoutTests {
   @Test
   func radical() {
     let radicalNode = RadicalNode([TextNode("m")], index: [TextNode("n")])
-    let (contentNode, context) = createTestScene(radicalNode)
+    let (contentNode, context) = createMathTestScene(radicalNode)
 
     // dirty, no frame change
     do {
@@ -220,7 +230,7 @@ struct MathNodeLayoutTests {
   @Test
   func underOver() {
     let underOverNode = UnderOverNode(.overline, [TextNode("x")])
-    let (contentNode, context) = createTestScene(underOverNode)
+    let (contentNode, context) = createMathTestScene(underOverNode)
 
     do {
       underOverNode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -235,7 +245,7 @@ struct MathNodeLayoutTests {
   @Test
   func mathAttributes() {
     let mathAttrs = MathAttributesNode(.mathKind(.mathop), [TextNode("x")])
-    let (contentNode, context) = createTestScene(mathAttrs)
+    let (contentNode, context) = createMathTestScene(mathAttrs)
 
     do {
       mathAttrs.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -250,7 +260,7 @@ struct MathNodeLayoutTests {
   @Test
   func mathStyles() {
     let mathStyles = MathStylesNode(.mathbb, [TextNode("x")])
-    let (contentNode, context) = createTestScene(mathStyles)
+    let (contentNode, context) = createMathTestScene(mathStyles)
 
     do {
       mathStyles.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -265,7 +275,7 @@ struct MathNodeLayoutTests {
   @Test
   func textMode() {
     let textMode = TextModeNode([TextNode("x")])
-    let (contentNode, context) = createTestScene(textMode)
+    let (contentNode, context) = createMathTestScene(textMode)
 
     do {
       textMode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
@@ -282,44 +292,107 @@ struct MathNodeLayoutTests {
   @Test
   func namedSymbol() {
     let namedSymbol = NamedSymbolNode(.lookup("idotsint")!)
-    _ = createTestScene(namedSymbol)
+    _ = createMathTestScene(namedSymbol)
     // no incremental layout test is necessary
   }
 
-  @Test
-  func matrix() {
-    let matrix = MatrixNode(
-      .Bmatrix,
-      [
+  private func _createTestScene(
+    _ subtype: MathArray
+  ) -> (ArrayNode, ContentNode, any LayoutContext) {
+
+    // prepare the rows
+    let rows: Array<Array<ArrayNode.Cell>>
+    if subtype.isMultiColumnEnabled {
+      rows = [
         [ContentNode([TextNode("a")]), ContentNode([TextNode("b")])],
         [ContentNode([TextNode("c")]), ContentNode([TextNode("d")])],
-      ])
-    let (contentNode, context) = createTestScene(matrix)
-    // dirty
-    do {
-      let child = matrix.getElement(0, 1)
-      child.replaceChild(TextNode("b"), at: 0, inStorage: true)
-      performLayout(context, contentNode)
+      ]
     }
-    // dirty
-    do {
-      let child = matrix.getElement(0, 1)
-      child.replaceChild(TextNode("x"), at: 0, inStorage: true)
-      performLayout(context, contentNode)
+    else {
+      rows = [
+        [ContentNode([TextNode("a")])],
+        [ContentNode([TextNode("b")])],
+      ]
     }
-    // modified
-    do {
-      matrix.removeRow(at: 1, inStorage: true)
-      matrix.insertColumn(at: 1, inStorage: true)
-      let child = matrix.getElement(0, 0)
-      child.replaceChild(TextNode("y"), at: 0, inStorage: true)
-      performLayout(context, contentNode)
+
+    // prepare the node
+    if subtype.isMatrixNodeCompatible {
+      let matrix = MatrixNode(subtype, rows)
+      let (contentNode, context) = createMathTestScene(matrix)
+      return (matrix, contentNode, context)
     }
-    do {
-      matrix.insertRow(at: 1, inStorage: true)
-      matrix.removeColumn(at: 1, inStorage: true)
-      let child = matrix.getElement(0, 0)
-      child.replaceChild(TextNode("y"), at: 0, inStorage: true)
+    else {
+      assert(subtype.isMultilineNodeCompatible)
+      let multiline = MultilineNode(subtype, rows)
+      let (contentNode, context) = createTextTestScene(multiline)
+      return (multiline, contentNode, context)
+    }
+  }
+
+  @Test("arrayNode", arguments: [MathArray.bmatrix, .align, .multline])
+  func arrayNode(_ subtype: MathArray) {
+    let (arrayNode, contentNode, context) = _createTestScene(subtype)
+
+    if subtype.isMultiColumnEnabled {
+      // dirty
+      do {
+        let child = arrayNode.getElement(0, 1)
+        child.replaceChild(TextNode("b"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+      // dirty
+      do {
+        let child = arrayNode.getElement(0, 1)
+        child.replaceChild(TextNode("x"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+      // modified
+      do {
+        arrayNode.removeRow(at: 1, inStorage: true)
+        arrayNode.insertColumn(at: 1, inStorage: true)
+        let child = arrayNode.getElement(0, 0)
+        child.replaceChild(TextNode("y"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+      do {
+        arrayNode.insertRow(at: 1, inStorage: true)
+        arrayNode.removeColumn(at: 1, inStorage: true)
+        let child = arrayNode.getElement(0, 0)
+        child.replaceChild(TextNode("y"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+    }
+    else {
+      // dirty
+      do {
+        let child = arrayNode.getElement(0, 0)
+        child.replaceChild(TextNode("b"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+      // dirty
+      do {
+        let child = arrayNode.getElement(0, 0)
+        child.replaceChild(TextNode("x"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+      // modified
+      do {
+        arrayNode.removeRow(at: 1, inStorage: true)
+        let child = arrayNode.getElement(0, 0)
+        child.replaceChild(TextNode("y"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+      do {
+        arrayNode.insertRow(at: 1, inStorage: true)
+        let child = arrayNode.getElement(0, 0)
+        child.replaceChild(TextNode("y"), at: 0, inStorage: true)
+        performLayout(context, contentNode)
+      }
+    }
+
+    // counter dirty
+    if subtype.shouldProvideCounter {
+      arrayNode.counterSegment?.begin.propagateDirty()
       performLayout(context, contentNode)
     }
   }
