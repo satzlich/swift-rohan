@@ -64,7 +64,6 @@ final class MultilineNode: ArrayNode {
 
       let sum = super.performLayout(context, fromScratch: true)
 
-      assert(self.isBlock)
       _addAttributesBackwards(1, context)
       _countProviderState?.isCounterDirty = false
 
