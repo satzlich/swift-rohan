@@ -42,31 +42,42 @@ struct ArrayNodeTests {
 
   static func allSamples() -> Array<ArrayNode> {
     [
-      MatrixNode(
-        .pmatrix,
-        [
-          MatrixNode.Row([
-            MatrixNode.Cell([TextNode("1")]),
-            MatrixNode.Cell([TextNode("2")]),
-            MatrixNode.Cell([TextNode("3")]),
-          ]),
-          MatrixNode.Row([
-            MatrixNode.Cell([TextNode("4")]),
-            MatrixNode.Cell([TextNode("5")]),
-            MatrixNode.Cell([TextNode("6")]),
-          ]),
-        ]),
-
-      MultilineNode(
-        .multlineAst,
-        [
-          MultilineNode.Row([
-            MultilineNode.Cell([TextNode("a")])
-          ]),
-          MultilineNode.Row([
-            MultilineNode.Cell([TextNode("b")])
-          ]),
-        ]),
+      _createMatrix(.Bmatrix),
+      _createMatrix(.cases),
+      _createMultiline(.multline),
+      _createMultiline(.multlineAst),
     ]
+  }
+
+  private static func _createMatrix(_ subtype: MathArray) -> MatrixNode {
+    precondition(subtype.isMatrixNodeCompatible)
+    return MatrixNode(
+      subtype,
+      [
+        MatrixNode.Row([
+          MatrixNode.Cell([TextNode("1")]),
+          MatrixNode.Cell([TextNode("2")]),
+          MatrixNode.Cell([TextNode("3")]),
+        ]),
+        MatrixNode.Row([
+          MatrixNode.Cell([TextNode("4")]),
+          MatrixNode.Cell([TextNode("5")]),
+          MatrixNode.Cell([TextNode("6")]),
+        ]),
+      ])
+  }
+
+  private static func _createMultiline(_ subtype: MathArray) -> MultilineNode {
+    precondition(subtype.isMultilineNodeCompatible)
+    return MultilineNode(
+      subtype,
+      [
+        MultilineNode.Row([
+          MultilineNode.Cell([TextNode("a")])
+        ]),
+        MultilineNode.Row([
+          MultilineNode.Cell([TextNode("b")])
+        ]),
+      ])
   }
 }

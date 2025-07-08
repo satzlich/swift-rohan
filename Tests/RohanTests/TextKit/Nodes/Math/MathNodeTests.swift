@@ -28,6 +28,8 @@ struct MathNodeTests {
         nuc: [TextNode("a")], lsub: [TextNode("1")], lsup: [TextNode("2")],
         sub: [TextNode("3")], sup: [TextNode("4")]),
       EquationNode(.inline, [TextNode("f(n)")]),
+      EquationNode(.display, [TextNode("f(n)")]),
+      EquationNode(.equation, [TextNode("f(n)")]),
       //
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .frac),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .binom),
