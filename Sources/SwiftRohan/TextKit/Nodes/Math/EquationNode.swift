@@ -140,22 +140,19 @@ final class EquationNode: MathNode {
     case .inline:
       break
     case .display:
-      EquationNode.addAttributesBackwards(
-        shouldProvideCounter: false, segment, context, &_cachedAttributes, nil)
+      EquationNode.addAttributesBackwards(segment, context, &_cachedAttributes, nil)
 
     case .equation:
       if let countHolder = countHolder,
         let cachedAttributes = _cachedAttributes
       {
-        let equationNumber = EquationNode.fetchEquationNumber(
-          countHolder, cachedAttributes)
+        let equationNumber =
+          EquationNode.composeEquationNumber(countHolder, cachedAttributes)
         EquationNode.addAttributesBackwards(
-          shouldProvideCounter: true, segment, context, &_cachedAttributes, equationNumber
-        )
+          segment, context, &_cachedAttributes, equationNumber)
       }
       else {
-        EquationNode.addAttributesBackwards(
-          shouldProvideCounter: true, segment, context, &_cachedAttributes, nil)
+        EquationNode.addAttributesBackwards(segment, context, &_cachedAttributes, nil)
       }
     }
   }
@@ -570,7 +567,6 @@ extension EquationNode: CountObserver {
   ///   - cachedAttributes: The cached attributes to use.
   ///   - countHolder: The count holder to use, if any.
   static func addAttributesBackwards(
-    shouldProvideCounter: Bool,
     _ segment: Int, _ context: some LayoutContext,
     _ cachedAttributes: inout Dictionary<NSAttributedString.Key, Any>?,
     _ equationNumber: NSAttributedString?
@@ -579,9 +575,7 @@ extension EquationNode: CountObserver {
       assertionFailure("expected cachedAttributes to be non-nil")
       return
     }
-    if shouldProvideCounter,
-      let equationNumber = equationNumber
-    {
+    if let equationNumber = equationNumber {
       cachedAttributes![.rhEquationNumber] = equationNumber
     }
     let begin = context.layoutCursor - segment
@@ -589,7 +583,7 @@ extension EquationNode: CountObserver {
     context.addAttributes(cachedAttributes!, begin..<end)
   }
 
-  static func fetchEquationNumber(
+  static func composeEquationNumber(
     _ countHolder: CountHolder, _ attributes: Dictionary<NSAttributedString.Key, Any>
   ) -> NSAttributedString {
     let n = countHolder.value(forName: .equation)

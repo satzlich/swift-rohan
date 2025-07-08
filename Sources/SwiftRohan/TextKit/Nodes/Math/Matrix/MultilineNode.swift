@@ -97,15 +97,13 @@ final class MultilineNode: ArrayNode {
     if let countHolder = countHolder,
       let cachedAttributes = _cachedAttributes
     {
-      let equationNumber = EquationNode.fetchEquationNumber(countHolder, cachedAttributes)
+      let equationNumber = EquationNode.composeEquationNumber(
+        countHolder, cachedAttributes)
       EquationNode.addAttributesBackwards(
-        shouldProvideCounter: subtype.shouldProvideCounter, segment, context,
-        &_cachedAttributes, equationNumber)
+        segment, context, &_cachedAttributes, equationNumber)
     }
     else {
-      EquationNode.addAttributesBackwards(
-        shouldProvideCounter: subtype.shouldProvideCounter, segment, context,
-        &_cachedAttributes, nil)
+      EquationNode.addAttributesBackwards(segment, context, &_cachedAttributes, nil)
     }
   }
 
@@ -251,7 +249,7 @@ final class MultilineNode: ArrayNode {
       _countProviderState?.trailingCursorPosition = trailingCursorPosition
       let countHolder = countHolder!
       _countProviderState?.equationNumber =
-        EquationNode.fetchEquationNumber(countHolder, _cachedAttributes!)
+        EquationNode.composeEquationNumber(countHolder, _cachedAttributes!)
     }
     else {
       let paragraphProperty: ParagraphProperty = resolveAggregate(styleSheet)
@@ -263,7 +261,7 @@ final class MultilineNode: ArrayNode {
     if subtype.shouldProvideCounter {
       let countHolder = countHolder!
       _countProviderState?.equationNumber =
-        EquationNode.fetchEquationNumber(countHolder, _cachedAttributes!)
+        EquationNode.composeEquationNumber(countHolder, _cachedAttributes!)
     }
     else {
       return
