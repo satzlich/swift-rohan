@@ -138,14 +138,13 @@ enum TestUtils {
     for attachmentViewProvider in fragment.textAttachmentViewProviders {
       guard let attachmentView = attachmentViewProvider.view else { continue }
 
-      let attachmentFrame =
-        fragment.frameForTextAttachment(at: attachmentViewProvider.location)
-      let attachmentBounds = attachmentView.bounds
+      let frame = fragment.frameForTextAttachment(at: attachmentViewProvider.location)
+      let bounds = attachmentView.bounds
 
       context.saveGState()
       context.translateBy(
-        x: attachmentFrame.origin.x - attachmentBounds.origin.x,
-        y: attachmentFrame.origin.y - attachmentBounds.origin.y)
+        x: frame.origin.x - bounds.origin.x,
+        y: frame.origin.y - bounds.origin.y)
       attachmentView.layer?.render(in: context)
       context.restoreGState()
     }
@@ -162,7 +161,7 @@ enum TestUtils {
     // draw coordinate
     context.saveGState()
     drawString("\(frame.formatted(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
-    context.restoreGState()
     context.textMatrix = .identity
+    context.restoreGState()
   }
 }
