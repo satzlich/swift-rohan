@@ -11,8 +11,8 @@ struct NewlineArray: Equatable, Hashable {
 
   private var _isBlock: BitArray
   private var _insertNewline: BitArray
-  /// total number of true values in `_insertNewline`
-  private(set) var newlineCount: Int
+  /// total number of trailing newlines in the array.
+  private(set) var trailingCount: Int
 
   public var asBitArray: BitArray { _insertNewline }
 
@@ -41,7 +41,7 @@ struct NewlineArray: Equatable, Hashable {
   private init(trailingMask: Bool) {
     self._isBlock = BitArray()
     self._insertNewline = BitArray()
-    self.newlineCount = 0
+    self.trailingCount = 0
     self.trailingMask = trailingMask
   }
 
@@ -51,7 +51,7 @@ struct NewlineArray: Equatable, Hashable {
       _isBlock.isEmpty == false
       ? Self.computeNewlines(for: _isBlock, trailingMask: trailingMask)
       : []
-    self.newlineCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
+    self.trailingCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
     self.trailingMask = trailingMask
   }
 
@@ -76,7 +76,7 @@ struct NewlineArray: Equatable, Hashable {
 
     _isBlock.insert(contentsOf: isBlock, at: index)
     _insertNewline.insert(contentsOf: segment, at: index)
-    newlineCount += delta
+    trailingCount += delta
   }
 
   mutating func insert(isBlock: Bool, at index: Int) {
@@ -92,7 +92,7 @@ struct NewlineArray: Equatable, Hashable {
     let delta = -_insertNewline[range].lazy.map(\.intValue).reduce(0, +)
     _isBlock.removeSubrange(range)
     _insertNewline.removeSubrange(range)
-    newlineCount += delta
+    trailingCount += delta
 
     // update the previous
     guard range.lowerBound > 0 else { return }
@@ -101,7 +101,7 @@ struct NewlineArray: Equatable, Hashable {
       (i < _insertNewline.count - 1)
       ? (_isBlock[i] || _isBlock[i + 1])
       : false
-    newlineCount += newValue.intValue - _insertNewline[i].intValue
+    trailingCount += newValue.intValue - _insertNewline[i].intValue
     _insertNewline[i] = newValue
   }
 
@@ -112,7 +112,7 @@ struct NewlineArray: Equatable, Hashable {
   mutating func removeAll() {
     self._isBlock.removeAll()
     self._insertNewline.removeAll()
-    self.newlineCount = 0
+    self.trailingCount = 0
   }
 
   mutating func replaceSubrange<C>(_ range: Range<Int>, with isBlock: C)
@@ -150,7 +150,7 @@ struct NewlineArray: Equatable, Hashable {
 
     _isBlock.replaceSubrange(range, with: isBlock)
     _insertNewline.replaceSubrange(range, with: segment)
-    newlineCount += delta
+    trailingCount += delta
   }
 
   mutating func setValue(isBlock: Bool, at index: Int) {
@@ -175,7 +175,7 @@ struct NewlineArray: Equatable, Hashable {
     _isBlock[index] = isBlock
     _insertNewline[index] = current
     // update true count
-    newlineCount += delta
+    trailingCount += delta
   }
 
   private static func computeNewlines(
