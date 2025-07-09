@@ -6,57 +6,71 @@ import BitCollections
 /// Array of boolean values that indicate whether a newline should be inserted
 /// at a given index.
 struct NewlineArray: Equatable, Hashable {
-  /// Mask value that is AND-ed with the first element of the array.
-  private let leadingMask: Bool
-
+  /// boolean values that indicate whether the corresponding element is a block.
   private var _isBlock: BitArray
-  private var _insertNewline: BitArray
-  /// total number of trailing newlines in the array.
+  /// boolean values that indicate whether a newline should be inserted **after**
+  /// each element.
+  private var _isNewline: BitArray
+
+  /// Mask value that is applied to the first element.
+  private let _leadingMask: Bool
+
+  /// the sum of all `true` values of trailing newlines.
   private(set) var trailingCount: Int
 
-  public var asBitArray: BitArray { _insertNewline }
+  @inlinable @inline(__always)
+  internal var asBitArray: BitArray { _isNewline }
 
-  public var isEmpty: Bool { _insertNewline.isEmpty }
-  public var count: Int { _insertNewline.count }
-  public subscript(index: Int) -> Bool { _insertNewline[index] }
+  @inlinable @inline(__always)
+  internal var isEmpty: Bool { _isNewline.isEmpty }
+
+  @inlinable @inline(__always)
+  internal var count: Int { _isNewline.count }
+
+  @inlinable @inline(__always)
+  internal subscript(index: Int) -> Bool { _isNewline[index] }
+
+  @inlinable @inline(__always)
+  var first: Bool? { _isNewline.first }
+
+  @inlinable @inline(__always)
+  var last: Bool? { _isNewline.last }
 
   @inlinable @inline(__always)
   internal func value(before index: Int) -> Bool {
-    precondition(0 <= index && index < _insertNewline.count)
-    if index == 0 { return false }
-    return _insertNewline[index - 1]
+    precondition(0 <= index && index < _isNewline.count)
+    return index == 0
+      ? _isBlock[0] && _leadingMask
+      : _isNewline[index - 1]
   }
 
-  var first: Bool? { _insertNewline.first }
-  var last: Bool? { _insertNewline.last }
-
-  init() {
+  internal init() {
     self.init(leadingMask: false)
   }
 
-  init(_ isBlock: some Sequence<Bool>) {
+  internal init(_ isBlock: some Sequence<Bool>) {
     self.init(isBlock, leadingMask: false)
   }
 
   private init(leadingMask: Bool) {
     self._isBlock = BitArray()
-    self._insertNewline = BitArray()
+    self._isNewline = BitArray()
     self.trailingCount = 0
-    self.leadingMask = leadingMask
+    self._leadingMask = leadingMask
   }
 
   private init(_ isBlock: some Sequence<Bool>, leadingMask: Bool) {
     self._isBlock = BitArray(isBlock)
-    self._insertNewline =
+    self._isNewline =
       !_isBlock.isEmpty
       ? Self._computeNewlines(for: _isBlock)
       : []
-    self.trailingCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
-    self.leadingMask = leadingMask
+    self.trailingCount = _isNewline.lazy.map(\.intValue).reduce(0, +)
+    self._leadingMask = leadingMask
   }
 
   mutating func insert(contentsOf isBlock: some Collection<Bool>, at index: Int) {
-    precondition(index >= 0 && index <= _insertNewline.count)
+    precondition(index >= 0 && index <= _isNewline.count)
 
     guard !isBlock.isEmpty else { return }
 
@@ -67,13 +81,13 @@ struct NewlineArray: Equatable, Hashable {
 
     var delta = 0
     if let previous {
-      delta += previous.intValue - _insertNewline[index - 1].intValue
-      _insertNewline[index - 1] = previous
+      delta += previous.intValue - _isNewline[index - 1].intValue
+      _isNewline[index - 1] = previous
     }
     delta += segment.lazy.map(\.intValue).reduce(0, +)
 
     _isBlock.insert(contentsOf: isBlock, at: index)
-    _insertNewline.insert(contentsOf: segment, at: index)
+    _isNewline.insert(contentsOf: segment, at: index)
     trailingCount += delta
   }
 
@@ -82,25 +96,25 @@ struct NewlineArray: Equatable, Hashable {
   }
 
   mutating func removeSubrange(_ range: Range<Int>) {
-    precondition(range.lowerBound >= 0 && range.upperBound <= _insertNewline.count)
+    precondition(range.lowerBound >= 0 && range.upperBound <= _isNewline.count)
 
     guard !range.isEmpty else { return }
 
     // remove
-    let delta = -_insertNewline[range].lazy.map(\.intValue).reduce(0, +)
+    let delta = -_isNewline[range].lazy.map(\.intValue).reduce(0, +)
     _isBlock.removeSubrange(range)
-    _insertNewline.removeSubrange(range)
+    _isNewline.removeSubrange(range)
     trailingCount += delta
 
     // update the previous
     guard range.lowerBound > 0 else { return }
     let i = range.lowerBound - 1
     let newValue: Bool =
-      (i < _insertNewline.count - 1)
+      (i < _isNewline.count - 1)
       ? (_isBlock[i] || _isBlock[i + 1])
       : false
-    trailingCount += newValue.intValue - _insertNewline[i].intValue
-    _insertNewline[i] = newValue
+    trailingCount += newValue.intValue - _isNewline[i].intValue
+    _isNewline[i] = newValue
   }
 
   mutating func remove(at index: Int) {
@@ -109,13 +123,13 @@ struct NewlineArray: Equatable, Hashable {
 
   mutating func removeAll() {
     self._isBlock.removeAll()
-    self._insertNewline.removeAll()
+    self._isNewline.removeAll()
     self.trailingCount = 0
   }
 
   mutating func replaceSubrange<C>(_ range: Range<Int>, with isBlock: C)
   where C: BidirectionalCollection<Bool> {
-    precondition(range.lowerBound >= 0 && range.upperBound <= _insertNewline.count)
+    precondition(range.lowerBound >= 0 && range.upperBound <= _isNewline.count)
 
     guard !isBlock.isEmpty
     else {
@@ -135,18 +149,18 @@ struct NewlineArray: Equatable, Hashable {
 
     var delta = 0
     // deduct the old values
-    delta -= _insertNewline[range].lazy.map(\.intValue).reduce(0, +)
+    delta -= _isNewline[range].lazy.map(\.intValue).reduce(0, +)
     // add change of previous neighbour
     if let previous {
-      delta += previous.intValue - _insertNewline[range.lowerBound - 1].intValue
+      delta += previous.intValue - _isNewline[range.lowerBound - 1].intValue
       // update previous neighbour
-      _insertNewline[range.lowerBound - 1] = previous
+      _isNewline[range.lowerBound - 1] = previous
     }
     // add the new values
     delta += segment.lazy.map(\.intValue).reduce(0, +)
 
     _isBlock.replaceSubrange(range, with: isBlock)
-    _insertNewline.replaceSubrange(range, with: segment)
+    _isNewline.replaceSubrange(range, with: segment)
     trailingCount += delta
   }
 
@@ -162,15 +176,15 @@ struct NewlineArray: Equatable, Hashable {
     var delta = 0
     if let previous {
       // compute delta
-      delta += previous.intValue - _insertNewline[index - 1].intValue
+      delta += previous.intValue - _isNewline[index - 1].intValue
       // update previous
-      _insertNewline[index - 1] = previous
+      _isNewline[index - 1] = previous
     }
     // compute delta
-    delta += current.intValue - _insertNewline[index].intValue
+    delta += current.intValue - _isNewline[index].intValue
     // update target
     _isBlock[index] = isBlock
-    _insertNewline[index] = current
+    _isNewline[index] = current
     // update true count
     trailingCount += delta
   }
