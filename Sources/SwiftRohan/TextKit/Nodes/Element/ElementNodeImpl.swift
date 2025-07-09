@@ -14,10 +14,10 @@ internal class ElementNodeImpl: ElementNode {
     guard 0..._layoutLength ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
-
-    if _children.isEmpty {
+    guard !_children.isEmpty else {
       return .terminal(value: .index(0), target: 0)
     }
+
     assert(isPlaceholderActive == false)
 
     var (k, s) = (0, 0)
@@ -430,7 +430,6 @@ internal class ElementNodeImpl: ElementNode {
     }
   }
 
-  @inline(__always)
   private final func _computeExtendedRecords()
     -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>)
   {
