@@ -60,17 +60,13 @@ internal class ElementNodeImpl: ElementNode {
 
   internal override func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
-    if _children.isEmpty {
-      // "0" whether placeholder is active or not.
-      return 0
-    }
-    else {
-      assert(isPlaceholderActive == false)
-      let range = 0..<index
-      let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
-      let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-      return s1 + s2
-    }
+    guard !_children.isEmpty else { return 0 }  // "0" whether placeholder is active or not.
+
+    assert(isPlaceholderActive == false)
+    let range = 0..<index
+    let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
+    let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
+    return s1 + s2
   }
 
   // MARK: - Layout Impl.
@@ -78,10 +74,7 @@ internal class ElementNodeImpl: ElementNode {
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   final override func snapshotDescription() -> Array<String>? {
-    if let snapshotRecords = _snapshotRecords {
-      return snapshotRecords.map(\.description)
-    }
-    return nil
+    _snapshotRecords.map { $0.map(\.description) }
   }
 
   /// Make snapshot once if not already made

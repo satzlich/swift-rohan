@@ -7,18 +7,11 @@ import Testing
 
 struct NewlineArrayTests {
   @Test
-  static func coverage() {
-    let newlines = NewlineArray([true, false, true])
-    _ = newlines.first
-    _ = newlines.last
-  }
-
-  @Test
   static func testNewlineArray() {
     do {
       let isBlock: Array<Bool> = []
       let newlines = NewlineArray(isBlock)
-      #expect(newlines.newlineCount == 0)
+      #expect(newlines.trailingCount == 0)
       #expect(newlines.asBitArray == [])
       #expect(newlines.isEmpty == true)
     }
@@ -26,9 +19,18 @@ struct NewlineArrayTests {
     do {
       let isBlock: Array<Bool> = [true]
       let newlines = NewlineArray(isBlock)
-      #expect(newlines.newlineCount == 0)
+      #expect(newlines.trailingCount == 0)
       #expect(newlines.asBitArray == [false])
       #expect(newlines.isEmpty == false)
+    }
+
+    do {
+      let newlines = NewlineArray([true, false, true])
+      #expect(newlines.first == true)
+      #expect(newlines.last == false)
+
+      #expect(newlines.value(before: 0, leadingMask: false) == false)
+      #expect(newlines.value(before: 0, leadingMask: true) == true)
     }
   }
 
@@ -37,49 +39,49 @@ struct NewlineArrayTests {
     let isBlock: Array<Bool> = [false, false, true, false, true, true]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
 
     // insert empty
     newlines.insert(contentsOf: [], at: 0)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
 
     // insert collection
     newlines.insert(contentsOf: [true, false], at: 1)
     // [false, ꞈ true, false, ꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 6)
+    #expect(newlines.trailingCount == 6)
 
     // insert single
     newlines.insert(isBlock: false, at: 1)
     // [false, ꞈ false, ꞈ true, false, false, true, false, true, true]
     #expect(
       newlines.asBitArray == [false, true, true, false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 6)
+    #expect(newlines.trailingCount == 6)
 
     // remove empty
     newlines.removeSubrange(0..<0)
     #expect(
       newlines.asBitArray == [false, true, true, false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 6)
+    #expect(newlines.trailingCount == 6)
 
     // remove subrange
     newlines.removeSubrange(2..<4)
     // [ false, false, ꞈꞈ false, true, false, true, true ]
     #expect(newlines.asBitArray == [false, false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
 
     // remove single
     newlines.remove(at: 1)
     // [ false, ꞈꞈ false, true, false, true, true ]
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
 
     // set value
     newlines.setValue(isBlock: true, at: 1)
     // [ false, true, true,  false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
-    #expect(newlines.newlineCount == 5)
+    #expect(newlines.trailingCount == 5)
   }
 
   @Test
@@ -87,31 +89,31 @@ struct NewlineArrayTests {
     let isBlock: Array<Bool> = [false, false, true, false, true, true]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
 
     // set value
     newlines.setValue(isBlock: true, at: 1)
     // [ false, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
-    #expect(newlines.newlineCount == 5)
+    #expect(newlines.trailingCount == 5)
 
     // set value at first position
     newlines.setValue(isBlock: true, at: 0)
     // [ true, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
-    #expect(newlines.newlineCount == 5)
+    #expect(newlines.trailingCount == 5)
 
     // set value at last position
     newlines.setValue(isBlock: false, at: 5)
     // [ true, true, true, false, true, false ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
-    #expect(newlines.newlineCount == 5)
+    #expect(newlines.trailingCount == 5)
 
     // set value at second last position
     newlines.setValue(isBlock: false, at: 4)
     // [ true, true, true, false, false, false ]
     #expect(newlines.asBitArray == [true, true, true, false, false, false])
-    #expect(newlines.newlineCount == 3)
+    #expect(newlines.trailingCount == 3)
   }
 
   @Test
@@ -119,19 +121,31 @@ struct NewlineArrayTests {
     let isBlock: Array<Bool> = [false, false, true, false, true, true]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
 
     // replace empty
     newlines.replaceSubrange(1..<1, with: [true, false])
     // [false, ꞈ true, false, ꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 6)
+    #expect(newlines.trailingCount == 6)
 
     // replace with empty
     newlines.replaceSubrange(1..<3, with: [])
     // [false, ꞈꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
-    #expect(newlines.newlineCount == 4)
+    #expect(newlines.trailingCount == 4)
+
+    // replace final segment
+    newlines.replaceSubrange(4..<6, with: [true])
+    // [false, false, true, true, ꞈ true ꞈ]
+    #expect(newlines.asBitArray == [false, true, true, true, false])
+    #expect(newlines.trailingCount == 3)
+
+    // replace initial segment
+    newlines.replaceSubrange(0..<2, with: [false])
+    // [false, ꞈꞈ true, true, true]
+    #expect(newlines.asBitArray == [true, true, true, false])
+    #expect(newlines.trailingCount == 3)
   }
 
   @Test
