@@ -7,13 +7,6 @@ import Testing
 
 struct NewlineArrayTests {
   @Test
-  static func coverage() {
-    let newlines = NewlineArray([true, false, true])
-    _ = newlines.first
-    _ = newlines.last
-  }
-
-  @Test
   static func testNewlineArray() {
     do {
       let isBlock: Array<Bool> = []
@@ -29,6 +22,15 @@ struct NewlineArrayTests {
       #expect(newlines.trailingCount == 0)
       #expect(newlines.asBitArray == [false])
       #expect(newlines.isEmpty == false)
+    }
+
+    do {
+      let newlines = NewlineArray([true, false, true])
+      #expect(newlines.first == true)
+      #expect(newlines.last == false)
+
+      #expect(newlines.value(before: 0, leadingMask: false) == false)
+      #expect(newlines.value(before: 0, leadingMask: true) == true)
     }
   }
 
@@ -132,6 +134,18 @@ struct NewlineArrayTests {
     // [false, ꞈꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
+
+    // replace final segment
+    newlines.replaceSubrange(4..<6, with: [true])
+    // [false, false, true, true, ꞈ true ꞈ]
+    #expect(newlines.asBitArray == [false, true, true, true, false])
+    #expect(newlines.trailingCount == 3)
+
+    // replace initial segment
+    newlines.replaceSubrange(0..<2, with: [false])
+    // [false, ꞈꞈ true, true, true]
+    #expect(newlines.asBitArray == [true, true, true, false])
+    #expect(newlines.trailingCount == 3)
   }
 
   @Test

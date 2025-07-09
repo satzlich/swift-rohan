@@ -12,9 +12,6 @@ struct NewlineArray: Equatable, Hashable {
   /// each element.
   private var _isNewline: BitArray
 
-  /// Mask value that is applied to the first element.
-  private let _leadingMask: Bool
-
   /// the sum of all `true` values of trailing newlines.
   private(set) var trailingCount: Int
 
@@ -38,35 +35,34 @@ struct NewlineArray: Equatable, Hashable {
 
   @inlinable @inline(__always)
   internal func value(before index: Int) -> Bool {
+    value(before: index, leadingMask: false)
+  }
+
+  /// Returns the value before the given index.
+  /// - Parameters:
+  ///   - index: The index for which to return the value before.
+  ///   - leadingMask: the mask for the first element. Default is `false`.
+  @inlinable @inline(__always)
+  internal func value(before index: Int, leadingMask: Bool) -> Bool {
     precondition(0 <= index && index < _isNewline.count)
     return index == 0
-      ? _isBlock[0] && _leadingMask
+      ? _isBlock[0] && leadingMask
       : _isNewline[index - 1]
   }
 
-  internal init() {
-    self.init(leadingMask: false)
-  }
-
-  internal init(_ isBlock: some Sequence<Bool>) {
-    self.init(isBlock, leadingMask: false)
-  }
-
-  private init(leadingMask: Bool) {
+  init() {
     self._isBlock = BitArray()
     self._isNewline = BitArray()
     self.trailingCount = 0
-    self._leadingMask = leadingMask
   }
 
-  private init(_ isBlock: some Sequence<Bool>, leadingMask: Bool) {
+  init(_ isBlock: some Sequence<Bool>) {
     self._isBlock = BitArray(isBlock)
     self._isNewline =
       !_isBlock.isEmpty
       ? Self._computeNewlines(for: _isBlock)
       : []
     self.trailingCount = _isNewline.lazy.map(\.intValue).reduce(0, +)
-    self._leadingMask = leadingMask
   }
 
   mutating func insert(contentsOf isBlock: some Collection<Bool>, at index: Int) {
@@ -127,17 +123,15 @@ struct NewlineArray: Equatable, Hashable {
     self.trailingCount = 0
   }
 
-  mutating func replaceSubrange<C>(_ range: Range<Int>, with isBlock: C)
-  where C: BidirectionalCollection<Bool> {
+  mutating func replaceSubrange(_ range: Range<Int>, with isBlock: some Collection<Bool>)
+  {
     precondition(range.lowerBound >= 0 && range.upperBound <= _isNewline.count)
 
-    guard !isBlock.isEmpty
-    else {
+    guard !isBlock.isEmpty else {
       self.removeSubrange(range)
       return
     }
-    guard !range.isEmpty
-    else {
+    guard !range.isEmpty else {
       self.insert(contentsOf: isBlock, at: range.lowerBound)
       return
     }
