@@ -78,10 +78,7 @@ internal class ElementNodeImpl: ElementNode {
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
   final override func snapshotDescription() -> Array<String>? {
-    if let snapshotRecords = _snapshotRecords {
-      return snapshotRecords.map(\.description)
-    }
-    return nil
+    _snapshotRecords.map { $0.map(\.description) }
   }
 
   /// Make snapshot once if not already made
