@@ -7,10 +7,12 @@ import BitCollections
 /// at a given index.
 struct NewlineArray: Equatable, Hashable {
   /// boolean values that indicate whether the corresponding element is a block.
-  private var _isBlock: BitArray
+  @usableFromInline
+  internal var _isBlock: BitArray
   /// boolean values that indicate whether a newline should be inserted **after**
   /// each element.
-  private var _isNewline: BitArray
+  @usableFromInline
+  internal var _isNewline: BitArray
 
   /// the sum of all `true` values of trailing newlines.
   private(set) var trailingCount: Int
