@@ -92,6 +92,8 @@ final class ItemListNode: ElementNode {
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
+    precondition(atBlockEdge)  // since it is a heading node, it must be at block edge.
+
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context, atBlockEdge: atBlockEdge)
       _snapshotRecords = nil

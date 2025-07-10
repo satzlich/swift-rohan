@@ -52,12 +52,14 @@ final class HeadingNode: ElementNodeImpl {
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
+    precondition(atBlockEdge)  // since it is a heading node, it must be at block edge.
+
     if fromScratch {
       _preamble = subtype.computePreamble(countHolder)
       // reconcile layout
       var sum = 0
       sum += StringReconciler.insertForward(new: _preamble, context: context, self)
-      sum += super.performLayout(context, fromScratch: true)
+      sum += super.performLayout(context, fromScratch: true, atBlockEdge: atBlockEdge)
       // update paragraph style
       context.addParagraphStyleBackward(sum, self)
       return sum
@@ -69,7 +71,7 @@ final class HeadingNode: ElementNodeImpl {
       var sum = 0
       sum += StringReconciler.reconcileForward(
         dirty: (_preamble, preamble), context: context, self)
-      sum += super.performLayout(context, fromScratch: false)
+      sum += super.performLayout(context, fromScratch: false, atBlockEdge: atBlockEdge)
       // update paragraph style
       context.addParagraphStyleBackward(sum, self)
       return sum
