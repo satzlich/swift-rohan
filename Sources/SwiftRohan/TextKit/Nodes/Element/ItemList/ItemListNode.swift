@@ -244,6 +244,7 @@ final class ItemListNode: ElementNode {
           new: _newlines.value(before: i), context: context, self)
         sum += StringReconciler.insertForward(
           new: _initialFiller(forIndex: i), context: context, self)
+        // "atBlockStart" is false because conceptually there is an item marker before.
         sum += NodeReconciler.insertForward(
           new: _children[i], context: context, atBlockStart: false)
       }
@@ -279,6 +280,7 @@ final class ItemListNode: ElementNode {
           current: _newlines.value(before: i), context: context)
         let ni = StringReconciler.skipForward(
           current: _initialFiller(forIndex: i), context: context)
+        // "atBlockStart" is false because conceptually there is an item marker before.
         let nc = NodeReconciler.reconcileForward(
           dirty: _children[i], context: context, atBlockStart: false)
         sum += nl + ni + nc
@@ -336,6 +338,7 @@ final class ItemListNode: ElementNode {
           new: current[i].leadingNewline, context: context, self)
         sum += StringReconciler.insertForward(
           new: _initialFiller(forIndex: i), context: context, self)
+        // "atBlockStart" is false because conceptually there is an item marker before.
         sum += NodeReconciler.insertForward(
           new: _children[i], context: context, atBlockStart: false)
       }
@@ -367,6 +370,7 @@ final class ItemListNode: ElementNode {
           StringReconciler.reconcileForward(
             dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
             context: context, self)
+        // "atBlockStart" is false because conceptually there is an item marker before.
         sum += NodeReconciler.reconcileForward(
           dirty: _children[i], context: context, atBlockStart: false)
 
