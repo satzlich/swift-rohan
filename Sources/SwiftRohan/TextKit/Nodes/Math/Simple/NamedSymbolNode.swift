@@ -19,7 +19,7 @@ final class NamedSymbolNode: SimpleNode {
   final override func layoutLength() -> Int { namedSymbol.string.length }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     switch context {
     case let context as MathListLayoutContext:

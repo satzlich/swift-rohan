@@ -38,7 +38,7 @@ internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Layout)
 
   internal override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool = false
   ) -> Int {
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context)

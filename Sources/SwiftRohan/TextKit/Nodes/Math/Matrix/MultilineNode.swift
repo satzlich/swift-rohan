@@ -54,7 +54,7 @@ final class MultilineNode: ArrayNode {
   final override var isBlock: Bool { true }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     precondition(context is TextLayoutContext)
     defer { assert(self.isDirty == false) }
@@ -62,7 +62,8 @@ final class MultilineNode: ArrayNode {
     if fromScratch {
       _setupNodeProperties(context)
 
-      let sum = super.performLayout(context, fromScratch: true)
+      let sum = super.performLayout(
+        context, fromScratch: true, atBlockStart: atBlockStart)
 
       _addAttributesBackwards(1, context)
       _countProviderState?.isCounterDirty = false
@@ -82,7 +83,8 @@ final class MultilineNode: ArrayNode {
           _nodeFragment!.setContainerWidth(containerWidth)
         }
 
-        let sum = super.performLayout(context, fromScratch: false)
+        let sum = super.performLayout(
+          context, fromScratch: false, atBlockStart: atBlockStart)
 
         _addAttributesBackwards(1, context)
         _countProviderState!.isCounterDirty = false
@@ -90,7 +92,8 @@ final class MultilineNode: ArrayNode {
         return sum
       }
       else {
-        return super.performLayout(context, fromScratch: false)
+        return super.performLayout(
+          context, fromScratch: false, atBlockStart: atBlockStart)
       }
     }
   }

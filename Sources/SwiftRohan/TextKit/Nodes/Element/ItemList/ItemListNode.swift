@@ -90,7 +90,7 @@ final class ItemListNode: ElementNode {
   // MARK: - Node(Layout)
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context)

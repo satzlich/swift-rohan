@@ -33,7 +33,7 @@ final class UnknownNode: SimpleNode {
   final override func layoutLength() -> Int { PLACEHOLDER.length }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     if fromScratch {
       context.insertText(PLACEHOLDER, self)

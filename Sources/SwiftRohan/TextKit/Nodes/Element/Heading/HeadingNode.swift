@@ -50,7 +50,7 @@ final class HeadingNode: ElementNodeImpl {
   final override func layoutLength() -> Int { _preamble.length + _layoutLength }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     if fromScratch {
       _preamble = subtype.computePreamble(countHolder)

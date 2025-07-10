@@ -33,7 +33,7 @@ final class MathOperatorNode: SimpleNode {
   final override func layoutLength() -> Int { 1 }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
