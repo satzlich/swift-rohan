@@ -49,6 +49,9 @@ internal class ElementNodeImpl: ElementNode {
   internal override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool = true
   ) -> Int {
+    // Maintenance: (a) save `_atBlockEdge`; (b) clear `_snapshotRecords` and `_isDirty`;
+    // (c) compute `_layoutLength`.
+
     if fromScratch {
       _layoutLength = _performLayoutFromScratch(context, atBlockEdge: atBlockEdge)
       _snapshotRecords = nil
@@ -61,6 +64,7 @@ internal class ElementNodeImpl: ElementNode {
       _snapshotRecords = nil
     }
 
+    _atBlockEdge = atBlockEdge
     _isDirty = false
     return _layoutLength
   }
@@ -141,8 +145,6 @@ internal class ElementNodeImpl: ElementNode {
     _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_children.count == _newlines.count)
-
-    defer { _atBlockEdge = atBlockEdge }
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
@@ -226,8 +228,6 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    defer { _atBlockEdge = atBlockEdge }
-
     switch self.isBlock {
     case true:
       var sum = 0
@@ -301,8 +301,6 @@ internal class ElementNodeImpl: ElementNode {
     _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
-
-    defer { _atBlockEdge = atBlockEdge }
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
