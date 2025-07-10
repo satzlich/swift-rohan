@@ -153,7 +153,7 @@ internal class Node: Codable {
   ///   - context: the layout context to perform layout in.
   ///   - fromScratch: true if the layout is performed from scratch, false if the
   ///       layout is performed incrementally.
-  ///   - startsBlock: true if the context cursor is at the start of a block node.
+  ///   - atBlockEdge: true if the context cursor is at the block edge.
   /// - Returns: the number of layout units contributed by the node.
   internal func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool = true
