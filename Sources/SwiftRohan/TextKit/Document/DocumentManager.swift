@@ -531,7 +531,8 @@ public final class DocumentManager: NSObject {
     textContentStorage.performEditingTransaction {
       let fromScratch = textContentStorage.documentRange.isEmpty
       guard rootNode.isDirty || fromScratch else { return }
-      _ = rootNode.performLayout(layoutContext, fromScratch: fromScratch)
+      _ = rootNode.performLayout(
+        layoutContext, fromScratch: fromScratch, atBlockEdge: true)
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)

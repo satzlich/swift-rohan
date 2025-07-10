@@ -14,13 +14,18 @@ internal class ElementNodeImpl: ElementNode {
     guard 0..._layoutLength ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
     }
-
-    if _children.isEmpty {
+    guard !_children.isEmpty else {
       return .terminal(value: .index(0), target: 0)
     }
+
+    let s0 = _newlines.value(before: 0, atBlockEdge: _atBlockEdge).intValue
+    guard s0 <= layoutOffset else {
+      return .terminal(value: .index(0), target: s0)
+    }
+
     assert(isPlaceholderActive == false)
 
-    var (k, s) = (0, 0)
+    var (k, s) = (0, s0)
     // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
     // invariant: s(k) = sum:i∈[0,k):ell(i)
     //            s(k) ≤ layoutOffset
@@ -37,21 +42,29 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - Node(Layout)
 
+  /// True if the **previous** layout of the node was performed at a block edge,
+  /// that is, immediately after a newline is emitted.
+  private final var _atBlockEdge: Bool = true
+
   internal override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool = true
   ) -> Int {
+    // Maintenance: (a) save `_atBlockEdge`; (b) clear `_snapshotRecords` and `_isDirty`;
+    // (c) compute `_layoutLength`.
+
     if fromScratch {
-      _layoutLength = _performLayoutFromScratch(context)
+      _layoutLength = _performLayoutFromScratch(context, atBlockEdge: atBlockEdge)
       _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context)
+      _layoutLength = _performLayoutSimple(context, atBlockEdge: atBlockEdge)
     }
     else {
-      _layoutLength = _performLayoutFull(context)
+      _layoutLength = _performLayoutFull(context, atBlockEdge: atBlockEdge)
       _snapshotRecords = nil
     }
 
+    _atBlockEdge = atBlockEdge
     _isDirty = false
     return _layoutLength
   }
@@ -64,9 +77,10 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(isPlaceholderActive == false)
     let range = 0..<index
+    let s0 = _newlines.value(before: 0, atBlockEdge: _atBlockEdge).intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return s1 + s2
+    return s0 + s1 + s2
   }
 
   // MARK: - Layout Impl.
@@ -89,13 +103,17 @@ internal class ElementNodeImpl: ElementNode {
     else {
       _snapshotRecords = _children.indices.map { i in
         SnapshotRecord(
-          _children[i], _newlines[i], leadingNewline: _newlines.value(before: i))
+          _children[i], _newlines[i],
+          leadingNewline: _newlines.value(before: i, atBlockEdge: _atBlockEdge))
       }
     }
   }
 
+  /// Layout empty node from scratch.
   @inline(__always)
-  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
+  private final func _performLayoutEmpty(
+    _ context: LayoutContext, atBlockEdge: Bool
+  ) -> Int {
     precondition(_children.isEmpty && _newlines.isEmpty)
     switch self.isBlock {
     case true:
@@ -123,12 +141,14 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout from scratch.
   @inline(__always)
-  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
+  private final func _performLayoutFromScratch(
+    _ context: LayoutContext, atBlockEdge: Bool
+  ) -> Int {
     precondition(_children.count == _newlines.count)
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
-      return _performLayoutEmpty(context)
+      return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
 
     case (false, true):
       var sum = 0
@@ -145,7 +165,8 @@ internal class ElementNodeImpl: ElementNode {
        (e) block child nodes are skipped for paragraph style.
        */
       for i in _children.indices {
-        let leadingNewline = _newlines.value(before: i)
+        let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
@@ -158,7 +179,8 @@ internal class ElementNodeImpl: ElementNode {
         // insert newline and child content.
         let nl =
           NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
-        let nc = NodeReconciler.insertForward(new: _children[i], context: context)
+        let nc = NodeReconciler.insertForward(
+          new: _children[i], context: context, atBlockEdge: runningBlockEdge)
         sum += nl + nc
 
         // update segment length and dirty flag.
@@ -189,7 +211,9 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout incrementally when snapshot was not made.
   @inline(__always)
-  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
+  private final func _performLayoutSimple(
+    _ context: LayoutContext, atBlockEdge: Bool
+  ) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
 
     if _children.isEmpty {
@@ -221,7 +245,8 @@ internal class ElementNodeImpl: ElementNode {
        */
 
       for i in _children.indices {
-        let leadingNewline = _newlines.value(before: i)
+        let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
@@ -236,7 +261,8 @@ internal class ElementNodeImpl: ElementNode {
         let nl = NewlineReconciler.skipForward(current: leadingNewline, context: context)
         let nc =
           _children[i].isDirty
-          ? NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          ? NodeReconciler.reconcileForward(
+            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
           : NodeReconciler.skipForward(current: _children[i], context: context)
         sum += nl + nc
 
@@ -271,16 +297,18 @@ internal class ElementNodeImpl: ElementNode {
 
   /// Perform layout incrementally when snapshot has been made.
   @inline(__always)
-  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
+  private final func _performLayoutFull(
+    _ context: LayoutContext, atBlockEdge: Bool
+  ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     switch (_children.isEmpty, self.isBlock) {
     case (true, _):
       context.deleteForward(_layoutLength)
-      return _performLayoutEmpty(context)
+      return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
 
     case (false, true):
-      let (current, original) = _computeExtendedRecords()
+      let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 
       var sum = 0
       var segmentLength = 0
@@ -306,7 +334,8 @@ internal class ElementNodeImpl: ElementNode {
           j += 1
         }
 
-        let leadingNewline = _newlines.value(before: i)
+        let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
@@ -323,7 +352,8 @@ internal class ElementNodeImpl: ElementNode {
         if current[i].mark == .added {
           nl =
             NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
-          nc = NodeReconciler.insertForward(new: _children[i], context: context)
+          nc = NodeReconciler.insertForward(
+            new: _children[i], context: context, atBlockEdge: runningBlockEdge)
           isCandidate = true
         }
         // skip none.
@@ -343,7 +373,8 @@ internal class ElementNodeImpl: ElementNode {
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
           let newlines = (original[j].leadingNewline, leadingNewline)
           nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
-          nc = NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          nc = NodeReconciler.reconcileForward(
+            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
           isCandidate = true
           j += 1
         }
@@ -379,7 +410,7 @@ internal class ElementNodeImpl: ElementNode {
       return sum
 
     case (false, false):
-      let (current, original) = _computeExtendedRecords()
+      let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 
       var sum = 0
       var j = 0
@@ -430,18 +461,24 @@ internal class ElementNodeImpl: ElementNode {
     }
   }
 
-  @inline(__always)
-  private final func _computeExtendedRecords()
-    -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>)
-  {
+  /// - Parameters:
+  ///   - atBlockEdge: Current value of passed-in `atBlockEdge` parameter.
+  private final func _computeExtendedRecords(
+    atBlockEdge: Bool
+  ) -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>) {
     precondition(_snapshotRecords != nil)
-    return ElementNodeImpl.computeExtendedRecords(_children, _newlines, _snapshotRecords!)
+    return ElementNodeImpl.computeExtendedRecords(
+      _children, _newlines, atBlockEdge: atBlockEdge, _snapshotRecords!)
   }
 
   /// Compute the current and original records for layout.
+  /// - Parameters:
+  ///   - children: The current children of the element node.
+  ///   - newlines: The newlines associated with the children.
+  ///   - atBlockEdge: Whether the layout of the node starts at a block start.
   @inline(__always)
   static func computeExtendedRecords(
-    _ children: ElementStore, _ newlines: NewlineArray,
+    _ children: ElementStore, _ newlines: NewlineArray, atBlockEdge: Bool,
     _ snapshotRecords: Array<SnapshotRecord>
   ) -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>) {
     // ID's of current children
@@ -455,7 +492,7 @@ internal class ElementNodeImpl: ElementNode {
       children.indices.map { i in
         let node = children[i]
         let insertNewline = newlines[i]
-        let newlineBefore = newlines.value(before: i)
+        let newlineBefore = newlines.value(before: i, atBlockEdge: atBlockEdge)
         let mark: LayoutMark =
           !originalIds.contains(node.id)
           ? .added

@@ -21,7 +21,7 @@ final class MathAttributesNode: MathNode {
   final override var isDirty: Bool { _nucleus.isDirty }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext

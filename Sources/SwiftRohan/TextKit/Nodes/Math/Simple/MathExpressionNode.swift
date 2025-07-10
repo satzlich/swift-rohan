@@ -24,7 +24,7 @@ final class MathExpressionNode: SimpleNode {
   final override func layoutLength() -> Int { _deflated.layoutLength() }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext

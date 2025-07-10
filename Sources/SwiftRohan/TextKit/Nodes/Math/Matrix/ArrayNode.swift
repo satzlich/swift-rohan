@@ -79,7 +79,7 @@ class ArrayNode: Node {
   internal override var isDirty: Bool { _isCellDirty }
 
   internal override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     // MathReflowLayoutContext is not used for layout, though it is used for
     // other methods such as rayshoot(), etc.

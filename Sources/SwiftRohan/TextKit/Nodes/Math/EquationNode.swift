@@ -44,7 +44,7 @@ final class EquationNode: MathNode {
   final override func layoutLength() -> Int { _layoutLength }
 
   final override func performLayout(
-    _ context: LayoutContext, fromScratch: Bool
+    _ context: LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext

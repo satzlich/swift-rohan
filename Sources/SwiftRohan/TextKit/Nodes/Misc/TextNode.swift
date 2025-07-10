@@ -32,7 +32,7 @@ final class TextNode: Node {
   final override var isDirty: Bool { false }
 
   final override func performLayout(
-    _ context: LayoutContext, fromScratch: Bool
+    _ context: LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     if fromScratch {
       context.insertText(_string, self)

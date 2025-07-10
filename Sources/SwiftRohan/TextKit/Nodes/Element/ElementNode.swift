@@ -803,6 +803,26 @@ internal class ElementNode: Node {
     try super.encode(to: encoder)
   }
 
+  // MARK: - ElementNode(Layout)
+
+  /// true if placeholder should be shown when the node is empty.
+  final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }
+
+  /// true if placeholder should be shown.
+  final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
+
+  /// Make snapshot once if not already made
+  /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
+  internal func makeSnapshotOnce() { preconditionFailure("overriding required") }
+
+  internal func snapshotDescription() -> Array<String>? {
+    preconditionFailure("overriding required")
+  }
+
+  internal func getLayoutOffset(_ index: Int) -> Int? {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Implementation
 
   internal final var _children: ElementStore
@@ -865,26 +885,6 @@ internal class ElementNode: Node {
       _counterSegment =
         CounterSegment.concate(contentsOf: _children.lazy.compactMap(\.counterSegment))
     }
-  }
-
-  // MARK: - Layout Impl.
-
-  /// true if placeholder should be shown when the node is empty.
-  final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }
-
-  /// true if placeholder should be shown.
-  final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
-
-  /// Make snapshot once if not already made
-  /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
-  internal func makeSnapshotOnce() { preconditionFailure("overriding required") }
-
-  internal func snapshotDescription() -> Array<String>? {
-    preconditionFailure("overriding required")
-  }
-
-  internal func getLayoutOffset(_ index: Int) -> Int? {
-    preconditionFailure("overriding required")
   }
 
   // MARK: - Children

@@ -149,8 +149,15 @@ internal class Node: Codable {
 
   /// Perform layout in the forward direction. When the method is returned, the node
   /// must be laid out with dirty flag cleared and layout length updated.
+  /// - Parameters:
+  ///   - context: the layout context to perform layout in.
+  ///   - fromScratch: true if the layout is performed from scratch, false if the
+  ///       layout is performed incrementally.
+  ///   - atBlockEdge: true if the context cursor is at the block edge.
   /// - Returns: the number of layout units contributed by the node.
-  internal func performLayout(_ context: LayoutContext, fromScratch: Bool) -> Int {
+  internal func performLayout(
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool = true
+  ) -> Int {
     preconditionFailure("overriding required")
   }
 

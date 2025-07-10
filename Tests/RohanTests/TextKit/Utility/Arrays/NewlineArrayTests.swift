@@ -29,8 +29,8 @@ struct NewlineArrayTests {
       #expect(newlines.first == true)
       #expect(newlines.last == false)
 
-      #expect(newlines.value(before: 0, leadingMask: false) == false)
-      #expect(newlines.value(before: 0, leadingMask: true) == true)
+      #expect(newlines.value(before: 0, atBlockEdge: true) == false)
+      #expect(newlines.value(before: 0, atBlockEdge: false) == true)
     }
   }
 

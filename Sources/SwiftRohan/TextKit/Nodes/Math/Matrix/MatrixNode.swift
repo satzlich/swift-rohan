@@ -17,10 +17,11 @@ final class MatrixNode: ArrayNode {
   // MARK: - Node(Layout)
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
-    return super.performLayout(context, fromScratch: fromScratch)
+    return super.performLayout(
+      context, fromScratch: fromScratch, atBlockEdge: atBlockEdge)
   }
 
   // MARK: - Node(Codable)
