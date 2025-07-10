@@ -83,7 +83,7 @@ internal class ElementNodeImpl: ElementNode {
     return s0 + s1 + s2
   }
 
-  // MARK: - Layout Impl.
+  // MARK: - Impl(Layout)
 
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
 
