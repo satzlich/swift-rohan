@@ -93,14 +93,14 @@ final class ItemListNode: ElementNode {
     _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
   ) -> Int {
     if fromScratch {
-      _layoutLength = _performLayoutFromScratch(context)
+      _layoutLength = _performLayoutFromScratch(context, atBlockStart: atBlockStart)
       _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context)
+      _layoutLength = _performLayoutSimple(context, atBlockStart: atBlockStart)
     }
     else {
-      _layoutLength = _performLayoutFull(context)
+      _layoutLength = _performLayoutFull(context, atBlockStart: atBlockStart)
       _snapshotRecords = nil
     }
     _isDirty = false
@@ -208,7 +208,9 @@ final class ItemListNode: ElementNode {
     }
   }
 
-  private final func _performLayoutEmpty(_ context: LayoutContext) -> Int {
+  private final func _performLayoutEmpty(
+    _ context: LayoutContext, atBlockStart: Bool
+  ) -> Int {
     precondition(_children.isEmpty)
     let itemAttributes = _bakeItemAttributes(context.styleSheet)
     let sum = StringReconciler.insertForward(
@@ -222,7 +224,9 @@ final class ItemListNode: ElementNode {
 
   /// Perform layout for fromScratch=true.
   @inline(__always)
-  private final func _performLayoutFromScratch(_ context: LayoutContext) -> Int {
+  private final func _performLayoutFromScratch(
+    _ context: LayoutContext, atBlockStart: Bool
+  ) -> Int {
     precondition(_children.count == _newlines.count)
 
     // set up properties before layout.
@@ -230,7 +234,7 @@ final class ItemListNode: ElementNode {
 
     switch _children.isEmpty {
     case true:
-      return _performLayoutEmpty(context)
+      return _performLayoutEmpty(context, atBlockStart: atBlockStart)
 
     case false:
       var sum = 0
@@ -251,7 +255,9 @@ final class ItemListNode: ElementNode {
 
   /// Perform layout incrementally when snapshot was not made.
   @inline(__always)
-  private final func _performLayoutSimple(_ context: LayoutContext) -> Int {
+  private final func _performLayoutSimple(
+    _ context: LayoutContext, atBlockStart: Bool
+  ) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
     assert(_children.isEmpty == false)
     let itemAttributes = _bakeItemAttributes(context.styleSheet)
@@ -290,12 +296,14 @@ final class ItemListNode: ElementNode {
 
   /// Perform layout incrementally when snapshot has been made.
   @inline(__always)
-  private final func _performLayoutFull(_ context: LayoutContext) -> Int {
+  private final func _performLayoutFull(
+    _ context: LayoutContext, atBlockStart: Bool
+  ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     guard _children.isEmpty == false else {
       context.deleteForward(_layoutLength)
-      return _performLayoutEmpty(context)
+      return _performLayoutEmpty(context, atBlockStart: atBlockStart)
     }
 
     let (current, original) = _computeExtendedRecords()
