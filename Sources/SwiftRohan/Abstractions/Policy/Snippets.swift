@@ -11,7 +11,7 @@ enum Snippets {
   nonisolated(unsafe) static let equation = CommandBody(EquationExpr(.equation), 1)
   nonisolated(unsafe) static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 
-  nonisolated(unsafe) static let wordJoiner = CommandBody("\u{2060}", .textText)
+  nonisolated(unsafe) static let noBreakSpace = CommandBody("\u{00A0}", .textText)
 
   // math
 
