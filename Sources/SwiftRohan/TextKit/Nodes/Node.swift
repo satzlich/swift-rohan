@@ -156,7 +156,7 @@ internal class Node: Codable {
   ///   - startsBlock: true if the context cursor is at the start of a block node.
   /// - Returns: the number of layout units contributed by the node.
   internal func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool = false
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool = true
   ) -> Int {
     preconditionFailure("overriding required")
   }

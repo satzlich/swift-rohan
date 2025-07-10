@@ -37,18 +37,18 @@ struct NewlineArray: Equatable, Hashable {
 
   @inlinable @inline(__always)
   internal func value(before index: Int) -> Bool {
-    value(before: index, leadingMask: false)
+    value(before: index, atBlockEdge: true)
   }
 
   /// Returns the value before the given index.
   /// - Parameters:
   ///   - index: The index for which to return the value before.
-  ///   - leadingMask: the mask for the first element. Default is `false`.
+  ///   - atBlockEdge: If `true`, the first element is located at the start of a block.
   @inlinable @inline(__always)
-  internal func value(before index: Int, leadingMask: Bool) -> Bool {
+  internal func value(before index: Int, atBlockEdge: Bool) -> Bool {
     precondition(0 <= index && index < _isNewline.count)
     return index == 0
-      ? _isBlock[0] && leadingMask
+      ? _isBlock[0] && !atBlockEdge
       : _isNewline[index - 1]
   }
 

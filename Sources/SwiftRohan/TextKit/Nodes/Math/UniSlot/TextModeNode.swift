@@ -34,7 +34,7 @@ final class TextModeNode: MathNode {
   final override var isDirty: Bool { nucleus.isDirty }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext

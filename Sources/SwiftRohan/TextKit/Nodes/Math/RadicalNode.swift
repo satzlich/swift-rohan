@@ -26,7 +26,7 @@ final class RadicalNode: MathNode {
   final override var isDirty: Bool { _isDirty }
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     precondition(context is MathListLayoutContext)
 

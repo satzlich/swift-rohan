@@ -90,17 +90,17 @@ final class ItemListNode: ElementNode {
   // MARK: - Node(Layout)
 
   final override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool, atBlockStart: Bool
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     if fromScratch {
-      _layoutLength = _performLayoutFromScratch(context, atBlockStart: atBlockStart)
+      _layoutLength = _performLayoutFromScratch(context, atBlockEdge: atBlockEdge)
       _snapshotRecords = nil
     }
     else if _snapshotRecords == nil {
-      _layoutLength = _performLayoutSimple(context, atBlockStart: atBlockStart)
+      _layoutLength = _performLayoutSimple(context, atBlockEdge: atBlockEdge)
     }
     else {
-      _layoutLength = _performLayoutFull(context, atBlockStart: atBlockStart)
+      _layoutLength = _performLayoutFull(context, atBlockEdge: atBlockEdge)
       _snapshotRecords = nil
     }
     _isDirty = false
@@ -209,7 +209,7 @@ final class ItemListNode: ElementNode {
   }
 
   private final func _performLayoutEmpty(
-    _ context: LayoutContext, atBlockStart: Bool
+    _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_children.isEmpty)
     let itemAttributes = _bakeItemAttributes(context.styleSheet)
@@ -225,7 +225,7 @@ final class ItemListNode: ElementNode {
   /// Perform layout for fromScratch=true.
   @inline(__always)
   private final func _performLayoutFromScratch(
-    _ context: LayoutContext, atBlockStart: Bool
+    _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_children.count == _newlines.count)
 
@@ -234,7 +234,7 @@ final class ItemListNode: ElementNode {
 
     switch _children.isEmpty {
     case true:
-      return _performLayoutEmpty(context, atBlockStart: atBlockStart)
+      return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
 
     case false:
       var sum = 0
@@ -244,9 +244,9 @@ final class ItemListNode: ElementNode {
           new: _newlines.value(before: i), context: context, self)
         sum += StringReconciler.insertForward(
           new: _initialFiller(forIndex: i), context: context, self)
-        // "atBlockStart" is false because conceptually there is an item marker before.
+        // "atBlockEdge" is false because conceptually there is an item marker before.
         sum += NodeReconciler.insertForward(
-          new: _children[i], context: context, atBlockStart: false)
+          new: _children[i], context: context, atBlockEdge: false)
       }
       sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
       _refreshParagraphStyleForForwardEditing(context, { _ in true })
@@ -257,7 +257,7 @@ final class ItemListNode: ElementNode {
   /// Perform layout incrementally when snapshot was not made.
   @inline(__always)
   private final func _performLayoutSimple(
-    _ context: LayoutContext, atBlockStart: Bool
+    _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
     assert(_children.isEmpty == false)
@@ -280,9 +280,9 @@ final class ItemListNode: ElementNode {
           current: _newlines.value(before: i), context: context)
         let ni = StringReconciler.skipForward(
           current: _initialFiller(forIndex: i), context: context)
-        // "atBlockStart" is false because conceptually there is an item marker before.
+        // "atBlockEdge" is false because conceptually there is an item marker before.
         let nc = NodeReconciler.reconcileForward(
-          dirty: _children[i], context: context, atBlockStart: false)
+          dirty: _children[i], context: context, atBlockEdge: false)
         sum += nl + ni + nc
 
         let end = context.layoutCursor - nc
@@ -299,13 +299,13 @@ final class ItemListNode: ElementNode {
   /// Perform layout incrementally when snapshot has been made.
   @inline(__always)
   private final func _performLayoutFull(
-    _ context: LayoutContext, atBlockStart: Bool
+    _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     guard _children.isEmpty == false else {
       context.deleteForward(_layoutLength)
-      return _performLayoutEmpty(context, atBlockStart: atBlockStart)
+      return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
     }
 
     let (current, original) = _computeExtendedRecords()
@@ -338,9 +338,9 @@ final class ItemListNode: ElementNode {
           new: current[i].leadingNewline, context: context, self)
         sum += StringReconciler.insertForward(
           new: _initialFiller(forIndex: i), context: context, self)
-        // "atBlockStart" is false because conceptually there is an item marker before.
+        // "atBlockEdge" is false because conceptually there is an item marker before.
         sum += NodeReconciler.insertForward(
-          new: _children[i], context: context, atBlockStart: false)
+          new: _children[i], context: context, atBlockEdge: false)
       }
       // skip none
       else if current[i].mark == .none,
@@ -370,9 +370,9 @@ final class ItemListNode: ElementNode {
           StringReconciler.reconcileForward(
             dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
             context: context, self)
-        // "atBlockStart" is false because conceptually there is an item marker before.
+        // "atBlockEdge" is false because conceptually there is an item marker before.
         sum += NodeReconciler.reconcileForward(
-          dirty: _children[i], context: context, atBlockStart: false)
+          dirty: _children[i], context: context, atBlockEdge: false)
 
         j += 1
       }
@@ -409,7 +409,9 @@ final class ItemListNode: ElementNode {
     -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>)
   {
     precondition(_snapshotRecords != nil)
-    return ElementNodeImpl.computeExtendedRecords(_children, _newlines, _snapshotRecords!)
+    // item list always starts at the beginning of a block.
+    return ElementNodeImpl.computeExtendedRecords(
+      _children, _newlines, atBlockEdge: true, _snapshotRecords!)
   }
 
   @inline(__always)
