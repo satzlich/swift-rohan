@@ -158,7 +158,8 @@ internal class ElementNodeImpl: ElementNode {
         // insert newline and child content.
         let nl =
           NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
-        let nc = NodeReconciler.insertForward(new: _children[i], context: context)
+        let nc = NodeReconciler.insertForward(
+          new: _children[i], context: context, atBlockStart: leadingNewline)
         sum += nl + nc
 
         // update segment length and dirty flag.
@@ -236,7 +237,8 @@ internal class ElementNodeImpl: ElementNode {
         let nl = NewlineReconciler.skipForward(current: leadingNewline, context: context)
         let nc =
           _children[i].isDirty
-          ? NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          ? NodeReconciler.reconcileForward(
+            dirty: _children[i], context: context, atBlockStart: leadingNewline)
           : NodeReconciler.skipForward(current: _children[i], context: context)
         sum += nl + nc
 
@@ -323,7 +325,8 @@ internal class ElementNodeImpl: ElementNode {
         if current[i].mark == .added {
           nl =
             NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
-          nc = NodeReconciler.insertForward(new: _children[i], context: context)
+          nc = NodeReconciler.insertForward(
+            new: _children[i], context: context, atBlockStart: leadingNewline)
           isCandidate = true
         }
         // skip none.
@@ -343,7 +346,8 @@ internal class ElementNodeImpl: ElementNode {
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
           let newlines = (original[j].leadingNewline, leadingNewline)
           nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
-          nc = NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          nc = NodeReconciler.reconcileForward(
+            dirty: _children[i], context: context, atBlockStart: leadingNewline)
           isCandidate = true
           j += 1
         }

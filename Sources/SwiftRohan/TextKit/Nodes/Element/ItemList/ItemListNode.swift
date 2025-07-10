@@ -240,7 +240,8 @@ final class ItemListNode: ElementNode {
           new: _newlines.value(before: i), context: context, self)
         sum += StringReconciler.insertForward(
           new: _initialFiller(forIndex: i), context: context, self)
-        sum += NodeReconciler.insertForward(new: _children[i], context: context)
+        sum += NodeReconciler.insertForward(
+          new: _children[i], context: context, atBlockStart: false)
       }
       sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
       _refreshParagraphStyleForForwardEditing(context, { _ in true })
@@ -272,7 +273,8 @@ final class ItemListNode: ElementNode {
           current: _newlines.value(before: i), context: context)
         let ni = StringReconciler.skipForward(
           current: _initialFiller(forIndex: i), context: context)
-        let nc = NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+        let nc = NodeReconciler.reconcileForward(
+          dirty: _children[i], context: context, atBlockStart: false)
         sum += nl + ni + nc
 
         let end = context.layoutCursor - nc
@@ -326,7 +328,8 @@ final class ItemListNode: ElementNode {
           new: current[i].leadingNewline, context: context, self)
         sum += StringReconciler.insertForward(
           new: _initialFiller(forIndex: i), context: context, self)
-        sum += NodeReconciler.insertForward(new: _children[i], context: context)
+        sum += NodeReconciler.insertForward(
+          new: _children[i], context: context, atBlockStart: false)
       }
       // skip none
       else if current[i].mark == .none,
@@ -356,7 +359,8 @@ final class ItemListNode: ElementNode {
           StringReconciler.reconcileForward(
             dirty: (_initialFiller(forIndex: j), _initialFiller(forIndex: i)),
             context: context, self)
-        sum += NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+        sum += NodeReconciler.reconcileForward(
+          dirty: _children[i], context: context, atBlockStart: false)
 
         j += 1
       }
