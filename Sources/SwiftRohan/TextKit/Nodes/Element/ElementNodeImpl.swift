@@ -99,11 +99,13 @@ internal class ElementNodeImpl: ElementNode {
     else {
       _snapshotRecords = _children.indices.map { i in
         SnapshotRecord(
-          _children[i], _newlines[i], leadingNewline: _newlines.value(before: i))
+          _children[i], _newlines[i],
+          leadingNewline: _newlines.value(before: i, atBlockEdge: _atBlockEdge))
       }
     }
   }
 
+  /// Layout empty node from scratch.
   @inline(__always)
   private final func _performLayoutEmpty(
     _ context: LayoutContext, atBlockEdge: Bool
@@ -308,7 +310,7 @@ internal class ElementNodeImpl: ElementNode {
       return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
 
     case (false, true):
-      let (current, original) = _computeExtendedRecords()
+      let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 
       var sum = 0
       var segmentLength = 0
@@ -410,7 +412,7 @@ internal class ElementNodeImpl: ElementNode {
       return sum
 
     case (false, false):
-      let (current, original) = _computeExtendedRecords()
+      let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 
       var sum = 0
       var j = 0
@@ -461,12 +463,14 @@ internal class ElementNodeImpl: ElementNode {
     }
   }
 
-  private final func _computeExtendedRecords()
-    -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>)
-  {
+  /// - Parameters:
+  ///   - atBlockEdge: Current value of passed-in `atBlockEdge` parameter.
+  private final func _computeExtendedRecords(
+    atBlockEdge: Bool
+  ) -> (current: Array<ExtendedRecord>, original: Array<ExtendedRecord>) {
     precondition(_snapshotRecords != nil)
     return ElementNodeImpl.computeExtendedRecords(
-      _children, _newlines, atBlockEdge: _atBlockEdge, _snapshotRecords!)
+      _children, _newlines, atBlockEdge: atBlockEdge, _snapshotRecords!)
   }
 
   /// Compute the current and original records for layout.
