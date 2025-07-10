@@ -18,9 +18,14 @@ internal class ElementNodeImpl: ElementNode {
       return .terminal(value: .index(0), target: 0)
     }
 
+    let s0 = _newlines.value(before: 0, atBlockEdge: _atBlockEdge).intValue
+    guard s0 <= layoutOffset else {
+      return .terminal(value: .index(0), target: s0)
+    }
+
     assert(isPlaceholderActive == false)
 
-    var (k, s) = (0, 0)
+    var (k, s) = (0, s0)
     // notations: ell(i):= children[i].layoutLength + _newlines[i].intValue
     // invariant: s(k) = sum:i∈[0,k):ell(i)
     //            s(k) ≤ layoutOffset
@@ -68,9 +73,10 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(isPlaceholderActive == false)
     let range = 0..<index
+    let s0 = _newlines.value(before: 0, atBlockEdge: _atBlockEdge).intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return s1 + s2
+    return s0 + s1 + s2
   }
 
   // MARK: - Layout Impl.
@@ -156,6 +162,7 @@ internal class ElementNodeImpl: ElementNode {
        */
       for i in _children.indices {
         let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
@@ -169,7 +176,7 @@ internal class ElementNodeImpl: ElementNode {
         let nl =
           NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
         let nc = NodeReconciler.insertForward(
-          new: _children[i], context: context, atBlockEdge: leadingNewline)
+          new: _children[i], context: context, atBlockEdge: runningBlockEdge)
         sum += nl + nc
 
         // update segment length and dirty flag.
@@ -237,6 +244,7 @@ internal class ElementNodeImpl: ElementNode {
 
       for i in _children.indices {
         let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
@@ -252,7 +260,7 @@ internal class ElementNodeImpl: ElementNode {
         let nc =
           _children[i].isDirty
           ? NodeReconciler.reconcileForward(
-            dirty: _children[i], context: context, atBlockEdge: leadingNewline)
+            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
           : NodeReconciler.skipForward(current: _children[i], context: context)
         sum += nl + nc
 
@@ -327,6 +335,7 @@ internal class ElementNodeImpl: ElementNode {
         }
 
         let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
         // apply paragraph style when segment edge is reached.
         if leadingNewline, isCandidate && segmentLength > 0 {
@@ -344,7 +353,7 @@ internal class ElementNodeImpl: ElementNode {
           nl =
             NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
           nc = NodeReconciler.insertForward(
-            new: _children[i], context: context, atBlockEdge: leadingNewline)
+            new: _children[i], context: context, atBlockEdge: runningBlockEdge)
           isCandidate = true
         }
         // skip none.
@@ -365,7 +374,7 @@ internal class ElementNodeImpl: ElementNode {
           let newlines = (original[j].leadingNewline, leadingNewline)
           nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
           nc = NodeReconciler.reconcileForward(
-            dirty: _children[i], context: context, atBlockEdge: leadingNewline)
+            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
           isCandidate = true
           j += 1
         }
