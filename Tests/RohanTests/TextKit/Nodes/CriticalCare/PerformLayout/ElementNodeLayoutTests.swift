@@ -8,7 +8,7 @@ import Testing
 
 struct ElementNodeLayoutTests {
 
-  // MARK: - Element Nodes
+  // MARK: - From Scratch
 
   @Test
   func elementNodes_fromScratch() {
@@ -24,6 +24,8 @@ struct ElementNodeLayoutTests {
     }
   }
 
+  // MARK: - Full Layout
+
   private func _createExample(_ rootNode: RootNode) -> (RootNode, TextLayoutContext) {
     let styleSheet = StyleSheetTests.testingStyleSheet()
     let context = TextLayoutContext(styleSheet)
@@ -35,7 +37,7 @@ struct ElementNodeLayoutTests {
     return (rootNode, context)
   }
 
-  private func _elementNodeExample() -> (RootNode, TextLayoutContext) {
+  private func _makeElementNodeExample() -> (RootNode, TextLayoutContext) {
     let rootNode = RootNode([
       ParagraphNode([TextNode("Hello, world!")]),
       HeadingNode(.sectionAst, [TextNode("Mary has a little lamb.")]),
@@ -49,7 +51,7 @@ struct ElementNodeLayoutTests {
   func elementNodes_Full() {
     // (1) delete + dirty
     do {
-      let (rootNode, context) = _elementNodeExample()
+      let (rootNode, context) = _makeElementNodeExample()
 
       let range = RhTextRange.parse("[↓0,↓0]:6..<[↓2,↓0]:4")!
       let result = TreeUtils.removeTextRange(range, rootNode)
@@ -65,7 +67,7 @@ struct ElementNodeLayoutTests {
 
     // (2) add + dirty
     do {
-      let (rootNode, context) = _elementNodeExample()
+      let (rootNode, context) = _makeElementNodeExample()
 
       let location = TextLocation.parse("[↓0,↓0]:6")!
       let nodes = [
@@ -86,7 +88,7 @@ struct ElementNodeLayoutTests {
 
     // (3) delete to activate placeholder
     do {
-      let (rootNode, context) = _elementNodeExample()
+      let (rootNode, context) = _makeElementNodeExample()
       let range = RhTextRange.parse("[↓1]:0..<[↓1]:1")!
       let result = TreeUtils.removeTextRange(range, rootNode)
       assert(result.isSuccess)
@@ -101,7 +103,7 @@ struct ElementNodeLayoutTests {
 
     // (4) add to activate the case of (insertNewline=false, insertNewline'=true)
     do {
-      let (rootNode, context) = _elementNodeExample()
+      let (rootNode, context) = _makeElementNodeExample()
       assert(rootNode.childCount == 4)
       let location = TextLocation.parse("[]:4")!
 
@@ -118,7 +120,7 @@ struct ElementNodeLayoutTests {
 
     // (5) delete to trigger double changes of delete range
     do {
-      let (rootNode, context) = _elementNodeExample()
+      let (rootNode, context) = _makeElementNodeExample()
       assert(rootNode.childCount == 4)
       do {
         let range1 = RhTextRange.parse("[]:3..<[]:4")!
@@ -140,7 +142,7 @@ struct ElementNodeLayoutTests {
 
     // (6) delete to trigger double changes of delete range
     do {
-      let (rootNode, context) = _elementNodeExample()
+      let (rootNode, context) = _makeElementNodeExample()
       assert(rootNode.childCount == 4)
       do {
         let range1 = RhTextRange.parse("[]:3..<[]:4")!
@@ -161,7 +163,9 @@ struct ElementNodeLayoutTests {
     }
   }
 
-  private func _equationInItemListExample() -> (RootNode, TextLayoutContext) {
+  // MARK: - Equation In ItemList
+
+  private func _makeEquationInItemListExample() -> (RootNode, TextLayoutContext) {
     let rootNode = RootNode([
       ParagraphNode([
         ItemListNode(
@@ -179,7 +183,7 @@ struct ElementNodeLayoutTests {
   /// Edge case where a single equation lies in an item list.
   @Test
   func equationInItemList() {
-    let (rootNode, context) = _equationInItemListExample()
+    let (rootNode, context) = _makeEquationInItemListExample()
     assert(rootNode.childCount == 1)
     let location = TextLocation.parse("[↓0,↓0,↓0]:0")!
     let result = TreeUtils.insertString("x", at: location, rootNode)

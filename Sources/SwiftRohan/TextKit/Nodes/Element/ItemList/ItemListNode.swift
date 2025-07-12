@@ -427,8 +427,8 @@ final class ItemListNode: ElementNode {
     context.addAttributes(attributesCopy, range)
   }
 
-  /// Enumerate from beginning to end, refreshing paragraph style for items
-  /// that satisfy the predicate.
+  /// Enumerate backwards, refreshing paragraph style for items that satisfy
+  /// the predicate.
   private final func _refreshParagraphStyle(
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
