@@ -147,7 +147,7 @@ struct CommandDeclarationTests {
   func mathTemplate_decodeThrows() throws {
     let json =
     """
-    {"subtype": "functionCall", "command": "nonexistent"}
+    {"subtype": "commandCall", "command": "nonexistent"}
     """
     let decoder = JSONDecoder()
     

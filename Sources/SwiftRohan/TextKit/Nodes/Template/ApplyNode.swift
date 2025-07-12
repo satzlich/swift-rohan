@@ -148,13 +148,16 @@ final class ApplyNode: Node {
 
   final override func store() -> JSONValue {
     switch template.subtype {
-    case .functionCall:
+    case .commandCall:
       let arguments: Array<JSONValue> = _arguments.map { $0.store() }
       let values = [JSONValue.string(template.command)] + arguments
       return JSONValue.array(values)
 
+    case .environmentUse:
+      preconditionFailure("TODO: export in environment-use notation")
+
     case .codeSnippet:
-      preconditionFailure()
+      preconditionFailure("TODO: export the content")
     }
   }
 
