@@ -251,7 +251,7 @@ final class ItemListNode: ElementNode {
           new: _children[i], context: context, atBlockEdge: false)
       }
       sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
-      _refreshParagraphStyleForForwardEditing(context, { _ in true })
+      _refreshParagraphStyle(context, { _ in true })
       return sum
     }
   }
@@ -400,7 +400,7 @@ final class ItemListNode: ElementNode {
     do {
       let firstDirtyMarker = firstDirtyMarker ?? _children.count
       let refreshRange = firstDirtyMarker..<_children.count
-      _refreshParagraphStyleForForwardEditing(
+      _refreshParagraphStyle(
         context, { i in current[i].mark == .dirty || refreshRange.contains(i) })
     }
     return sum
@@ -427,32 +427,9 @@ final class ItemListNode: ElementNode {
     context.addAttributes(attributesCopy, range)
   }
 
-  /// Refresh paragraph style for those children that match the predicate and are not
-  /// themselves paragraph containers.
-  ///
-  /// If `self` is **not** a paragraph container, this method does nothing.
-  ///
-  /// - Precondition: layout cursor is at the start of the node.
-  /// - Postcondition: the cursor is unchanged.
-  @inline(__always)
+  /// Enumerate backwards, refreshing paragraph style for items that satisfy
+  /// the predicate.
   private final func _refreshParagraphStyle(
-    _ context: LayoutContext, _ predicate: (Int) -> Bool
-  ) {
-    precondition(self.isBlockContainer)
-    let itemAttributes = _bakeItemAttributes(context.styleSheet)
-
-    var location = context.layoutCursor
-    for i in 0..<_children.count {
-      let end = location + _initialFiller(forIndex: i).length
-      if predicate(i) {
-        _addItemAttributes(
-          context, itemAttributes, _attributedMarker(forIndex: i), location..<end)
-      }
-      location = end + _children[i].layoutLength() + _newlines[i].intValue
-    }
-  }
-
-  private final func _refreshParagraphStyleForForwardEditing(
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
     precondition(self.isBlock)
