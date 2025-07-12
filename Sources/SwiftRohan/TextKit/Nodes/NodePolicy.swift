@@ -227,7 +227,8 @@ enum NodePolicy {
   @inlinable @inline(__always)
   static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [
-      NodeType.itemList,
+      .content,
+      .itemList,
       .paragraph,
       .root,
     ].contains(type)
