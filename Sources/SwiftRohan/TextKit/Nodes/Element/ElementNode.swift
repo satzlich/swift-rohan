@@ -1017,7 +1017,7 @@ internal class ElementNode: Node {
     }
   }
 
-  internal final func replaceChild(_ node: Node, at index: Int, inStorage: Bool) {
+  final func replaceChild(_ node: Node, at index: Int, inStorage: Bool) {
     precondition(_children[index] !== node && node.parent == nil)
 
     let shouldSynthesiseCounterSegment = self.shouldSynthesiseCounterSegment
