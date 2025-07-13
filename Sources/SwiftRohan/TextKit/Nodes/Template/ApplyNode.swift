@@ -249,6 +249,12 @@ final class ApplyNode: Node {
       context: context, layoutOffset: layoutOffset)
   }
 
+  // MARK: - Node(Counter)
+
+  final override func contentDidChange(_ counterChange: CounterChange, _ child: Node) {
+    parent?.contentDidChange(counterChange, self)
+  }
+
   // MARK: - ApplyNode
 
   let template: MathTemplate
