@@ -181,9 +181,9 @@ enum NodePolicy {
       .mathAttributes,
       .mathExpression,
       .mathOperator,
-      .namedSymbol,
       .mathStyles,
       .matrix,
+      .namedSymbol,
       .radical,
       .textMode,
       .underOver,
@@ -227,9 +227,11 @@ enum NodePolicy {
   @inlinable @inline(__always)
   static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [
-      NodeType.itemList,
+      .content,
+      .itemList,
       .paragraph,
       .root,
+      .textStyles,
     ].contains(type)
   }
 
@@ -238,6 +240,7 @@ enum NodePolicy {
   static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
     switch nodeType {
     // Misc
+    case .counter: return nil
     case .linebreak: return nil
     case .text: return nil
     case .unknown: return nil

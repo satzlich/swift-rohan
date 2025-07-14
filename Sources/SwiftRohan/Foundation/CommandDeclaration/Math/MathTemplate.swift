@@ -5,8 +5,10 @@ import LatexParser
 
 struct MathTemplate: CommandDeclarationProtocol {
   enum Subtype: String, Codable {
-    /// For function call, a call to the template is output for storage.
-    case functionCall
+    /// For command call, the template is used to create a command call.
+    case commandCall
+    /// For environment use, the template is used to create an environment.
+    case environmentUse
     /// For code snippet, the expanded content is output for storage.
     case codeSnippet
   }
@@ -21,7 +23,7 @@ struct MathTemplate: CommandDeclarationProtocol {
   var name: TemplateName { template.name }
   var parameterCount: Int { template.parameterCount }
 
-  init(_ template: CompiledTemplate, subtype: Subtype = .functionCall) {
+  init(_ template: CompiledTemplate, subtype: Subtype = .commandCall) {
     self.template = template
     self.subtype = subtype
   }

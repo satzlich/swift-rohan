@@ -261,6 +261,14 @@ final class ExprNodeSyncTests {
     }
     // misc
     do {
+      let counter = CounterExpr(.equation)
+      let json =
+        """
+        {"counterName":"equation","type":"counter"}
+        """
+      try testSerdeSync(counter, CounterNode.self, json)
+    }
+    do {
       let linebreak = LinebreakExpr()
       let json =
         """
@@ -315,7 +323,7 @@ final class ExprNodeSyncTests {
       let applyNode = ApplyNode(MathTemplate.pmod, [[]])!
       let json =
         """
-        {"arguments":[[]],"template":{"command":"pmod","subtype":"functionCall"},"type":"apply"}
+        {"arguments":[[]],"template":{"command":"pmod","subtype":"commandCall"},"type":"apply"}
         """
       try testRoundTrip(applyNode, json)
     }

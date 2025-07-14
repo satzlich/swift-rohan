@@ -4,6 +4,7 @@ import Foundation
 
 enum NodeSerdeUtils {
   static let registeredNodes: Dictionary<NodeType, Node.Type> = [
+    .counter: CounterNode.self,
     .linebreak: LinebreakNode.self,
     .text: TextNode.self,
     .unknown: UnknownNode.self,

@@ -8,6 +8,7 @@ struct CategoryTests {
   @Test
   static func contentCategory() {
     let testCases: [(Node, ContentCategory?)] = [
+      (CounterNode(.equation), .textText),
       (LinebreakNode(), .arbitraryParagraphContent),
       (TextNode("Hello"), .plaintext),
       (UnknownNode(), .arbitraryParagraphContent),

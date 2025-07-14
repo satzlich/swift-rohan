@@ -10,6 +10,10 @@ class ExprVisitor<C, R> {
     preconditionFailure("overriding required")
   }
 
+  func visit(counter: CounterExpr, _ context: C) -> R {
+    visitExpr(counter, context)
+  }
+
   func visit(linebreak: LinebreakExpr, _ context: C) -> R {
     visitExpr(linebreak, context)
   }

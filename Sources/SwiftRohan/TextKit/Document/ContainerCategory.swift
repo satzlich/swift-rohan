@@ -36,11 +36,11 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, S
   static let topLevelContainer = ContainerCategory(rawValue: 0b0001_1111)
 
   /// container for math-text-compatible (for math layout)
-  static let mathTextContainer = ContainerCategory(rawValue: 0b0110_0000)
+  static let mathTextContainer = ContainerCategory(rawValue: 0b0010_0000)
 
   /// math container (for math layout)
   /// Example: nucleus component, etc.
-  static let mathContainer = ContainerCategory(rawValue: 0b1110_0000)
+  static let mathContainer = ContainerCategory(rawValue: 0b0110_0000)
 }
 
 extension ContainerCategory {

@@ -121,6 +121,7 @@ extension TreeUtils {
     default:
       summary.total += 1
 
+      // count those that are close to text material.
       if isTextNode(node) {
         summary.textNodes += 1
         return
@@ -137,6 +138,10 @@ extension TreeUtils {
           summary.mathSymbols += 1
           return
         }
+      }
+      else if node is CounterNode {
+        summary.textSymbols += 1
+        return
       }
 
       if NodePolicy.isInlineMath(node) {

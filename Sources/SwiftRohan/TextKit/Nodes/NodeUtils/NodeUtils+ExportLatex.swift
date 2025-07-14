@@ -111,6 +111,13 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   // MARK: - Misc
 
   override func visit(
+    counter: CounterNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    preconditionFailure("CounterNode should not be visited in ExportLatexVisitor")
+  }
+
+  override func visit(
     linebreak: LinebreakNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let syntax = EscapedCharSyntax(char: "\\")
@@ -138,10 +145,13 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit(apply: ApplyNode, _ context: LayoutMode) -> SatzResult<StreamSyntax>
   {
     switch apply.template.subtype {
-    case .functionCall:
+    case .commandCall:
       let command = apply.template.command
       let components = (0..<apply.argumentCount).map { apply.getArgument($0) }
       return _composeControlSeqCall(command, arguments: components, context)
+
+    case .environmentUse:
+      preconditionFailure("TODO: handle environment use")
 
     case .codeSnippet:
       preconditionFailure("TODO: handle code snippets")

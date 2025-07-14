@@ -171,6 +171,11 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
 
   // MARK: - Misc
 
+  override func visit(counter: CounterExpr, _ context: Void) -> Array<String> {
+    let description = "\(counter.type) \"\(counter.counterName)\""
+    return PrintUtils.compose([description], [])
+  }
+
   override func visit(linebreak: LinebreakExpr, _ context: Void) -> Array<String> {
     let description = "\(linebreak.type)"
     return PrintUtils.compose([description], [])

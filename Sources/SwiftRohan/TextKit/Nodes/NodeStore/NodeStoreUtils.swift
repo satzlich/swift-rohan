@@ -5,6 +5,7 @@ import Foundation
 enum NodeStoreUtils {
   /// Returns all classes that export a tag in file storage.
   static let registeredClasses: Array<Node.Type> = [
+    CounterNode.self,
     LinebreakNode.self,
     UnknownNode.self,
     // Template
