@@ -52,9 +52,42 @@ final class CounterNode: SimpleNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Node(Storage)
+
+  private static let uniqueTag = "counter"
+
+  final override class var storageTags: Array<String> { [uniqueTag] }
+
+  final override class func load(from json: JSONValue) -> NodeLoaded<Node> {
+    loadSelf(from: json).cast()
+  }
+
+  final override func store() -> JSONValue {
+    let json = JSONValue.array([
+      .string(Self.uniqueTag), .string(countHolder.counterName.rawValue),
+    ])
+    return json
+  }
+
   // MARK: - Node(Counter)
 
   final override var counterSegment: CounterSegment? { _counterSegment }
+
+  // MARK: - Storage
+
+  class func loadSelf(from json: JSONValue) -> NodeLoaded<CounterNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag,
+      case let .string(counterNameStr) = array[1],
+      let counterName = CounterName(rawValue: counterNameStr)
+    else {
+      return .failure(UnknownNode(json))
+    }
+    let counterNode = CounterNode(counterName)
+    return .success(counterNode)
+  }
 
   // MARK: - CounterNode
 

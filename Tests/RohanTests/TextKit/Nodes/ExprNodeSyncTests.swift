@@ -261,6 +261,14 @@ final class ExprNodeSyncTests {
     }
     // misc
     do {
+      let counter = CounterExpr(.equation)
+      let json =
+        """
+        {"counterName":"equation","type":"counter"}
+        """
+      try testSerdeSync(counter, CounterNode.self, json)
+    }
+    do {
       let linebreak = LinebreakExpr()
       let json =
         """

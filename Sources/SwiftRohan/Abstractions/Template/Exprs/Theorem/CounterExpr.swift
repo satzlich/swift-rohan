@@ -28,4 +28,10 @@ final class CounterExpr: Expr {
     counterName = try container.decode(CounterName.self, forKey: .counterName)
     try super.init(from: decoder)
   }
+
+  override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(counterName, forKey: .counterName)
+    try super.encode(to: encoder)
+  }
 }

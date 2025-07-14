@@ -4,6 +4,7 @@ import Foundation
 
 enum ExprSerdeUtils {
   static let registeredExprs: Dictionary<ExprType, Expr.Type> = [
+    .counter: CounterExpr.self,
     .linebreak: LinebreakExpr.self,
     .text: TextExpr.self,
     .unknown: UnknownExpr.self,

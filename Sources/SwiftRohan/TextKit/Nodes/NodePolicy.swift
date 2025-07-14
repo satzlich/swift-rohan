@@ -231,6 +231,7 @@ enum NodePolicy {
       .itemList,
       .paragraph,
       .root,
+      .textStyles,
     ].contains(type)
   }
 
