@@ -40,6 +40,10 @@ class NodeVisitor<R, C> {
 
   // MARK: - Misc
 
+  internal func visit(counter: CounterNode, _ context: C) -> R {
+    visitNode(counter, context)
+  }
+
   public func visit(linebreak: LinebreakNode, _ context: C) -> R {
     visitNode(linebreak, context)
   }

@@ -62,6 +62,10 @@ extension NodeUtils {
 private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   // MARK: - Misc
 
+  override func visit(counter: CounterExpr, _ context: Void) -> Node {
+    CounterNode(counter.counterName)
+  }
+  
   override func visit(linebreak: LinebreakExpr, _ context: Void) -> Node {
     LinebreakNode()
   }

@@ -4,6 +4,10 @@ import Foundation
 
 class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
 
+  override func visit(counter: CounterExpr, _ context: C) -> Void {
+    // no-op
+  }
+
   override func visit(linebreak: LinebreakExpr, _ context: C) -> Void {
     // no-op
   }

@@ -168,6 +168,12 @@ final class CountHolder: CountPublisher {
     return value
   }
 
+  /// Returns the value for the counter name of **this** holder.
+  /// - Postcondition: Call to this method clears the dirty state of the holder.
+  final func value() -> Int {
+    value(forName: counterName)
+  }
+
   private final func _computeValue(forName name: CounterName) -> Int {
     switch name {
     case .section:
@@ -205,6 +211,15 @@ final class CountHolder: CountPublisher {
       let previousValue = previous?.value(forName: .equation) ?? 0
       switch self.counterName {
       case .equation:
+        return previousValue + 1
+      case _:
+        return previousValue
+      }
+
+    case .theorem:
+      let previousValue = previous?.value(forName: .theorem) ?? 0
+      switch self.counterName {
+      case .theorem:
         return previousValue + 1
       case _:
         return previousValue

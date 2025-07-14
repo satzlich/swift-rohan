@@ -4,6 +4,7 @@ import Foundation
 
 public enum ExprType: String, CaseIterable, Codable, Sendable {
   // Misc
+  case counter
   case linebreak
   case namedSymbol
   case text

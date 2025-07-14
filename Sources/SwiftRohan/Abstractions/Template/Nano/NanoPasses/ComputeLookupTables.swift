@@ -55,6 +55,10 @@ extension Nano {
 
     // MARK: - Misc
 
+    override func visit(counter: CounterExpr, _ context: TreePath) -> Void {
+      // no-op as CounterExpr does not have children
+    }
+
     override func visit(linebreak: LinebreakExpr, _ context: Context) -> Void {
       // no-op as LinebreakExpr does not have children
     }

@@ -111,6 +111,13 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   // MARK: - Misc
 
   override func visit(
+    counter: CounterNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    preconditionFailure("CounterNode should not be visited in ExportLatexVisitor")
+  }
+
+  override func visit(
     linebreak: LinebreakNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let syntax = EscapedCharSyntax(char: "\\")

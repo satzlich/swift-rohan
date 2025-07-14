@@ -239,6 +239,7 @@ enum NodePolicy {
   static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
     switch nodeType {
     // Misc
+    case .counter: return nil
     case .linebreak: return nil
     case .text: return nil
     case .unknown: return nil

@@ -8,6 +8,10 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     context
   }
 
+  override func visit(counter: CounterExpr, _ context: C) -> Expr {
+    counter
+  }
+
   override func visit(linebreak: LinebreakExpr, _ context: C) -> Expr {
     linebreak
   }
