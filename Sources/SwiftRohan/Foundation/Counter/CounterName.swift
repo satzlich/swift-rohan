@@ -5,4 +5,5 @@ enum CounterName: String, Equatable, Hashable {
   case subsection
   case subsubsection
   case equation
+  case theorem
 }
