@@ -166,8 +166,9 @@ struct NewlineArrayTests {
   }
 
   private static func randomLayoutTypes(_ count: Int) -> Array<LayoutType> {
-    return (0..<count).map { _ in Bool.random() ? .block : .inline }
+    (0..<count).map { _ in LayoutType.allCases.randomElement()! }
   }
+
   private static func randomRange(_ count: Int) -> Range<Int> {
     guard count > 1 else { return 0..<0 }  // Handle edge case
     let start = Int.random(in: 0..<count)  // Random start

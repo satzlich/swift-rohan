@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum LayoutType: UInt8, Codable {
+enum LayoutType: UInt8, Codable, CaseIterable {
   case block
   case inline
 
