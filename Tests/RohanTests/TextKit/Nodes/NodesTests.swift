@@ -25,7 +25,7 @@ struct NodesTests {
       _ = node.firstIndex()
       _ = node.lastIndex()
       _ = node.layoutLength()
-      _ = node.isBlock
+      _ = node.layoutType
       _ = node.isDirty
       _ = node.selector()
       _ = node.getProperties(stylesheet)

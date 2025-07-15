@@ -80,7 +80,7 @@ internal class ElementNode: Node {
 
     // children and newlines
     self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
-    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
+    self._newlines = NewlineArray(_children.lazy.map(\.layoutType))
 
     self._layoutLength = 0
     self._isDirty = false
@@ -847,7 +847,7 @@ internal class ElementNode: Node {
   /// - Warning: Sync with other init() method.
   internal init(_ children: ElementStore) {
     self._children = children
-    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    self._newlines = NewlineArray(children.lazy.map(\.layoutType))
     self._layoutLength = 0
     self._isDirty = false
 
@@ -975,7 +975,7 @@ internal class ElementNode: Node {
     if inStorage { makeSnapshotOnce() }
 
     _children.insert(contentsOf: nodes, at: index)
-    _newlines.insert(contentsOf: nodes.lazy.map(\.isBlock), at: index)
+    _newlines.insert(contentsOf: nodes.lazy.map(\.layoutType), at: index)
 
     for node in nodes {
       node.setParent(self)
@@ -1035,7 +1035,7 @@ internal class ElementNode: Node {
     _children[index].clearParent()
     _children[index] = node
     _children[index].setParent(self)
-    _newlines.setValue(isBlock: node.isBlock, at: index)
+    _newlines.setValue(isBlock: node.layoutType, at: index)
 
     if shouldSynthesiseCounterSegment {
       switch (subrangeSegment, node.counterSegment) {

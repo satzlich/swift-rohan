@@ -17,7 +17,7 @@ struct TextNodeTests {
   @Test
   static func test_isBlock() {
     let textNode = TextNode("Abc")
-    #expect(textNode.isBlock == false)
+    #expect(textNode.layoutType == .inline)
   }
 
   @Test

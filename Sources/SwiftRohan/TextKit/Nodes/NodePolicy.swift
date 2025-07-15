@@ -108,7 +108,7 @@ enum NodePolicy {
   /// Returns true if the node is inline-math.
   @inlinable @inline(__always)
   static func isInlineMath(_ node: Node) -> Bool {
-    isEquationNode(node) && node.isBlock == false
+    isEquationNode(node) && node.layoutType == .inline
   }
 
   /// Returns true if the node is paragraph content other than inline math compatible.
@@ -120,7 +120,7 @@ enum NodePolicy {
       .textStyles,
       .unknown,
     ].contains(node.type)
-      || (isEquationNode(node) && node.isBlock)  // block math
+      || (isEquationNode(node) && node.layoutType == .block)  // block math
   }
 
   @inlinable @inline(__always)

@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum LayoutType {
+enum LayoutType: UInt8 {
   case block
   case inline
 

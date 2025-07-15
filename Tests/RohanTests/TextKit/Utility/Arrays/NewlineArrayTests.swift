@@ -9,7 +9,7 @@ struct NewlineArrayTests {
   @Test
   static func testNewlineArray() {
     do {
-      let isBlock: Array<Bool> = []
+      let isBlock: Array<LayoutType> = []
       let newlines = NewlineArray(isBlock)
       #expect(newlines.trailingCount == 0)
       #expect(newlines.asBitArray == [])
@@ -17,7 +17,7 @@ struct NewlineArrayTests {
     }
 
     do {
-      let isBlock: Array<Bool> = [true]
+      let isBlock: Array<LayoutType> = [.block]
       let newlines = NewlineArray(isBlock)
       #expect(newlines.trailingCount == 0)
       #expect(newlines.asBitArray == [false])
@@ -25,7 +25,7 @@ struct NewlineArrayTests {
     }
 
     do {
-      let newlines = NewlineArray([true, false, true])
+      let newlines = NewlineArray([.block, .inline, .block])
       #expect(newlines.first == true)
       #expect(newlines.last == false)
 
@@ -36,7 +36,7 @@ struct NewlineArrayTests {
 
   @Test
   static func test_Manipulation() {
-    let isBlock: Array<Bool> = [false, false, true, false, true, true]
+    let isBlock: Array<LayoutType> = [.inline, .inline, .block, .inline, .block, .block]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
@@ -47,13 +47,13 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // insert collection
-    newlines.insert(contentsOf: [true, false], at: 1)
+    newlines.insert(contentsOf: [.block, .inline], at: 1)
     // [false, ꞈ true, false, ꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
     #expect(newlines.trailingCount == 6)
 
     // insert single
-    newlines.insert(isBlock: false, at: 1)
+    newlines.insert(isBlock: .inline, at: 1)
     // [false, ꞈ false, ꞈ true, false, false, true, false, true, true]
     #expect(
       newlines.asBitArray == [false, true, true, false, true, true, true, true, false])
@@ -78,7 +78,7 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // set value
-    newlines.setValue(isBlock: true, at: 1)
+    newlines.setValue(isBlock: .block, at: 1)
     // [ false, true, true,  false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
@@ -86,31 +86,31 @@ struct NewlineArrayTests {
 
   @Test
   static func testSetValue() {
-    let isBlock: Array<Bool> = [false, false, true, false, true, true]
+    let isBlock: Array<LayoutType> = [.inline, .inline, .block, .inline, .block, .block]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
 
     // set value
-    newlines.setValue(isBlock: true, at: 1)
+    newlines.setValue(isBlock: .block, at: 1)
     // [ false, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at first position
-    newlines.setValue(isBlock: true, at: 0)
+    newlines.setValue(isBlock: .block, at: 0)
     // [ true, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at last position
-    newlines.setValue(isBlock: false, at: 5)
+    newlines.setValue(isBlock: .inline, at: 5)
     // [ true, true, true, false, true, false ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at second last position
-    newlines.setValue(isBlock: false, at: 4)
+    newlines.setValue(isBlock: .inline, at: 4)
     // [ true, true, true, false, false, false ]
     #expect(newlines.asBitArray == [true, true, true, false, false, false])
     #expect(newlines.trailingCount == 3)
@@ -118,13 +118,13 @@ struct NewlineArrayTests {
 
   @Test
   static func testReplace() {
-    let isBlock: Array<Bool> = [false, false, true, false, true, true]
+    let isBlock: Array<LayoutType> = [.inline, .inline, .block, .inline, .block, .block]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
 
     // replace empty
-    newlines.replaceSubrange(1..<1, with: [true, false])
+    newlines.replaceSubrange(1..<1, with: [.block, .inline])
     // [false, ꞈ true, false, ꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
     #expect(newlines.trailingCount == 6)
@@ -136,13 +136,13 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // replace final segment
-    newlines.replaceSubrange(4..<6, with: [true])
+    newlines.replaceSubrange(4..<6, with: [.block])
     // [false, false, true, true, ꞈ true ꞈ]
     #expect(newlines.asBitArray == [false, true, true, true, false])
     #expect(newlines.trailingCount == 3)
 
     // replace initial segment
-    newlines.replaceSubrange(0..<2, with: [false])
+    newlines.replaceSubrange(0..<2, with: [.inline])
     // [false, ꞈꞈ true, true, true]
     #expect(newlines.asBitArray == [true, true, true, false])
     #expect(newlines.trailingCount == 3)
@@ -153,20 +153,20 @@ struct NewlineArrayTests {
     let repeats = 10
     let count = 100
     for _ in 0..<repeats {
-      let isBlock: Array<Bool> = randomBools(count)
+      let isBlock: Array<LayoutType> = randomLayoutTypes(count)
       var control = NewlineArray(isBlock)
       var test = NewlineArray(isBlock)
       //
       let range = randomRange(count)
-      let placement: Array<Bool> = randomBools(10)
+      let placement: Array<LayoutType> = randomLayoutTypes(10)
       control.replaceSubrange(range, with: placement)
       test.replaceSubrange(range, with: placement)
       #expect(control == test)
     }
   }
 
-  private static func randomBools(_ count: Int) -> Array<Bool> {
-    return (0..<count).map { _ in Bool.random() }
+  private static func randomLayoutTypes(_ count: Int) -> Array<LayoutType> {
+    return (0..<count).map { _ in Bool.random() ? .block : .inline }
   }
   private static func randomRange(_ count: Int) -> Range<Int> {
     guard count > 1 else { return 0..<0 }  // Handle edge case
