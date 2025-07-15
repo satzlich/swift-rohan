@@ -82,19 +82,19 @@ enum NodePolicy {
     [
       NodeType.content,
       .heading,
+      .paragraph,
       .textStyles,
       .variable,
     ].contains(nodeType)
   }
 
   @inlinable @inline(__always)
-  static func placeholder(for nodeType: NodeType) -> (char: Character, visible: Bool) {
-    // ZWSP or dotted square
+  static func placeholder(for nodeType: NodeType) -> PlaceholderRecord {
     if nodeType == .paragraph {
-      ("\u{200B}", false)
+      PlaceholderRecord("\u{2009}", false)  // use thin space.
     }
     else {
-      ("⬚", true)
+      PlaceholderRecord("⬚", true)
     }
   }
 

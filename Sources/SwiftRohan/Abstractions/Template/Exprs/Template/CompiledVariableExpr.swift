@@ -8,17 +8,20 @@ final class CompiledVariableExpr: Expr {
   /// Delta of the nested level of the variable.
   let nestedLevelDetla: Int
 
+  let textStyles: TextStyles?
   let layoutType: LayoutType
   let isBlockContainer: Bool
 
   init(
     _ argumentIndex: Int, nestedLevelDelta: Int = 0,
+    textStyles: TextStyles? = nil,
     _ layoutType: LayoutType,
     _ isBlockContainer: Bool
   ) {
     precondition(CompiledVariableExpr.validate(argumentIndex: argumentIndex))
     self.argumentIndex = argumentIndex
     self.nestedLevelDetla = nestedLevelDelta
+    self.textStyles = textStyles
     self.layoutType = layoutType
     self.isBlockContainer = isBlockContainer
     super.init()
@@ -31,6 +34,7 @@ final class CompiledVariableExpr: Expr {
   func with(nestedLevelDelta delta: Int) -> CompiledVariableExpr {
     CompiledVariableExpr(
       argumentIndex, nestedLevelDelta: delta,
+      textStyles: textStyles,
       layoutType,
       isBlockContainer)
   }
@@ -43,7 +47,7 @@ final class CompiledVariableExpr: Expr {
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey {
-    case argIndex, levelDelta, layoutType, isBlockContainer
+    case argIndex, levelDelta, textStyles, layoutType, isBlockContainer
   }
 
   required init(from decoder: Decoder) throws {
@@ -56,6 +60,8 @@ final class CompiledVariableExpr: Expr {
         debugDescription: "Invalid argument index \(argumentIndex)")
     }
     nestedLevelDetla = try container.decode(Int.self, forKey: .levelDelta)
+
+    textStyles = try container.decodeIfPresent(TextStyles.self, forKey: .textStyles)
     layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
     isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
     try super.init(from: decoder)
@@ -65,6 +71,7 @@ final class CompiledVariableExpr: Expr {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(argumentIndex, forKey: .argIndex)
     try container.encode(nestedLevelDetla, forKey: .levelDelta)
+    try container.encodeIfPresent(textStyles, forKey: .textStyles)
     try container.encode(layoutType, forKey: .layoutType)
     try container.encode(isBlockContainer, forKey: .isBlockContainer)
     try super.encode(to: encoder)

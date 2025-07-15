@@ -24,56 +24,41 @@ final class TextStylesNode: ElementNodeImpl {
   }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    switch subtype {
-    case .emph: return _getProperties(styleSheet, emph: ())
-    case .textbf: return _getProperties(styleSheet, textbf: ())
-    case .textit: return _getProperties(styleSheet, textit: ())
-    case .texttt: return super.getProperties(styleSheet)
-    }
-  }
-
-  private final func _getProperties(
-    _ styleSheet: StyleSheet, textbf: Void
-  ) -> PropertyDictionary {
     if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
-      current[TextProperty.weight] = .fontWeight(.bold)
-      _cachedProperties = current
+      var properties = super.getProperties(styleSheet)
+      TextStylesNode.setProperties(&properties, styleSheet, self.subtype)
+      _cachedProperties = properties
     }
     return _cachedProperties!
   }
 
-  private final func _getProperties(
-    _ styleSheet: StyleSheet, textit: Void
-  ) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
-      current[TextProperty.style] = .fontStyle(.italic)
-      _cachedProperties = current
-    }
-    return _cachedProperties!
-  }
-
-  private final func _getProperties(
-    _ styleSheet: StyleSheet, emph: Void
-  ) -> PropertyDictionary {
-    func invertFontStyle(_ fontStyle: FontStyle) -> FontStyle {
-      switch fontStyle {
-      case .normal: .italic
-      case .italic: .normal
-      }
-    }
-
-    if _cachedProperties == nil {
-      var current = super.getProperties(styleSheet)
-
+  static func setProperties(
+    _ properties: inout PropertyDictionary, _ styleSheet: StyleSheet,
+    _ textStyles: TextStyles
+  ) {
+    switch textStyles {
+    case .emph:
       let key = TextProperty.style
-      let value = key.resolveValue(current, styleSheet).fontStyle()!
-      current[key] = .fontStyle(invertFontStyle(value))
+      let value = key.resolveValue(properties, styleSheet).fontStyle()!
+      properties[key] = .fontStyle(emphasisStyle(for: value))
 
-      _cachedProperties = current
+    case .textbf:
+      properties[TextProperty.weight] = .fontWeight(.bold)
+
+    case .textit:
+      properties[TextProperty.style] = .fontStyle(.italic)
+
+    case .texttt:
+      // this is done with style sheet rules.
+      break
     }
-    return _cachedProperties!
+  }
+
+  static func emphasisStyle(for fontStyle: FontStyle) -> FontStyle {
+    switch fontStyle {
+    case .normal: .italic
+    case .italic: .normal
+    }
   }
 
   // MARK: - Node(Codable)

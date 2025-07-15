@@ -55,7 +55,7 @@ struct CategoryTests {
       (UnderOverNode(MathSpreader.underline, []), .mathContent),
       // template
       (ApplyNode(MathTemplateSamples.newtonsLaw, [])!, .mathContent),
-      (VariableNode(0, .inline, false), nil),
+      (VariableNode(0, .textit, .inline, false), nil),
     ]
 
     do {
