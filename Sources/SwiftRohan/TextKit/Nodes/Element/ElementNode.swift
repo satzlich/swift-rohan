@@ -1035,7 +1035,7 @@ internal class ElementNode: Node {
     _children[index].clearParent()
     _children[index] = node
     _children[index].setParent(self)
-    _newlines.setValue(isBlock: node.layoutType, at: index)
+    _newlines.setValue(layoutType: node.layoutType, at: index)
 
     if shouldSynthesiseCounterSegment {
       switch (subrangeSegment, node.counterSegment) {

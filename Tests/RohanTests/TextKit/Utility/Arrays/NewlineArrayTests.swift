@@ -53,7 +53,7 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 6)
 
     // insert single
-    newlines.insert(isBlock: .inline, at: 1)
+    newlines.insert(layoutType: .inline, at: 1)
     // [false, ꞈ false, ꞈ true, false, false, true, false, true, true]
     #expect(
       newlines.asBitArray == [false, true, true, false, true, true, true, true, false])
@@ -78,7 +78,7 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // set value
-    newlines.setValue(isBlock: .block, at: 1)
+    newlines.setValue(layoutType: .block, at: 1)
     // [ false, true, true,  false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
@@ -92,25 +92,25 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // set value
-    newlines.setValue(isBlock: .block, at: 1)
+    newlines.setValue(layoutType: .block, at: 1)
     // [ false, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at first position
-    newlines.setValue(isBlock: .block, at: 0)
+    newlines.setValue(layoutType: .block, at: 0)
     // [ true, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at last position
-    newlines.setValue(isBlock: .inline, at: 5)
+    newlines.setValue(layoutType: .inline, at: 5)
     // [ true, true, true, false, true, false ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at second last position
-    newlines.setValue(isBlock: .inline, at: 4)
+    newlines.setValue(layoutType: .inline, at: 4)
     // [ true, true, true, false, false, false ]
     #expect(newlines.asBitArray == [true, true, true, false, false, false])
     #expect(newlines.trailingCount == 3)
