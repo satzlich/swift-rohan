@@ -14,6 +14,7 @@ enum NodeSerdeUtils {
     .variable: VariableNode.self,
     // element
     .content: ContentNode.self,
+    .expansion: ExpansionNode.self,
     .heading: HeadingNode.self,
     .itemList: ItemListNode.self,
     .paragraph: ParagraphNode.self,
