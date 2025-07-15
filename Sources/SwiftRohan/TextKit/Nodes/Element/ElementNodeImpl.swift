@@ -116,7 +116,7 @@ internal class ElementNodeImpl: ElementNode {
   ) -> Int {
     precondition(_children.isEmpty && _newlines.isEmpty)
     if self.isPlaceholderActive {
-      let placeholder = String(NodePolicy.placeholder(for: self.type))
+      let placeholder = String(NodePolicy.placeholder(for: self.type).char)
       let sum = StringReconciler.insertForward(new: placeholder, context: context, self)
       if self.layoutType.mayEmitBlock {
         context.addParagraphStyleBackward(sum, self)
@@ -201,7 +201,7 @@ internal class ElementNodeImpl: ElementNode {
 
     if _children.isEmpty {
       if self.isPlaceholderActive {
-        let placeholder = String(NodePolicy.placeholder(for: self.type))
+        let placeholder = String(NodePolicy.placeholder(for: self.type).char)
         return StringReconciler.skipForward(current: placeholder, context: context)
       }
       else {
