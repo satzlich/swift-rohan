@@ -45,11 +45,17 @@ enum NodePolicy {
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inlinable @inline(__always)
   static func isTopLevelNode(_ node: Node) -> Bool {
-    [
-      NodeType.heading,
-      .paragraph,
-      .parList,
-    ].contains(node.type)
+    if [NodeType.heading, .paragraph, .parList].contains(node.type) {
+      return true
+    }
+    else if let applyNode = node as? ApplyNode,
+      applyNode.getContent().childrenReadonly().allSatisfy { isTopLevelNode($0) }
+    {
+      return true
+    }
+    else {
+      return false
+    }
   }
 
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
