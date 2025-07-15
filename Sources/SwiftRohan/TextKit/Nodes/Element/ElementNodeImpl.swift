@@ -159,9 +159,13 @@ internal class ElementNodeImpl: ElementNode {
     for i in _children.indices {
       let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
       let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
+      let childMayEmitBlock = _children[i].layoutType.mayEmitBlock
 
       // apply paragraph style when segment edge is reached.
-      if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
+      if mayEmitBlock,
+        leadingNewline || childMayEmitBlock,
+        isCandidate && segmentLength > 0
+      {
         context.addParagraphStyleBackward(segmentLength, self)
         // reset
         segmentLength = 0
@@ -176,7 +180,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nl + nc
 
       // update segment length and dirty flag.
-      if _children[i].layoutType == .block {
+      if childMayEmitBlock {
         segmentLength = 0
         isCandidate = false
       }
@@ -230,9 +234,13 @@ internal class ElementNodeImpl: ElementNode {
     for i in _children.indices {
       let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
       let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
+      let childMayEmitBlock = _children[i].layoutType.mayEmitBlock
 
       // apply paragraph style when segment edge is reached.
-      if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
+      if mayEmitBlock,
+        leadingNewline || childMayEmitBlock,
+        isCandidate && segmentLength > 0
+      {
         context.addParagraphStyleBackward(segmentLength, self)
         // reset
         segmentLength = 0
@@ -310,9 +318,13 @@ internal class ElementNodeImpl: ElementNode {
 
       let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
       let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
+      let childMayEmitBlock = _children[i].layoutType.mayEmitBlock
 
       // apply paragraph style when segment edge is reached.
-      if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
+      if mayEmitBlock,
+        leadingNewline || childMayEmitBlock,
+        isCandidate && segmentLength > 0
+      {
         context.addParagraphStyleBackward(segmentLength, self)
         // reset
         segmentLength = 0
@@ -355,7 +367,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nc + nl
 
       // update segment length and dirty flag.
-      if _children[i].layoutType == .block {
+      if childMayEmitBlock {
         segmentLength = 0
         isCandidate = false
       }
