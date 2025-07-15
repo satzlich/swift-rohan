@@ -14,7 +14,8 @@ extension Nano {
 
     static func emitCompiledTemplate(_ template: Input.Element) -> CompiledTemplate {
       let variablePaths = convert(template.annotation, template.parameters.count)
-      return CompiledTemplate(template.name, template.body, variablePaths)
+      return CompiledTemplate(
+        template.name, template.body, template.layoutType, variablePaths)
     }
 
     private static func convert(

@@ -117,9 +117,8 @@ internal class ElementNodeImpl: ElementNode {
     precondition(_children.isEmpty && _newlines.isEmpty)
     if self.isPlaceholderActive {
       let placeholder = String(NodePolicy.placeholder(for: self.type))
-      let sum =
-        StringReconciler.insertForward(new: placeholder, context: context, self)
-      if self.layoutType == .block {
+      let sum = StringReconciler.insertForward(new: placeholder, context: context, self)
+      if self.layoutType.mayEmitBlock {
         context.addParagraphStyleBackward(sum, self)
       }
       return sum
@@ -142,7 +141,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    let mayEmitBlock = self.layoutType == .block
+    let mayEmitBlock = self.layoutType.mayEmitBlock
 
     var sum = 0
     var segmentLength = 0
@@ -177,7 +176,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nl + nc
 
       // update segment length and dirty flag.
-      if _children[i].layoutType == .block {
+      if _children[i].layoutType.mayEmitBlock {
         segmentLength = 0
         isCandidate = false
       }
@@ -212,7 +211,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    let mayEmitBlock = self.layoutType == .block
+    let mayEmitBlock = self.layoutType.mayEmitBlock
 
     var sum = 0
     var segmentLength = 0
@@ -251,7 +250,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nl + nc
 
       // update segment length and dirty flag.
-      if _children[i].layoutType == .block {
+      if _children[i].layoutType.mayEmitBlock {
         segmentLength = 0
         isCandidate = false
       }
@@ -281,7 +280,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    let mayEmitBlock = self.layoutType == .block
+    let mayEmitBlock = self.layoutType.mayEmitBlock
 
     let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 
@@ -356,7 +355,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nc + nl
 
       // update segment length and dirty flag.
-      if _children[i].layoutType == .block {
+      if _children[i].layoutType.mayEmitBlock {
         segmentLength = 0
         isCandidate = false
       }

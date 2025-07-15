@@ -212,10 +212,10 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   }
 
   override func visit(multiline: MultilineExpr, _ context: Void) -> Node {
-    typealias Element = MultilineNode.Cell
+    typealias Cell = MultilineNode.Cell
     let rows = multiline.rows.map { row in
       let elements = row.map { _convertChildren(of: $0, context) }
-        .map { Element.init($0) }
+        .map { Cell.init($0) }
       return ArrayNode.Row(elements)
     }
     return MultilineNode(multiline.subtype, rows)

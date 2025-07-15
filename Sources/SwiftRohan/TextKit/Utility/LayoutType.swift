@@ -16,4 +16,13 @@ enum LayoutType: UInt8, Codable, CaseIterable {
     case _: false
     }
   }
+
+  @inlinable @inline(__always)
+  var mayEmitBlock: Bool {
+    switch self {
+    case .block: true
+    case .softBlock: true
+    case .inline: false
+    }
+  }
 }

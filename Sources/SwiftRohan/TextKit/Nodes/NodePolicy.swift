@@ -21,8 +21,10 @@ enum NodePolicy {
   @inlinable @inline(__always)
   static func layoutType(_ nodeType: NodeType) -> LayoutType {
     switch nodeType {
-    case .heading, .itemList, .paragraph, .parList, .root:
+    case .heading, .itemList, .parList, .root:
       return .block
+    case .paragraph:
+      return .softBlock
     case _:
       return .inline
     }
