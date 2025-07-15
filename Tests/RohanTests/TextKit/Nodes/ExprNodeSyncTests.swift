@@ -73,6 +73,14 @@ final class ExprNodeSyncTests {
       try testSerdeSync(paragraph, ParagraphNode.self, json)
     }
     do {
+      let parList = ParListExpr([ParagraphExpr([TextExpr("abc")])])
+      let json =
+        """
+        {"children":[{"children":[{"string":"abc","type":"text"}],"type":"paragraph"}],"type":"parList"}
+        """
+      try testSerdeSync(parList, ParListNode.self, json)
+    }
+    do {
       let root = RootExpr([ParagraphExpr()])
       let json =
         """

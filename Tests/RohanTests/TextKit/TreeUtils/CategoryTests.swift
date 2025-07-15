@@ -17,6 +17,7 @@ struct CategoryTests {
       (HeadingNode(.sectionAst, []), .toplevelNodes),
       (ItemListNode(.enumerate, []), .toplevelParagraphContent),
       (ParagraphNode([]), .paragraphNodes),
+      (ParListNode([]), .toplevelNodes),
       (RootNode([]), nil),
       (TextStylesNode(.emph, []), .arbitraryParagraphContent),
       (TextStylesNode(.textbf, []), .arbitraryParagraphContent),

@@ -162,6 +162,8 @@ enum MathCommands {
         (MathTemplate.pmod, .string("(mod ⬚)")),
         (MathTemplate.stackrel, .image("stackrel")),
         (MathTemplate.underset, .image("underset")),
+        (MathTemplate.theorem, .string("⬚")),
+        (MathTemplate.proof, .string("⬚")),
       ]
       assert(commands.count == MathTemplate.allCommands.count)
       let records = commands.map { (mathTemplate, preview) in

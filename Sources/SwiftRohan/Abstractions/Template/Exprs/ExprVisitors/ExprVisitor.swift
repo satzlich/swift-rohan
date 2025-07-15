@@ -62,6 +62,10 @@ class ExprVisitor<C, R> {
     visitExpr(paragraph, context)
   }
 
+  func visit(parList: ParListExpr, _ context: C) -> R {
+    visitExpr(parList, context)
+  }
+
   func visit(root: RootExpr, _ context: C) -> R {
     visitExpr(root, context)
   }

@@ -51,6 +51,7 @@ final class MultilineNode: ArrayNode {
   final override var isDirty: Bool {
     super.isDirty || _countProviderState?.isCounterDirty == true
   }
+
   final override var isBlock: Bool { true }
 
   final override func performLayout(

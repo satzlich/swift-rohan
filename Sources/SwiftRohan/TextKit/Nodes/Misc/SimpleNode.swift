@@ -37,7 +37,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
 
   final override func contentDidChange() { /* no-op */  }
 
-  final override var isDirty: Bool { false }
+  internal override var isDirty: Bool { false }
 
   // MARK: - Node(Codable)
 

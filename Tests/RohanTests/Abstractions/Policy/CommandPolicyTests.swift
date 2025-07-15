@@ -18,7 +18,7 @@ struct CommandPolicyTests {
     #expect(MathOperator.allCommands.count == 34)
     #expect(MathSpreader.allCommands.count == 23)
     #expect(MathStyles.allCommands.count == 12)
-    #expect(MathTemplate.allCommands.count == 5)
+    #expect(MathTemplate.allCommands.count == 7)
     #expect(NamedSymbol.allCommands.count == 458)
     #expect(TextStyles.allCommands.count == 4)
 
@@ -30,9 +30,9 @@ struct CommandPolicyTests {
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
       + TextStyles.allCommands.count
 
-    #expect(sum == 606)  // + 2 ("\sqrt", "\text").
+    #expect(sum == 608)  // + 2 ("\sqrt", "\text").
     #expect(CommandDeclaration.allCommands.count == sum)
-    #expect(CommandRecords.allCases.count == 628)
+    #expect(CommandRecords.allCases.count == 630)
   }
 
   @Test

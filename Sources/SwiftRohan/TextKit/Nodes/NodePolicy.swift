@@ -24,6 +24,7 @@ enum NodePolicy {
       .heading,
       .itemList,
       .paragraph,
+      .parList,
       .root,
     ].contains(nodeType)
   }
@@ -31,7 +32,17 @@ enum NodePolicy {
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inlinable @inline(__always)
   static func isTopLevelNode(_ node: Node) -> Bool {
-    [NodeType.heading, .paragraph].contains(node.type)
+    if [NodeType.heading, .paragraph, .parList].contains(node.type) {
+      return true
+    }
+    else if let applyNode = node as? ApplyNode,
+      applyNode.getContent().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
+    {
+      return true
+    }
+    else {
+      return false
+    }
   }
 
   /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
@@ -111,8 +122,9 @@ enum NodePolicy {
   @inlinable @inline(__always)
   static func isBlockContainer(_ nodeType: NodeType) -> Bool {
     [
-      .root,
       .itemList,
+      .parList,
+      .root,
     ].contains(nodeType)
   }
 
@@ -230,8 +242,10 @@ enum NodePolicy {
       .content,
       .itemList,
       .paragraph,
+      .parList,
       .root,
       .textStyles,
+      .variable,
     ].contains(type)
   }
 
@@ -250,6 +264,7 @@ enum NodePolicy {
     case .heading: return .inlineContentContainer
     case .itemList: return .paragraphContainer
     case .paragraph: return nil
+    case .parList: return .paragraphContainer
     case .root: return .topLevelContainer
     case .textStyles: return .extendedTextContainer
 

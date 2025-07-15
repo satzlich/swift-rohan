@@ -24,6 +24,7 @@ struct ElementExprTests {
       HeadingExpr(.sectionAst),
       ItemListExpr(.enumerate),
       ParagraphExpr(),
+      ParListExpr(),
       RootExpr(),
       TextStylesExpr(.textbf),
     ]

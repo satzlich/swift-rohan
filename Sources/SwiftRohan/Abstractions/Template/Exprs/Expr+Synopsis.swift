@@ -58,6 +58,10 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitElement(paragraph, context)
   }
 
+  override func visit(parList: ParListExpr, _ context: Void) -> Array<String> {
+    _visitElement(parList, context)
+  }
+
   override func visit(root: RootExpr, _ context: Void) -> Array<String> {
     _visitElement(root, context)
   }

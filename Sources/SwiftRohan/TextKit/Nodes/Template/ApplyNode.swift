@@ -154,7 +154,9 @@ final class ApplyNode: Node {
       return JSONValue.array(values)
 
     case .environmentUse:
-      preconditionFailure("TODO: export in environment-use notation")
+      let arguments: Array<JSONValue> = _arguments.map { $0.store() }
+      let values = [JSONValue.string(template.command)] + arguments
+      return JSONValue.array(values)
 
     case .codeSnippet:
       preconditionFailure("TODO: export the content")
@@ -254,6 +256,8 @@ final class ApplyNode: Node {
   final override func contentDidChange(_ counterChange: CounterChange, _ child: Node) {
     parent?.contentDidChange(counterChange, self)
   }
+
+  final override var counterSegment: CounterSegment? { _content.counterSegment }
 
   // MARK: - ApplyNode
 

@@ -142,7 +142,7 @@ internal class Node: Codable {
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 
   /// Returns true if the node produces a block layout.
-  internal var isBlock: Bool { false }  // default is inline.
+  internal var isBlock: Bool { false }
 
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }

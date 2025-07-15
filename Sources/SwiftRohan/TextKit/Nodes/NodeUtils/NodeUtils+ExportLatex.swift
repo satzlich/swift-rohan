@@ -101,7 +101,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     _ command: String, children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlWordToken(name: $0) }),
-      let argument = _visitChildren(children, context).success()
+      let argument = _visitChildren(children, context, isParagraphList: false).success()
     else { return .failure(SatzError(.ExportLatexFailure)) }
     let group = GroupSyntax(argument)
     let controlWord = ControlWordSyntax(command: command, arguments: [.group(group)])
@@ -179,13 +179,13 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit<T, S>(
     variable: VariableNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
-    _visitChildren(children, context)
+    _visitChildren(children, context, isParagraphList: false)
   }
 
   // MARK: - Element
 
   private func _visitChildren<T: GenNode, C: Collection<T>>(
-    _ children: C, _ context: LayoutMode
+    _ children: C, _ context: LayoutMode, isParagraphList: Bool
   ) -> SatzResult<StreamSyntax> {
 
     let newlines = NewlineArray(children.map(\.isBlock))
@@ -197,6 +197,9 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       stream.append(contentsOf: childSyntax.stream)
       if newline {
         stream.append(.newline(NewlineSyntax()))
+        if isParagraphList {
+          stream.append(.newline(NewlineSyntax()))
+        }
       }
     }
     return .success(StreamSyntax(stream))
@@ -211,7 +214,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit<T, S>(
     content: ContentNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
-    _visitChildren(children, context)
+    _visitChildren(children, context, isParagraphList: false)
   }
 
   override func visit(
@@ -275,7 +278,22 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     paragraph: ParagraphNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
-    return _visitChildren(children, context)
+    return _visitChildren(children, context, isParagraphList: false)
+  }
+
+  override func visit(
+    parList: ParListNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    let children = parList.childrenReadonly()
+    return visit(parList: parList, context, withChildren: children)
+  }
+
+  override func visit<T: GenNode, S: Collection<T>>(
+    parList: ParListNode, _ context: LayoutMode, withChildren children: S
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    return _visitChildren(children, context, isParagraphList: true)
   }
 
   override func visit(root: RootNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {

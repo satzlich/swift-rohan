@@ -97,6 +97,10 @@ extension Nano {
       _visitElement(paragraph, context)
     }
 
+    override func visit(parList: ParListExpr, _ context: Context) -> Void {
+      _visitElement(parList, context)
+    }
+
     override func visit(root: RootExpr, _ context: Context) -> Void {
       _visitElement(root, context)
     }
