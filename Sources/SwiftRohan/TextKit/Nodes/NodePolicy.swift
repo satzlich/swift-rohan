@@ -37,7 +37,7 @@ enum NodePolicy {
       return true
     }
     else if let applyNode = node as? ApplyNode,
-      applyNode.getContent().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
+      applyNode.getExpansion().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
     {
       return true
     }

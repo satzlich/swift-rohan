@@ -322,7 +322,7 @@ final class ApplyNode: Node {
     return _arguments[index]
   }
 
-  final func getContent() -> ExpansionNode { _expansion }
+  final func getExpansion() -> ExpansionNode { _expansion }
 
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
