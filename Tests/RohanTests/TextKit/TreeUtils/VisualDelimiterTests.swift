@@ -87,6 +87,6 @@ final class VisualDelimiterTests: TextKitTestsBase {
       return
     }
     #expect("\(range)" == "[↓0,nuc,↓0,⇒0]:0..<[↓0,nuc,↓0,⇒0]:1")
-    #expect(level == 3)
+    #expect(level == 4)
   }
 }

@@ -182,7 +182,7 @@ final class ApplyNode: Node {
 
     let argument = _arguments[index]
 
-    for j in 0..<argument.variableNodes.count {
+    for j in argument.variableNodes.indices {
       let newPath = localPath(for: index, variableIndex: j, path.dropFirst())
       let newEndPath = localPath(for: index, variableIndex: j, endPath.dropFirst())
       let continueEnumeration = _expansion.enumerateTextSegments(

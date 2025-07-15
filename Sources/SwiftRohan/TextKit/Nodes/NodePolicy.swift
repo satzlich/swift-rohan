@@ -167,6 +167,7 @@ enum NodePolicy {
     [
       .apply,  // proxy for `.argument`
       .content,  // this covers most math node
+      .expansion,
       .heading,
       .textStyles,
     ].contains(nodeType)
