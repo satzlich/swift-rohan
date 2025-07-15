@@ -87,7 +87,7 @@ enum LayoutUtils {
     let (context, fragment) =
       initMathLayoutContextAndFragment(for: component, parent: parent)
     context.beginEditing()
-    _ = component.performLayout(context, fromScratch: true)
+    _ = component.performLayout(context, fromScratch: true, atBlockEdge: true)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
@@ -104,7 +104,7 @@ enum LayoutUtils {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
     context.resetCursor()
-    _ = component.performLayout(context, fromScratch: fromScratch)
+    _ = component.performLayout(context, fromScratch: fromScratch, atBlockEdge: true)
     context.endEditing(previousClass: previousClass)
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
@@ -116,7 +116,7 @@ enum LayoutUtils {
     let (context, fragment) =
       initMathLayoutContextAndFragment(for: component, parent: parent)
     context.beginEditing()
-    _ = component.performLayout(context, fromScratch: true)
+    _ = component.performLayout(context, fromScratch: true, atBlockEdge: true)
     context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
@@ -133,7 +133,7 @@ enum LayoutUtils {
     let context = initMathListLayoutContext(for: component, fragment, parent: parent)
     context.beginEditing()
     context.resetCursor()
-    _ = component.performLayout(context, fromScratch: fromScratch)
+    _ = component.performLayout(context, fromScratch: fromScratch, atBlockEdge: true)
     context.endEditing(previousClass: previousClass)
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
