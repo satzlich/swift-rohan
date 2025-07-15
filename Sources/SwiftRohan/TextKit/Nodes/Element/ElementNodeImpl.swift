@@ -115,7 +115,7 @@ internal class ElementNodeImpl: ElementNode {
     _ context: LayoutContext, atBlockEdge: Bool
   ) -> Int {
     precondition(_children.isEmpty && _newlines.isEmpty)
-    switch self.isBlock {
+    switch self.mayEmitBlock {
     case true:
       if self.isPlaceholderActive {
         let placeholder = String(NodePolicy.placeholder(for: self.type))
@@ -146,7 +146,7 @@ internal class ElementNodeImpl: ElementNode {
   ) -> Int {
     precondition(_children.count == _newlines.count)
 
-    switch (_children.isEmpty, self.isBlock) {
+    switch (_children.isEmpty, self.mayEmitBlock) {
     case (true, _):
       return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
 
@@ -231,7 +231,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    switch self.isBlock {
+    switch self.mayEmitBlock {
     case true:
       var sum = 0
       var segmentLength = 0
@@ -308,7 +308,7 @@ internal class ElementNodeImpl: ElementNode {
   ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
-    switch (_children.isEmpty, self.isBlock) {
+    switch (_children.isEmpty, self.mayEmitBlock) {
     case (true, _):
       context.deleteForward(_layoutLength)
       return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
