@@ -65,7 +65,7 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(counter: CounterExpr, _ context: Void) -> Node {
     CounterNode(counter.counterName)
   }
-  
+
   override func visit(linebreak: LinebreakExpr, _ context: Void) -> Node {
     LinebreakNode()
   }
@@ -125,6 +125,11 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(paragraph: ParagraphExpr, _ context: Void) -> ParagraphNode {
     let children = _convertChildren(of: paragraph, context)
     return ParagraphNode(children)
+  }
+
+  override func visit(parList: ParListExpr, _ context: Void) -> Node {
+    let children = _convertChildren(of: parList, context)
+    return ParListNode(children)
   }
 
   override func visit(root: RootExpr, _ context: Void) -> RootNode {

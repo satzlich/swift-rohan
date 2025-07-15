@@ -17,6 +17,7 @@ enum ExprSerdeUtils {
     .heading: HeadingExpr.self,
     .itemList: ItemListExpr.self,
     .paragraph: ParagraphExpr.self,
+    .parList: ParListExpr.self,
     .root: RootExpr.self,
     .textStyles: TextStylesExpr.self,
     // Math

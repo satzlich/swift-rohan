@@ -72,6 +72,10 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     _visitElement(paragraph, context)
   }
 
+  override func visit(parList: ParListExpr, _ context: C) -> Void {
+    _visitElement(parList, context)
+  }
+
   override func visit(root: RootExpr, _ context: C) -> Void {
     _visitElement(root, context)
   }

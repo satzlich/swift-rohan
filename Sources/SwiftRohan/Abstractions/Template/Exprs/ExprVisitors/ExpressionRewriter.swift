@@ -65,6 +65,10 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     _rewriteElement(paragraph, context)
   }
 
+  override func visit(parList: ParListExpr, _ context: C) -> Expr {
+    _rewriteElement(parList, context)
+  }
+
   override func visit(root: RootExpr, _ context: C) -> Expr {
     _rewriteElement(root, context)
   }

@@ -15,6 +15,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case heading
   case itemList
   case paragraph
+  case parList
   case root
   case textStyles
 

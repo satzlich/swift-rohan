@@ -32,6 +32,7 @@ struct ElementNodeTests {
       ItemListNode(.enumerate, [TextNode("abc")]),
       ItemListNode(.itemize, [TextNode("abc")]),
       ParagraphNode([TextNode("abc")]),
+      ParListNode([ParagraphNode([TextNode("abc")])]),
       TextStylesNode(.emph, [TextNode("abc")]),
       TextStylesNode(.textbf, [TextNode("abc")]),
     ]
