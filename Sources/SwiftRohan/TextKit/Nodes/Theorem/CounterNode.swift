@@ -44,6 +44,7 @@ final class CounterNode: SimpleNode {
     let counterName = try container.decode(CounterName.self, forKey: .counterName)
     self._counterSegment = CounterSegment(CountHolder(counterName))
     try super.init(from: decoder)
+    _setUp()
   }
 
   final override func encode(to encoder: any Encoder) throws {
@@ -95,15 +96,29 @@ final class CounterNode: SimpleNode {
   private final var countHolder: CountHolder { _counterSegment.begin }
 
   private var _counterText: String = ""
+  private var _isCounterDirty: Bool = false
 
   init(_ counterName: CounterName) {
     self._counterSegment = CounterSegment(CountHolder(counterName))
     super.init()
+    _setUp()
   }
 
   private init(deepCopyOf other: CounterNode) {
     let counterName = other.countHolder.counterName
     self._counterSegment = CounterSegment(CountHolder(counterName))
     super.init()
+    _setUp()
+  }
+
+  private func _setUp() {
+    countHolder.registerObserver(self)
+  }
+}
+
+extension CounterNode: CountObserver {
+  func countObserver(markAsDirty: Void) {
+    parent?.contentDidChange()
+    _isCounterDirty = true
   }
 }

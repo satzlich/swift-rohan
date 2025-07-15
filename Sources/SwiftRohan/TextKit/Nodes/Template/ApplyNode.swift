@@ -255,6 +255,8 @@ final class ApplyNode: Node {
     parent?.contentDidChange(counterChange, self)
   }
 
+  final override var counterSegment: CounterSegment? { _content.counterSegment }
+
   // MARK: - ApplyNode
 
   let template: MathTemplate
