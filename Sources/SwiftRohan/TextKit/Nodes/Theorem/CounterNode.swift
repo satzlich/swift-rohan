@@ -18,9 +18,13 @@ final class CounterNode: SimpleNode {
 
   final override func layoutLength() -> Int { _counterText.length }
 
+  final override var isDirty: Bool { _isCounterDirty }
+
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
+    defer { _isCounterDirty = false }
+
     if fromScratch {
       _counterText = "\(countHolder.value())"
       return StringReconciler.insertForward(new: _counterText, context: context, self)
