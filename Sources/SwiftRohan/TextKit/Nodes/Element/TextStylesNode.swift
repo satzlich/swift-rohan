@@ -38,15 +38,9 @@ final class TextStylesNode: ElementNodeImpl {
   ) {
     switch textStyles {
     case .emph:
-      func invertFontStyle(_ fontStyle: FontStyle) -> FontStyle {
-        switch fontStyle {
-        case .normal: .italic
-        case .italic: .normal
-        }
-      }
       let key = TextProperty.style
       let value = key.resolveValue(properties, styleSheet).fontStyle()!
-      properties[key] = .fontStyle(invertFontStyle(value))
+      properties[key] = .fontStyle(emphasisStyle(for: value))
 
     case .textbf:
       properties[TextProperty.weight] = .fontWeight(.bold)
@@ -57,6 +51,13 @@ final class TextStylesNode: ElementNodeImpl {
     case .texttt:
       // this is done with style sheet rules.
       break
+    }
+  }
+
+  static func emphasisStyle(for fontStyle: FontStyle) -> FontStyle {
+    switch fontStyle {
+    case .normal: .italic
+    case .italic: .normal
     }
   }
 
