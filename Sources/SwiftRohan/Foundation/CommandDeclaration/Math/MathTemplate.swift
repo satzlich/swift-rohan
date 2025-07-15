@@ -57,6 +57,7 @@ extension MathTemplate {
     pmod,
     stackrel,
     underset,
+    theorem,
   ]
 
   nonisolated(unsafe) private static let _dictionary: Dictionary<String, MathTemplate> =
@@ -131,4 +132,22 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
+  nonisolated(unsafe) static let theorem: MathTemplate = {
+    let template = Template(
+      name: "theorem", parameters: ["content"],
+      body: [
+        ParListExpr([
+          TextStylesExpr(
+            .textbf,
+            [
+              TextExpr("Theorem "),
+              CounterExpr(.theorem),
+              TextExpr(" "),
+            ]),
+          VariableExpr("content"),
+        ])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled, subtype: .environmentUse)
+  }()
 }
