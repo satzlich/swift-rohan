@@ -143,16 +143,21 @@ enum NodePolicy {
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
   @inlinable @inline(__always)
-  static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
+  static func needsVisualDelimiter(_ node: Node) -> Bool {
     // NOTE: update `shouldIncreaseLevel(_:)` if this is changed.
-
     // must be element node or argument node
-    [
-      .argument,
-      .content,  // this covers most math node
-      .heading,
-      .textStyles,
-    ].contains(nodeType)
+
+    if [.content, .heading, .textStyles].contains(node.type) {
+      return true
+    }
+    else if let argumentNode = node as? ArgumentNode,
+      argumentNode.variableNodes.first!.isBlockContainer == false
+    {
+      return true
+    }
+    else {
+      return false
+    }
   }
 
   /// Returns true if a node of given kind should increase the nested level.

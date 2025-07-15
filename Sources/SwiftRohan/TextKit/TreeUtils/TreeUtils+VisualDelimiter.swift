@@ -16,7 +16,7 @@ extension TreeUtils {
 
     // check if the node needs visual delimiter
     let node = trace[i].node
-    guard NodePolicy.needsVisualDelimiter(node.type) else { return nil }
+    guard NodePolicy.needsVisualDelimiter(node) else { return nil }
 
     // take prefix
     let prefix = trace[0..<i].map(\.index)

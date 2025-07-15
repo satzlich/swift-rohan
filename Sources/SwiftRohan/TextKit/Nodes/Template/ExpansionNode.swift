@@ -12,6 +12,10 @@ final class ExpansionNode: ElementNodeImpl {
 
   override final class var type: NodeType { .expansion }
 
+  // MARK: - Node(Layout)
+
+  final override var layoutType: LayoutType { _layoutType }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: String, CodingKey {
