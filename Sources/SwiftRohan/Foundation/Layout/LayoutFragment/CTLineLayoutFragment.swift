@@ -118,7 +118,7 @@ extension CTLineLayoutFragment {
   ) -> CTLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, boundsOption)
     context.beginEditing()
-    _ = node.performLayout(context, fromScratch: true)
+    _ = node.performLayout(context, fromScratch: true, atBlockEdge: true)
     context.endEditing()
     return CTLineLayoutFragment(context, boundsOption)
   }
@@ -141,7 +141,7 @@ extension CTLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, fragment)
     context.beginEditing()
     context.resetCursor()
-    _ = node.performLayout(context, fromScratch: false)
+    _ = node.performLayout(context, fromScratch: false, atBlockEdge: true)
     context.endEditing()
     return CTLineLayoutFragment(context, fragment.boundsOption)
   }

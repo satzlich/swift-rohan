@@ -30,7 +30,7 @@ final class MathExpressionNode: SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      return _deflated.performLayout(context, fromScratch: true)
+      return _deflated.performLayout(context, fromScratch: true, atBlockEdge: atBlockEdge)
     }
     else {
       assertionFailure("theorectically, we should never reach here")

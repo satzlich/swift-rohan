@@ -21,7 +21,7 @@ enum NodeReconciler {
   ///   - atBlockEdge: True if the context cursor is at the start of the block.
   @inline(__always)
   static func insertForward(
-    new: Node, context: some LayoutContext, atBlockEdge: Bool = true
+    new: Node, context: some LayoutContext, atBlockEdge: Bool
   ) -> Int {
     new.performLayout(context, fromScratch: true, atBlockEdge: atBlockEdge)
   }
@@ -33,7 +33,7 @@ enum NodeReconciler {
   ///   - atBlockEdge: True if the context cursor is at the start of the block.
   @inline(__always)
   static func reconcileForward(
-    dirty: Node, context: some LayoutContext, atBlockEdge: Bool = true
+    dirty: Node, context: some LayoutContext, atBlockEdge: Bool
   ) -> Int {
     dirty.performLayout(context, fromScratch: false, atBlockEdge: atBlockEdge)
   }

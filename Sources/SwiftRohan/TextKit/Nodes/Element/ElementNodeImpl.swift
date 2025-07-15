@@ -47,7 +47,7 @@ internal class ElementNodeImpl: ElementNode {
   private final var _atBlockEdge: Bool = true
 
   internal override func performLayout(
-    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool = true
+    _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
     // Maintenance: (a) save `_atBlockEdge`; (b) clear `_snapshotRecords` and `_isDirty`;
     // (c) compute `_layoutLength`.
@@ -201,9 +201,12 @@ internal class ElementNodeImpl: ElementNode {
 
     case (false, false):
       var sum = 0
+      var runningBlockEdge = atBlockEdge
       for i in _children.indices {
         assert(_newlines.value(before: i) == false)  // inline nodes should not contain newlines.
-        sum += NodeReconciler.insertForward(new: _children[i], context: context)
+        sum += NodeReconciler.insertForward(
+          new: _children[i], context: context, atBlockEdge: runningBlockEdge)
+        runningBlockEdge = false
       }
       return sum
     }
@@ -284,12 +287,15 @@ internal class ElementNodeImpl: ElementNode {
 
     case false:
       var sum = 0
+      var runningBlockEdge = atBlockEdge
       for i in _children.indices {
         assert(_newlines.value(before: i) == false)
         sum +=
           _children[i].isDirty
-          ? NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          ? NodeReconciler.reconcileForward(
+            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
           : NodeReconciler.skipForward(current: _children[i], context: context)
+        runningBlockEdge = false
       }
       return sum
     }
@@ -415,6 +421,7 @@ internal class ElementNodeImpl: ElementNode {
       var sum = 0
       var j = 0
       let originalCount = original.count
+      var runningBlockEdge = atBlockEdge
 
       for i in _children.indices {
         // process deleted in a batch if any.
@@ -427,7 +434,8 @@ internal class ElementNodeImpl: ElementNode {
         // process added.
         if current[i].mark == .added {
           assert(current[i].leadingNewline == false)
-          sum += NodeReconciler.insertForward(new: _children[i], context: context)
+          sum += NodeReconciler.insertForward(
+            new: _children[i], context: context, atBlockEdge: runningBlockEdge)
         }
         // skip none.
         else if current[i].mark == .none,
@@ -446,9 +454,12 @@ internal class ElementNodeImpl: ElementNode {
           assert(current[i].mark == .dirty && original[j].mark == .dirty)
           assert(current[i].leadingNewline == false)
           assert(original[j].leadingNewline == false)
-          sum += NodeReconciler.reconcileForward(dirty: _children[i], context: context)
+          sum += NodeReconciler.reconcileForward(
+            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
           j += 1
         }
+
+        runningBlockEdge = false
       }
       // process deleted in a batch if any.
       while j < originalCount && original[j].mark == .deleted {
