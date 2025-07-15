@@ -136,61 +136,61 @@ internal class ElementNodeImpl: ElementNode {
   ) -> Int {
     precondition(_children.count == _newlines.count)
 
+    if _children.isEmpty {
+      return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
+    }
+
+    assert(_children.isEmpty == false)
+
     let mayEmitBlock = self.mayEmitBlock
 
-    switch _children.isEmpty {
-    case true:
-      return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
+    var sum = 0
+    var segmentLength = 0
+    var isCandidate = false
 
-    case false:
-      var sum = 0
-      var segmentLength = 0
-      var isCandidate = false
+    /*
+     Invariant:
+     (a) segmentLength maintains accumulated length since entry or previous newline.
+     (b) isCandidate is true if the segment is candidate for paragraph style.
+     (c) sum maintains the total length inserted so far.
+     (d) every segment (separated by leading newlines) is applied with paragraph
+         style when downstream edge is reached with the exception of (e).
+     (e) block child nodes are skipped for paragraph style.
+     */
+    for i in _children.indices {
+      let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+      let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
 
-      /*
-       Invariant:
-       (a) segmentLength maintains accumulated length since entry or previous newline.
-       (b) isCandidate is true if the segment is candidate for paragraph style.
-       (c) sum maintains the total length inserted so far.
-       (d) every segment (separated by leading newlines) is applied with paragraph
-       style when downstream edge is reached with the exception of (e).
-       (e) block child nodes are skipped for paragraph style.
-       */
-      for i in _children.indices {
-        let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
-        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
-
-        // apply paragraph style when segment edge is reached.
-        if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
-          context.addParagraphStyleBackward(segmentLength, self)
-          // reset
-          segmentLength = 0
-          isCandidate = false
-        }
-
-        // insert newline and child content.
-        let nl =
-          NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
-        let nc = NodeReconciler.insertForward(
-          new: _children[i], context: context, atBlockEdge: runningBlockEdge)
-        sum += nl + nc
-
-        // update segment length and dirty flag.
-        if _children[i].isBlock {
-          segmentLength = 0
-          isCandidate = false
-        }
-        else {
-          segmentLength += nc
-          isCandidate = true
-        }
-      }
-      if mayEmitBlock, isCandidate && segmentLength > 0 {
+      // apply paragraph style when segment edge is reached.
+      if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
         context.addParagraphStyleBackward(segmentLength, self)
+        // reset
+        segmentLength = 0
+        isCandidate = false
       }
-      sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
-      return sum
+
+      // insert newline and child content.
+      let nl =
+        NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
+      let nc = NodeReconciler.insertForward(
+        new: _children[i], context: context, atBlockEdge: runningBlockEdge)
+      sum += nl + nc
+
+      // update segment length and dirty flag.
+      if _children[i].isBlock {
+        segmentLength = 0
+        isCandidate = false
+      }
+      else {
+        segmentLength += nc
+        isCandidate = true
+      }
     }
+    if mayEmitBlock, isCandidate && segmentLength > 0 {
+      context.addParagraphStyleBackward(segmentLength, self)
+    }
+    sum += NewlineReconciler.insertForward(new: _newlines.last!, context: context, self)
+    return sum
   }
 
   /// Perform layout incrementally when snapshot was not made.
@@ -274,115 +274,115 @@ internal class ElementNodeImpl: ElementNode {
   ) -> Int {
     precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
-    let mayEmitBlock = self.mayEmitBlock
-
-    switch _children.isEmpty {
-    case true:
+    if _children.isEmpty {
       context.deleteForward(_layoutLength)
       return _performLayoutEmpty(context, atBlockEdge: atBlockEdge)
+    }
 
-    case false:
-      let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
+    assert(_children.isEmpty == false)
 
-      var sum = 0
-      var segmentLength = 0
-      var isCandidate = false
-      var j = 0
-      let originalCount = original.count
+    let mayEmitBlock = self.mayEmitBlock
 
-      /*
-       Invariant:
-       (a) segmentLength maintains accumulated length since entry or previous newline.
-       (b) isCandidate is true if the segment is candidate for paragraph style.
-       (c) sum maintains the total length inserted so far.
-       (d) every segment (separated by leading newlines) is applied with paragraph
-       style when downstream edge is reached with the exception of (e).
-       (e) block child nodes are skipped for paragraph style.
-       */
-      for i in _children.indices {
-        // process deleted in a batch if any.
-        while j < originalCount && original[j].mark == .deleted {
-          NewlineReconciler.deleteForward(
-            old: original[j].leadingNewline, context: context)
-          NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
-          j += 1
-        }
+    let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 
-        let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
-        let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
+    var sum = 0
+    var segmentLength = 0
+    var isCandidate = false
+    var j = 0
+    let originalCount = original.count
 
-        // apply paragraph style when segment edge is reached.
-        if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
-          context.addParagraphStyleBackward(segmentLength, self)
-          // reset
-          segmentLength = 0
-          isCandidate = false
-        }
-
-        let nc: Int
-        let nl: Int
-
-        // process added.
-        if current[i].mark == .added {
-          nl =
-            NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
-          nc = NodeReconciler.insertForward(
-            new: _children[i], context: context, atBlockEdge: runningBlockEdge)
-          isCandidate = true
-        }
-        // skip none.
-        else if current[i].mark == .none,
-          j < originalCount && original[j].mark == .none
-        {
-          assert(current[i].nodeId == original[j].nodeId)
-          let newlines = (original[j].leadingNewline, leadingNewline)
-          nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
-          nc =
-            NodeReconciler.skipForward(current: current[i].layoutLength, context: context)
-          j += 1
-        }
-        // process dirty.
-        else {
-          assert(j < originalCount && current[i].nodeId == original[j].nodeId)
-          assert(current[i].mark == .dirty && original[j].mark == .dirty)
-          let newlines = (original[j].leadingNewline, leadingNewline)
-          nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
-          nc = NodeReconciler.reconcileForward(
-            dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
-          isCandidate = true
-          j += 1
-        }
-        sum += nc + nl
-
-        // update segment length and dirty flag.
-        if _children[i].isBlock {
-          segmentLength = 0
-          isCandidate = false
-        }
-        else {
-          segmentLength += nc
-          // isCandidate is unchanged.
-        }
-      }
+    /*
+     Invariant:
+     (a) segmentLength maintains accumulated length since entry or previous newline.
+     (b) isCandidate is true if the segment is candidate for paragraph style.
+     (c) sum maintains the total length inserted so far.
+     (d) every segment (separated by leading newlines) is applied with paragraph
+     style when downstream edge is reached with the exception of (e).
+     (e) block child nodes are skipped for paragraph style.
+     */
+    for i in _children.indices {
       // process deleted in a batch if any.
       while j < originalCount && original[j].mark == .deleted {
-        NewlineReconciler.deleteForward(old: original[j].leadingNewline, context: context)
+        NewlineReconciler.deleteForward(
+          old: original[j].leadingNewline, context: context)
         NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
         j += 1
       }
-      assert(j == originalCount)
-      if mayEmitBlock, isCandidate, segmentLength > 0 {
+
+      let leadingNewline = _newlines.value(before: i, atBlockEdge: atBlockEdge)
+      let runningBlockEdge = i == 0 ? (leadingNewline || atBlockEdge) : leadingNewline
+
+      // apply paragraph style when segment edge is reached.
+      if mayEmitBlock, leadingNewline, isCandidate && segmentLength > 0 {
         context.addParagraphStyleBackward(segmentLength, self)
+        // reset
+        segmentLength = 0
+        isCandidate = false
       }
-      do {
-        let old = original.last?.trailingNewline ?? false
-        let new = _newlines.last!
-        let n = NewlineReconciler.reconcileForward(
-          dirty: (old, new), context: context, self)
-        sum += n
+
+      let nc: Int
+      let nl: Int
+
+      // process added.
+      if current[i].mark == .added {
+        nl =
+          NewlineReconciler.insertForward(new: leadingNewline, context: context, self)
+        nc = NodeReconciler.insertForward(
+          new: _children[i], context: context, atBlockEdge: runningBlockEdge)
+        isCandidate = true
       }
-      return sum
+      // skip none.
+      else if current[i].mark == .none,
+        j < originalCount && original[j].mark == .none
+      {
+        assert(current[i].nodeId == original[j].nodeId)
+        let newlines = (original[j].leadingNewline, leadingNewline)
+        nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
+        nc =
+          NodeReconciler.skipForward(current: current[i].layoutLength, context: context)
+        j += 1
+      }
+      // process dirty.
+      else {
+        assert(j < originalCount && current[i].nodeId == original[j].nodeId)
+        assert(current[i].mark == .dirty && original[j].mark == .dirty)
+        let newlines = (original[j].leadingNewline, leadingNewline)
+        nl = NewlineReconciler.reconcileForward(dirty: newlines, context: context, self)
+        nc = NodeReconciler.reconcileForward(
+          dirty: _children[i], context: context, atBlockEdge: runningBlockEdge)
+        isCandidate = true
+        j += 1
+      }
+      sum += nc + nl
+
+      // update segment length and dirty flag.
+      if _children[i].isBlock {
+        segmentLength = 0
+        isCandidate = false
+      }
+      else {
+        segmentLength += nc
+        // isCandidate is unchanged.
+      }
     }
+    // process deleted in a batch if any.
+    while j < originalCount && original[j].mark == .deleted {
+      NewlineReconciler.deleteForward(old: original[j].leadingNewline, context: context)
+      NodeReconciler.deleteForward(old: original[j].layoutLength, context: context)
+      j += 1
+    }
+    assert(j == originalCount)
+    if mayEmitBlock, isCandidate, segmentLength > 0 {
+      context.addParagraphStyleBackward(segmentLength, self)
+    }
+    do {
+      let old = original.last?.trailingNewline ?? false
+      let new = _newlines.last!
+      let n = NewlineReconciler.reconcileForward(
+        dirty: (old, new), context: context, self)
+      sum += n
+    }
+    return sum
   }
 
   /// - Parameters:
