@@ -141,9 +141,6 @@ internal class Node: Codable {
   ///     must return the accurate length computed by the last call to `performLayout`.
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 
-  /// Returns true if the node produces a block layout.
-  internal var isBlock: Bool { false }
-
   /// Returns the type of layout produced by the node.
   internal var layoutType: LayoutType { .inline }
 

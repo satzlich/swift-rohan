@@ -54,7 +54,5 @@ extension SlicedElement: GenNode {
     _sourceNode.accept(visitor, context, withChildren: _children)
   }
 
-  var isBlock: Bool { _sourceNode.isBlock }
-
   var layoutType: LayoutType { _sourceNode.layoutType }
 }
