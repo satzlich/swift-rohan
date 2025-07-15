@@ -14,6 +14,7 @@ struct CategoryTests {
       (UnknownNode(), .arbitraryParagraphContent),
       // element
       (ContentNode([TextNode("Hello")]), .plaintext),
+      (ExpansionNode([TextNode("Hello")], .inline), .plaintext),
       (HeadingNode(.sectionAst, []), .toplevelNodes),
       (ItemListNode(.enumerate, []), .toplevelParagraphContent),
       (ParagraphNode([]), .paragraphNodes),

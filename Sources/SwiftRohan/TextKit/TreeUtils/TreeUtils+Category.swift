@@ -118,6 +118,9 @@ extension TreeUtils {
     case let contentNode as ContentNode:
       _performCount(&summary, contentNode.childrenReadonly())
 
+    case let expansionNode as ExpansionNode:
+      _performCount(&summary, expansionNode.childrenReadonly())
+
     default:
       summary.total += 1
 

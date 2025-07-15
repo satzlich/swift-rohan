@@ -21,6 +21,7 @@ final class ExprNodeSyncTests {
           .apply,
           .argument,
           .cVariable,
+          .expansion,
           .variable,
         ])
     }

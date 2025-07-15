@@ -391,12 +391,12 @@ final class InsertStringTests: TextKitTestsBase {
       └ paragraph
         └ template(doubleText)
           ├ argument #0 (x2)
-          └ content
+          └ expansion
             ├ text "{"
             ├ variable #0
             │ └ template(doubleText)
             │   ├ argument #0 (x2)
-            │   └ content
+            │   └ expansion
             │     ├ text "{"
             │     ├ variable #0
             │     │ └ text "foxpro"
@@ -410,7 +410,7 @@ final class InsertStringTests: TextKitTestsBase {
             │ └ variable #0
             │   └ template(doubleText)
             │     ├ argument #0 (x2)
-            │     └ content
+            │     └ expansion
             │       ├ text "{"
             │       ├ variable #0
             │       │ └ text "foxpro"
@@ -461,7 +461,7 @@ final class InsertStringTests: TextKitTestsBase {
             ├ template(complexFraction)
             │ ├ argument #0 (x2)
             │ ├ argument #1 (x2)
-            │ └ content
+            │ └ expansion
             │   └ fraction
             │     ├ num
             │     │ └ fraction
@@ -520,12 +520,12 @@ final class InsertStringTests: TextKitTestsBase {
           └ nuc
             └ template(bifun)
               ├ argument #0 (x2)
-              └ content
+              └ expansion
                 ├ text "f("
                 ├ variable #0
                 │ └ template(bifun)
                 │   ├ argument #0 (x2)
-                │   └ content
+                │   └ expansion
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ └ text "n-k+1"
@@ -537,7 +537,7 @@ final class InsertStringTests: TextKitTestsBase {
                 ├ variable #0
                 │ └ template(bifun)
                 │   ├ argument #0 (x2)
-                │   └ content
+                │   └ expansion
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ └ text "n-k+1"

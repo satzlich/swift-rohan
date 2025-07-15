@@ -694,12 +694,12 @@ final class DeleteRangeTests: TextKitTestsBase {
         ├ text "Sample of nested apply nodes: "
         └ template(doubleText)
           ├ argument #0 (x2)
-          └ content
+          └ expansion
             ├ text "{"
             ├ variable #0
             │ └ template(doubleText)
             │   ├ argument #0 (x2)
-            │   └ content
+            │   └ expansion
             │     ├ text "{"
             │     ├ variable #0
             │     │ └ text "fox"
@@ -713,7 +713,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             │ └ variable #0
             │   └ template(doubleText)
             │     ├ argument #0 (x2)
-            │     └ content
+            │     └ expansion
             │       ├ text "{"
             │       ├ variable #0
             │       │ └ text "fox"
@@ -766,7 +766,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             ├ template(complexFraction)
             │ ├ argument #0 (x2)
             │ ├ argument #1 (x2)
-            │ └ content
+            │ └ expansion
             │   └ fraction
             │     ├ num
             │     │ └ fraction
@@ -825,12 +825,12 @@ final class DeleteRangeTests: TextKitTestsBase {
           └ nuc
             └ template(bifun)
               ├ argument #0 (x2)
-              └ content
+              └ expansion
                 ├ text "f("
                 ├ variable #0
                 │ └ template(bifun)
                 │   ├ argument #0 (x2)
-                │   └ content
+                │   └ expansion
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ └ text "n+1"
@@ -842,7 +842,7 @@ final class DeleteRangeTests: TextKitTestsBase {
                 ├ variable #0
                 │ └ template(bifun)
                 │   ├ argument #0 (x2)
-                │   └ content
+                │   └ expansion
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ └ text "n+1"

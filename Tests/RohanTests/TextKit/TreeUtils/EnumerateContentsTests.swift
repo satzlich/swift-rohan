@@ -787,7 +787,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content
           ├ template(doubleText)
           │ ├ argument #0 (x2)
-          │ └ content
+          │ └ expansion
           │   ├ text "{"
           │   ├ variable #0
           │   │ └ text "Sample"

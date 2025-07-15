@@ -16,7 +16,7 @@ struct TemplateSerdeTests {
     try assertSerde(
       template,
       """
-      {"body":[{"string":"Hello, ","type":"text"},{"isBlockContainer":false,"layoutType":1,"name":"x","type":"variable"}],"name":"test","parameters":["x"]}
+      {"body":[{"string":"Hello, ","type":"text"},{"isBlockContainer":false,"layoutType":1,"name":"x","type":"variable"}],"layoutType":1,"name":"test","parameters":["x"]}
       """)
   }
 
@@ -29,7 +29,7 @@ struct TemplateSerdeTests {
     try assertSerde(
       template,
       """
-      {"body":[{"string":"Hello, ","type":"text"},{"argIndex":0,"isBlockContainer":false,"layoutType":1,"levelDelta":0,"type":"cVariable"}],"lookup":[[[{"index":{"_0":1}}]]],"name":"test"}
+      {"body":[{"string":"Hello, ","type":"text"},{"argIndex":0,"isBlockContainer":false,"layoutType":1,"levelDelta":0,"type":"cVariable"}],"layoutType":1,"lookup":[[[{"index":{"_0":1}}]]],"name":"test"}
       """)
   }
 
