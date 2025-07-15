@@ -18,10 +18,16 @@ final class VariableNode: ElementNodeImpl {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
 
-      let key = InternalProperty.nestedLevel
-      let value = key.resolveValue(current, styleSheet).integer()!
-      let level = value + (1 - nestedLevelDelta % 2)
-      current[key] = .integer(level)
+      do {
+        let key = InternalProperty.nestedLevel
+        let value = key.resolveValue(current, styleSheet).integer()!
+        let level = value + (1 - nestedLevelDelta % 2)
+        current[key] = .integer(level)
+      }
+
+      if let textStyle = _textStyles {
+        TextStylesNode.setProperties(&current, styleSheet, textStyle)
+      }
 
       _cachedProperties = current
     }
@@ -31,12 +37,13 @@ final class VariableNode: ElementNodeImpl {
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey {
-    case argIndex, levelDelta, layoutType, isBlockContainer
+    case argIndex, levelDelta, textStyles, layoutType, isBlockContainer
   }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     argumentIndex = try container.decode(Int.self, forKey: .argIndex)
+    _textStyles = try container.decodeIfPresent(TextStyles.self, forKey: .textStyles)
     _layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
     _isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
     nestedLevelDelta = try container.decode(Int.self, forKey: .levelDelta)
@@ -46,6 +53,7 @@ final class VariableNode: ElementNodeImpl {
   final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(argumentIndex, forKey: .argIndex)
+    try container.encodeIfPresent(_textStyles, forKey: .textStyles)
     try container.encode(_layoutType, forKey: .layoutType)
     try container.encode(_isBlockContainer, forKey: .isBlockContainer)
     try container.encode(nestedLevelDelta, forKey: .levelDelta)
@@ -53,9 +61,9 @@ final class VariableNode: ElementNodeImpl {
   }
 
   // MARK: - Node(Layout)
-  
+
   final override var isBlockContainer: Bool { _isBlockContainer }
-  
+
   final override var layoutType: LayoutType { _layoutType }
 
   // MARK: - Node(Storage)
@@ -87,6 +95,7 @@ final class VariableNode: ElementNodeImpl {
   /// The delta of the nested level from the apply node.
   let nestedLevelDelta: Int
 
+  private let _textStyles: TextStyles?
   private let _layoutType: LayoutType
   private let _isBlockContainer: Bool
 
@@ -102,11 +111,13 @@ final class VariableNode: ElementNodeImpl {
 
   init(
     _ argumentIndex: Int,
+    _ textStyles: TextStyles?,
     _ layoutType: LayoutType,
     _ isBlockContainer: Bool,
     nestedLevelDelta: Int = 0
   ) {
     self.argumentIndex = argumentIndex
+    self._textStyles = textStyles
     self._layoutType = layoutType
     self._isBlockContainer = isBlockContainer
     self.nestedLevelDelta = nestedLevelDelta
@@ -115,6 +126,7 @@ final class VariableNode: ElementNodeImpl {
 
   private init(deepCopyOf variableNode: VariableNode) {
     self.argumentIndex = variableNode.argumentIndex
+    self._textStyles = variableNode._textStyles
     self._layoutType = variableNode._layoutType
     self._isBlockContainer = variableNode._isBlockContainer
     self.nestedLevelDelta = variableNode.nestedLevelDelta

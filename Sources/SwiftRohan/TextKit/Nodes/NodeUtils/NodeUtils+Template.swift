@@ -98,6 +98,7 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> VariableNode {
     VariableNode(
       cVariable.argumentIndex,
+      cVariable.textStyles,
       cVariable.layoutType,
       cVariable.isBlockContainer,
       nestedLevelDelta: cVariable.nestedLevelDetla)

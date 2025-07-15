@@ -188,7 +188,7 @@ extension MathTemplate {
               CounterExpr(.theorem),
               TextExpr(" "),
             ]),
-          VariableExpr("content", .softBlock, true),
+          VariableExpr("content", textStyles: .textit, .softBlock, true),
         ])
       ],
       layoutType: .block)
