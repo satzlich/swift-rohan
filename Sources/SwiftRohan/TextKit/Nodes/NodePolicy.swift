@@ -91,7 +91,7 @@ enum NodePolicy {
   @inlinable @inline(__always)
   static func placeholder(for nodeType: NodeType) -> PlaceholderRecord {
     if nodeType == .paragraph {
-      PlaceholderRecord("\u{2009}", false)
+      PlaceholderRecord("\u{2009}", false)  // use thin space.
     }
     else {
       PlaceholderRecord("⬚", true)

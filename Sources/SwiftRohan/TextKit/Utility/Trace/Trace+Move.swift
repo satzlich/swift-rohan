@@ -330,11 +330,15 @@ extension Trace {
     func _shouldMoveBackAgain(_ node: Node, _ index: RohanIndex) -> Bool {
       precondition(NodePolicy.isCursorAllowed(in: node))
 
-      guard let node = node as? GenElementNode,
+      if let node = node as? GenElementNode,
         node.isBlockContainer && !isRootNode(node),
         let index = index.index()
-      else { return false }
-      return node.childCount > 0 && index == node.childCount
+      {
+        return node.childCount > 0 && index == node.childCount
+      }
+      else {
+        return false
+      }
     }
   }
 }
