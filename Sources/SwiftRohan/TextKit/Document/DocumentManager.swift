@@ -595,7 +595,7 @@ public final class DocumentManager: NSObject {
     //  When an empty paragraph is selected from beyond the right edge, the
     //  affinity is resolved to upstream, but it should be downstream.
     if let last = trace.last,
-      last.node.isBlock,
+      last.node.layoutType == .block,
       last.index == .index(0)
     {
       affinity = .downstream
@@ -1069,7 +1069,7 @@ public final class DocumentManager: NSObject {
             }
           }
           else {
-            if node.isBlock {
+            if node.layoutType == .block {
               return .blockBoundary
             }
             else {
@@ -1114,7 +1114,7 @@ public final class DocumentManager: NSObject {
             trace.emplaceBack(textNode, .index(textNode.length))
             continue
           }
-          else if child.isBlock {
+          else if child.layoutType == .block {
             return .blockBoundary
           }
           else {
@@ -1124,7 +1124,7 @@ public final class DocumentManager: NSObject {
         }
         else {
           // for offset == 0 and node is block, blockBoundary is a safe default.
-          if node.isBlock {
+          if node.layoutType == .block {
             return .blockBoundary
           }
           else {

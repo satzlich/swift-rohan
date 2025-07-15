@@ -9,7 +9,7 @@ struct TemplateNodesTests {
 
   static func allSamples() -> Array<Node> {
     [
-      VariableNode(1),
+      VariableNode(1, .inline, false),
       ApplyNode(MathTemplate.pmod, [[]])!
     ]
   }

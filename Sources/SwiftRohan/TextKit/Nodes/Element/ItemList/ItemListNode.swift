@@ -432,7 +432,7 @@ final class ItemListNode: ElementNode {
   private final func _refreshParagraphStyle(
     _ context: LayoutContext, _ predicate: (Int) -> Bool
   ) {
-    precondition(self.isBlock)
+    precondition(self.layoutType == .block)
     let itemAttributes = _bakeItemAttributes(context.styleSheet)
 
     var location = context.layoutCursor

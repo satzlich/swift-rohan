@@ -29,7 +29,9 @@ extension Nano {
       override func visit(variable: VariableExpr, _ context: Void) -> R {
         precondition(variableDict[variable.name] != nil)
         let index = variableDict[variable.name]!
-        return CompiledVariableExpr(index)
+        return CompiledVariableExpr(
+          index, variable.layoutType,
+          variable.isBlockContainer)
       }
     }
   }

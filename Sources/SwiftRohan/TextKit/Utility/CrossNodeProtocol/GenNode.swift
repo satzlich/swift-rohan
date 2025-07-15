@@ -4,7 +4,7 @@
 protocol GenNode {
   var type: NodeType { get }
   func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C>
-  var isBlock: Bool { get }
+  var layoutType: LayoutType { get }
 }
 
 extension Node: GenNode {}
@@ -32,14 +32,14 @@ extension PartialNode: GenNode {
     }
   }
 
-  var isBlock: Bool {
+  var layoutType: LayoutType {
     switch self {
     case .original(let node):
-      return node.isBlock
+      return node.layoutType
     case .slicedText(let slicedText):
-      return slicedText.isBlock
+      return slicedText.layoutType
     case .slicedElement(let slicedElement):
-      return slicedElement.isBlock
+      return slicedElement.layoutType
     }
   }
 }

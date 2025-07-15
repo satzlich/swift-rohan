@@ -188,7 +188,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     _ children: C, _ context: LayoutMode, isParagraphList: Bool
   ) -> SatzResult<StreamSyntax> {
 
-    let newlines = NewlineArray(children.map(\.isBlock))
+    let newlines = NewlineArray(children.map(\.layoutType))
 
     var stream: Array<StreamletSyntax> = []
     for (child, newline) in zip(children, newlines.asBitArray) {
@@ -306,7 +306,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
 
-    let newlines = NewlineArray(children.map(\.isBlock))
+    let newlines = NewlineArray(children.map(\.layoutType))
 
     var stream: Array<StreamletSyntax> = []
     for (child, newline) in zip(children, newlines.asBitArray) {

@@ -141,8 +141,11 @@ internal class Node: Codable {
   ///     must return the accurate length computed by the last call to `performLayout`.
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 
-  /// Returns true if the node produces a block layout.
-  internal var isBlock: Bool { false }
+  /// Returns the type of layout produced by the node.
+  internal var layoutType: LayoutType { .inline }
+
+  /// Returns true if the node is a block container.
+  internal var isBlockContainer: Bool { false }
 
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }
@@ -281,7 +284,6 @@ internal class Node: Codable {
 extension Node {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
-  final var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
 
   final func resolveAggregate<T: PropertyAggregate>(_ styleSheet: StyleSheet) -> T {
     T.resolveAggregate(getProperties(styleSheet), styleSheet)

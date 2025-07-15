@@ -19,20 +19,21 @@ struct MathTemplate: CommandDeclarationProtocol {
 
   let template: CompiledTemplate
   let subtype: Subtype
+  let layoutType: LayoutType
 
   var name: TemplateName { template.name }
   var parameterCount: Int { template.parameterCount }
 
-  init(_ template: CompiledTemplate, subtype: Subtype = .commandCall) {
+  init(_ template: CompiledTemplate, _ subtype: Subtype, _ layoutType: LayoutType) {
     self.template = template
     self.subtype = subtype
+    self.layoutType = layoutType
   }
 
-  private enum CodingKeys: CodingKey { case command, subtype }
+  private enum CodingKeys: CodingKey { case command, subtype, layoutType }
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
 
     let command = try container.decode(String.self, forKey: .command)
     guard let template = MathTemplate.lookup(command) else {
@@ -41,12 +42,13 @@ struct MathTemplate: CommandDeclarationProtocol {
         in: container, debugDescription: "Unknown command \(command)")
     }
     self.template = template.template
+    self.subtype = template.subtype
+    self.layoutType = template.layoutType
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(command, forKey: .command)
-    try container.encode(subtype, forKey: .subtype)
   }
 }
 
@@ -77,10 +79,15 @@ extension MathTemplate {
       name: "operatorname", parameters: ["content"],
       body: [
         MathAttributesExpr(
-          .mathKind(.mathop), [MathStylesExpr(.mathrm, [VariableExpr("content")])])
+          .mathKind(.mathop),
+          [
+            MathStylesExpr(
+              .mathrm,
+              [VariableExpr("content", .inline, false)])
+          ])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, .commandCall, .inline)
   }()
 
   nonisolated(unsafe) static let overset: MathTemplate = {
@@ -88,11 +95,15 @@ extension MathTemplate {
       name: "overset", parameters: ["top", "content"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.mathLimits(.limits), [VariableExpr("content")])],
-          sup: [VariableExpr("top")])
+          nuc: [
+            MathAttributesExpr(
+              .mathLimits(.limits),
+              [VariableExpr("content", .inline, false)])
+          ],
+          sup: [VariableExpr("top", .inline, false)])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, .commandCall, .inline)
   }()
 
   nonisolated(unsafe) static let pmod: MathTemplate = {
@@ -102,11 +113,11 @@ extension MathTemplate {
         TextExpr("\u{2001}("),  // \quad (
         MathStylesExpr(.mathrm, [TextExpr("mod")]),
         TextExpr("\u{2004}"),  // thickspace
-        VariableExpr("content"),
+        VariableExpr("content", .inline, false),
         TextExpr(")"),
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, .commandCall, .inline)
   }()
 
   nonisolated(unsafe) static let stackrel: MathTemplate = {
@@ -114,11 +125,15 @@ extension MathTemplate {
       name: "stackrel", parameters: ["top", "bottom"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.combo(.mathrel, .limits), [VariableExpr("bottom")])],
-          sup: [VariableExpr("top")])
+          nuc: [
+            MathAttributesExpr(
+              .combo(.mathrel, .limits),
+              [VariableExpr("bottom", .inline, false)])
+          ],
+          sup: [VariableExpr("top", .inline, false)])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, .commandCall, .inline)
   }()
 
   nonisolated(unsafe) static let underset: MathTemplate = {
@@ -126,11 +141,15 @@ extension MathTemplate {
       name: "underset", parameters: ["bottom", "content"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.mathLimits(.limits), [VariableExpr("content")])],
-          sub: [VariableExpr("bottom")])
+          nuc: [
+            MathAttributesExpr(
+              .mathLimits(.limits),
+              [VariableExpr("content", .inline, false)])
+          ],
+          sub: [VariableExpr("bottom", .inline, false)])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, .commandCall, .inline)
   }()
 
   nonisolated(unsafe) static let theorem: MathTemplate =
@@ -146,11 +165,11 @@ extension MathTemplate {
             [
               TextExpr("Proof. ")
             ]),
-          VariableExpr("content")
-        ]),
+          VariableExpr("content", .block, true),
+        ])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, subtype: .environmentUse)
+    return MathTemplate(compiled, .environmentUse, .block)
   }()
 
   static func _createTheoremEnvironment(name: String, title: String) -> MathTemplate {
@@ -165,10 +184,10 @@ extension MathTemplate {
               CounterExpr(.theorem),
               TextExpr(" "),
             ]),
-          VariableExpr("content"),
+          VariableExpr("content", .block, true),
         ])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, subtype: .environmentUse)
+    return MathTemplate(compiled, .environmentUse, .block)
   }
 }

@@ -6,9 +6,9 @@ import BitCollections
 /// Array of boolean values that indicate whether a newline should be inserted
 /// at a given index.
 struct NewlineArray: Equatable, Hashable {
-  /// boolean values that indicate whether the corresponding element is a block.
+  /// List of layout types.
   @usableFromInline
-  internal var _isBlock: BitArray
+  internal var _layoutTypes: ContiguousArray<LayoutType>
   /// boolean values that indicate whether a newline should be inserted **after**
   /// each element.
   @usableFromInline
@@ -48,34 +48,35 @@ struct NewlineArray: Equatable, Hashable {
   internal func value(before index: Int, atBlockEdge: Bool) -> Bool {
     precondition(0 <= index && index < _isNewline.count)
     return index == 0
-      ? _isBlock[0] && !atBlockEdge
+      ? _layoutTypes[0] == .block && !atBlockEdge
       : _isNewline[index - 1]
   }
 
   init() {
-    self._isBlock = BitArray()
+    self._layoutTypes = ContiguousArray()
     self._isNewline = BitArray()
     self.trailingCount = 0
   }
 
-  init(_ isBlock: some Sequence<Bool>) {
-    self._isBlock = BitArray(isBlock)
+  init(_ layoutTypes: some Sequence<LayoutType>) {
+    self._layoutTypes = ContiguousArray(layoutTypes)
     self._isNewline =
-      !_isBlock.isEmpty
-      ? Self._computeNewlines(for: _isBlock)
+      !_layoutTypes.isEmpty
+      ? Self._computeNewlines(for: _layoutTypes)
       : []
     self.trailingCount = _isNewline.lazy.map(\.intValue).reduce(0, +)
   }
 
-  mutating func insert(contentsOf isBlock: some Collection<Bool>, at index: Int) {
+  mutating func insert(contentsOf layoutTypes: some Collection<LayoutType>, at index: Int)
+  {
     precondition(index >= 0 && index <= _isNewline.count)
 
-    guard !isBlock.isEmpty else { return }
+    guard !layoutTypes.isEmpty else { return }
 
-    let prev: Bool? = index > 0 ? _isBlock[index - 1] : nil
-    let next: Bool? = index < _isBlock.count ? _isBlock[index] : nil
+    let prev: LayoutType? = index > 0 ? _layoutTypes[index - 1] : nil
+    let next: LayoutType? = index < _layoutTypes.count ? _layoutTypes[index] : nil
     let (previous, segment) =
-      Self._computeNewlines(previous: prev, segment: isBlock, next: next)
+      Self._computeNewlines(previous: prev, segment: layoutTypes, next: next)
 
     var delta = 0
     if let previous {
@@ -84,13 +85,13 @@ struct NewlineArray: Equatable, Hashable {
     }
     delta += segment.lazy.map(\.intValue).reduce(0, +)
 
-    _isBlock.insert(contentsOf: isBlock, at: index)
+    _layoutTypes.insert(contentsOf: layoutTypes, at: index)
     _isNewline.insert(contentsOf: segment, at: index)
     trailingCount += delta
   }
 
-  mutating func insert(isBlock: Bool, at index: Int) {
-    insert(contentsOf: CollectionOfOne(isBlock), at: index)
+  mutating func insert(layoutType: LayoutType, at index: Int) {
+    insert(contentsOf: CollectionOfOne(layoutType), at: index)
   }
 
   mutating func removeSubrange(_ range: Range<Int>) {
@@ -100,7 +101,7 @@ struct NewlineArray: Equatable, Hashable {
 
     // remove
     let delta = -_isNewline[range].lazy.map(\.intValue).reduce(0, +)
-    _isBlock.removeSubrange(range)
+    _layoutTypes.removeSubrange(range)
     _isNewline.removeSubrange(range)
     trailingCount += delta
 
@@ -109,7 +110,7 @@ struct NewlineArray: Equatable, Hashable {
     let i = range.lowerBound - 1
     let newValue: Bool =
       (i < _isNewline.count - 1)
-      ? (_isBlock[i] || _isBlock[i + 1])
+      ? LayoutType.isNewline(_layoutTypes[i], _layoutTypes[i + 1])
       : false
     trailingCount += newValue.intValue - _isNewline[i].intValue
     _isNewline[i] = newValue
@@ -120,28 +121,31 @@ struct NewlineArray: Equatable, Hashable {
   }
 
   mutating func removeAll() {
-    self._isBlock.removeAll()
+    self._layoutTypes.removeAll()
     self._isNewline.removeAll()
     self.trailingCount = 0
   }
 
-  mutating func replaceSubrange(_ range: Range<Int>, with isBlock: some Collection<Bool>)
-  {
+  mutating func replaceSubrange(
+    _ range: Range<Int>, with layoutTypes: some Collection<LayoutType>
+  ) {
     precondition(range.lowerBound >= 0 && range.upperBound <= _isNewline.count)
 
-    guard !isBlock.isEmpty else {
+    guard !layoutTypes.isEmpty else {
       self.removeSubrange(range)
       return
     }
     guard !range.isEmpty else {
-      self.insert(contentsOf: isBlock, at: range.lowerBound)
+      self.insert(contentsOf: layoutTypes, at: range.lowerBound)
       return
     }
 
-    let prev: Bool? = range.lowerBound > 0 ? _isBlock[range.lowerBound - 1] : nil
-    let next: Bool? = range.upperBound < _isBlock.count ? _isBlock[range.upperBound] : nil
+    let prev: LayoutType? =
+      range.lowerBound > 0 ? _layoutTypes[range.lowerBound - 1] : nil
+    let next: LayoutType? =
+      range.upperBound < _layoutTypes.count ? _layoutTypes[range.upperBound] : nil
     let (previous, segment) =
-      Self._computeNewlines(previous: prev, segment: isBlock, next: next)
+      Self._computeNewlines(previous: prev, segment: layoutTypes, next: next)
 
     var delta = 0
     // deduct the old values
@@ -155,20 +159,21 @@ struct NewlineArray: Equatable, Hashable {
     // add the new values
     delta += segment.lazy.map(\.intValue).reduce(0, +)
 
-    _isBlock.replaceSubrange(range, with: isBlock)
+    _layoutTypes.replaceSubrange(range, with: layoutTypes)
     _isNewline.replaceSubrange(range, with: segment)
     trailingCount += delta
   }
 
-  mutating func setValue(isBlock: Bool, at index: Int) {
-    precondition(0..<_isBlock.count ~= index)
-    guard _isBlock[index] != isBlock else { return }
+  mutating func setValue(layoutType: LayoutType, at index: Int) {
+    precondition(0..<_layoutTypes.count ~= index)
+    guard _layoutTypes[index] != layoutType else { return }
 
     // compute new values at previous and target position
-    let prev: Bool? = (index == 0) ? nil : _isBlock[index - 1]
-    let next: Bool? = (index + 1 < _isBlock.count) ? _isBlock[index + 1] : nil
+    let prev: LayoutType? = (index == 0) ? nil : _layoutTypes[index - 1]
+    let next: LayoutType? =
+      (index + 1 < _layoutTypes.count) ? _layoutTypes[index + 1] : nil
     let (previous, current) =
-      Self.computeNewlines(previous: prev, current: isBlock, next: next)
+      Self.computeNewlines(previous: prev, current: layoutType, next: next)
     var delta = 0
     if let previous {
       // compute delta
@@ -179,17 +184,17 @@ struct NewlineArray: Equatable, Hashable {
     // compute delta
     delta += current.intValue - _isNewline[index].intValue
     // update target
-    _isBlock[index] = isBlock
+    _layoutTypes[index] = layoutType
     _isNewline[index] = current
     // update true count
     trailingCount += delta
   }
 
   private static func computeNewlines(
-    previous: Bool?, current isBlock: Bool, next: Bool?
+    previous: LayoutType?, current layoutType: LayoutType, next: LayoutType?
   ) -> (previous: Bool?, current: Bool) {
-    let previous = previous.map { $0 || isBlock }
-    let current = next.map { isBlock || $0 } ?? false
+    let previous = previous.map { LayoutType.isNewline($0, layoutType) }
+    let current = next.map { LayoutType.isNewline(layoutType, $0) } ?? false
     return (previous, current)
   }
 
@@ -203,23 +208,27 @@ struct NewlineArray: Equatable, Hashable {
   ///   __segment__: The newlines for the segment.
   /// - Precondition: `isBlock` is not empty.
   private static func _computeNewlines(
-    previous: Bool?, segment isBlock: some Collection<Bool>, next: Bool?
+    previous: LayoutType?,
+    segment layoutTypes: some Collection<LayoutType>,
+    next: LayoutType?
   ) -> (previous: Bool?, segment: BitArray) {
-    precondition(!isBlock.isEmpty)
+    precondition(!layoutTypes.isEmpty)
 
     // insertNewline of previous neighbour
-    let previous: Bool? = previous.map({ $0 || isBlock.first! })
+    let previous: Bool? = previous.map {
+      LayoutType.isNewline($0, layoutTypes.first!)
+    }
 
     if let next {
       // compute newlines
-      let isBlock = chain(isBlock, CollectionOfOne(next))
+      let isBlock = chain(layoutTypes, CollectionOfOne(next))
       var newlines = Self._computeNewlines(for: isBlock)
       newlines.removeLast()
       return (previous, newlines)
     }
     else {
       // compute newlines
-      let newlines = Self._computeNewlines(for: isBlock)
+      let newlines = Self._computeNewlines(for: layoutTypes)
       return (previous, newlines)
     }
   }
@@ -227,11 +236,15 @@ struct NewlineArray: Equatable, Hashable {
   /// Determine whether a newline should be inserted after each element.
   /// - Precondition: The input collection is not empty.
   /// - Postcondition: The last element is always false.
-  private static func _computeNewlines(for isBlock: some Collection<Bool>) -> BitArray {
-    precondition(!isBlock.isEmpty)
+  private static func _computeNewlines(
+    for layoutTypes: some Collection<LayoutType>
+  ) -> BitArray {
+    precondition(!layoutTypes.isEmpty)
     var bitArray = BitArray()
-    bitArray.reserveCapacity(isBlock.count)
-    bitArray.append(contentsOf: isBlock.lazy.adjacentPairs().map { $0.0 || $0.1 })
+    bitArray.reserveCapacity(layoutTypes.count)
+    bitArray.append(
+      contentsOf: layoutTypes.lazy.adjacentPairs()
+        .map { (lhs, rhs) in LayoutType.isNewline(lhs, rhs) })
     bitArray.append(false)
     return bitArray
   }

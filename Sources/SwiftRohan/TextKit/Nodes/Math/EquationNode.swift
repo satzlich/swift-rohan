@@ -16,7 +16,7 @@ final class EquationNode: MathNode {
   final override class var type: NodeType { .equation }
 
   final override func selector() -> TargetSelector {
-    EquationNode.selector(isBlock: isBlock)
+    EquationNode.selector(isBlock: layoutType == .block)
   }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -26,7 +26,7 @@ final class EquationNode: MathNode {
       // if there is no math style, compute and set
       let key = MathProperty.style
       if current[key] == nil {
-        current[key] = .mathStyle(isBlock ? .display : .text)
+        current[key] = .mathStyle(layoutType == .block ? .display : .text)
       }
 
       _cachedProperties = current
@@ -36,7 +36,7 @@ final class EquationNode: MathNode {
 
   // MARK: - Node(Layout)
 
-  final override var isBlock: Bool { subtype.isBlock }
+  final override var layoutType: LayoutType { subtype.layoutType }
 
   final override var isDirty: Bool {
     nucleus.isDirty || _countProviderState?.isCounterDirty == true
@@ -75,7 +75,7 @@ final class EquationNode: MathNode {
       context.insertFragment(nodeFragment, self)
 
       // for block equation, we need to add attributes backwards.
-      if self.isBlock {
+      if self.layoutType == .block {
         _addAttributesBackwards(1, context)
         _countProviderState?.isCounterDirty = false
       }

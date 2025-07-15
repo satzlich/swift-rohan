@@ -17,16 +17,15 @@ enum NodePolicy {
     [.paragraph, .text].contains(nodeType)
   }
 
-  /// Returns true if a node of given kind is a block element.
+  /// Returns the type of the layout produced by a node of given kind.
   @inlinable @inline(__always)
-  static func isBlockElement(_ nodeType: NodeType) -> Bool {
-    [
-      .heading,
-      .itemList,
-      .paragraph,
-      .parList,
-      .root,
-    ].contains(nodeType)
+  static func layoutType(_ nodeType: NodeType) -> LayoutType {
+    switch nodeType {
+    case .heading, .itemList, .paragraph, .parList, .root:
+      return .block
+    case _:
+      return .inline
+    }
   }
 
   /// Returns true if a node of given kind can be a top-level node in a document.
@@ -84,8 +83,7 @@ enum NodePolicy {
       .paragraph,
       .textStyles,
       .variable,
-    ]
-    .contains(nodeType)
+    ].contains(nodeType)
   }
 
   @inlinable @inline(__always)
@@ -97,7 +95,7 @@ enum NodePolicy {
   /// Returns true if the node is inline-math.
   @inlinable @inline(__always)
   static func isInlineMath(_ node: Node) -> Bool {
-    isEquationNode(node) && node.isBlock == false
+    isEquationNode(node) && node.layoutType == .inline
   }
 
   /// Returns true if the node is paragraph content other than inline math compatible.
@@ -109,7 +107,7 @@ enum NodePolicy {
       .textStyles,
       .unknown,
     ].contains(node.type)
-      || (isEquationNode(node) && node.isBlock)  // block math
+      || (isEquationNode(node) && node.layoutType == .block)  // block math
   }
 
   @inlinable @inline(__always)
@@ -251,45 +249,46 @@ enum NodePolicy {
 
   /// Content container cateogry of given node type, or nil if the value should
   /// be determined from contextual nodes.
+  @inlinable @inline(__always)
   static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
     switch nodeType {
     // Misc
-    case .counter: return nil
-    case .linebreak: return nil
-    case .text: return nil
-    case .unknown: return nil
+    case .counter: nil
+    case .linebreak: nil
+    case .text: nil
+    case .unknown: nil
 
     // Element
-    case .content: return nil
-    case .heading: return .inlineContentContainer
-    case .itemList: return .paragraphContainer
-    case .paragraph: return nil
-    case .parList: return .paragraphContainer
-    case .root: return .topLevelContainer
-    case .textStyles: return .extendedTextContainer
+    case .content: nil
+    case .heading: .inlineContentContainer
+    case .itemList: .paragraphContainer
+    case .paragraph: nil
+    case .parList: .paragraphContainer
+    case .root: .topLevelContainer
+    case .textStyles: .extendedTextContainer
 
     // Math
-    case .accent: return .mathContainer
-    case .attach: return .mathContainer
-    case .equation: return .mathContainer
-    case .fraction: return .mathContainer
-    case .leftRight: return .mathContainer
-    case .mathAttributes: return .mathContainer
-    case .mathExpression: return nil
-    case .mathOperator: return nil
-    case .mathStyles: return .mathContainer
-    case .matrix: return .mathContainer
-    case .multiline: return .mathContainer
-    case .namedSymbol: return nil
-    case .radical: return .mathContainer
-    case .textMode: return .textTextContainer
-    case .underOver: return .mathContainer
+    case .accent: .mathContainer
+    case .attach: .mathContainer
+    case .equation: .mathContainer
+    case .fraction: .mathContainer
+    case .leftRight: .mathContainer
+    case .mathAttributes: .mathContainer
+    case .mathExpression: nil
+    case .mathOperator: nil
+    case .mathStyles: .mathContainer
+    case .matrix: .mathContainer
+    case .multiline: .mathContainer
+    case .namedSymbol: nil
+    case .radical: .mathContainer
+    case .textMode: .textTextContainer
+    case .underOver: .mathContainer
 
     // Template
-    case .apply: return nil
-    case .argument: return nil
-    case .cVariable: return nil
-    case .variable: return nil
+    case .apply: nil
+    case .argument: nil
+    case .cVariable: nil
+    case .variable: nil
     }
   }
 }

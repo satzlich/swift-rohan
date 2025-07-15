@@ -52,7 +52,7 @@ final class MultilineNode: ArrayNode {
     super.isDirty || _countProviderState?.isCounterDirty == true
   }
 
-  final override var isBlock: Bool { true }
+  final override var layoutType: LayoutType { .block }
 
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
