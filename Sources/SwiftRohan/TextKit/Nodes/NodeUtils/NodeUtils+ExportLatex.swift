@@ -211,6 +211,12 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     visit(content: content, context, withChildren: content.childrenReadonly())
   }
 
+  override func visit(
+    expansion: ExpansionNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    preconditionFailure("should not be called")
+  }
+
   override func visit<T, S>(
     content: ContentNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {

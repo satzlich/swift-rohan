@@ -6,11 +6,11 @@ import OrderedCollections
 extension NodeUtils {
   static func applyTemplate(
     _ template: CompiledTemplate, _ arguments: Array<ElementStore>
-  ) -> (ContentNode, Array<ArgumentNode>)? {
+  ) -> (ExpansionNode, Array<ArgumentNode>)? {
     precondition(template.parameterCount == arguments.count)
 
     // expand template body
-    let contentNode = ContentNode(convertExprs(template.body))
+    let contentNode = ExpansionNode(convertExprs(template.body), template.layoutType)
 
     // create argument node from paths
     func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode?

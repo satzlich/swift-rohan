@@ -9,7 +9,9 @@ struct TemplateSerdeTests {
   @Test
   func test_Template() throws {
     let template = Template(
-      name: "test", parameters: ["x"], body: [TextExpr("Hello, "), VariableExpr("x", .inline, false)])
+      name: "test", parameters: ["x"],
+      body: [TextExpr("Hello, "), VariableExpr("x", .inline, false)],
+      layoutType: .inline)
 
     try assertSerde(
       template,
@@ -22,7 +24,8 @@ struct TemplateSerdeTests {
   func test_CompiledTemplate() throws {
     let argument0: VariablePaths = [[.index(1)]]
     let template = CompiledTemplate(
-      "test", [TextExpr("Hello, "), CompiledVariableExpr(0, .inline, false)], [argument0])
+      "test", [TextExpr("Hello, "), CompiledVariableExpr(0, .inline, false)],
+      .inline, [argument0])
     try assertSerde(
       template,
       """

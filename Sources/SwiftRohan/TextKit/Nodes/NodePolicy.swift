@@ -240,6 +240,7 @@ enum NodePolicy {
   static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [
       .content,
+      .expansion,
       .itemList,
       .paragraph,
       .parList,
@@ -262,6 +263,7 @@ enum NodePolicy {
 
     // Element
     case .content: nil
+    case .expansion: nil
     case .heading: .inlineContentContainer
     case .itemList: .paragraphContainer
     case .paragraph: nil
