@@ -24,7 +24,7 @@ enum NodePolicy {
       .heading,
       .itemList,
       .paragraph,
-      // No parList
+      .parList,
       .root,
     ].contains(nodeType)
   }
