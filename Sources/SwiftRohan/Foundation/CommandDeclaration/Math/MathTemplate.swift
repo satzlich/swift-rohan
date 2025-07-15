@@ -146,8 +146,8 @@ extension MathTemplate {
             [
               TextExpr("Proof. ")
             ]),
-          VariableExpr("content"),
-        ])
+          VariableExpr("content")
+        ]),
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled, subtype: .environmentUse)
