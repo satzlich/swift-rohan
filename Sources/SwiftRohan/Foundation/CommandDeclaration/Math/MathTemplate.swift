@@ -23,7 +23,7 @@ struct MathTemplate: CommandDeclarationProtocol {
   var name: TemplateName { template.name }
   var parameterCount: Int { template.parameterCount }
 
-  init(_ template: CompiledTemplate, subtype: Subtype = .commandCall) {
+  init(_ template: CompiledTemplate, subtype: Subtype) {
     self.template = template
     self.subtype = subtype
   }
@@ -80,7 +80,7 @@ extension MathTemplate {
           .mathKind(.mathop), [MathStylesExpr(.mathrm, [VariableExpr("content")])])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, subtype: .commandCall)
   }()
 
   nonisolated(unsafe) static let overset: MathTemplate = {
@@ -92,7 +92,7 @@ extension MathTemplate {
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, subtype: .commandCall)
   }()
 
   nonisolated(unsafe) static let pmod: MathTemplate = {
@@ -106,7 +106,7 @@ extension MathTemplate {
         TextExpr(")"),
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, subtype: .commandCall)
   }()
 
   nonisolated(unsafe) static let stackrel: MathTemplate = {
@@ -118,7 +118,7 @@ extension MathTemplate {
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, subtype: .commandCall)
   }()
 
   nonisolated(unsafe) static let underset: MathTemplate = {
@@ -130,7 +130,7 @@ extension MathTemplate {
           sub: [VariableExpr("bottom")])
       ])
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled)
+    return MathTemplate(compiled, subtype: .commandCall)
   }()
 
   nonisolated(unsafe) static let theorem: MathTemplate =
@@ -146,8 +146,8 @@ extension MathTemplate {
             [
               TextExpr("Proof. ")
             ]),
-          VariableExpr("content")
-        ]),
+          VariableExpr("content"),
+        ])
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled, subtype: .environmentUse)
