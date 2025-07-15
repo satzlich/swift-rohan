@@ -95,8 +95,12 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     fatalError("The input should be free of (named) variable")
   }
 
-  override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Node {
-    VariableNode(cVariable.argumentIndex, nestedLevelDelta: cVariable.nestedLevelDetla)
+  override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> VariableNode {
+    VariableNode(
+      cVariable.argumentIndex,
+      cVariable.layoutType,
+      cVariable.isBlockContainer,
+      nestedLevelDelta: cVariable.nestedLevelDetla)
   }
 
   // MARK: - Element

@@ -11,15 +11,15 @@ public enum CompiledSamples {
 
   public static var philipFox: CompiledTemplate {
     let content = [
-      CompiledVariableExpr(0),
+      CompiledVariableExpr(0, .inline, false),
       TextExpr(" is a good "),
       TextStylesExpr(
         .emph,
         [
-          CompiledVariableExpr(1)
+          CompiledVariableExpr(1, .inline, false)
         ]),
       TextExpr(", is "),
-      CompiledVariableExpr(0),
+      CompiledVariableExpr(0, .inline, false),
       TextExpr("?"),
     ]
     let argument0: VariablePaths = [
@@ -35,9 +35,9 @@ public enum CompiledSamples {
   public static var doubleText: CompiledTemplate {
     let content = [
       TextExpr("{"),
-      CompiledVariableExpr(0),
+      CompiledVariableExpr(0, .inline, false),
       TextExpr(" and "),
-      TextStylesExpr(.emph, [CompiledVariableExpr(0)]),
+      TextStylesExpr(.emph, [CompiledVariableExpr(0, .inline, false)]),
       TextExpr("}"),
     ]
     let argument0: VariablePaths = [
@@ -52,13 +52,13 @@ public enum CompiledSamples {
       FractionExpr(
         num: [
           FractionExpr(
-            num: [CompiledVariableExpr(1), TextExpr("+1")],
-            denom: [CompiledVariableExpr(0), TextExpr("+1")])
+            num: [CompiledVariableExpr(1, .inline, false), TextExpr("+1")],
+            denom: [CompiledVariableExpr(0, .inline, false), TextExpr("+1")])
         ],
         denom: [
-          CompiledVariableExpr(0),
+          CompiledVariableExpr(0, .inline, false),
           TextExpr("+"),
-          CompiledVariableExpr(1),
+          CompiledVariableExpr(1, .inline, false),
           TextExpr("+1"),
         ])
     ]
@@ -79,9 +79,9 @@ public enum CompiledSamples {
   public static var bifun: CompiledTemplate {
     let content = [
       TextExpr("f("),
-      CompiledVariableExpr(0),
+      CompiledVariableExpr(0, .inline, false),
       TextExpr(","),
-      CompiledVariableExpr(0),
+      CompiledVariableExpr(0, .inline, false),
       TextExpr(")"),
     ]
     let argument0: VariablePaths = [[.index(1)], [.index(3)]]

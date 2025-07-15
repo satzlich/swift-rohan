@@ -64,9 +64,11 @@ internal class ElementNode: Node {
 
   internal override func layoutLength() -> Int { _layoutLength }
 
-  final override var layoutType: LayoutType { NodePolicy.layoutType(type) }
+  internal override var layoutType: LayoutType { NodePolicy.layoutType(type) }
 
   final override var isDirty: Bool { _isDirty }
+
+  internal override var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
 
   // MARK: - Node(Codable)
 

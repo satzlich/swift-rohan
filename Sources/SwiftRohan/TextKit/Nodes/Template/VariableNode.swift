@@ -30,11 +30,15 @@ final class VariableNode: ElementNodeImpl {
 
   // MARK: - Node(Codable)
 
-  private enum CodingKeys: CodingKey { case argIndex, levelDelta }
+  private enum CodingKeys: CodingKey {
+    case argIndex, levelDelta, layoutType, isBlockContainer
+  }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     argumentIndex = try container.decode(Int.self, forKey: .argIndex)
+    _layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
+    _isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
     nestedLevelDelta = try container.decode(Int.self, forKey: .levelDelta)
     super.init()
   }
@@ -42,9 +46,17 @@ final class VariableNode: ElementNodeImpl {
   final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(argumentIndex, forKey: .argIndex)
+    try container.encode(_layoutType, forKey: .layoutType)
+    try container.encode(_isBlockContainer, forKey: .isBlockContainer)
     try container.encode(nestedLevelDelta, forKey: .levelDelta)
     try super.encode(to: encoder)
   }
+
+  // MARK: - Node(Layout)
+  
+  final override var isBlockContainer: Bool { _isBlockContainer }
+  
+  final override var layoutType: LayoutType { _layoutType }
 
   // MARK: - Node(Storage)
 
@@ -75,6 +87,9 @@ final class VariableNode: ElementNodeImpl {
   /// The delta of the nested level from the apply node.
   let nestedLevelDelta: Int
 
+  private let _layoutType: LayoutType
+  private let _isBlockContainer: Bool
+
   internal func setArgumentNode(_ argument: ArgumentNode) {
     precondition(self.argumentNode == nil)
     assert(argument.argumentIndex == argumentIndex)
@@ -85,14 +100,23 @@ final class VariableNode: ElementNodeImpl {
     argumentNode?.isAssociated(with: applyNode) == true
   }
 
-  init(_ argumentIndex: Int, nestedLevelDelta: Int = 0) {
+  init(
+    _ argumentIndex: Int,
+    _ layoutType: LayoutType,
+    _ isBlockContainer: Bool,
+    nestedLevelDelta: Int = 0
+  ) {
     self.argumentIndex = argumentIndex
+    self._layoutType = layoutType
+    self._isBlockContainer = isBlockContainer
     self.nestedLevelDelta = nestedLevelDelta
     super.init()
   }
 
   private init(deepCopyOf variableNode: VariableNode) {
     self.argumentIndex = variableNode.argumentIndex
+    self._layoutType = variableNode._layoutType
+    self._isBlockContainer = variableNode._isBlockContainer
     self.nestedLevelDelta = variableNode.nestedLevelDelta
     super.init(deepCopyOf: variableNode)
   }

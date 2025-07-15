@@ -8,10 +8,19 @@ final class CompiledVariableExpr: Expr {
   /// Delta of the nested level of the variable.
   let nestedLevelDetla: Int
 
-  init(_ argumentIndex: Int, nestedLevelDelta: Int = 0) {
+  let layoutType: LayoutType
+  let isBlockContainer: Bool
+
+  init(
+    _ argumentIndex: Int, nestedLevelDelta: Int = 0,
+    _ layoutType: LayoutType,
+    _ isBlockContainer: Bool
+  ) {
     precondition(CompiledVariableExpr.validate(argumentIndex: argumentIndex))
     self.argumentIndex = argumentIndex
     self.nestedLevelDetla = nestedLevelDelta
+    self.layoutType = layoutType
+    self.isBlockContainer = isBlockContainer
     super.init()
   }
 
@@ -20,7 +29,10 @@ final class CompiledVariableExpr: Expr {
   }
 
   func with(nestedLevelDelta delta: Int) -> CompiledVariableExpr {
-    CompiledVariableExpr(argumentIndex, nestedLevelDelta: delta)
+    CompiledVariableExpr(
+      argumentIndex, nestedLevelDelta: delta,
+      layoutType,
+      isBlockContainer)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -30,7 +42,9 @@ final class CompiledVariableExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case argIndex, levelDelta }
+  private enum CodingKeys: CodingKey {
+    case argIndex, levelDelta, layoutType, isBlockContainer
+  }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -42,6 +56,8 @@ final class CompiledVariableExpr: Expr {
         debugDescription: "Invalid argument index \(argumentIndex)")
     }
     nestedLevelDetla = try container.decode(Int.self, forKey: .levelDelta)
+    layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
+    isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
     try super.init(from: decoder)
   }
 
@@ -49,6 +65,8 @@ final class CompiledVariableExpr: Expr {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(argumentIndex, forKey: .argIndex)
     try container.encode(nestedLevelDetla, forKey: .levelDelta)
+    try container.encode(layoutType, forKey: .layoutType)
+    try container.encode(isBlockContainer, forKey: .isBlockContainer)
     try super.encode(to: encoder)
   }
 }

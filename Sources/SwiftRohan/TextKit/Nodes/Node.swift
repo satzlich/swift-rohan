@@ -145,7 +145,7 @@ internal class Node: Codable {
   internal var layoutType: LayoutType { .inline }
 
   /// Returns true if the node is a block container.
-  internal var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
+  internal var isBlockContainer: Bool { false }
 
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }
