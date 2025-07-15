@@ -16,6 +16,14 @@ enum EquationSubtype: String, Codable {
     }
   }
 
+  var layoutType: LayoutType {
+    switch self {
+    case .inline: .inline
+    case .display: .block
+    case .equation: .block
+    }
+  }
+
   var shouldProvideCounter: Bool {
     switch self {
     case .inline: false

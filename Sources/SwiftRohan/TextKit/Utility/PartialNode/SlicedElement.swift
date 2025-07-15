@@ -55,4 +55,6 @@ extension SlicedElement: GenNode {
   }
 
   var isBlock: Bool { _sourceNode.isBlock }
+
+  var layoutType: LayoutType { _sourceNode.layoutType }
 }

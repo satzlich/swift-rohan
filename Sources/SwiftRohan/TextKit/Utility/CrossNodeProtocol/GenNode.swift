@@ -5,6 +5,7 @@ protocol GenNode {
   var type: NodeType { get }
   func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C>
   var isBlock: Bool { get }
+  var layoutType: LayoutType { get }
 }
 
 extension Node: GenNode {}
@@ -40,6 +41,17 @@ extension PartialNode: GenNode {
       return slicedText.isBlock
     case .slicedElement(let slicedElement):
       return slicedElement.isBlock
+    }
+  }
+
+  var layoutType: LayoutType {
+    switch self {
+    case .original(let node):
+      return node.layoutType
+    case .slicedText(let slicedText):
+      return slicedText.layoutType
+    case .slicedElement(let slicedElement):
+      return slicedElement.layoutType
     }
   }
 }

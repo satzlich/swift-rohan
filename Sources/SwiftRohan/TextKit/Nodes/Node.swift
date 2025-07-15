@@ -144,6 +144,9 @@ internal class Node: Codable {
   /// Returns true if the node produces a block layout.
   internal var isBlock: Bool { false }
 
+  /// Returns the type of layout produced by the node.
+  internal var layoutType: LayoutType { .inline }
+
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }
 

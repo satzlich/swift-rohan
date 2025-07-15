@@ -29,6 +29,17 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
+  /// Returns the type of the layout produced by a node of given kind.
+  @inlinable @inline(__always)
+  static func layoutType(_ nodeType: NodeType) -> LayoutType {
+    switch nodeType {
+    case .heading, .itemList, .paragraph, .parList, .root:
+      return .block
+    case _:
+      return .inline
+    }
+  }
+
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inlinable @inline(__always)
   static func isTopLevelNode(_ node: Node) -> Bool {
