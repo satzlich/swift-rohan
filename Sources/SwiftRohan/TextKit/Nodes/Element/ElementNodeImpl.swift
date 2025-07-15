@@ -176,7 +176,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nl + nc
 
       // update segment length and dirty flag.
-      if _children[i].layoutType.mayEmitBlock {
+      if _children[i].layoutType == .block {
         segmentLength = 0
         isCandidate = false
       }
@@ -250,7 +250,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nl + nc
 
       // update segment length and dirty flag.
-      if _children[i].layoutType.mayEmitBlock {
+      if _children[i].layoutType == .block {
         segmentLength = 0
         isCandidate = false
       }
@@ -355,7 +355,7 @@ internal class ElementNodeImpl: ElementNode {
       sum += nc + nl
 
       // update segment length and dirty flag.
-      if _children[i].layoutType.mayEmitBlock {
+      if _children[i].layoutType == .block {
         segmentLength = 0
         isCandidate = false
       }
