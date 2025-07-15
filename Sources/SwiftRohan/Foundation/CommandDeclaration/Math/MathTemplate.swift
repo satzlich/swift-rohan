@@ -19,15 +19,14 @@ struct MathTemplate: CommandDeclarationProtocol {
 
   let template: CompiledTemplate
   let subtype: Subtype
-  let layoutType: LayoutType
+  var layoutType: LayoutType { template.layoutType }
 
   var name: TemplateName { template.name }
   var parameterCount: Int { template.parameterCount }
 
-  init(_ template: CompiledTemplate, _ subtype: Subtype, _ layoutType: LayoutType) {
+  init(_ template: CompiledTemplate, _ subtype: Subtype) {
     self.template = template
     self.subtype = subtype
-    self.layoutType = layoutType
   }
 
   private enum CodingKeys: CodingKey { case command, subtype, layoutType }
@@ -43,7 +42,6 @@ struct MathTemplate: CommandDeclarationProtocol {
     }
     self.template = template.template
     self.subtype = template.subtype
-    self.layoutType = template.layoutType
   }
 
   func encode(to encoder: any Encoder) throws {
@@ -85,9 +83,10 @@ extension MathTemplate {
               .mathrm,
               [VariableExpr("content", .inline, false)])
           ])
-      ])
+      ],
+      layoutType: .inline)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .commandCall, .inline)
+    return MathTemplate(compiled, .commandCall)
   }()
 
   nonisolated(unsafe) static let overset: MathTemplate = {
@@ -101,9 +100,10 @@ extension MathTemplate {
               [VariableExpr("content", .inline, false)])
           ],
           sup: [VariableExpr("top", .inline, false)])
-      ])
+      ],
+      layoutType: .inline)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .commandCall, .inline)
+    return MathTemplate(compiled, .commandCall)
   }()
 
   nonisolated(unsafe) static let pmod: MathTemplate = {
@@ -115,9 +115,10 @@ extension MathTemplate {
         TextExpr("\u{2004}"),  // thickspace
         VariableExpr("content", .inline, false),
         TextExpr(")"),
-      ])
+      ],
+      layoutType: .inline)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .commandCall, .inline)
+    return MathTemplate(compiled, .commandCall)
   }()
 
   nonisolated(unsafe) static let stackrel: MathTemplate = {
@@ -131,9 +132,10 @@ extension MathTemplate {
               [VariableExpr("bottom", .inline, false)])
           ],
           sup: [VariableExpr("top", .inline, false)])
-      ])
+      ],
+      layoutType: .inline)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .commandCall, .inline)
+    return MathTemplate(compiled, .commandCall)
   }()
 
   nonisolated(unsafe) static let underset: MathTemplate = {
@@ -147,9 +149,10 @@ extension MathTemplate {
               [VariableExpr("content", .inline, false)])
           ],
           sub: [VariableExpr("bottom", .inline, false)])
-      ])
+      ],
+      layoutType: .inline)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .commandCall, .inline)
+    return MathTemplate(compiled, .commandCall)
   }()
 
   nonisolated(unsafe) static let theorem: MathTemplate =
@@ -165,11 +168,12 @@ extension MathTemplate {
             [
               TextExpr("Proof. ")
             ]),
-          VariableExpr("content", .block, true),
+          VariableExpr("content", .softBlock, true),
         ])
-      ])
+      ],
+      layoutType: .block)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .environmentUse, .block)
+    return MathTemplate(compiled, .environmentUse)
   }()
 
   static func _createTheoremEnvironment(name: String, title: String) -> MathTemplate {
@@ -184,10 +188,11 @@ extension MathTemplate {
               CounterExpr(.theorem),
               TextExpr(" "),
             ]),
-          VariableExpr("content", .block, true),
+          VariableExpr("content", .softBlock, true),
         ])
-      ])
+      ],
+      layoutType: .block)
     let compiled = Nano.compile(template).success()!
-    return MathTemplate(compiled, .environmentUse, .block)
+    return MathTemplate(compiled, .environmentUse)
   }
 }

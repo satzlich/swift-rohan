@@ -113,7 +113,7 @@ extension Trace {
         }
         // For a class of block containers, the end position cannot be placed at.
         else if index + 1 == node.childCount,
-          isItemListNode(node)
+          node.isBlockContainer
         {
           moveForward()
         }

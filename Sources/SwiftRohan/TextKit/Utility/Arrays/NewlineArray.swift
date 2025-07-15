@@ -198,15 +198,15 @@ struct NewlineArray: Equatable, Hashable {
     return (previous, current)
   }
 
-  /// Compute the newlines for a segment of `isBlock` values.
+  /// Compute the newlines for a segment of layout types.
   /// - Parameters:
-  ///   - previous: The `isBlock` value of the element before the segment. Can be `nil`.
-  ///   - isBlock: The segment of `isBlock` values.
-  ///   - next: The `isBlock` value of the element after the segment. Can be `nil`.
+  ///   - previous: The layout type of the element before the segment. May be `nil`.
+  ///   - layoutTypes: The segment of layout types.
+  ///   - next: The layout type of the element after the segment. May be `nil`.
   /// - Returns:
-  ///   __previous__: The `newline` value of the element before the segment.
+  ///   __previous__: The newline value of the element before the segment.
   ///   __segment__: The newlines for the segment.
-  /// - Precondition: `isBlock` is not empty.
+  /// - Precondition: `layoutTypes` is not empty.
   private static func _computeNewlines(
     previous: LayoutType?,
     segment layoutTypes: some Collection<LayoutType>,
@@ -221,8 +221,8 @@ struct NewlineArray: Equatable, Hashable {
 
     if let next {
       // compute newlines
-      let isBlock = chain(layoutTypes, CollectionOfOne(next))
-      var newlines = Self._computeNewlines(for: isBlock)
+      let layoutTypes = chain(layoutTypes, CollectionOfOne(next))
+      var newlines = Self._computeNewlines(for: layoutTypes)
       newlines.removeLast()
       return (previous, newlines)
     }

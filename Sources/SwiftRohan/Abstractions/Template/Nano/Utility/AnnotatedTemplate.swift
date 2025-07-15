@@ -11,6 +11,7 @@ extension Nano {
     var name: TemplateName { template.name }
     var parameters: Array<Identifier> { template.parameters }
     var body: Array<Expr> { template.body }
+    var layoutType: LayoutType { template.layoutType }
 
     init(_ template: Template, annotation: A) {
       self.template = template

@@ -6,11 +6,11 @@ import OrderedCollections
 extension NodeUtils {
   static func applyTemplate(
     _ template: CompiledTemplate, _ arguments: Array<ElementStore>
-  ) -> (ContentNode, Array<ArgumentNode>)? {
+  ) -> (ExpansionNode, Array<ArgumentNode>)? {
     precondition(template.parameterCount == arguments.count)
 
     // expand template body
-    let contentNode = ContentNode(convertExprs(template.body))
+    let contentNode = ExpansionNode(convertExprs(template.body), template.layoutType)
 
     // create argument node from paths
     func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode?
@@ -212,10 +212,10 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   }
 
   override func visit(multiline: MultilineExpr, _ context: Void) -> Node {
-    typealias Element = MultilineNode.Cell
+    typealias Cell = MultilineNode.Cell
     let rows = multiline.rows.map { row in
       let elements = row.map { _convertChildren(of: $0, context) }
-        .map { Element.init($0) }
+        .map { Cell.init($0) }
       return ArrayNode.Row(elements)
     }
     return MultilineNode(multiline.subtype, rows)

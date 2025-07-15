@@ -535,7 +535,7 @@ extension EquationNode {
     }
 
     // text property
-    let textProperty = TextProperty.resolveAggregate(properties, styleSheet)
+    let textProperty = styleSheet.resolveDefault() as TextProperty
     attributes.merge(textProperty.getAttributes(), uniquingKeysWith: { $1 })
 
     // trailing cursor position

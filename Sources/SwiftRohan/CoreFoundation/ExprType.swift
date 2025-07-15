@@ -12,6 +12,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
 
   // Elements
   case content
+  case expansion
   case heading
   case itemList
   case paragraph

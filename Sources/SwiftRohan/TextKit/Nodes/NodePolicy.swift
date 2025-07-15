@@ -21,8 +21,10 @@ enum NodePolicy {
   @inlinable @inline(__always)
   static func layoutType(_ nodeType: NodeType) -> LayoutType {
     switch nodeType {
-    case .heading, .itemList, .paragraph, .parList, .root:
+    case .heading, .itemList, .parList, .root:
       return .block
+    case .paragraph:
+      return .softBlock
     case _:
       return .inline
     }
@@ -35,7 +37,7 @@ enum NodePolicy {
       return true
     }
     else if let applyNode = node as? ApplyNode,
-      applyNode.getContent().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
+      applyNode.getExpansion().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
     {
       return true
     }
@@ -80,16 +82,20 @@ enum NodePolicy {
     [
       NodeType.content,
       .heading,
-      .paragraph,
       .textStyles,
       .variable,
     ].contains(nodeType)
   }
 
   @inlinable @inline(__always)
-  static func placeholder(for nodeType: NodeType) -> Character {
+  static func placeholder(for nodeType: NodeType) -> (char: Character, visible: Bool) {
     // ZWSP or dotted square
-    nodeType == .paragraph ? "\u{200B}" : "⬚"
+    if nodeType == .paragraph {
+      ("\u{200B}", false)
+    }
+    else {
+      ("⬚", true)
+    }
   }
 
   /// Returns true if the node is inline-math.
@@ -141,16 +147,21 @@ enum NodePolicy {
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
   @inlinable @inline(__always)
-  static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
+  static func needsVisualDelimiter(_ node: Node) -> Bool {
     // NOTE: update `shouldIncreaseLevel(_:)` if this is changed.
-
     // must be element node or argument node
-    [
-      .argument,
-      .content,  // this covers most math node
-      .heading,
-      .textStyles,
-    ].contains(nodeType)
+
+    if [.content, .heading, .textStyles].contains(node.type) {
+      return true
+    }
+    else if let argumentNode = node as? ArgumentNode,
+      argumentNode.variableNodes.first!.isBlockContainer == false
+    {
+      return true
+    }
+    else {
+      return false
+    }
   }
 
   /// Returns true if a node of given kind should increase the nested level.
@@ -160,6 +171,7 @@ enum NodePolicy {
     [
       .apply,  // proxy for `.argument`
       .content,  // this covers most math node
+      .expansion,
       .heading,
       .textStyles,
     ].contains(nodeType)
@@ -238,6 +250,7 @@ enum NodePolicy {
   static func shouldSynthesiseCounterSegment(_ type: NodeType) -> Bool {
     [
       .content,
+      .expansion,
       .itemList,
       .paragraph,
       .parList,
@@ -260,6 +273,7 @@ enum NodePolicy {
 
     // Element
     case .content: nil
+    case .expansion: nil
     case .heading: .inlineContentContainer
     case .itemList: .paragraphContainer
     case .paragraph: nil

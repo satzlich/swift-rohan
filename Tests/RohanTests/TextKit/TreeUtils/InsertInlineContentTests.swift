@@ -524,12 +524,12 @@ final class InsertInlineContentTests: TextKitTestsBase {
           └ nuc
             └ template(bifun)
               ├ argument #0 (x2)
-              └ content
+              └ expansion
                 ├ text "f("
                 ├ variable #0
                 │ └ template(bifun)
                 │   ├ argument #0 (x2)
-                │   └ content
+                │   └ expansion
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ ├ fraction
@@ -551,7 +551,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 ├ variable #0
                 │ └ template(bifun)
                 │   ├ argument #0 (x2)
-                │   └ content
+                │   └ expansion
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ ├ fraction

@@ -40,7 +40,10 @@ struct NanoPassTests {
     let erroneous = [
       Template(
         name: "square", parameters: ["x"],
-        body: [AttachExpr(nuc: [VariableExpr("y", .inline, false)], sup: [TextExpr("2")])])
+        body: [
+          AttachExpr(nuc: [VariableExpr("y", .inline, false)], sup: [TextExpr("2")])
+        ],
+        layoutType: .inline)
     ]
     let result = Nano.CheckWellFormedness.process(erroneous)
     #expect(result.isFailure)
@@ -63,7 +66,9 @@ struct NanoPassTests {
   func testCheckDanglingCalls() {
     let erroneous: Nano.CheckDanglingCalls.Input = [
       .init(
-        Template(name: "a", body: [ApplyExpr("b")]),
+        Template(
+          name: "a", body: [ApplyExpr("b")],
+          layoutType: .inline),
         annotation: [TemplateName("b")])
     ]
     let result = Nano.CheckDanglingCalls.process(erroneous)
@@ -73,11 +78,21 @@ struct NanoPassTests {
   @Test
   func testTSortTemplates() {
     // canonical
-    let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
-    let B = Template(name: "B", body: [TextExpr("B"), ApplyExpr("C")])
-    let C = Template(name: "C", body: [TextExpr("C")])
-    let D = Template(name: "D", body: [TextExpr("D"), ApplyExpr("E")])
-    let E = Template(name: "E", body: [TextExpr("E"), ApplyExpr("D")])
+    let A = Template(
+      name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")],
+      layoutType: .inline)
+    let B = Template(
+      name: "B", body: [TextExpr("B"), ApplyExpr("C")],
+      layoutType: .inline)
+    let C = Template(
+      name: "C", body: [TextExpr("C")],
+      layoutType: .inline)
+    let D = Template(
+      name: "D", body: [TextExpr("D"), ApplyExpr("E")],
+      layoutType: .inline)
+    let E = Template(
+      name: "E", body: [TextExpr("E"), ApplyExpr("D")],
+      layoutType: .inline)
 
     // annotated with uses
     typealias TemplateWithUses = Nano.TSortTemplates.Input.Element
@@ -116,9 +131,15 @@ struct NanoPassTests {
   func testInlineCalls() {
     // canonical
 
-    let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
-    let B = Template(name: "B", body: [TextExpr("B"), ApplyExpr("C")])
-    let C = Template(name: "C", body: [TextExpr("C")])
+    let A = Template(
+      name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")],
+      layoutType: .inline)
+    let B = Template(
+      name: "B", body: [TextExpr("B"), ApplyExpr("C")],
+      layoutType: .inline)
+    let C = Template(
+      name: "C", body: [TextExpr("C")],
+      layoutType: .inline)
 
     // annotated with uses
     typealias TemplateWithUses = Nano.InlineCalls.Input.Element
@@ -150,14 +171,20 @@ struct NanoPassTests {
         TextExpr("A"),
         ContentExpr([TextExpr("B"), ContentExpr([TextExpr("C")])]),
         ContentExpr([TextExpr("C")]),
-      ])
-    let B = Template(name: "B", body: [TextExpr("B"), ContentExpr([TextExpr("C")])])
-    let C = Template(name: "C", body: [TextExpr("C")])
+      ],
+      layoutType: .inline)
+    let B = Template(
+      name: "B", body: [TextExpr("B"), ContentExpr([TextExpr("C")])],
+      layoutType: .inline)
+    let C = Template(
+      name: "C", body: [TextExpr("C")],
+      layoutType: .inline)
     let D = Template(
       name: "D",
       body: [
         TextStylesExpr(.emph, [TextExpr("D")]), TextStylesExpr(.emph, [TextExpr("E")]),
-      ])
+      ],
+      layoutType: .inline)
 
     let input = [A, B, C, D]
     guard let output = Nano.UnnestContents.process(input).success() else {
@@ -209,12 +236,18 @@ struct NanoPassTests {
 
   @Test
   func mergeNeighbours() {
-    let A = Template(name: "A", body: [ContentExpr([TextExpr("A")]), ContentExpr()])
-    let B = Template(name: "B", body: [ContentExpr(), ContentExpr([TextExpr("B")])])
+    let A = Template(
+      name: "A", body: [ContentExpr([TextExpr("A")]), ContentExpr()],
+      layoutType: .inline)
+    let B = Template(
+      name: "B", body: [ContentExpr(), ContentExpr([TextExpr("B")])],
+      layoutType: .inline)
     let C = Template(
-      name: "C", body: [ContentExpr([TextExpr("A")]), ContentExpr([TextExpr("B")])])
+      name: "C", body: [ContentExpr([TextExpr("A")]), ContentExpr([TextExpr("B")])],
+      layoutType: .inline)
     let D = Template(
-      name: "D", body: [ContentExpr([LinebreakExpr()]), ContentExpr([LinebreakExpr()])])
+      name: "D", body: [ContentExpr([LinebreakExpr()]), ContentExpr([LinebreakExpr()])],
+      layoutType: .inline)
 
     let input = [A, B, C, D]
     guard let output = Nano.MergeNeighbours.process(input).success() else {
@@ -262,7 +295,8 @@ struct NanoPassTests {
           VariableExpr("x", .inline, false),
           TextExpr("+"),
           VariableExpr("y", .inline, false),
-        ])
+        ],
+        layoutType: .inline)
 
     let input = [foo]
     guard let output = Nano.ConvertVariables.process(input).success(),
@@ -295,9 +329,11 @@ struct NanoPassTests {
           FractionExpr(
             num: [CompiledVariableExpr(0, .inline, false)],
             denom: [
-              FractionExpr(num: [CompiledVariableExpr(0, .inline, false)], denom: [TextExpr("2")])
+              FractionExpr(
+                num: [CompiledVariableExpr(0, .inline, false)], denom: [TextExpr("2")])
             ])
-        ])
+        ],
+        layoutType: .inline)
 
     let input = [foo]
     guard let output = Nano.ComputeNestedLevelDelta.process(input).success(),
@@ -386,13 +422,17 @@ struct NanoPassTests {
       body: [
         LinebreakExpr(),
         UnknownExpr(.string("Hello")),
-        TextStylesExpr(.emph, [TextExpr("World"), CompiledVariableExpr(0, .inline, false)]),
-        HeadingExpr(.sectionAst, [TextExpr("Heading"), CompiledVariableExpr(1, .inline, false)]),
+        TextStylesExpr(
+          .emph, [TextExpr("World"), CompiledVariableExpr(0, .inline, false)]),
+        HeadingExpr(
+          .sectionAst, [TextExpr("Heading"), CompiledVariableExpr(1, .inline, false)]),
         ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0, .inline, false)]),
         RootExpr([TextExpr("Root"), CompiledVariableExpr(1, .inline, false)]),
-        TextStylesExpr(.textbf, [TextExpr("Strong"), CompiledVariableExpr(0, .inline, false)]),
+        TextStylesExpr(
+          .textbf, [TextExpr("Strong"), CompiledVariableExpr(0, .inline, false)]),
         //
-      ])
+      ],
+      layoutType: .inline)
     let t2 = Template(
       name: "t2",
       parameters: ["x"],
@@ -427,11 +467,13 @@ struct NanoPassTests {
                   ContentExpr([TextExpr("a")])
                 ]),
               ]),
-            RadicalExpr([CompiledVariableExpr(0, .inline, false)], index: [TextExpr("n")]),
+            RadicalExpr(
+              [CompiledVariableExpr(0, .inline, false)], index: [TextExpr("n")]),
             TextModeExpr([TextExpr("Text Mode")]),
             UnderOverExpr(.overline, [TextExpr("Overline")]),
           ])
-      ])
+      ],
+      layoutType: .inline)
 
     let templates = [t1, t2]
     let result = Nano.ComputeLookupTables.process(templates)

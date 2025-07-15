@@ -17,7 +17,7 @@ final class ApplyNode: Node {
 
   final override func resetCachedProperties() {
     super.resetCachedProperties()
-    _content.resetCachedProperties()
+    _expansion.resetCachedProperties()
   }
 
   // MARK: - Node(Positioning)
@@ -53,15 +53,16 @@ final class ApplyNode: Node {
 
   final override func contentDidChange() { parent?.contentDidChange() }
 
-  final override func layoutLength() -> Int { _content.layoutLength() }
+  final override func layoutLength() -> Int { _expansion.layoutLength() }
 
   final override var layoutType: LayoutType { template.layoutType }
-  final override var isDirty: Bool { _content.isDirty }
+
+  final override var isDirty: Bool { _expansion.isDirty }
 
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {
-    _content.performLayout(
+    _expansion.performLayout(
       context, fromScratch: fromScratch, atBlockEdge: atBlockEdge)
   }
 
@@ -91,7 +92,7 @@ final class ApplyNode: Node {
 
     self.template = template
     self._arguments = arguments
-    self._content = content
+    self._expansion = content
 
     try super.init(from: decoder)
 
@@ -181,10 +182,10 @@ final class ApplyNode: Node {
 
     let argument = _arguments[index]
 
-    for j in 0..<argument.variableNodes.count {
+    for j in argument.variableNodes.indices {
       let newPath = localPath(for: index, variableIndex: j, path.dropFirst())
       let newEndPath = localPath(for: index, variableIndex: j, endPath.dropFirst())
-      let continueEnumeration = _content.enumerateTextSegments(
+      let continueEnumeration = _expansion.enumerateTextSegments(
         ArraySlice(newPath), ArraySlice(newEndPath),
         context: context, layoutOffset: layoutOffset, originCorrection: originCorrection,
         type: type, options: options, using: block)
@@ -208,7 +209,7 @@ final class ApplyNode: Node {
     pickedRange: PickedRange
   ) -> Bool {
     var localTrace = Trace()
-    let modified = _content.resolveTextLocation(
+    let modified = _expansion.resolveTextLocation(
       with: point, context: context, layoutOffset: layoutOffset, trace: &localTrace,
       affinity: &affinity, pickedRange: pickedRange)
     guard modified else { return false }
@@ -247,7 +248,7 @@ final class ApplyNode: Node {
 
     // compose path for the 0-th variable of the argument
     let newPath = localPath(for: index, variableIndex: 0, path.dropFirst())
-    return _content.rayshoot(
+    return _expansion.rayshoot(
       from: ArraySlice(newPath), affinity: affinity, direction: direction,
       context: context, layoutOffset: layoutOffset)
   }
@@ -258,13 +259,13 @@ final class ApplyNode: Node {
     parent?.contentDidChange(counterChange, self)
   }
 
-  final override var counterSegment: CounterSegment? { _content.counterSegment }
+  final override var counterSegment: CounterSegment? { _expansion.counterSegment }
 
   // MARK: - ApplyNode
 
   let template: MathTemplate
   private let _arguments: Array<ArgumentNode>
-  private let _content: ContentNode
+  private let _expansion: ExpansionNode
 
   internal init?(_ template: MathTemplate, _ argumentValues: Array<ElementStore>) {
     guard template.parameterCount == argumentValues.count,
@@ -274,7 +275,7 @@ final class ApplyNode: Node {
 
     self.template = template
     self._arguments = arguments
-    self._content = content
+    self._expansion = content
 
     super.init()
     self._setUp()
@@ -299,7 +300,7 @@ final class ApplyNode: Node {
     let argumentCopies = applyNode._arguments.map({ deepCopy(from: $0) })
     let (content, arguments) = NodeUtils.applyTemplate(template.template, argumentCopies)!
 
-    self._content = content
+    self._expansion = content
     self._arguments = arguments
 
     super.init()
@@ -308,7 +309,7 @@ final class ApplyNode: Node {
 
   private final func _setUp() {
     // set parent for content
-    self._content.setParent(self)
+    self._expansion.setParent(self)
     // set apply node for arguments
     // NOTE: parent should not be set for arguments
     self._arguments.forEach({ $0.setApplyNode(self) })
@@ -321,7 +322,7 @@ final class ApplyNode: Node {
     return _arguments[index]
   }
 
-  final func getContent() -> ContentNode { _content }
+  final func getExpansion() -> ExpansionNode { _expansion }
 
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>

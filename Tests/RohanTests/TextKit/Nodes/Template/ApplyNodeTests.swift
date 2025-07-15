@@ -18,7 +18,7 @@ struct ApplyNodeTests {
     #expect(
       newtonsLaw.prettyPrint() == """
         template(newton)
-        └ content
+        └ expansion
           ├ text "a="
           └ fraction
             ├ num
@@ -52,7 +52,7 @@ struct ApplyNodeTests {
         template(philipFox)
         ├ argument #0 (x2)
         ├ argument #1 (x1)
-        └ content
+        └ expansion
           ├ variable #0
           │ └ text "Philip"
           ├ text " is a good "
@@ -90,12 +90,12 @@ struct ApplyNodeTests {
       """
       template(doubleText)
       ├ argument #0 (x2)
-      └ content
+      └ expansion
         ├ text "{"
         ├ variable #0
         │ └ template(doubleText)
         │   ├ argument #0 (x2)
-        │   └ content
+        │   └ expansion
         │     ├ text "{"
         │     ├ variable #0
         │     │ └ text "fox"
@@ -109,7 +109,7 @@ struct ApplyNodeTests {
         │ └ variable #0
         │   └ template(doubleText)
         │     ├ argument #0 (x2)
-        │     └ content
+        │     └ expansion
         │       ├ text "{"
         │       ├ variable #0
         │       │ └ text "fox"
@@ -144,7 +144,7 @@ struct ApplyNodeTests {
       template(complexFraction)
       ├ argument #0 (x2)
       ├ argument #1 (x2)
-      └ content
+      └ expansion
         └ fraction
           ├ num
           │ └ fraction
@@ -184,7 +184,7 @@ struct ApplyNodeTests {
 
     #expect(
       contentNode.prettyPrint() == """
-        content
+        expansion
         ├ text "a="
         └ fraction
           ├ num
@@ -209,7 +209,7 @@ struct ApplyNodeTests {
 
     #expect(
       contentNode.prettyPrint() == """
-        content
+        expansion
         ├ variable #0
         │ └ text "Philip"
         ├ text " is a good "

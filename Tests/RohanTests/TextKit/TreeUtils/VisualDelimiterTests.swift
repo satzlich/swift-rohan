@@ -80,8 +80,8 @@ final class VisualDelimiterTests: TextKitTestsBase {
 
     let location = TextLocation.parse("[↓0,nuc,↓0,⇒0]:0")!
     guard
-      let (range, level) = TreeUtils.visualDelimiterRange(
-        for: location, rootNode, styleSheet)
+      let (range, level) =
+        TreeUtils.visualDelimiterRange(for: location, rootNode, styleSheet)
     else {
       Issue.record("Failed to get visual delimiter range")
       return

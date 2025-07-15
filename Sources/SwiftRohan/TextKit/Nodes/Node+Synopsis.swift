@@ -156,7 +156,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     let arguments = (0..<apply.argumentCount)
       .map { i in apply.getArgument(i).accept(self, context) }
     // content
-    let content = apply.getContent().accept(self, context)
+    let content = apply.getExpansion().accept(self, context)
     return PrintUtils.compose(description, arguments + [content])
   }
 

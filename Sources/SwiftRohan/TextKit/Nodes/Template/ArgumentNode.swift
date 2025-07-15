@@ -42,6 +42,8 @@ final class ArgumentNode: Node {
 
   // MARK: - Node(Layout)
 
+  final var isBlockContainer: Bool { variableNodes.first!.isBlockContainer }
+
   final override func contentDidChange() {
     assertionFailure("should not be called")
   }

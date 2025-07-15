@@ -76,6 +76,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitElementNode(content, context)
   }
 
+  override func visit(expansion: ExpansionNode, _ context: C) {
+    _visitElementNode(expansion, context)
+  }
+
   override public func visit(heading: HeadingNode, _ context: C) {
     _visitElementNode(heading, context)
   }

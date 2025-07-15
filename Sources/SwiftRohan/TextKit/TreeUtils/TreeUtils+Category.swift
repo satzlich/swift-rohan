@@ -110,13 +110,16 @@ extension TreeUtils {
   private static func _performCount(_ summary: inout CountSummary, _ node: Node) {
     switch node {
     case let applyNode as ApplyNode:
-      _performCount(&summary, applyNode.getContent().childrenReadonly())
+      _performCount(&summary, applyNode.getExpansion().childrenReadonly())
 
     case let variableNode as VariableNode:
       _performCount(&summary, variableNode.childrenReadonly())
 
     case let contentNode as ContentNode:
       _performCount(&summary, contentNode.childrenReadonly())
+
+    case let expansionNode as ExpansionNode:
+      _performCount(&summary, expansionNode.childrenReadonly())
 
     default:
       summary.total += 1
