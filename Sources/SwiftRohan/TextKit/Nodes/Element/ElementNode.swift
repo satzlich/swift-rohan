@@ -65,7 +65,6 @@ internal class ElementNode: Node {
   internal override func layoutLength() -> Int { _layoutLength }
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
-  final override var mayEmitBlock: Bool { NodePolicy.mayEmitBlock(type) }
   final override var isDirty: Bool { _isDirty }
 
   // MARK: - Node(Codable)

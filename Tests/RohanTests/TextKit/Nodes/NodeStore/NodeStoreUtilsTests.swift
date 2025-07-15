@@ -84,11 +84,11 @@ struct NodeStoreUtilsTests {
       "operatorname", "oplus", "oslash", "otimes", "overbar", "overbrace", "overbracket",
       "overleftarrow", "overleftrightarrow", "overline", "overparen", "overrightarrow",
       "overset", "owns", "paragraph", "parallel", "parlist", "partial", "perp", "phi",
-      "pi",
-      "pitchfork", "pm", "pmatrix", "pmod", "pounds", "prec", "precapprox", "preccurlyeq",
-      "preceq", "precnapprox", "precneqq", "precnsim", "precsim", "prime", "prod",
-      "projlim", "propto", "psi", "qprime", "qquad", "quad", "rVert", "rangle", "rbrace",
-      "rbrack", "rceil", "restriction", "rfloor", "rgroup", "rhd", "rho", "rightarrow",
+      "pi", "pitchfork", "pm", "pmatrix", "pmod", "pounds", "prec", "precapprox",
+      "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim", "prime",
+      "prod", "projlim", "proof", "propto", "psi", "qprime", "qquad", "quad", "rVert",
+      "rangle", "rbrace", "rbrack", "rceil", "restriction", "rfloor", "rgroup", "rhd",
+      "rho", "rightarrow",
       "rightarrowtail", "rightharpoondown", "rightharpoonup", "rightleftarrows",
       "rightleftharpoons", "rightouterjoin", "rightrightarrows", "rightsquigarrow",
       "rightthreetimes", "risingdotseq", "rmoustache", "rtimes", "rvert",
@@ -102,6 +102,7 @@ struct NodeStoreUtilsTests {
       "succnapprox", "succneqq", "succnsim", "succsim", "sum", "sup", "supset",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
       "tanh", "tau", "tbinom", "text", "textbf", "textit", "textstyle", "texttt", "tfrac",
+      "theorem",
       "therefore", "theta", "thickspace", "thinspace", "tilde", "times", "to", "top",
       "triangle", "triangledown", "triangleleft", "trianglelefteq", "triangleq",
       "triangleright", "trianglerighteq", "trprime", "twoheadleftarrow",
@@ -119,7 +120,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 626)
+    #expect(tags.count == 628)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

@@ -54,8 +54,6 @@ final class MultilineNode: ArrayNode {
 
   final override var isBlock: Bool { true }
 
-  final override var mayEmitBlock: Bool { true }
-
   final override func performLayout(
     _ context: any LayoutContext, fromScratch: Bool, atBlockEdge: Bool
   ) -> Int {

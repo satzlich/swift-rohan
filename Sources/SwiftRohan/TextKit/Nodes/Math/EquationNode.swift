@@ -38,8 +38,6 @@ final class EquationNode: MathNode {
 
   final override var isBlock: Bool { subtype.isBlock }
 
-  final override var mayEmitBlock: Bool { subtype.isBlock }
-
   final override var isDirty: Bool {
     nucleus.isDirty || _countProviderState?.isCounterDirty == true
   }

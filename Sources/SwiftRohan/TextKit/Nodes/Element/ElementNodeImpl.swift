@@ -119,7 +119,7 @@ internal class ElementNodeImpl: ElementNode {
       let placeholder = String(NodePolicy.placeholder(for: self.type))
       let sum =
         StringReconciler.insertForward(new: placeholder, context: context, self)
-      if self.mayEmitBlock {
+      if self.isBlock {
         context.addParagraphStyleBackward(sum, self)
       }
       return sum
@@ -142,7 +142,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    let mayEmitBlock = self.mayEmitBlock
+    let mayEmitBlock = self.isBlock
 
     var sum = 0
     var segmentLength = 0
@@ -212,7 +212,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    let mayEmitBlock = self.mayEmitBlock
+    let mayEmitBlock = self.isBlock
 
     var sum = 0
     var segmentLength = 0
@@ -281,7 +281,7 @@ internal class ElementNodeImpl: ElementNode {
 
     assert(_children.isEmpty == false)
 
-    let mayEmitBlock = self.mayEmitBlock
+    let mayEmitBlock = self.isBlock
 
     let (current, original) = _computeExtendedRecords(atBlockEdge: atBlockEdge)
 

@@ -29,19 +29,6 @@ enum NodePolicy {
     ].contains(nodeType)
   }
 
-  /// Returns true if the list of layouts produced by the node may contain blocks.
-  /// - Precondition: the node must be **ElementNode**.
-  @inlinable @inline(__always)
-  static func mayEmitBlock(_ nodeType: NodeType) -> Bool {
-    [
-      .heading,
-      .itemList,
-      .paragraph,
-      .parList,
-      .root,
-    ].contains(nodeType)
-  }
-
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inlinable @inline(__always)
   static func isTopLevelNode(_ node: Node) -> Bool {
@@ -49,7 +36,7 @@ enum NodePolicy {
       return true
     }
     else if let applyNode = node as? ApplyNode,
-      applyNode.getContent().childrenReadonly().allSatisfy { isTopLevelNode($0) }
+      applyNode.getContent().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
     {
       return true
     }
