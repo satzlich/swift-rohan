@@ -109,7 +109,7 @@ struct NewlineArray: Equatable, Hashable {
     let i = range.lowerBound - 1
     let newValue: Bool =
       (i < _isNewline.count - 1)
-      ? LayoutType.newlineBetween(_isBlock[i], _isBlock[i + 1])
+      ? LayoutType.isNewline(_isBlock[i], _isBlock[i + 1])
       : false
     trailingCount += newValue.intValue - _isNewline[i].intValue
     _isNewline[i] = newValue
@@ -190,8 +190,8 @@ struct NewlineArray: Equatable, Hashable {
   private static func computeNewlines(
     previous: LayoutType?, current isBlock: LayoutType, next: LayoutType?
   ) -> (previous: Bool?, current: Bool) {
-    let previous = previous.map { LayoutType.newlineBetween($0, isBlock) }
-    let current = next.map { LayoutType.newlineBetween(isBlock, $0) } ?? false
+    let previous = previous.map { LayoutType.isNewline($0, isBlock) }
+    let current = next.map { LayoutType.isNewline(isBlock, $0) } ?? false
     return (previous, current)
   }
 
@@ -211,7 +211,7 @@ struct NewlineArray: Equatable, Hashable {
 
     // insertNewline of previous neighbour
     let previous: Bool? = previous.map {
-      LayoutType.newlineBetween($0, isBlock.first!)
+      LayoutType.isNewline($0, isBlock.first!)
     }
 
     if let next {
@@ -239,7 +239,7 @@ struct NewlineArray: Equatable, Hashable {
     bitArray.reserveCapacity(isBlock.count)
     bitArray.append(
       contentsOf: isBlock.lazy.adjacentPairs()
-        .map { (lhs, rhs) in LayoutType.newlineBetween(lhs, rhs) })
+        .map { (lhs, rhs) in LayoutType.isNewline(lhs, rhs) })
     bitArray.append(false)
     return bitArray
   }

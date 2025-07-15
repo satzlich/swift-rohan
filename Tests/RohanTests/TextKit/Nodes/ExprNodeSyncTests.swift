@@ -331,7 +331,7 @@ final class ExprNodeSyncTests {
       let applyNode = ApplyNode(MathTemplate.pmod, [[]])!
       let json =
         """
-        {"arguments":[[]],"template":{"command":"pmod","subtype":"commandCall"},"type":"apply"}
+        {"arguments":[[]],"template":{"command":"pmod"},"type":"apply"}
         """
       try testRoundTrip(applyNode, json)
     }

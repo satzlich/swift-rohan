@@ -2,13 +2,14 @@
 
 enum MathTemplateSamples {
   nonisolated(unsafe) static let newtonsLaw =
-    MathTemplate(CompiledSamples.newtonsLaw, subtype: .commandCall)
+    MathTemplate(CompiledSamples.newtonsLaw, .commandCall, .inline)
   nonisolated(unsafe) static let bifun =
-    MathTemplate(CompiledSamples.bifun, subtype: .commandCall)
+    MathTemplate(CompiledSamples.bifun, .commandCall, .inline)
   nonisolated(unsafe) static let complexFraction =
-    MathTemplate(CompiledSamples.complexFraction, subtype: .commandCall)
+    MathTemplate(
+      CompiledSamples.complexFraction, .commandCall, .inline)
   nonisolated(unsafe) static let philipFox =
-    MathTemplate(CompiledSamples.philipFox, subtype: .commandCall)
+    MathTemplate(CompiledSamples.philipFox, .commandCall, .inline)
   nonisolated(unsafe) static let doubleText =
-    MathTemplate(CompiledSamples.doubleText, subtype: .commandCall)
+    MathTemplate(CompiledSamples.doubleText, .commandCall, .inline)
 }

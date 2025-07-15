@@ -55,6 +55,7 @@ final class ApplyNode: Node {
 
   final override func layoutLength() -> Int { _content.layoutLength() }
 
+  final override var layoutType: LayoutType { template.layoutType }
   final override var isDirty: Bool { _content.isDirty }
 
   final override func performLayout(

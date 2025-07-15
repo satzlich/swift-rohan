@@ -12,7 +12,8 @@ final class VariableExpr: Expr {
   }
 
   convenience init(_ name: String) {
-    self.init(Identifier(name))
+    let name = Identifier(name)
+    self.init(name)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
