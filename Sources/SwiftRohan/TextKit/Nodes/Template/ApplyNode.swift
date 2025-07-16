@@ -20,6 +20,14 @@ final class ApplyNode: Node {
     _expansion.resetCachedProperties()
   }
 
+  final class func selector(command: String) -> TargetSelector {
+    TargetSelector(.apply, PropertyMatcher(.command, .string(command)))
+  }
+
+  final override func selector() -> TargetSelector {
+    Self.selector(command: template.command)
+  }
+
   // MARK: - Node(Positioning)
 
   final override func getChild(_ index: RohanIndex) -> ArgumentNode? {

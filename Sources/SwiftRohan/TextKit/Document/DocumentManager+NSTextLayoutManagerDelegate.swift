@@ -39,6 +39,11 @@ extension DocumentManager: NSTextLayoutManagerDelegate {
         decorators.append(decorator)
       }
 
+      if let verticalRibbon = attribute(forKey: .rhVerticalRibbon) as? NSColor {
+        let decorator = VerticalRibbonFragmentDecorator(color: verticalRibbon)
+        decorators.append(decorator)
+      }
+
       if decorators.isEmpty == false {
         return DecoratedTextLayoutFragment(
           textElement: textElement, range: textElement.elementRange,

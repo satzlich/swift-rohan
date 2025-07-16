@@ -133,6 +133,10 @@ public enum StyleSheets {
       EquationNode.selector(isBlock: true): [
         ParagraphProperty.textAlignment: .textAlignment(.center)
       ],
+      // proof
+      ApplyNode.selector(command: MathTemplate.proof.command): [
+        ParagraphProperty.verticalRibbon: .color(Color.lightGray)
+      ],
     ]
 
     return styleRules
@@ -164,6 +168,7 @@ public enum StyleSheets {
       ParagraphProperty.listLevel: .integer(0),
       ParagraphProperty.paragraphSpacing: .float(0.5 * textSize.floatValue),
       ParagraphProperty.textAlignment: .textAlignment(.justified),
+      ParagraphProperty.verticalRibbon: .none,
       // page (a4)
       PageProperty.width: .absLength(.mm(210)),
       PageProperty.height: .absLength(.mm(297)),
