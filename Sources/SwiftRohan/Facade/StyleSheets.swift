@@ -90,7 +90,6 @@ public enum StyleSheets {
     let h3Size = FontSize(textSize.floatValue + 2)
 
     let emphasisColor = Color.brown
-    let strongColor = Color.brown
 
     let styleRules: StyleRules = [
       // H1
@@ -125,10 +124,6 @@ public enum StyleSheets {
       // emph
       TextStylesNode.selector(command: TextStyles.emph.command): [
         TextProperty.foregroundColor: .color(emphasisColor)
-      ],
-      // textbf
-      TextStylesNode.selector(command: TextStyles.textbf.command): [
-        TextProperty.foregroundColor: .color(strongColor)
       ],
       // texttt
       TextStylesNode.selector(command: TextStyles.texttt.command): [

@@ -58,6 +58,8 @@ extension MathTemplate {
     stackrel,
     underset,
     theorem,
+    lemma,
+    corollary,
     proof,
   ]
 
