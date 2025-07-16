@@ -19,12 +19,13 @@ final class ListItemTextLayoutFragment: NSTextLayoutFragment {
     super.draw(at: point, in: context)
 
     context.saveGState()
+    defer { context.restoreGState() }
+
     var position = _precomputedPosition
     position.x += point.x
     position.y += point.y
     itemMarker.draw(at: position)
     context.textMatrix = .identity
-    context.restoreGState()
   }
 
   init(

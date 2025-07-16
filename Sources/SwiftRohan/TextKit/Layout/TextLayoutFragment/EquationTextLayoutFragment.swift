@@ -9,10 +9,10 @@ final class EquationTextLayoutFragment: NSTextLayoutFragment {
   private let _precomputedPosition: CGPoint
 
   final override func draw(at point: CGPoint, in context: CGContext) {
+    super.draw(at: point, in: context)
+
     context.saveGState()
     defer { context.restoreGState() }
-
-    super.draw(at: point, in: context)
 
     var position = _precomputedPosition
     let glyphOrigin = self.textLineFragments.first?.glyphOrigin ?? .zero
