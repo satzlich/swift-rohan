@@ -158,16 +158,18 @@ extension MathTemplate {
   nonisolated(unsafe) static let theorem: MathTemplate =
     _createTheoremEnvironment(name: "theorem", title: "Theorem")
 
+  nonisolated(unsafe) static let lemma: MathTemplate =
+    _createTheoremEnvironment(name: "lemma", title: "Lemma")
+
+  nonisolated(unsafe) static let corollary: MathTemplate =
+    _createTheoremEnvironment(name: "corollary", title: "Corollary")
+
   nonisolated(unsafe) static let proof: MathTemplate = {
     let template = Template(
       name: "proof", parameters: ["content"],
       body: [
         ParListExpr([
-          TextStylesExpr(
-            .textit,
-            [
-              TextExpr("Proof. ")
-            ]),
+          TextStylesExpr(.textit, [TextExpr("Proof. ")]),
           VariableExpr("content", .softBlock, true),
         ])
       ],

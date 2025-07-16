@@ -1069,7 +1069,7 @@ public final class DocumentManager: NSObject {
             }
           }
           else {
-            if node.layoutType == .block {
+            if node.layoutType.mayEmitBlock {
               return .blockBoundary
             }
             else {
@@ -1114,7 +1114,7 @@ public final class DocumentManager: NSObject {
             trace.emplaceBack(textNode, .index(textNode.length))
             continue
           }
-          else if child.layoutType == .block {
+          else if child.layoutType.mayEmitBlock {
             return .blockBoundary
           }
           else {
@@ -1124,7 +1124,7 @@ public final class DocumentManager: NSObject {
         }
         else {
           // for offset == 0 and node is block, blockBoundary is a safe default.
-          if node.layoutType == .block {
+          if node.layoutType.mayEmitBlock {
             return .blockBoundary
           }
           else {
