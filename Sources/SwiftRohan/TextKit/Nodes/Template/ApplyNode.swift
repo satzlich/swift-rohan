@@ -20,7 +20,7 @@ final class ApplyNode: Node {
     _expansion.resetCachedProperties()
   }
 
-  final class func selector(command: String) -> TargetSelector {
+  static func selector(command: String) -> TargetSelector {
     TargetSelector(.apply, PropertyMatcher(.command, .string(command)))
   }
 
