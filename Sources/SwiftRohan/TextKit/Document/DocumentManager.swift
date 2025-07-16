@@ -595,7 +595,7 @@ public final class DocumentManager: NSObject {
     //  When an empty paragraph is selected from beyond the right edge, the
     //  affinity is resolved to upstream, but it should be downstream.
     if let last = trace.last,
-      last.node.layoutType == .block,
+      last.node.layoutType.mayEmitBlock,
       last.index == .index(0)
     {
       affinity = .downstream

@@ -190,7 +190,7 @@ extension MathTemplate {
             [
               TextExpr("\(title) "),
               CounterExpr(.theorem),
-              TextExpr(" "),
+              TextExpr(". "),
             ]),
           VariableExpr("content", textStyles: .textit, .softBlock, true),
         ])

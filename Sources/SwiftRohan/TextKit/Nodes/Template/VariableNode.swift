@@ -21,7 +21,8 @@ final class VariableNode: ElementNodeImpl {
       do {
         let key = InternalProperty.nestedLevel
         let value = key.resolveValue(current, styleSheet).integer()!
-        let level = value + (1 - nestedLevelDelta % 2)
+        let parity = nestedLevelDelta % 2
+        let level = value + (isBlockContainer ? parity : (1 - parity))
         current[key] = .integer(level)
       }
 
