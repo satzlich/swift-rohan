@@ -531,7 +531,7 @@ extension EquationNode {
     do {
       let x: CGFloat = paragraphProperty.headIndent
       let width: CGFloat = containerWidth - x - Rohan.fragmentPadding
-      attributes[.rhHorizontalBounds] = HorizontalBounds(x, width)
+      attributes[.rhHorizontalBounds] = HorizontalBounds(x: x, width: width)
     }
 
     // text property
