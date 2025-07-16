@@ -34,6 +34,7 @@ internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
   case headIndent
   case paragraphSpacing
   case textAlignment
+  case verticalRibbon
 
   // root
   case width

@@ -151,7 +151,20 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       return _composeControlSeqCall(command, arguments: components, context)
 
     case .environmentUse:
-      preconditionFailure("TODO: handle environment use")
+      let envName = NameToken(apply.template.command)!
+      if apply.argumentCount == 1 {
+        let argument = apply.getArgument(0)
+        let children = _visitChildren(
+          argument.getArgumentValue_readonly(), context,
+          isParagraphList: argument.isBlockContainer)
+        guard let childrenSyntax = children.success()
+        else { return .failure(SatzError(.ExportLatexFailure)) }
+        let envSyntax = EnvironmentSyntax(name: envName, wrapped: childrenSyntax)
+        return .success(StreamSyntax([.environment(envSyntax)]))
+      }
+      else {
+        return .failure(SatzError(.ExportLatexFailure))
+      }
 
     case .codeSnippet:
       preconditionFailure("TODO: handle code snippets")

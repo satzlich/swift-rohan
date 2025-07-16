@@ -97,7 +97,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       for (i, location) in locations.enumerated() {
         // print("\"\(location.description)\",")
         #expect(location.value.description == expected[i], "i=\(i)")
-        if [1, 16, 31].contains(i) {  // paragraph beginning.
+        if [1, 6, 16, 18, 31].contains(i) {  // paragraph beginning.
           #expect(location.affinity == .downstream, "i=\(i)")
         }
         else {
@@ -161,7 +161,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       for (i, location) in locations.enumerated() {
         // print("\"\(location.description)\",")
         #expect(location.value.description == expected[i], "i=\(i)")
-        if [26].contains(i) {
+        if [14, 26].contains(i) {
           #expect(location.affinity == .upstream, "i=\(i)")
         }
         else {
@@ -236,11 +236,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [([↓1,↓0]:0, upstream), \
+          [([↓1,↓0]:0, downstream), \
           ([↓0,↓0]:24, downstream), \
           ([↓1,↓0]:40, upstream), \
           ([↓0,↓0]:25, downstream), \
-          (anchor: [↓0,↓0]:25; focus: [↓1,↓0]:0, upstream; range: []:0..<[↓1,↓0]:0), \
+          (anchor: [↓0,↓0]:25; focus: [↓1,↓0]:0, downstream; range: []:0..<[↓1,↓0]:0), \
           (focus: [↓0,↓0]:24, downstream; anchor: [↓0,↓0]:25; range: [↓0,↓0]:24..<[↓0,↓0]:25), \
           (anchor: [↓0,↓0]:25; focus: [↓1,↓0]:40, upstream; range: []:0..<[↓1,↓0]:40), \
           (focus: []:0, downstream; anchor: [↓0,↓0]:25; range: []:0..<[]:1)]

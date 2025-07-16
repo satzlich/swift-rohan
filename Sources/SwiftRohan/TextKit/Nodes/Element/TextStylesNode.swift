@@ -15,7 +15,7 @@ final class TextStylesNode: ElementNodeImpl {
 
   final override class var type: NodeType { .textStyles }
 
-  final class func selector(command: String) -> TargetSelector {
+  static func selector(command: String) -> TargetSelector {
     TargetSelector(.textStyles, PropertyMatcher(.command, .string(command)))
   }
 

@@ -11,4 +11,6 @@ extension NSAttributedString.Key {
 
   static let rhEquationNumber = NSAttributedString.Key("rhEquationNumber")  // NSAttributedString
   static let rhHorizontalBounds = NSAttributedString.Key("rhHorizontalBounds")  // HorizontalBounds
+
+  static let rhVerticalRibbon = NSAttributedString.Key("rhVerticalRibbon")  // NSColor
 }

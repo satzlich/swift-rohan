@@ -38,8 +38,8 @@ struct NodeStoreUtilsTests {
       "cases", "cdot", "cdotp", "cdots", "centerdot", "cfrac", "check", "checkmark",
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "clubsuit", "colon",
-      "complement", "cong", "coprod", "copyright", "cos", "cosh", "cot", "coth",
-      "counter", "csc",
+      "complement", "cong", "coprod", "copyright", "corollary", "cos", "cosh", "cot",
+      "coth", "counter", "csc",
       "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge", "curvearrowleft",
       "curvearrowright", "dag", "dagger", "daleth", "dashleftarrow", "dashrightarrow",
       "dashv", "dbinom", "ddag", "ddagger", "ddddot", "dddot", "ddot", "ddots", "deg",
@@ -63,8 +63,8 @@ struct NodeStoreUtilsTests {
       "lambda", "land", "langle", "lbrace", "lbrack", "lceil", "ldotp", "ldots", "le",
       "leadsto", "leftarrow", "leftarrowtail", "leftharpoondown", "leftharpoonup",
       "leftleftarrows", "leftouterjoin", "leftright", "leftrightarrow", "leftrightarrows",
-      "leftrightharpoons", "leftrightsquigarrow", "leftthreetimes", "leq", "leqq",
-      "leqslant", "lessapprox", "lessdot", "lesseqgtr", "lesseqqgtr", "lessgtr",
+      "leftrightharpoons", "leftrightsquigarrow", "leftthreetimes", "lemma", "leq",
+      "leqq", "leqslant", "lessapprox", "lessdot", "lesseqgtr", "lesseqqgtr", "lessgtr",
       "lesssim", "lfloor", "lg", "lgroup", "lhd", "lim", "liminf", "limits", "limsup",
       "linebreak", "ll", "llcorner", "lll", "llless", "lmoustache", "ln", "lnapprox",
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
@@ -120,7 +120,7 @@ struct NodeStoreUtilsTests {
       "xrightharpoondown", "xrightharpoonup", "xrightleftharpoons", "yen", "zeta",
     ]
 
-    #expect(tags.count == 628)
+    #expect(tags.count == 630)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
