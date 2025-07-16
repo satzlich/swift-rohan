@@ -1,11 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
 enum LayoutType: UInt8, Codable, CaseIterable {
-  case inline
+  case inline = 0
   /// hard block.
-  case hardBlock
+  case hardBlock = 1
   /// soft block
-  case softBlock
+  case softBlock = 2
 
   /// Returns true if a newline should be inserted between two layout types.
   @inlinable @inline(__always)
