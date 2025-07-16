@@ -135,7 +135,7 @@ public enum StyleSheets {
       ],
       // proof
       ApplyNode.selector(command: MathTemplate.proof.command): [
-        ParagraphProperty.verticalRibbon: .color(Color.lightGray)
+        ParagraphProperty.verticalRibbon: .color(Color.lightGray.withAlpha(0.5))
       ],
     ]
 

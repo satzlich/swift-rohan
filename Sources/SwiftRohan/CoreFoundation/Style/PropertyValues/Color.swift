@@ -22,6 +22,10 @@ public struct Color: Equatable, Hashable, Sendable {
     self.nsColor = nsColor
   }
 
+  func withAlpha(_ alpha: Double) -> Color {
+    Color(nsColor.withAlphaComponent(alpha))
+  }
+
   public static let clear = Color(NSColor.clear)
   public static let black = Color(NSColor.black)
   public static let white = Color(NSColor.white)
