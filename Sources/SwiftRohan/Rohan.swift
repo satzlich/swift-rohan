@@ -71,9 +71,14 @@ extension Rohan {
         \usepackage[usenames]{color}
         \usepackage{amssymb}
         \usepackage{amsmath}
+        \usepackage{amsthm}
         \usepackage[utf8]{inputenc}
         \usepackage{mathtools}
         \usepackage{unicode-math}
+
+        \newtheorem{theorem}{Theorem}
+        \newtheorem{lemma}{Lemma}
+        \newtheorem{corollary}{Corollary}
 
         %\setlength\parindent{0pt}
         \setlength{\parskip}{0.5em}
