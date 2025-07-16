@@ -175,7 +175,7 @@ extension MathTemplate {
           VariableExpr("content", .softBlock, true),
         ])
       ],
-      layoutType: .block)
+      layoutType: .hardBlock)
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled, .environmentUse)
   }()
@@ -195,7 +195,7 @@ extension MathTemplate {
           VariableExpr("content", textStyles: .textit, .softBlock, true),
         ])
       ],
-      layoutType: .block)
+      layoutType: .hardBlock)
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled, .environmentUse)
   }

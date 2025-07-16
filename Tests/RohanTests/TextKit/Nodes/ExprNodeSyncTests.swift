@@ -324,7 +324,7 @@ final class ExprNodeSyncTests {
       let variable = VariableNode(1, .textit, .inline, false)
       let json =
         """
-        {"argIndex":1,"children":[],"isBlockContainer":false,"layoutType":1,"levelDelta":0,"textStyles":"textit","type":"variable"}
+        {"argIndex":1,"children":[],"isBlockContainer":false,"layoutType":0,"levelDelta":0,"textStyles":"textit","type":"variable"}
         """
       try testRoundTrip(variable, json)
     }

@@ -19,8 +19,8 @@ enum EquationSubtype: String, Codable {
   var layoutType: LayoutType {
     switch self {
     case .inline: .inline
-    case .display: .block
-    case .equation: .block
+    case .display: .hardBlock
+    case .equation: .hardBlock
     }
   }
 
