@@ -48,7 +48,7 @@ struct NewlineArray: Equatable, Hashable {
   internal func value(before index: Int, atBlockEdge: Bool) -> Bool {
     precondition(0 <= index && index < _isNewline.count)
     return index == 0
-      ? _layoutTypes[0] == .block && !atBlockEdge
+      ? _layoutTypes[0] == .block && !atBlockEdge  // for softBlock and inline, no newline.
       : _isNewline[index - 1]
   }
 
