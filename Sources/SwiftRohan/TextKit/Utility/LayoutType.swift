@@ -1,9 +1,9 @@
 // Copyright 2024-2025 Lie Yan
 
 enum LayoutType: UInt8, Codable, CaseIterable {
-  /// (hard) block.
-  case block
   case inline
+  /// hard block.
+  case hardBlock
   /// soft block
   case softBlock
 
@@ -11,7 +11,7 @@ enum LayoutType: UInt8, Codable, CaseIterable {
   @inlinable @inline(__always)
   static func isNewline(_ lhs: LayoutType, _ rhs: LayoutType) -> Bool {
     switch (lhs, rhs) {
-    case (.block, _), (_, .block): true
+    case (.hardBlock, _), (_, .hardBlock): true
     case (.softBlock, .softBlock): true
     case _: false
     }
@@ -20,7 +20,7 @@ enum LayoutType: UInt8, Codable, CaseIterable {
   @inlinable @inline(__always)
   var mayEmitBlock: Bool {
     switch self {
-    case .block: true
+    case .hardBlock: true
     case .softBlock: true
     case .inline: false
     }

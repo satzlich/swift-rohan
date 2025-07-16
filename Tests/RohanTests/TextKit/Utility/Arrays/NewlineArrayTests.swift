@@ -17,7 +17,7 @@ struct NewlineArrayTests {
     }
 
     do {
-      let isBlock: Array<LayoutType> = [.block]
+      let isBlock: Array<LayoutType> = [.hardBlock]
       let newlines = NewlineArray(isBlock)
       #expect(newlines.trailingCount == 0)
       #expect(newlines.asBitArray == [false])
@@ -25,7 +25,7 @@ struct NewlineArrayTests {
     }
 
     do {
-      let newlines = NewlineArray([.block, .inline, .block])
+      let newlines = NewlineArray([.hardBlock, .inline, .hardBlock])
       #expect(newlines.first == true)
       #expect(newlines.last == false)
 
@@ -36,7 +36,7 @@ struct NewlineArrayTests {
 
   @Test
   static func test_Manipulation() {
-    let isBlock: Array<LayoutType> = [.inline, .inline, .block, .inline, .block, .block]
+    let isBlock: Array<LayoutType> = [.inline, .inline, .hardBlock, .inline, .hardBlock, .hardBlock]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
@@ -47,7 +47,7 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // insert collection
-    newlines.insert(contentsOf: [.block, .inline], at: 1)
+    newlines.insert(contentsOf: [.hardBlock, .inline], at: 1)
     // [false, ꞈ true, false, ꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
     #expect(newlines.trailingCount == 6)
@@ -78,7 +78,7 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // set value
-    newlines.setValue(layoutType: .block, at: 1)
+    newlines.setValue(layoutType: .hardBlock, at: 1)
     // [ false, true, true,  false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
@@ -86,19 +86,19 @@ struct NewlineArrayTests {
 
   @Test
   static func testSetValue() {
-    let isBlock: Array<LayoutType> = [.inline, .inline, .block, .inline, .block, .block]
+    let isBlock: Array<LayoutType> = [.inline, .inline, .hardBlock, .inline, .hardBlock, .hardBlock]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
 
     // set value
-    newlines.setValue(layoutType: .block, at: 1)
+    newlines.setValue(layoutType: .hardBlock, at: 1)
     // [ false, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
 
     // set value at first position
-    newlines.setValue(layoutType: .block, at: 0)
+    newlines.setValue(layoutType: .hardBlock, at: 0)
     // [ true, true, true, false, true, true  ]
     #expect(newlines.asBitArray == [true, true, true, true, true, false])
     #expect(newlines.trailingCount == 5)
@@ -118,13 +118,13 @@ struct NewlineArrayTests {
 
   @Test
   static func testReplace() {
-    let isBlock: Array<LayoutType> = [.inline, .inline, .block, .inline, .block, .block]
+    let isBlock: Array<LayoutType> = [.inline, .inline, .hardBlock, .inline, .hardBlock, .hardBlock]
     var newlines = NewlineArray(isBlock)
     #expect(newlines.asBitArray == [false, true, true, true, true, false])
     #expect(newlines.trailingCount == 4)
 
     // replace empty
-    newlines.replaceSubrange(1..<1, with: [.block, .inline])
+    newlines.replaceSubrange(1..<1, with: [.hardBlock, .inline])
     // [false, ꞈ true, false, ꞈ false, true, false, true, true]
     #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
     #expect(newlines.trailingCount == 6)
@@ -136,7 +136,7 @@ struct NewlineArrayTests {
     #expect(newlines.trailingCount == 4)
 
     // replace final segment
-    newlines.replaceSubrange(4..<6, with: [.block])
+    newlines.replaceSubrange(4..<6, with: [.hardBlock])
     // [false, false, true, true, ꞈ true ꞈ]
     #expect(newlines.asBitArray == [false, true, true, true, false])
     #expect(newlines.trailingCount == 3)

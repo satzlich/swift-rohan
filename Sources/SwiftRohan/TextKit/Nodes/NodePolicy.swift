@@ -22,7 +22,7 @@ enum NodePolicy {
   static func layoutType(_ nodeType: NodeType) -> LayoutType {
     switch nodeType {
     case .heading, .itemList, .parList, .root:
-      return .block
+      return .hardBlock
     case .paragraph:
       return .softBlock
     case _:
@@ -113,7 +113,7 @@ enum NodePolicy {
       .textStyles,
       .unknown,
     ].contains(node.type)
-      || (isEquationNode(node) && node.layoutType == .block)  // block math
+      || (isEquationNode(node) && node.layoutType == .hardBlock)  // block math
   }
 
   @inlinable @inline(__always)
