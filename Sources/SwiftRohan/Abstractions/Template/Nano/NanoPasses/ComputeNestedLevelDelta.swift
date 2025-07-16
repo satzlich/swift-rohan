@@ -19,8 +19,8 @@ extension Nano {
   }
 
   private final class NestedLevelDeltaRewriter: ExpressionRewriter<Int> {
-    override func nextLevelContext(_ node: Expr, _ context: Int) -> Int {
-      NodePolicy.shouldIncreaseLevel(node.type)
+    override func nextLevelContext(_ expr: Expr, _ context: Int) -> Int {
+      NodePolicy.shouldIncreaseLevel(expr.type)
         ? context + 1
         : context
     }
