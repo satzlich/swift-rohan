@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ContainerType {
+enum ContainerType: CaseIterable {
   case inline
   case block
   /// can contain inline or block elements

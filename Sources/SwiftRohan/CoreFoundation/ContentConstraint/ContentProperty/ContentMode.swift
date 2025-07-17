@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ContentMode: String, Comparable, Codable {
+enum ContentMode: String, Comparable, Codable, CaseIterable {
   case text
   case math
   /// can be either text or math

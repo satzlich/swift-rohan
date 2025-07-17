@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ContentType {
+enum ContentType: CaseIterable {
   case inline
   case block
 }

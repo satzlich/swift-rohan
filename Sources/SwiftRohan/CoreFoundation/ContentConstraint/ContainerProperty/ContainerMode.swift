@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ContainerMode {
+enum ContainerMode: CaseIterable {
   case text
   case math
 }

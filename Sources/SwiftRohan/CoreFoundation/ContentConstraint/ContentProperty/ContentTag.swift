@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ContentTag: OptionSet {
+struct ContentTag: OptionSet, CaseIterable {
   var rawValue: UInt32
 
   init(rawValue: UInt32) {
@@ -11,6 +11,11 @@ struct ContentTag: OptionSet {
 
   static let plaintext = ContentTag(rawValue: 1 << 0)
   static let formula = ContentTag(rawValue: 1 << 1)
+
+  static let allCases: Array<ContentTag> = [
+    .plaintext,
+    .formula,
+  ]
 }
 
 extension NodeType {

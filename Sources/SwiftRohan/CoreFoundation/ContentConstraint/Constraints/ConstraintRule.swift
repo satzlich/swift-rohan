@@ -4,26 +4,26 @@ import Foundation
 
 struct RuleSubject {
   let nodeType: NodeType
-  let predicate: Optional<RulePredicate>
+  let predicate: Optional<NodePredicate>
 
-  init(_ nodeType: NodeType, _ predicate: RulePredicate? = nil) {
+  init(_ nodeType: NodeType, _ predicate: NodePredicate? = nil) {
     self.nodeType = nodeType
     self.predicate = predicate
   }
 }
 
-enum RulePredicate {
-  /// True if the tag of the subject is in the given set.
+enum NodePredicate {
+  /// True if the content tag of subject is in the given set.
   case contentTag(ContentTag)
-  /// True if the node type of the subject equals the given node type.
+  /// True if the node type of subject equals the given node type.
   case nodeType(NodeType)
-  /// True if the content type of the subject equals the given content type.
+  /// True if the content type of subject equals the given content type.
   case contentType(ContentType)
 }
 
 enum ConstraintRule {
-  case canContainOnly(_ subject: NodeType, _ object: RulePredicate)
-  case mustBeContainedIn(_ subject: RuleSubject, _ object: NodeType)
+  case canContainOnly(_ container: NodeType, _ content: NodePredicate)
+  case mustBeContainedIn(_ content: RuleSubject, _ container: NodeType)
 }
 
 let contentConstaints: Array<ConstraintRule> = [
