@@ -221,7 +221,7 @@ enum NodePolicy {
 
     @inline(__always)
     func isMathSymbol(_ node: Node) -> Bool {
-      (node as? NamedSymbolNode)?.namedSymbol.subtype == .math
+      (node as? NamedSymbolNode)?.namedSymbol.contentMode == .math
     }
   }
 

@@ -130,7 +130,7 @@ extension TreeUtils {
         return
       }
       else if let namedSymbolNode = node as? NamedSymbolNode {
-        switch namedSymbolNode.namedSymbol.subtype {
+        switch namedSymbolNode.namedSymbol.contentMode {
         case .universal:
           summary.universalSymbols += 1
           return
