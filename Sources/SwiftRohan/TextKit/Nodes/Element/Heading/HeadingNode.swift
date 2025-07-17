@@ -5,6 +5,7 @@ import Foundation
 
 final class HeadingNode: ElementNodeImpl {
   // MARK: - Node
+
   final override class var type: NodeType { .heading }
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }

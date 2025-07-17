@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ContainerType: CaseIterable {
+enum ContainerType: String, Codable, CaseIterable {
   case inline
   case block
   /// can contain inline or block elements
@@ -26,15 +26,15 @@ extension NodeType {
   var containerType: ContainerType? {
     switch self {
     // Misc
-    case .counter: nil
-    case .linebreak: nil
-    case .namedSymbol: nil
-    case .text: nil
-    case .unknown: nil
+    case .counter: nil  // non-container
+    case .linebreak: nil  // non-container
+    case .namedSymbol: nil  // non-container
+    case .text: nil  // non-container
+    case .unknown: nil  // non-container
 
     // Elements
-    case .content: nil
-    case .expansion: nil
+    case .content: nil  // inherited
+    case .expansion: nil  // inherited
     case .heading: .inline
     case .itemList: .block
     case .paragraph: .mixed
@@ -59,10 +59,10 @@ extension NodeType {
     case .underOver: .inline
 
     // Template
-    case .apply: nil
-    case .argument: nil
-    case .cVariable: nil
-    case .variable: nil
+    case .apply: nil  // unused
+    case .argument: nil  // unused
+    case .cVariable: nil  // assigned or inherited
+    case .variable: nil  // assigned or inherited
     }
   }
 }

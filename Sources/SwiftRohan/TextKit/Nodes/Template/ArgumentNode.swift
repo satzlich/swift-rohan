@@ -5,6 +5,12 @@ import _RopeModule
 final class ArgumentNode: Node {
   // MARK: - Node
 
+  final override class var type: NodeType { .argument }
+
+  final override func contentProperty() -> Array<ContentProperty> {
+    preconditionFailure("ContentProperty for ArgumentNode is unused.")
+  }
+
   final override func deepCopy() -> Self {
     preconditionFailure("Work is done in ApplyNode.")
   }
@@ -13,8 +19,6 @@ final class ArgumentNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(argument: self, context)
   }
-
-  final override class var type: NodeType { .argument }
 
   // MARK: - Node(Positioning)
 

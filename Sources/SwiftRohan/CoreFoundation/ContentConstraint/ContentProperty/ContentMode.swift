@@ -30,16 +30,16 @@ extension NodeType {
     case .linebreak: .text
     case .namedSymbol: nil  // instance-specific
     case .text: .universal
-    case .unknown: nil
+    case .unknown: .universal
 
     // Elements
-    case .content: nil
-    case .expansion: nil
+    case .content: nil  // synthesised from children.
+    case .expansion: nil  // synthesised from children.
     case .heading: .text
     case .itemList: .text
     case .paragraph: .text
     case .parList: .text
-    case .root: nil
+    case .root: .text  // placeholder; root cannot be contained.
     case .textStyles: .text
 
     // Math
@@ -59,10 +59,10 @@ extension NodeType {
     case .underOver: .math
 
     // Template
-    case .apply: nil
-    case .argument: nil
-    case .cVariable: nil
-    case .variable: nil
+    case .apply: nil  // instance-specific
+    case .argument: nil  // unused.
+    case .cVariable: nil  // TBD: assigned or synthesised from children.
+    case .variable: nil  // TBD: assigned or synthesised from children.
     }
   }
 }
