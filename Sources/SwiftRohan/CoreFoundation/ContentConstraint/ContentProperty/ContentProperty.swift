@@ -3,6 +3,7 @@
 import Foundation
 
 struct ContentProperty {
+  let nodeType: NodeType
   let contentMode: ContentMode
   let contentType: ContentType
   let contentTag: Optional<ContentTag>

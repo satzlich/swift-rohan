@@ -2,36 +2,74 @@
 
 import Foundation
 
-struct RuleSubject {
+struct SubjectPredicate {
   let nodeType: NodeType
-  let predicate: Optional<NodePredicate>
+  let predicate: Optional<ContentPredicate>
 
-  init(_ nodeType: NodeType, _ predicate: NodePredicate? = nil) {
+  init(_ nodeType: NodeType, _ predicate: ContentPredicate? = nil) {
     self.nodeType = nodeType
     self.predicate = predicate
   }
+
+  func matches(_ contentProperty: ContentProperty) -> Bool {
+    return contentProperty.nodeType == nodeType
+      && (predicate?.matches(contentProperty) ?? true)
+  }
 }
 
-enum NodePredicate {
+enum ContentPredicate {
   /// True if the content tag of subject is in the given set.
   case contentTag(ContentTag)
-  /// True if the node type of subject equals the given node type.
-  case nodeType(NodeType)
   /// True if the content type of subject equals the given content type.
   case contentType(ContentType)
+
+  @inlinable @inline(__always)
+  func matches(_ contentProperty: ContentProperty) -> Bool {
+    asObjectPredicate.matches(contentProperty)
+  }
+
+  @inlinable @inline(__always)
+  var asObjectPredicate: ObjectPredicate {
+    switch self {
+    case .contentTag(let tag):
+      return .contentTag(tag)
+    case .contentType(let type):
+      return .contentType(type)
+    }
+  }
+}
+
+enum ObjectPredicate {
+  case nodeType(_ nodeType: NodeType)
+  /// True if the content tag of subject is in the given set.
+  case contentTag(ContentTag)
+  /// True if the content type of subject equals the given content type.
+  case contentType(ContentType)
+
+  @inlinable @inline(__always)
+  func matches(_ contentProperty: ContentProperty) -> Bool {
+    switch self {
+    case .nodeType(let nodeType):
+      return contentProperty.nodeType == nodeType
+    case .contentTag(let tag):
+      return contentProperty.contentTag.map { tag.contains($0) } ?? false
+    case .contentType(let type):
+      return contentProperty.contentType == type
+    }
+  }
 }
 
 enum ConstraintRule {
-  case canContainOnly(_ container: NodeType, _ content: NodePredicate)
-  case mustBeContainedIn(_ content: RuleSubject, _ container: NodeType)
+  case canContainOnly(_ container: NodeType, _ content: ObjectPredicate)
+  case mustBeContainedIn(_ content: SubjectPredicate, _ container: NodeType)
 }
 
 let contentConstaints: Array<ConstraintRule> = [
-  .mustBeContainedIn(RuleSubject(.parList), .root),
-  .mustBeContainedIn(RuleSubject(.heading), .root),
-  .mustBeContainedIn(RuleSubject(.itemList), .paragraph),
-  .mustBeContainedIn(RuleSubject(.equation, .contentType(.block)), .paragraph),
-  .mustBeContainedIn(RuleSubject(.multiline), .paragraph),
+  .mustBeContainedIn(SubjectPredicate(.parList), .root),
+  .mustBeContainedIn(SubjectPredicate(.heading), .root),
+  .mustBeContainedIn(SubjectPredicate(.itemList), .paragraph),
+  .mustBeContainedIn(SubjectPredicate(.equation, .contentType(.block)), .paragraph),
+  .mustBeContainedIn(SubjectPredicate(.multiline), .paragraph),
 ]
 
 let containerConstraints: Array<ConstraintRule> = [
