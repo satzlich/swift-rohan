@@ -59,10 +59,10 @@ extension NodeType {
     case .underOver: .math
 
     // Template
-    case .apply: nil  // assigned.
+    case .apply: nil  // use the value of expansion.
     case .argument: nil  // unused.
-    case .cVariable: nil  // unused. TBD: assigned or computed from children.
-    case .variable: nil  // unused. TBD: assigned or computed from children.
+    case .cVariable: nil  // unused. Computed from children.
+    case .variable: nil  // unused. Computed from children.
     }
   }
 }

@@ -5,14 +5,18 @@
 final class VariableNode: ElementNodeImpl {
   // MARK: - Node
 
+  final override class var type: NodeType { .variable }
+
+  final override func contentProperty() -> Array<ContentProperty> {
+    _children.flatMap { $0.contentProperty() }
+  }
+
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(variable: self, context)
   }
-
-  final override class var type: NodeType { .variable }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
