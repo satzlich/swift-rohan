@@ -3,14 +3,8 @@
 import Foundation
 
 struct ContainerProperty {
+  let nodeType: NodeType
+  let parentType: NodeType?
   let containerMode: ContainerMode
   let containerType: ContainerType
-}
-
-extension ContainerProperty {
-  @inlinable @inline(__always)
-  func isCompatible(with content: ContentProperty) -> Bool {
-    containerMode.isCompatible(with: content.contentMode)
-      && containerType.isCompatible(with: content.contentType)
-  }
 }

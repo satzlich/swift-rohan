@@ -6,12 +6,5 @@ struct ContentProperty {
   let nodeType: NodeType
   let contentMode: ContentMode
   let contentType: ContentType
-  let contentTag: Optional<ContentTag>
-}
-
-extension ContentProperty {
-  @inlinable @inline(__always)
-  func isCompatible(with container: ContainerProperty) -> Bool {
-    container.isCompatible(with: self)
-  }
+  let contentTag: ContentTag?
 }
