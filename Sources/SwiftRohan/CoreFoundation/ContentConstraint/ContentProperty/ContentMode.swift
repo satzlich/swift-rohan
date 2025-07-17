@@ -33,8 +33,8 @@ extension NodeType {
     case .unknown: .universal
 
     // Elements
-    case .content: nil  // synthesised from children.
-    case .expansion: nil  // synthesised from children.
+    case .content: nil  // computed from children.
+    case .expansion: nil  // computed from children.
     case .heading: .text
     case .itemList: .text
     case .paragraph: .text
@@ -59,10 +59,10 @@ extension NodeType {
     case .underOver: .math
 
     // Template
-    case .apply: nil  // instance-specific
+    case .apply: nil  // assigned.
     case .argument: nil  // unused.
-    case .cVariable: nil  // TBD: assigned or synthesised from children.
-    case .variable: nil  // TBD: assigned or synthesised from children.
+    case .cVariable: nil  // unused. TBD: assigned or computed from children.
+    case .variable: nil  // unused. TBD: assigned or computed from children.
     }
   }
 }
