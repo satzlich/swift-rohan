@@ -26,3 +26,14 @@ enum LayoutType: UInt8, Codable, CaseIterable {
     }
   }
 }
+
+extension LayoutType {
+  @inlinable @inline(__always)
+  var contentType: ContentType {
+    switch self {
+    case .inline: .inline
+    case .hardBlock: .block
+    case .softBlock: .block
+    }
+  }
+}

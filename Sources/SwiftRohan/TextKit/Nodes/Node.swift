@@ -291,3 +291,8 @@ extension Node {
     key.resolveValue(getProperties(styleSheet), styleSheet)
   }
 }
+
+extension Node {
+  @inlinable @inline(__always)
+  var contentType: ContentType { self.layoutType.contentType }
+}

@@ -4,16 +4,7 @@ import Foundation
 import LatexParser
 
 struct NamedSymbol: Codable, CommandDeclarationProtocol {
-  enum Subtype: String, Comparable, Codable {
-    case math
-    case text
-    case universal
-
-    /// The order is arbitrary, but it is used for sorting.
-    static func < (lhs: Subtype, rhs: Subtype) -> Bool {
-      lhs.rawValue < rhs.rawValue
-    }
-  }
+  typealias Subtype = ContentMode
 
   let command: String
   let tag: CommandTag
