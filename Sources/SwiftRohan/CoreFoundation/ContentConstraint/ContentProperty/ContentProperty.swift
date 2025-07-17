@@ -5,6 +5,7 @@ import Foundation
 struct ContentProperty {
   let contentMode: ContentMode
   let contentType: ContentType
+  let contentTag: Optional<ContentTag>
 }
 
 extension ContentProperty {
