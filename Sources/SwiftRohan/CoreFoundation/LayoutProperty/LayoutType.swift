@@ -36,4 +36,13 @@ extension LayoutType {
     case .softBlock: .block
     }
   }
+
+  @inlinable @inline(__always)
+  var defaultContainerType: ContainerType {
+    switch self {
+    case .inline: .inline
+    case .hardBlock: .block
+    case .softBlock: .block
+    }
+  }
 }

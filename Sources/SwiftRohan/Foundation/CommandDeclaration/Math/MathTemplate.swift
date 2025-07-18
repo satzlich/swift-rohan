@@ -81,7 +81,7 @@ extension MathTemplate {
         MathAttributesExpr(
           .mathKind(.mathop),
           [
-            MathStylesExpr(.mathrm, [VariableExpr("content", .inline, false)])
+            MathStylesExpr(.mathrm, [VariableExpr("content", .inline)])
           ])
       ],
       layoutType: .inline)
@@ -96,9 +96,9 @@ extension MathTemplate {
         AttachExpr(
           nuc: [
             MathAttributesExpr(
-              .mathLimits(.limits), [VariableExpr("content", .inline, false)])
+              .mathLimits(.limits), [VariableExpr("content", .inline)])
           ],
-          sup: [VariableExpr("top", .inline, false)])
+          sup: [VariableExpr("top", .inline)])
       ],
       layoutType: .inline)
     let compiled = Nano.compile(template).success()!
@@ -112,7 +112,7 @@ extension MathTemplate {
         TextExpr("\u{2001}("),  // \quad (
         MathStylesExpr(.mathrm, [TextExpr("mod")]),
         TextExpr("\u{2004}"),  // thickspace
-        VariableExpr("content", .inline, false),
+        VariableExpr("content", .inline),
         TextExpr(")"),
       ],
       layoutType: .inline)
@@ -127,9 +127,9 @@ extension MathTemplate {
         AttachExpr(
           nuc: [
             MathAttributesExpr(
-              .combo(.mathrel, .limits), [VariableExpr("bottom", .inline, false)])
+              .combo(.mathrel, .limits), [VariableExpr("bottom", .inline)])
           ],
-          sup: [VariableExpr("top", .inline, false)])
+          sup: [VariableExpr("top", .inline)])
       ],
       layoutType: .inline)
     let compiled = Nano.compile(template).success()!
@@ -143,9 +143,9 @@ extension MathTemplate {
         AttachExpr(
           nuc: [
             MathAttributesExpr(
-              .mathLimits(.limits), [VariableExpr("content", .inline, false)])
+              .mathLimits(.limits), [VariableExpr("content", .inline)])
           ],
-          sub: [VariableExpr("bottom", .inline, false)])
+          sub: [VariableExpr("bottom", .inline)])
       ],
       layoutType: .inline)
     let compiled = Nano.compile(template).success()!
@@ -167,7 +167,7 @@ extension MathTemplate {
       body: [
         ParListExpr([
           TextStylesExpr(.textit, [TextExpr("Proof. ")]),
-          VariableExpr("content", .softBlock, true),
+          VariableExpr("content", .softBlock),
         ])
       ],
       layoutType: .hardBlock)
@@ -187,7 +187,7 @@ extension MathTemplate {
               CounterExpr(.theorem),
               TextExpr(". "),
             ]),
-          VariableExpr("content", textStyles: .textit, .softBlock, true),
+          VariableExpr("content", textStyles: .textit, .softBlock),
         ])
       ],
       layoutType: .hardBlock)

@@ -8,29 +8,25 @@ final class VariableExpr: Expr {
 
   let textStyles: TextStyles?
   let layoutType: LayoutType
-  let isBlockContainer: Bool
+  let containerType: ContainerType
+  var isBlockContainer: Bool { containerType == .block }
 
   init(
-    _ name: Identifier,
-    textStyles: TextStyles?,
-    _ layoutType: LayoutType,
-    _ isBlockContainer: Bool
+    _ name: Identifier, textStyles: TextStyles?, _ layoutType: LayoutType,
+    _ containerType: ContainerType? = nil
   ) {
     self.name = name
     self.textStyles = textStyles
     self.layoutType = layoutType
-    self.isBlockContainer = isBlockContainer
+    self.containerType = containerType ?? layoutType.defaultContainerType
     super.init()
   }
 
   convenience init(
-    _ name: String,
-    textStyles: TextStyles? = nil,
-    _ layoutType: LayoutType,
-    _ isBlockContainer: Bool
+    _ name: String, textStyles: TextStyles? = nil, _ layoutType: LayoutType
   ) {
     let name = Identifier(name)
-    self.init(name, textStyles: textStyles, layoutType, isBlockContainer)
+    self.init(name, textStyles: textStyles, layoutType)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -41,7 +37,7 @@ final class VariableExpr: Expr {
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey {
-    case name, textStyles, layoutType, isBlockContainer
+    case name, textStyles, layoutType, containerType
   }
 
   required init(from decoder: Decoder) throws {
@@ -49,7 +45,7 @@ final class VariableExpr: Expr {
     name = try container.decode(Identifier.self, forKey: .name)
     textStyles = try container.decodeIfPresent(TextStyles.self, forKey: .textStyles)
     layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
-    isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
+    containerType = try container.decode(ContainerType.self, forKey: .containerType)
     try super.init(from: decoder)
   }
 
@@ -58,7 +54,7 @@ final class VariableExpr: Expr {
     try container.encode(name, forKey: .name)
     try container.encodeIfPresent(textStyles, forKey: .textStyles)
     try container.encode(layoutType, forKey: .layoutType)
-    try container.encode(isBlockContainer, forKey: .isBlockContainer)
+    try container.encode(containerType, forKey: .containerType)
     try super.encode(to: encoder)
   }
 }

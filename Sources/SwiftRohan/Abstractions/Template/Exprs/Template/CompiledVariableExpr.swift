@@ -10,20 +10,22 @@ final class CompiledVariableExpr: Expr {
 
   let textStyles: TextStyles?
   let layoutType: LayoutType
-  let isBlockContainer: Bool
+  let containerType: ContainerType
+
+  var isBlockContainer: Bool { containerType == .block }
 
   init(
     _ argumentIndex: Int, nestedLevelDelta: Int = 0,
     textStyles: TextStyles? = nil,
     _ layoutType: LayoutType,
-    _ isBlockContainer: Bool
+    _ containerType: ContainerType
   ) {
     precondition(CompiledVariableExpr.validate(argumentIndex: argumentIndex))
     self.argumentIndex = argumentIndex
     self.nestedLevelDetla = nestedLevelDelta
     self.textStyles = textStyles
     self.layoutType = layoutType
-    self.isBlockContainer = isBlockContainer
+    self.containerType = containerType
     super.init()
   }
 
@@ -34,9 +36,7 @@ final class CompiledVariableExpr: Expr {
   func with(nestedLevelDelta delta: Int) -> CompiledVariableExpr {
     CompiledVariableExpr(
       argumentIndex, nestedLevelDelta: delta,
-      textStyles: textStyles,
-      layoutType,
-      isBlockContainer)
+      textStyles: textStyles, layoutType, containerType)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -47,7 +47,7 @@ final class CompiledVariableExpr: Expr {
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey {
-    case argIndex, levelDelta, textStyles, layoutType, isBlockContainer
+    case argIndex, levelDelta, textStyles, layoutType, containerType
   }
 
   required init(from decoder: Decoder) throws {
@@ -63,7 +63,7 @@ final class CompiledVariableExpr: Expr {
 
     textStyles = try container.decodeIfPresent(TextStyles.self, forKey: .textStyles)
     layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
-    isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
+    containerType = try container.decode(ContainerType.self, forKey: .containerType)
     try super.init(from: decoder)
   }
 
@@ -73,7 +73,7 @@ final class CompiledVariableExpr: Expr {
     try container.encode(nestedLevelDetla, forKey: .levelDelta)
     try container.encodeIfPresent(textStyles, forKey: .textStyles)
     try container.encode(layoutType, forKey: .layoutType)
-    try container.encode(isBlockContainer, forKey: .isBlockContainer)
+    try container.encode(containerType, forKey: .containerType)
     try super.encode(to: encoder)
   }
 }

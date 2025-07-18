@@ -23,11 +23,11 @@ struct TemplateExprTests {
       try testRoundTrip(apply)
     }
     do {
-      let cVariable = CompiledVariableExpr(1, .inline, false)
+      let cVariable = CompiledVariableExpr(1, .inline, .inline)
       try testRoundTrip(cVariable)
     }
     do {
-      let variable = VariableExpr("z", .inline, false)
+      let variable = VariableExpr("z", .inline)
       try testRoundTrip(variable)
     }
   }
@@ -35,8 +35,8 @@ struct TemplateExprTests {
   static func allSamples() -> Array<Expr> {
     [
       ApplyExpr("test", arguments: [[TextExpr("x")]]),
-      CompiledVariableExpr(1, .inline, false),
-      VariableExpr("z", .inline, false),
+      CompiledVariableExpr(1, .inline, .inline),
+      VariableExpr("z", .inline),
     ]
   }
 

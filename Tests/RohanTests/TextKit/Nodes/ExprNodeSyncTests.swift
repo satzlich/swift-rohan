@@ -261,11 +261,11 @@ final class ExprNodeSyncTests {
       // skip
     }
     do {
-      _ = CompiledVariableExpr(2, .inline, false)
+      _ = CompiledVariableExpr(2, .inline, .inline)
       // skip
     }
     do {
-      _ = VariableExpr("test", .inline, false)
+      _ = VariableExpr("test", .inline)
       // skip
     }
     // misc
