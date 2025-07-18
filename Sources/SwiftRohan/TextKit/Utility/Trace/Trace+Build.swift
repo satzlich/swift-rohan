@@ -169,7 +169,7 @@ extension Trace {
     //            (lastNode, lastIndex) are paired.
     while true {
       switch lastNode {
-      case let node as GenElementNode where node.isBlockContainer:
+      case let node as GenElementNode where node.containerType == .block:
         if lastIndex < node.childCount,
           let child = node.getChild(lastIndex) as? ElementNode,
           child.isTransparent

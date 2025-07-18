@@ -322,13 +322,13 @@ struct MathNodeLayoutTests {
     }
 
     // prepare the node
-    if subtype.isMatrixNodeCompatible {
+    if subtype.requiresMatrixNode {
       let matrix = MatrixNode(subtype, rows)
       let (contentNode, context) = createMathTestScene(matrix)
       return (matrix, contentNode, context)
     }
     else {
-      assert(subtype.isMultilineNodeCompatible)
+      assert(subtype.requiresMultilineNode)
       let multiline = MultilineNode(subtype, rows)
       let (contentNode, context) = createTextTestScene(multiline)
       return (multiline, contentNode, context)

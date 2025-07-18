@@ -32,12 +32,12 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can be a top-level node in a document.
   @inlinable @inline(__always)
-  static func isTopLevelNode(_ node: Node) -> Bool {
+  static func canBeToplevelNode(_ node: Node) -> Bool {
     if [NodeType.heading, .paragraph, .parList].contains(node.type) {
       return true
     }
     else if let applyNode = node as? ApplyNode,
-      applyNode.getExpansion().childrenReadonly().allSatisfy({ isTopLevelNode($0) })
+      applyNode.getExpansion().childrenReadonly().allSatisfy({ canBeToplevelNode($0) })
     {
       return true
     }
@@ -90,46 +90,12 @@ enum NodePolicy {
 
   @inlinable @inline(__always)
   static func placeholder(for nodeType: NodeType) -> PlaceholderRecord {
-    if nodeType == .paragraph {
+    if [.paragraph, .heading].contains(nodeType) {
       PlaceholderRecord("\u{2009}", false)  // use thin space.
     }
     else {
       PlaceholderRecord("⬚", true)
     }
-  }
-
-  /// Returns true if the node is inline-math.
-  @inlinable @inline(__always)
-  static func isInlineMath(_ node: Node) -> Bool {
-    isEquationNode(node) && node.layoutType == .inline
-  }
-
-  /// Returns true if the node is paragraph content other than inline math compatible.
-  @inlinable @inline(__always)
-  static func isOtherArbitraryParagraphContent(_ node: Node) -> Bool {
-    [
-      .linebreak,
-      .multiline,  // block, but inline content.
-      .textStyles,
-      .unknown,
-    ].contains(node.type)
-      || (isEquationNode(node) && node.layoutType == .hardBlock)  // block math
-  }
-
-  @inlinable @inline(__always)
-  static func isStrictToplevelParagraphContent(_ node: Node) -> Bool {
-    .itemList == node.type
-  }
-
-  /// Returns true if a node of given kind can be used as a container for
-  /// block elements such as heading and paragraph.
-  @inlinable @inline(__always)
-  static func isBlockContainer(_ nodeType: NodeType) -> Bool {
-    [
-      .itemList,
-      .parList,
-      .root,
-    ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be empty.
@@ -155,7 +121,7 @@ enum NodePolicy {
       return true
     }
     else if let argumentNode = node as? ArgumentNode,
-      argumentNode.variableNodes.first!.isBlockContainer == false
+      !(argumentNode.containerType == .block)
     {
       return true
     }
@@ -186,62 +152,6 @@ enum NodePolicy {
     case .paragraph: return rhs == .paragraph
     default: return false
     }
-  }
-
-  // MARK: - Content Categories
-
-  /// Returns true if it can be determined from the type of a node that the node
-  /// can be inserted into math list.
-  @inlinable @inline(__always)
-  static func isMathListContent(_ nodeType: NodeType) -> Bool {
-    [
-      // Math
-      .accent,
-      .attach,
-      .fraction,
-      .leftRight,
-      .mathAttributes,
-      .mathExpression,
-      .mathOperator,
-      .mathStyles,
-      .matrix,
-      .namedSymbol,
-      .radical,
-      .textMode,
-      .underOver,
-      // Misc
-      .text,
-      .unknown,
-    ].contains(nodeType)
-  }
-
-  @inlinable @inline(__always)
-  static func isMathOnlyContent(_ node: Node) -> Bool {
-    return isMathOnlyContent(node.type) || isMathSymbol(node)
-
-    @inline(__always)
-    func isMathSymbol(_ node: Node) -> Bool {
-      (node as? NamedSymbolNode)?.namedSymbol.contentMode == .math
-    }
-  }
-
-  /// Returns true if a node of given kind can appear in math list only.
-  @inline(__always)
-  private static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
-    [
-      .accent,
-      .attach,
-      .fraction,
-      .leftRight,
-      .mathAttributes,
-      .mathExpression,
-      .mathOperator,
-      .mathStyles,
-      .matrix,
-      .radical,
-      .textMode,
-      .underOver,
-    ].contains(nodeType)
   }
 
   /// True if a counter segment should be computed from child nodes and be updated

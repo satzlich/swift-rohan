@@ -41,7 +41,7 @@ struct NanoPassTests {
       Template(
         name: "square", parameters: ["x"],
         body: [
-          AttachExpr(nuc: [VariableExpr("y", .inline, false)], sup: [TextExpr("2")])
+          AttachExpr(nuc: [VariableExpr("y", .inline)], sup: [TextExpr("2")])
         ],
         layoutType: .inline)
     ]
@@ -290,11 +290,11 @@ struct NanoPassTests {
         name: "foo",
         parameters: ["x", "y", "z"],
         body: [
-          VariableExpr("z", .inline, false),
+          VariableExpr("z", .inline),
           TextExpr("="),
-          VariableExpr("x", .inline, false),
+          VariableExpr("x", .inline),
           TextExpr("+"),
-          VariableExpr("y", .inline, false),
+          VariableExpr("y", .inline),
         ],
         layoutType: .inline)
 
@@ -327,10 +327,10 @@ struct NanoPassTests {
         parameters: ["x"],
         body: [
           FractionExpr(
-            num: [CompiledVariableExpr(0, .inline, false)],
+            num: [CompiledVariableExpr(0, .inline)],
             denom: [
               FractionExpr(
-                num: [CompiledVariableExpr(0, .inline, false)], denom: [TextExpr("2")])
+                num: [CompiledVariableExpr(0, .inline)], denom: [TextExpr("2")])
             ])
         ],
         layoutType: .inline)
@@ -423,13 +423,13 @@ struct NanoPassTests {
         LinebreakExpr(),
         UnknownExpr(.string("Hello")),
         TextStylesExpr(
-          .emph, [TextExpr("World"), CompiledVariableExpr(0, .inline, false)]),
+          .emph, [TextExpr("World"), CompiledVariableExpr(0, .inline)]),
         HeadingExpr(
-          .sectionAst, [TextExpr("Heading"), CompiledVariableExpr(1, .inline, false)]),
-        ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0, .inline, false)]),
-        RootExpr([TextExpr("Root"), CompiledVariableExpr(1, .inline, false)]),
+          .sectionAst, [TextExpr("Heading"), CompiledVariableExpr(1, .inline)]),
+        ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0, .inline)]),
+        RootExpr([TextExpr("Root"), CompiledVariableExpr(1, .inline)]),
         TextStylesExpr(
-          .textbf, [TextExpr("Strong"), CompiledVariableExpr(0, .inline, false)]),
+          .textbf, [TextExpr("Strong"), CompiledVariableExpr(0, .inline)]),
         //
       ],
       layoutType: .inline)
@@ -440,7 +440,7 @@ struct NanoPassTests {
         EquationExpr(
           .display,
           [
-            AccentExpr(.dot, [CompiledVariableExpr(0, .inline, false)]),
+            AccentExpr(.dot, [CompiledVariableExpr(0, .inline)]),
             LeftRightExpr(.BRACE, [TextExpr("Brace")]),
             MathExpressionExpr(.bmod),
             MathOperatorExpr(.Pr),
@@ -468,7 +468,7 @@ struct NanoPassTests {
                 ]),
               ]),
             RadicalExpr(
-              [CompiledVariableExpr(0, .inline, false)], index: [TextExpr("n")]),
+              [CompiledVariableExpr(0, .inline)], index: [TextExpr("n")]),
             TextModeExpr([TextExpr("Text Mode")]),
             UnderOverExpr(.overline, [TextExpr("Overline")]),
           ])

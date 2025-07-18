@@ -2,7 +2,7 @@
 
 /// Common interface for nodes that can have linear children.
 protocol GenElementNode: Node {
-  var isBlockContainer: Bool { get }
+  var containerType: ContainerType? { get }
 
   /// The number of child nodes.
   var childCount: Int { get }

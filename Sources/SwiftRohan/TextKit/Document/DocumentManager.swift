@@ -205,8 +205,7 @@ public final class DocumentManager: NSObject {
     // insert nodes
     let result: EditResult<RhTextRange>
 
-    // TODO: factor out the comparison
-    if content.allSatisfy({ [.paragraph, .heading, .parList].contains($0.nodeType) }) {
+    if nodes.allSatisfy(NodePolicy.canBeToplevelNode(_:)) {
       switch TreeUtils.insertBlockNodes(nodes, at: location, rootNode) {
       case let .success(range):
         result = .blockInserted(range)
@@ -288,7 +287,7 @@ public final class DocumentManager: NSObject {
     let index = trace.last!.index
 
     if let node = node as? ElementNode,
-      node.isBlockContainer,
+      node.containerType == .block,
       let index = index.index()
     {
       if node.childCount == 0

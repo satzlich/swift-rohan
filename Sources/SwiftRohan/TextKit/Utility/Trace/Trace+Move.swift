@@ -113,7 +113,7 @@ extension Trace {
         }
         // For a class of block containers, the end position cannot be placed at.
         else if index + 1 == node.childCount,
-          node.isBlockContainer
+          node.containerType == .block
         {
           moveForward()
         }
@@ -331,7 +331,7 @@ extension Trace {
       precondition(NodePolicy.isCursorAllowed(in: node))
 
       if let node = node as? GenElementNode,
-        node.isBlockContainer && !isRootNode(node),
+        node.containerType == .block && !isRootNode(node),
         let index = index.index()
       {
         return node.childCount > 0 && index == node.childCount

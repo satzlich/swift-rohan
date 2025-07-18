@@ -57,7 +57,7 @@ struct ArrayNodeTests {
   }
 
   private static func _createMatrix(_ subtype: MathArray) -> MatrixNode {
-    precondition(subtype.isMatrixNodeCompatible)
+    precondition(subtype.requiresMatrixNode)
     if subtype.isMultiColumnEnabled {
       return MatrixNode(
         subtype,
@@ -89,7 +89,7 @@ struct ArrayNodeTests {
   }
 
   private static func _createMultiline(_ subtype: MathArray) -> MultilineNode {
-    precondition(subtype.isMultilineNodeCompatible)
+    precondition(subtype.requiresMultilineNode)
     return MultilineNode(
       subtype,
       [
