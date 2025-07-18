@@ -143,7 +143,7 @@ internal class ElementNode: Node {
     if self.isPlaceholderActive {
       assert(path.count == 1 && endPath.count == 1)
       assert(index == endIndex && index == 0)
-      let offset = layoutOffset + (self.getFinalLayoutOffset(0) ?? 0)
+      let offset = layoutOffset + (self.getLayoutOffset(0) ?? 0)
       let layoutRange = offset..<offset + 1
 
       func placeholderBlock(
@@ -420,7 +420,7 @@ internal class ElementNode: Node {
     guard let index = path.first?.index() else { return nil }
 
     if path.count == 1 {
-      guard let localOffset = getFinalLayoutOffset(index) else { return nil }
+      guard let localOffset = getLayoutOffset(index) else { return nil }
       assert(index <= self.childCount)
       let newOffset = layoutOffset + localOffset
       guard
@@ -824,10 +824,6 @@ internal class ElementNode: Node {
 
   internal func getLayoutOffset(_ index: Int) -> Int? {
     preconditionFailure("overriding required")
-  }
-
-  internal func getFinalLayoutOffset(_ index: Int) -> Int? {
-    self.getLayoutOffset(index)  // default implementation
   }
 
   // MARK: - Implementation

@@ -10,11 +10,6 @@ internal class ElementNodeImpl: ElementNode {
     return getLayoutOffset(index)
   }
 
-  final override func getFinalLayoutOffset(_ index: RohanIndex) -> Int? {
-    guard let index = index.index() else { return nil }
-    return getFinalLayoutOffset(index)
-  }
-
   internal override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     guard 0..._layoutLength ~= layoutOffset else {
       return .failure(SatzError(.InvalidLayoutOffset))
@@ -88,15 +83,15 @@ internal class ElementNodeImpl: ElementNode {
     return s0 + s1 + s2
   }
 
-  final override func getFinalLayoutOffset(_ index: Int) -> Int? {
-    guard let offset = self.getLayoutOffset(index) else { return nil }
-    if index > 0 && _children[index - 1].layoutType == .inline {
-      return offset - _newlines[index - 1].intValue
-    }
-    else {
-      return offset
-    }
-  }
+//  final override func getFinalLayoutOffset(_ index: Int) -> Int? {
+//    guard let offset = self.getLayoutOffset(index) else { return nil }
+//    if index > 0 && _children[index - 1].layoutType == .inline {
+//      return offset - _newlines[index - 1].intValue
+//    }
+//    else {
+//      return offset
+//    }
+//  }
 
   // MARK: - Impl(Layout)
 

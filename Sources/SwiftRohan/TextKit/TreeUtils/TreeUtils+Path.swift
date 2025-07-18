@@ -50,7 +50,7 @@ extension TreeUtils {
       s += n
       node = child
     }
-    guard let n = node.getFinalLayoutOffset(path.last!) else { return nil }
+    guard let n = node.getLayoutOffset(path.last!) else { return nil }
     s += n
     return s
   }
