@@ -31,7 +31,8 @@ internal class Node: Codable {
         nodeType: type,
         parentType: parent?.type,
         containerMode: containerMode,
-        containerType: containerType)
+        containerType: containerType,
+        containerTag: type.containerTag)
     }
     return nil
   }

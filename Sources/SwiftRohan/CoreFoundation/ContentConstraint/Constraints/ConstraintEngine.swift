@@ -39,10 +39,10 @@ struct ConstraintEngine {
   // MARK: - State
 
   private let _contentConstraints:
-    Dictionary<NodeType, Array<ConstraintRule.MustBeContainedIn>>
+    Dictionary<NodeType, Array<ConstraintRule.MustBeInsertedInto>>
 
   private let _containerConstraints:
-    Dictionary<NodeType, Array<ConstraintRule.CanContainOnly>>
+    Dictionary<NodeType, Array<ConstraintRule.CanInsertOnly>>
 
   init() {
     _contentConstraints = Self._contentConstraints.reduce(into: [:]) { dict, rule in
@@ -55,7 +55,7 @@ struct ConstraintEngine {
   }
 
   nonisolated(unsafe) static let _contentConstraints:
-    Array<ConstraintRule.MustBeContainedIn> = [
+    Array<ConstraintRule.MustBeInsertedInto> = [
       // heading must be inserted into a root node or a paragraph whose parent is a root node.
       .init(
         SubjectPredicate(.heading),
@@ -75,12 +75,16 @@ struct ConstraintEngine {
         SubjectPredicate(.itemList),
         .conjunction([.nodeType(.paragraph), .negation(.parentType(.itemList))])),
       // block equation must be inserted into a paragraph.
-      .init(SubjectPredicate(.equation, .contentType(.block)), .nodeType(.paragraph)),
+      .init(
+        SubjectPredicate(.equation, .contentType(.block)),
+        .disjunction([.nodeType(.paragraph), .containerTag(.paragraphContainer)])),
       // multiline must be inserted into a paragraph.
-      .init(.multiline, .paragraph),
+      .init(
+        SubjectPredicate(.multiline),
+        .disjunction([.nodeType(.paragraph), .containerTag(.paragraphContainer)])),
     ]
 
-  static let _containerConstraints: Array<ConstraintRule.CanContainOnly> = [
+  static let _containerConstraints: Array<ConstraintRule.CanInsertOnly> = [
     // heading can contain only "plaintext", "formula", and "styledText".
     .init(.heading, .contentTag([.plaintext, .formula, .styledText])),
     // textStyles can contain only "plaintext", "formula".
@@ -88,8 +92,16 @@ struct ConstraintEngine {
     // textMode can contain only "plaintext".
     .init(.textMode, .contentTag([.plaintext])),
     // itemList can contain only "paragraph"s.
-    .init(.itemList, .nodeType(.paragraph)),
+    .init(
+      .itemList,
+      .disjunction([
+        .nodeType(.paragraph), .contentTag([.plaintext, .formula, .styledText]),
+      ])),
     // parList can contain only "paragraph"s.
-    .init(.parList, .nodeType(.paragraph)),
+    .init(
+      .parList,
+      .disjunction([
+        .nodeType(.paragraph), .contentTag([.plaintext, .formula, .styledText]),
+      ])),
   ]
 }

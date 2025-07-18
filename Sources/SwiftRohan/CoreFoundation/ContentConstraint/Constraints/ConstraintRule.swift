@@ -3,20 +3,20 @@
 import Foundation
 
 enum ConstraintRule {
-  case canContainOnly(CanContainOnly)
-  case mustBeContainedIn(MustBeContainedIn)
+  case canInsertOnly(CanInsertOnly)
+  case mustBeInsertedInto(MustBeInsertedInto)
 
   func isSatisfied(_ content: ContentProperty, _ container: ContainerProperty) -> Bool {
     switch self {
-    case .canContainOnly(let rule):
+    case .canInsertOnly(let rule):
       return rule.isSatisfied(content, container)
-    case .mustBeContainedIn(let rule):
+    case .mustBeInsertedInto(let rule):
       return rule.isSatisfied(content, container)
     }
   }
 
   /// container($1) => content($0)
-  struct CanContainOnly {
+  struct CanInsertOnly {
     let container: NodeType
     let content: ContentPredicate
 
@@ -31,7 +31,7 @@ enum ConstraintRule {
   }
 
   /// content($0) => container($1)
-  struct MustBeContainedIn {
+  struct MustBeInsertedInto {
     let content: SubjectPredicate
     let container: ContainerPredicate
 

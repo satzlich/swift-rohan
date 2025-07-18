@@ -7,6 +7,7 @@ struct ContainerProperty: Equatable, Hashable {
   let parentType: NodeType?
   let containerMode: ContainerMode
   let containerType: ContainerType
+  let containerTag: ContainerTag?
 }
 
 extension ContainerProperty {
@@ -21,7 +22,8 @@ extension ContainerProperty {
               nodeType: nodeType,
               parentType: parentType,
               containerMode: containerMode,
-              containerType: containerType)
+              containerType: containerType,
+              containerTag: nodeType.containerTag)
             result.append(container)
           }
         }

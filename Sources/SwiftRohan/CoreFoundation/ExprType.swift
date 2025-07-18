@@ -228,3 +228,49 @@ extension NodeType {
     }
   }
 }
+
+extension NodeType {
+  @inline(__always)
+  var containerTag: ContainerTag? {
+    switch self {
+    // Misc
+    case .counter: nil
+    case .linebreak: nil
+    case .namedSymbol: nil
+    case .text: nil
+    case .unknown: nil
+
+    // Elements
+    case .content: nil
+    case .expansion: nil
+    case .heading: nil
+    case .itemList: .paragraphContainer
+    case .paragraph: nil
+    case .parList: .paragraphContainer
+    case .root: .paragraphContainer
+    case .textStyles: nil
+
+    // Math
+    case .accent: nil
+    case .attach: nil
+    case .equation: nil
+    case .fraction: nil
+    case .leftRight: nil
+    case .mathAttributes: nil
+    case .mathExpression: nil
+    case .mathOperator: nil
+    case .mathStyles: nil
+    case .matrix: nil
+    case .multiline: nil
+    case .radical: nil
+    case .textMode: nil
+    case .underOver: nil
+
+    // Template
+    case .apply: nil
+    case .argument: nil
+    case .cVariable: nil
+    case .variable: nil
+    }
+  }
+}

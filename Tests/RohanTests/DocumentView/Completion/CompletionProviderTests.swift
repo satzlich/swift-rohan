@@ -10,7 +10,7 @@ struct CompletionProviderTests {
   var mathContainer: ContainerProperty {
     ContainerProperty(
       nodeType: .equation, parentType: .paragraph, containerMode: .math,
-      containerType: .inline)
+      containerType: .inline, containerTag: nil)
   }
 
   @Test
