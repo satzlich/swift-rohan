@@ -42,7 +42,7 @@ final class VariableNode: ElementNodeImpl {
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey {
-    case argIndex, levelDelta, textStyles, layoutType, isBlockContainer
+    case argIndex, levelDelta, textStyles, layoutType
   }
 
   required init(from decoder: any Decoder) throws {
@@ -50,7 +50,6 @@ final class VariableNode: ElementNodeImpl {
     argumentIndex = try container.decode(Int.self, forKey: .argIndex)
     _textStyles = try container.decodeIfPresent(TextStyles.self, forKey: .textStyles)
     _layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
-    _isBlockContainer = try container.decode(Bool.self, forKey: .isBlockContainer)
     nestedLevelDelta = try container.decode(Int.self, forKey: .levelDelta)
     super.init()
   }
@@ -60,14 +59,13 @@ final class VariableNode: ElementNodeImpl {
     try container.encode(argumentIndex, forKey: .argIndex)
     try container.encodeIfPresent(_textStyles, forKey: .textStyles)
     try container.encode(_layoutType, forKey: .layoutType)
-    try container.encode(_isBlockContainer, forKey: .isBlockContainer)
     try container.encode(nestedLevelDelta, forKey: .levelDelta)
     try super.encode(to: encoder)
   }
 
   // MARK: - Node(Layout)
 
-  final override var isBlockContainer: Bool { _isBlockContainer }
+  final override var isBlockContainer: Bool { _layoutType.defaultContainerType == .block }
 
   final override var layoutType: LayoutType { _layoutType }
 
@@ -102,7 +100,6 @@ final class VariableNode: ElementNodeImpl {
 
   private let _textStyles: TextStyles?
   private let _layoutType: LayoutType
-  private let _isBlockContainer: Bool
 
   internal func setArgumentNode(_ argument: ArgumentNode) {
     precondition(self.argumentNode == nil)
@@ -118,13 +115,11 @@ final class VariableNode: ElementNodeImpl {
     _ argumentIndex: Int,
     _ textStyles: TextStyles?,
     _ layoutType: LayoutType,
-    _ isBlockContainer: Bool,
     nestedLevelDelta: Int = 0
   ) {
     self.argumentIndex = argumentIndex
     self._textStyles = textStyles
     self._layoutType = layoutType
-    self._isBlockContainer = isBlockContainer
     self.nestedLevelDelta = nestedLevelDelta
     super.init()
   }
@@ -133,7 +128,6 @@ final class VariableNode: ElementNodeImpl {
     self.argumentIndex = variableNode.argumentIndex
     self._textStyles = variableNode._textStyles
     self._layoutType = variableNode._layoutType
-    self._isBlockContainer = variableNode._isBlockContainer
     self.nestedLevelDelta = variableNode.nestedLevelDelta
     super.init(deepCopyOf: variableNode)
   }

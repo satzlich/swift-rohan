@@ -261,7 +261,7 @@ final class ExprNodeSyncTests {
       // skip
     }
     do {
-      _ = CompiledVariableExpr(2, .inline, .inline)
+      _ = CompiledVariableExpr(2, .inline)
       // skip
     }
     do {
@@ -321,10 +321,10 @@ final class ExprNodeSyncTests {
       try testRoundTrip(root, json)
     }
     do {
-      let variable = VariableNode(1, .textit, .inline, false)
+      let variable = VariableNode(1, .textit, .inline)
       let json =
         """
-        {"argIndex":1,"children":[],"isBlockContainer":false,"layoutType":0,"levelDelta":0,"textStyles":"textit","type":"variable"}
+        {"argIndex":1,"children":[],"layoutType":0,"levelDelta":0,"textStyles":"textit","type":"variable"}
         """
       try testRoundTrip(variable, json)
     }

@@ -10,22 +10,17 @@ final class CompiledVariableExpr: Expr {
 
   let textStyles: TextStyles?
   let layoutType: LayoutType
-  let containerType: ContainerType
-
-  var isBlockContainer: Bool { containerType == .block }
 
   init(
     _ argumentIndex: Int, nestedLevelDelta: Int = 0,
     textStyles: TextStyles? = nil,
-    _ layoutType: LayoutType,
-    _ containerType: ContainerType
+    _ layoutType: LayoutType
   ) {
     precondition(CompiledVariableExpr.validate(argumentIndex: argumentIndex))
     self.argumentIndex = argumentIndex
     self.nestedLevelDetla = nestedLevelDelta
     self.textStyles = textStyles
     self.layoutType = layoutType
-    self.containerType = containerType
     super.init()
   }
 
@@ -36,7 +31,7 @@ final class CompiledVariableExpr: Expr {
   func with(nestedLevelDelta delta: Int) -> CompiledVariableExpr {
     CompiledVariableExpr(
       argumentIndex, nestedLevelDelta: delta,
-      textStyles: textStyles, layoutType, containerType)
+      textStyles: textStyles, layoutType)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -47,23 +42,20 @@ final class CompiledVariableExpr: Expr {
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey {
-    case argIndex, levelDelta, textStyles, layoutType, containerType
+    case argIndex, levelDelta, textStyles, layoutType
   }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     argumentIndex = try container.decode(Int.self, forKey: .argIndex)
-    guard CompiledVariableExpr.validate(argumentIndex: argumentIndex)
-    else {
+    guard CompiledVariableExpr.validate(argumentIndex: argumentIndex) else {
       throw DecodingError.dataCorruptedError(
         forKey: .argIndex, in: container,
         debugDescription: "Invalid argument index \(argumentIndex)")
     }
     nestedLevelDetla = try container.decode(Int.self, forKey: .levelDelta)
-
     textStyles = try container.decodeIfPresent(TextStyles.self, forKey: .textStyles)
     layoutType = try container.decode(LayoutType.self, forKey: .layoutType)
-    containerType = try container.decode(ContainerType.self, forKey: .containerType)
     try super.init(from: decoder)
   }
 
@@ -73,7 +65,6 @@ final class CompiledVariableExpr: Expr {
     try container.encode(nestedLevelDetla, forKey: .levelDelta)
     try container.encodeIfPresent(textStyles, forKey: .textStyles)
     try container.encode(layoutType, forKey: .layoutType)
-    try container.encode(containerType, forKey: .containerType)
     try super.encode(to: encoder)
   }
 }

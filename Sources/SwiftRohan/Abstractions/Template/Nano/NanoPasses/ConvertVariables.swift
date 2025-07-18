@@ -30,8 +30,7 @@ extension Nano {
         precondition(variableDict[variable.name] != nil)
         let index = variableDict[variable.name]!
         return CompiledVariableExpr(
-          index, textStyles: variable.textStyles,
-          variable.layoutType, variable.containerType)
+          index, textStyles: variable.textStyles, variable.layoutType)
       }
     }
   }

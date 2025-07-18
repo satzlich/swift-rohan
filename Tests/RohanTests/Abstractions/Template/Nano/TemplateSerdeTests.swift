@@ -16,7 +16,7 @@ struct TemplateSerdeTests {
     try assertSerde(
       template,
       """
-      {"body":[{"string":"Hello, ","type":"text"},{"containerType":"inline","layoutType":0,"name":"x","type":"variable"}],"layoutType":0,"name":"test","parameters":["x"]}
+      {"body":[{"string":"Hello, ","type":"text"},{"layoutType":0,"name":"x","type":"variable"}],"layoutType":0,"name":"test","parameters":["x"]}
       """)
   }
 
@@ -24,12 +24,12 @@ struct TemplateSerdeTests {
   func test_CompiledTemplate() throws {
     let argument0: VariablePaths = [[.index(1)]]
     let template = CompiledTemplate(
-      "test", [TextExpr("Hello, "), CompiledVariableExpr(0, .inline, .inline)],
+      "test", [TextExpr("Hello, "), CompiledVariableExpr(0, .inline)],
       .inline, [argument0])
     try assertSerde(
       template,
       """
-      {"body":[{"string":"Hello, ","type":"text"},{"argIndex":0,"containerType":"inline","layoutType":0,"levelDelta":0,"type":"cVariable"}],"layoutType":0,"lookup":[[[{"index":{"_0":1}}]]],"name":"test"}
+      {"body":[{"string":"Hello, ","type":"text"},{"argIndex":0,"layoutType":0,"levelDelta":0,"type":"cVariable"}],"layoutType":0,"lookup":[[[{"index":{"_0":1}}]]],"name":"test"}
       """)
   }
 

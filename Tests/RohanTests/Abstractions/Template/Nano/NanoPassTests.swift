@@ -327,10 +327,10 @@ struct NanoPassTests {
         parameters: ["x"],
         body: [
           FractionExpr(
-            num: [CompiledVariableExpr(0, .inline, .inline)],
+            num: [CompiledVariableExpr(0, .inline)],
             denom: [
               FractionExpr(
-                num: [CompiledVariableExpr(0, .inline, .inline)], denom: [TextExpr("2")])
+                num: [CompiledVariableExpr(0, .inline)], denom: [TextExpr("2")])
             ])
         ],
         layoutType: .inline)
@@ -423,13 +423,13 @@ struct NanoPassTests {
         LinebreakExpr(),
         UnknownExpr(.string("Hello")),
         TextStylesExpr(
-          .emph, [TextExpr("World"), CompiledVariableExpr(0, .inline, .inline)]),
+          .emph, [TextExpr("World"), CompiledVariableExpr(0, .inline)]),
         HeadingExpr(
-          .sectionAst, [TextExpr("Heading"), CompiledVariableExpr(1, .inline, .inline)]),
-        ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0, .inline, .inline)]),
-        RootExpr([TextExpr("Root"), CompiledVariableExpr(1, .inline, .inline)]),
+          .sectionAst, [TextExpr("Heading"), CompiledVariableExpr(1, .inline)]),
+        ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0, .inline)]),
+        RootExpr([TextExpr("Root"), CompiledVariableExpr(1, .inline)]),
         TextStylesExpr(
-          .textbf, [TextExpr("Strong"), CompiledVariableExpr(0, .inline, .inline)]),
+          .textbf, [TextExpr("Strong"), CompiledVariableExpr(0, .inline)]),
         //
       ],
       layoutType: .inline)
@@ -440,7 +440,7 @@ struct NanoPassTests {
         EquationExpr(
           .display,
           [
-            AccentExpr(.dot, [CompiledVariableExpr(0, .inline, .inline)]),
+            AccentExpr(.dot, [CompiledVariableExpr(0, .inline)]),
             LeftRightExpr(.BRACE, [TextExpr("Brace")]),
             MathExpressionExpr(.bmod),
             MathOperatorExpr(.Pr),
@@ -468,7 +468,7 @@ struct NanoPassTests {
                 ]),
               ]),
             RadicalExpr(
-              [CompiledVariableExpr(0, .inline, .inline)], index: [TextExpr("n")]),
+              [CompiledVariableExpr(0, .inline)], index: [TextExpr("n")]),
             TextModeExpr([TextExpr("Text Mode")]),
             UnderOverExpr(.overline, [TextExpr("Overline")]),
           ])

@@ -121,9 +121,9 @@ struct TemplateSamples {
       name: "circle", parameters: ["x", "y"],
       body: [
         AttachExpr(
-          nuc: [CompiledVariableExpr(0, .inline, .inline)], sup: [TextExpr("2")]),
+          nuc: [CompiledVariableExpr(0, .inline)], sup: [TextExpr("2")]),
         TextExpr("+"),
-        AttachExpr(nuc: [CompiledVariableExpr(1, .inline, .inline)], sup: [TextExpr("2")]),
+        AttachExpr(nuc: [CompiledVariableExpr(1, .inline)], sup: [TextExpr("2")]),
         TextExpr("=1"),
       ],
       layoutType: .inline)
@@ -135,7 +135,7 @@ struct TemplateSamples {
         FractionExpr(
           num: [
             AttachExpr(
-              nuc: [CompiledVariableExpr(0, .inline, .inline)], sup: [TextExpr("2")])
+              nuc: [CompiledVariableExpr(0, .inline)], sup: [TextExpr("2")])
           ],
           denom: [AttachExpr(nuc: [TextExpr("a")], sup: [TextExpr("2")])]
         ),
@@ -143,7 +143,7 @@ struct TemplateSamples {
         FractionExpr(
           num: [
             AttachExpr(
-              nuc: [CompiledVariableExpr(1, .inline, .inline)], sup: [TextExpr("2")])
+              nuc: [CompiledVariableExpr(1, .inline)], sup: [TextExpr("2")])
           ],
           denom: [AttachExpr(nuc: [TextExpr("b")], sup: [TextExpr("2")])]
         ),
@@ -156,15 +156,15 @@ struct TemplateSamples {
       name: "SOS", parameters: ["x"],
       body: [
         AttachExpr(
-          nuc: [CompiledVariableExpr(0, .inline, .inline)], sub: [TextExpr("1")],
+          nuc: [CompiledVariableExpr(0, .inline)], sub: [TextExpr("1")],
           sup: [TextExpr("2")]),
         TextExpr("+"),
         AttachExpr(
-          nuc: [CompiledVariableExpr(0, .inline, .inline)], sub: [TextExpr("2")],
+          nuc: [CompiledVariableExpr(0, .inline)], sub: [TextExpr("2")],
           sup: [TextExpr("2")]),
         TextExpr("+⋯+"),
         AttachExpr(
-          nuc: [CompiledVariableExpr(0, .inline, .inline)], sub: [TextExpr("n")],
+          nuc: [CompiledVariableExpr(0, .inline)], sub: [TextExpr("n")],
           sup: [TextExpr("2")]),
       ],
       layoutType: .inline)
@@ -173,7 +173,7 @@ struct TemplateSamples {
     Template(
       name: "square", parameters: ["x"],
       body: [
-        AttachExpr(nuc: [CompiledVariableExpr(0, .inline, .inline)], sup: [TextExpr("2")])
+        AttachExpr(nuc: [CompiledVariableExpr(0, .inline)], sup: [TextExpr("2")])
       ],
       layoutType: .inline)
 }

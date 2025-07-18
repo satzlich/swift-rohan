@@ -263,7 +263,7 @@ struct ContentPropertyTests {
     }
     // VariableNode
     do {
-      let node = VariableNode(0, .textit, .inline, false)
+      let node = VariableNode(0, .textit, .inline)
       node.insertChild(TextNode("Hello"), at: 0, inStorage: true)
       let content = ContentProperty(
         nodeType: .text, contentMode: .universal, contentType: .inline,

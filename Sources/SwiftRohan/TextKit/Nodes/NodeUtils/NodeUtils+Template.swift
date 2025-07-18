@@ -100,7 +100,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
       cVariable.argumentIndex,
       cVariable.textStyles,
       cVariable.layoutType,
-      cVariable.isBlockContainer,
       nestedLevelDelta: cVariable.nestedLevelDetla)
   }
 
