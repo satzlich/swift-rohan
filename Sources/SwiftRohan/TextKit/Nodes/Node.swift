@@ -7,6 +7,36 @@ import _RopeModule
 internal class Node: Codable {
   public init() {}
 
+  internal class var type: NodeType { preconditionFailure("overriding required") }
+  final var type: NodeType { Self.type }
+
+  /// Returns the content properties for the node.
+  internal func contentProperty() -> Array<ContentProperty> {
+    let type = self.type
+    let contentProperty = ContentProperty(
+      nodeType: type,
+      contentMode: type.contentMode!,
+      contentType: contentType,
+      contentTag: type.contentTag)
+    return [contentProperty]
+  }
+
+  /// Returns the container property for the node, if any.
+  internal func containerProperty() -> ContainerProperty? {
+    let type = self.type
+    if let containerMode = type.containerMode,
+      let containerType = type.containerType
+    {
+      return ContainerProperty(
+        nodeType: type,
+        parentType: parent?.type,
+        containerMode: containerMode,
+        containerType: containerType,
+        containerTag: type.containerTag)
+    }
+    return nil
+  }
+
   /// Returns a deep copy of the node (intrinsic state only).
   internal func deepCopy() -> Self { preconditionFailure("overriding required") }
 
@@ -14,9 +44,6 @@ internal class Node: Codable {
   where V: NodeVisitor<R, C> {  // V for visitor, C for context, R for result
     preconditionFailure("overriding required")
   }
-
-  internal class var type: NodeType { preconditionFailure("overriding required") }
-  final var type: NodeType { Self.type }
 
   final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
 
@@ -290,4 +317,9 @@ extension Node {
   final func resolveValue(_ key: PropertyKey, _ styleSheet: StyleSheet) -> PropertyValue {
     key.resolveValue(getProperties(styleSheet), styleSheet)
   }
+}
+
+extension Node {
+  @inlinable @inline(__always)
+  final var contentType: ContentType { self.layoutType.contentType }
 }

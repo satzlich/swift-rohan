@@ -68,17 +68,25 @@
 
 - `itemList` can only contain `paragraph`.
 
+## Can create 
+
+- Inserting content that can be inserted into paragraph can create `paragraph` node.
+
 # Design
+
+- obtains node type and node type of its parent
+- obtains content properties from a node
+- obtains container properties from the effective node for given location
 
 ```swift
 
 struct ContentProperty {
   let contentMode: ContentMode
-  let layoutType: LayoutType
+  let contentType: ContentType
 }
 
 struct ContainerProperty {
-  let containerMode: LayoutMode
+  let containerMode: ContainerMode
   let containerType: ContainerType // inline, block, mixed
 }
 
@@ -88,13 +96,12 @@ enum ContentMode {
   case universal // can be either text or math
 }
 
-enum LayoutType {
+enum ContentType {
   case inline
-  case hardBlock
-  case softBlock
+  case block
 }
 
-enum LayoutMode {
+enum ContainerMode {
   case text
   case math
 }

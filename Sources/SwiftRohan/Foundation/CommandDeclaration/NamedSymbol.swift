@@ -4,32 +4,21 @@ import Foundation
 import LatexParser
 
 struct NamedSymbol: Codable, CommandDeclarationProtocol {
-  enum Subtype: String, Comparable, Codable {
-    case math
-    case text
-    case universal
-
-    /// The order is arbitrary, but it is used for sorting.
-    static func < (lhs: Subtype, rhs: Subtype) -> Bool {
-      lhs.rawValue < rhs.rawValue
-    }
-  }
-
   let command: String
   let tag: CommandTag
   var source: CommandSource { .preBuilt }
 
   let string: String
-  let subtype: Subtype
+  let contentMode: ContentMode
 
   init(
     _ command: String, _ string: String,
-    subtype: Subtype = .math,
+    contentMode: ContentMode = .math,
     tag: CommandTag = .namedSymbol
   ) {
     self.command = command
     self.string = string
-    self.subtype = subtype
+    self.contentMode = contentMode
     self.tag = tag
   }
 
@@ -46,7 +35,7 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
   }
 
   private func _preview() -> String {
-    switch subtype {
+    switch contentMode {
     case .math:
       if string.count == 1,
         let char = string.first
@@ -78,19 +67,19 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 
 extension NamedSymbol: Equatable, Hashable {
   static func == (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
-    lhs.command == rhs.command && lhs.subtype == rhs.subtype
+    lhs.command == rhs.command && lhs.contentMode == rhs.contentMode
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine(command)
-    hasher.combine(subtype)
+    hasher.combine(contentMode)
   }
 }
 
 extension NamedSymbol: Comparable {
   static func < (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
-    if lhs.subtype != rhs.subtype {
-      return lhs.subtype < rhs.subtype
+    if lhs.contentMode != rhs.contentMode {
+      return lhs.contentMode < rhs.contentMode
     }
     else {
       return lhs.command < rhs.command
@@ -115,10 +104,10 @@ extension NamedSymbol {
 /// Symbols defined in LaTeX
 private enum LatexCommands {
   static let universalSymbols: Array<NamedSymbol> = [
-    .init("dag", "\u{2020}", subtype: .universal),  // †
-    .init("ddag", "\u{2021}", subtype: .universal),  // ‡
-    .init("P", "\u{00B6}", subtype: .universal),  // ¶
-    .init("S", "\u{00A7}", subtype: .universal),  // §
+    .init("dag", "\u{2020}", contentMode: .universal),  // †
+    .init("ddag", "\u{2021}", contentMode: .universal),  // ‡
+    .init("P", "\u{00B6}", contentMode: .universal),  // ¶
+    .init("S", "\u{00A7}", contentMode: .universal),  // §
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
@@ -794,7 +783,7 @@ private enum AMSCommands {
 
 private enum OtherCommands {
   static let universalSymbol: Array<NamedSymbol> = [
-    .init("QED", "\u{220E}", subtype: .universal)  // ∎
+    .init("QED", "\u{220E}", contentMode: .universal)  // ∎
   ]
 
   static let mathSymbols: Array<NamedSymbol> = [

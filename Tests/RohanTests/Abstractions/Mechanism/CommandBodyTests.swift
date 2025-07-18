@@ -11,14 +11,17 @@ struct CommandBodyTests {
   func coverage() {
     let records = CommandRecords.allCases.map(\.body)
     let rules = ReplacementRules.allCases.map(\.command)
-    let categories = ContainerCategory.allCases
+    let containerProperties = ContainerProperty.allCasesForTesting
 
-    for (body, category) in product(records + rules, categories) {
-      _ = body.isCompatible(with: category)
+    for body in records {
       _ = body.isMathOnly
       _ = body.isUniversal
       _ = body.preview
       _ = body.insertString()
+    }
+
+    for (body, container) in product(records + rules, containerProperties) {
+      _ = body.isCompatible(with: container)
     }
   }
 
@@ -27,7 +30,7 @@ struct CommandBodyTests {
     // cover preview for long string.
     do {
       let body =
-        CommandBody.insertString(CommandBody.InsertString("LongString", .textText))
+        CommandBody.insertString(CommandBody.InsertString("LongString", .text))
       _ = body.preview
     }
 

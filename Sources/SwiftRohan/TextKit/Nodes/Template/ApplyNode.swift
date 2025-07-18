@@ -6,14 +6,18 @@ import _RopeModule
 final class ApplyNode: Node {
   // MARK: - Node
 
+  final override class var type: NodeType { .apply }
+
+  final override func contentProperty() -> Array<ContentProperty> {
+    _expansion.contentProperty()
+  }
+
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(apply: self, context)
   }
-
-  final override class var type: NodeType { .apply }
 
   final override func resetCachedProperties() {
     super.resetCachedProperties()

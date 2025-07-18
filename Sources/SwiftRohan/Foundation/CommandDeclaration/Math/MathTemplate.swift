@@ -81,9 +81,7 @@ extension MathTemplate {
         MathAttributesExpr(
           .mathKind(.mathop),
           [
-            MathStylesExpr(
-              .mathrm,
-              [VariableExpr("content", .inline, false)])
+            MathStylesExpr(.mathrm, [VariableExpr("content", .inline, false)])
           ])
       ],
       layoutType: .inline)
@@ -98,8 +96,7 @@ extension MathTemplate {
         AttachExpr(
           nuc: [
             MathAttributesExpr(
-              .mathLimits(.limits),
-              [VariableExpr("content", .inline, false)])
+              .mathLimits(.limits), [VariableExpr("content", .inline, false)])
           ],
           sup: [VariableExpr("top", .inline, false)])
       ],
@@ -130,8 +127,7 @@ extension MathTemplate {
         AttachExpr(
           nuc: [
             MathAttributesExpr(
-              .combo(.mathrel, .limits),
-              [VariableExpr("bottom", .inline, false)])
+              .combo(.mathrel, .limits), [VariableExpr("bottom", .inline, false)])
           ],
           sup: [VariableExpr("top", .inline, false)])
       ],
@@ -147,8 +143,7 @@ extension MathTemplate {
         AttachExpr(
           nuc: [
             MathAttributesExpr(
-              .mathLimits(.limits),
-              [VariableExpr("content", .inline, false)])
+              .mathLimits(.limits), [VariableExpr("content", .inline, false)])
           ],
           sub: [VariableExpr("bottom", .inline, false)])
       ],

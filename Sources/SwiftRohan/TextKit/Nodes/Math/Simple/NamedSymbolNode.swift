@@ -5,6 +5,14 @@ import Foundation
 final class NamedSymbolNode: SimpleNode {
   // MARK: - Node
 
+  final override func contentProperty() -> Array<ContentProperty> {
+    let type = self.type
+    let contentProperty = ContentProperty(
+      nodeType: type, contentMode: namedSymbol.contentMode,
+      contentType: self.contentType, contentTag: type.contentTag)
+    return [contentProperty]
+  }
+
   final override func deepCopy() -> Self { Self(namedSymbol) }
 
   final override func accept<V, R, C>(_ visitor: V, _ context: C) -> R

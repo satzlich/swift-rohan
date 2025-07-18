@@ -5,6 +5,12 @@ import _RopeModule
 final class ArgumentNode: Node {
   // MARK: - Node
 
+  final override class var type: NodeType { .argument }
+
+  final override func contentProperty() -> Array<ContentProperty> {
+    preconditionFailure("ContentProperty for ArgumentNode is unused.")
+  }
+
   final override func deepCopy() -> Self {
     preconditionFailure("Work is done in ApplyNode.")
   }
@@ -13,8 +19,6 @@ final class ArgumentNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(argument: self, context)
   }
-
-  final override class var type: NodeType { .argument }
 
   // MARK: - Node(Positioning)
 
@@ -162,22 +166,9 @@ final class ArgumentNode: Node {
       location, endLocation, variableNodes.first!, using: block)
   }
 
-  /// Returns the content container category of the argument.
-  func getContainerCategory() -> ContainerCategory? {
-    let categories: Array<ContainerCategory> =
-      variableNodes.compactMap { variable in
-        guard let parent = variable.parent else { return nil }
-        return TreeUtils.containerCategory(of: parent)
-      }
-    if categories.count != variableNodes.count {
-      return nil
-    }
-    else {
-      let candidate = categories.dropFirst().reduce(categories.first!) { a, b in
-        a.intersection(b)
-      }
-      return candidate
-    }
+  func computeContainerProperty() -> ContainerProperty? {
+    // TODO: We have to refine it when variable nodes are different.
+    TreeUtils.containerProperty(of: variableNodes.first!)
   }
 
   // MARK: - Children

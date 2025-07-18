@@ -221,7 +221,7 @@ enum NodePolicy {
 
     @inline(__always)
     func isMathSymbol(_ node: Node) -> Bool {
-      (node as? NamedSymbolNode)?.namedSymbol.subtype == .math
+      (node as? NamedSymbolNode)?.namedSymbol.contentMode == .math
     }
   }
 
@@ -258,51 +258,5 @@ enum NodePolicy {
       .textStyles,
       .variable,
     ].contains(type)
-  }
-
-  /// Content container cateogry of given node type, or nil if the value should
-  /// be determined from contextual nodes.
-  @inlinable @inline(__always)
-  static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
-    switch nodeType {
-    // Misc
-    case .counter: nil
-    case .linebreak: nil
-    case .text: nil
-    case .unknown: nil
-
-    // Element
-    case .content: nil
-    case .expansion: nil
-    case .heading: .inlineContentContainer
-    case .itemList: .paragraphContainer
-    case .paragraph: nil
-    case .parList: .paragraphContainer
-    case .root: .topLevelContainer
-    case .textStyles: .extendedTextContainer
-
-    // Math
-    case .accent: .mathContainer
-    case .attach: .mathContainer
-    case .equation: .mathContainer
-    case .fraction: .mathContainer
-    case .leftRight: .mathContainer
-    case .mathAttributes: .mathContainer
-    case .mathExpression: nil
-    case .mathOperator: nil
-    case .mathStyles: .mathContainer
-    case .matrix: .mathContainer
-    case .multiline: .mathContainer
-    case .namedSymbol: nil
-    case .radical: .mathContainer
-    case .textMode: .textTextContainer
-    case .underOver: .mathContainer
-
-    // Template
-    case .apply: nil
-    case .argument: nil
-    case .cVariable: nil
-    case .variable: nil
-    }
   }
 }

@@ -98,12 +98,12 @@ extension DocumentView {
       string.count == 1
     else { return }
 
-    guard let container = documentManager.containerCategory(for: range.location) else {
+    guard let container = documentManager.containerProperty(for: range.location) else {
       assertionFailure("Invalid range: \(range)")
       return
     }
 
-    let mode = container.layoutMode()
+    let mode = container.containerMode.layoutMode()
     let char = string.first!
     let location = range.location
 
@@ -113,7 +113,7 @@ extension DocumentView {
       let (body, matched) = engine.replacement(for: char, prefix: prefix, in: mode),
       let beginning = documentManager.traceBackward(from: location, matched),
       let newRange = RhTextRange(beginning, range.endLocation),
-      body.isCompatible(with: container)
+       body.isCompatible(with: container)
     {
       executeCommand(body, at: newRange)
     }
