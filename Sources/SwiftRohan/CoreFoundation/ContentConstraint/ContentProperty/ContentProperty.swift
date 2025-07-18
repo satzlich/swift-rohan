@@ -10,7 +10,7 @@ struct ContentProperty: Equatable, Hashable {
 }
 
 extension ContentProperty {
-  func isCompatbile(with container: ContainerProperty) -> Bool {
+  func isCompatible(with container: ContainerProperty) -> Bool {
     ConstraintEngine.shared.isCompatible(self, container)
   }
 }

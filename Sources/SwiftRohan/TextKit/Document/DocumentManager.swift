@@ -184,7 +184,7 @@ public final class DocumentManager: NSObject {
     let content: Array<ContentProperty> = TreeUtils.contentProperty(of: nodes)
     guard content.isEmpty == false,
       let container = containerProperty(for: range.location),
-      content.allSatisfy({ $0.isCompatbile(with: container) })
+      content.allSatisfy({ $0.isCompatible(with: container) })
     else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point

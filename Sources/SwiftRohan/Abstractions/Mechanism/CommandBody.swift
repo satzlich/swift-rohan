@@ -45,11 +45,11 @@ public enum CommandBody {
     switch self {
     case .insertString(let insertString):
       return insertString.contentProperty.allSatisfy {
-        $0.isCompatbile(with: containerProperty)
+        $0.isCompatible(with: containerProperty)
       }
     case .insertExprs(let insertExprs):
       return insertExprs.contentProperty.allSatisfy {
-        $0.isCompatbile(with: containerProperty)
+        $0.isCompatible(with: containerProperty)
       }
     case .editMath:
       return containerProperty.containerMode == .math
