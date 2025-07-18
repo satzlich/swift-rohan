@@ -126,12 +126,19 @@ internal class Node: Codable {
   /// Returns the layout offset for the given index, that is, the sum of layout
   /// lengths of all children before the child at the given index, taking into
   /// account additional units (e.g. newlines) that contribute to layout lengths.
+  /// - Parameters:
+  ///   - index: the index to get the layout offset for.
+  ///   - isFinal: true if the index is the final index of a path.
   /// - Returns: the layout offset; or `nil` if the index is invalid or layout
   ///     length is not well-defined for the kind of this node.
   /// - Invariant: if `offset = getLayoutOffset(index)` is non-nil, then
   ///     `getPosition(offset) == index`.
-  internal func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  internal func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     preconditionFailure("overriding required")
+  }
+
+  final func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    self.getLayoutOffset(index, isFinal: false)
   }
 
   /// Returns a position within the node that is picked by `layoutOffset`.

@@ -32,7 +32,7 @@ internal class ElementNode: Node {
 
   final override func lastIndex() -> RohanIndex? { .index(_children.count) }
 
-  internal override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  internal override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     preconditionFailure("overriding required")
   }
 
@@ -143,7 +143,7 @@ internal class ElementNode: Node {
     if self.isPlaceholderActive {
       assert(path.count == 1 && endPath.count == 1)
       assert(index == endIndex && index == 0)
-      let offset = layoutOffset + (self.getLayoutOffset(0) ?? 0)
+      let offset = layoutOffset + (self.getLayoutOffset(0, isFinal: true) ?? 0)
       let layoutRange = offset..<offset + 1
 
       func placeholderBlock(
@@ -158,8 +158,8 @@ internal class ElementNode: Node {
         layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
     }
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
-      guard let offset = TreeUtils.computeFinalLayoutOffset(for: path, self),
-        let endOffset = TreeUtils.computeFinalLayoutOffset(for: endPath, self)
+      guard let offset = TreeUtils.computeLayoutOffset(for: path, isFinal: true, self),
+        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, isFinal: true, self)
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
 
@@ -214,7 +214,7 @@ internal class ElementNode: Node {
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
       guard index < self.childCount,
-        let offset = getLayoutOffset(index)
+        let offset = getLayoutOffset(index, isFinal: false)
       else { assertionFailure("Invalid path"); return false }
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context: context,
@@ -420,7 +420,7 @@ internal class ElementNode: Node {
     guard let index = path.first?.index() else { return nil }
 
     if path.count == 1 {
-      guard let localOffset = getLayoutOffset(index) else { return nil }
+      guard let localOffset = getLayoutOffset(index, isFinal: true) else { return nil }
       assert(index <= self.childCount)
       let newOffset = layoutOffset + localOffset
       guard
@@ -448,7 +448,7 @@ internal class ElementNode: Node {
       return LayoutUtils.relayRayshoot(newOffset, affinity, direction, result, context)
     }
     else {
-      guard let localOffset = getLayoutOffset(index),
+      guard let localOffset = getLayoutOffset(index, isFinal: false),
         index < self.childCount
       else { return nil }
       return _children[index].rayshoot(
@@ -822,7 +822,7 @@ internal class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
-  internal func getLayoutOffset(_ index: Int) -> Int? {
+  internal func getLayoutOffset(_ index: Int, isFinal: Bool) -> Int? {
     preconditionFailure("overriding required")
   }
 

@@ -5,9 +5,9 @@ internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Positioning)
 
   // Override `getLayoutOffset(_ index: Int)` instead of this method.
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     guard let index = index.index() else { return nil }
-    return getLayoutOffset(index)
+    return getLayoutOffset(index, isFinal: isFinal)
   }
 
   internal override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
@@ -71,7 +71,7 @@ internal class ElementNodeImpl: ElementNode {
 
   // MARK: - ElementNode
 
-  internal override func getLayoutOffset(_ index: Int) -> Int? {
+  internal override func getLayoutOffset(_ index: Int, isFinal: Bool) -> Int? {
     guard index <= childCount else { return nil }
     guard !_children.isEmpty else { return 0 }  // "0" whether placeholder is active or not.
 
@@ -80,18 +80,27 @@ internal class ElementNodeImpl: ElementNode {
     let s0 = _newlines.value(before: 0, atBlockEdge: _atBlockEdge).intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return s0 + s1 + s2
+    let sum = s0 + s1 + s2
+
+    if isFinal,
+      index > 0 && _children[index - 1].layoutType == .inline
+    {
+      return sum - _newlines[index - 1].intValue
+    }
+    else {
+      return sum
+    }
   }
 
-//  final override func getFinalLayoutOffset(_ index: Int) -> Int? {
-//    guard let offset = self.getLayoutOffset(index) else { return nil }
-//    if index > 0 && _children[index - 1].layoutType == .inline {
-//      return offset - _newlines[index - 1].intValue
-//    }
-//    else {
-//      return offset
-//    }
-//  }
+  //  final override func getFinalLayoutOffset(_ index: Int) -> Int? {
+  //    guard let offset = self.getLayoutOffset(index) else { return nil }
+  //    if index > 0 && _children[index - 1].layoutType == .inline {
+  //      return offset - _newlines[index - 1].intValue
+  //    }
+  //    else {
+  //      return offset
+  //    }
+  //  }
 
   // MARK: - Impl(Layout)
 

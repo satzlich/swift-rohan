@@ -27,7 +27,7 @@ class MathNode: Node {
     (enumerateComponents().last?.index).map { .mathIndex($0) }
   }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     // layout offset for math component is not well-defined and is unused
     return nil
   }

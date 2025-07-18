@@ -34,7 +34,7 @@ final class ArgumentNode: Node {
     variableNodes.first?.lastIndex()
   }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     assertionFailure("should not be called")
     return nil
   }
