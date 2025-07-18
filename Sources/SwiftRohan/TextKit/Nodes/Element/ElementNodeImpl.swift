@@ -92,16 +92,6 @@ internal class ElementNodeImpl: ElementNode {
     }
   }
 
-  //  final override func getFinalLayoutOffset(_ index: Int) -> Int? {
-  //    guard let offset = self.getLayoutOffset(index) else { return nil }
-  //    if index > 0 && _children[index - 1].layoutType == .inline {
-  //      return offset - _newlines[index - 1].intValue
-  //    }
-  //    else {
-  //      return offset
-  //    }
-  //  }
-
   // MARK: - Impl(Layout)
 
   private final var _snapshotRecords: Array<SnapshotRecord>? = nil
