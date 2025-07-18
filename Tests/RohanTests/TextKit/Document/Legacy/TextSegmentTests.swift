@@ -328,7 +328,7 @@ final class TextSegmentTests: TextKitTestsBase {
   }
 
   private func _createArrayNodeExample(_ subtype: MathArray) -> (Node, RhTextRange) {
-    if subtype.isMatrixNodeCompatible {
+    if subtype.requiresMatrixNode {
       let node =
         EquationNode(
           .equation,
@@ -352,7 +352,7 @@ final class TextSegmentTests: TextKitTestsBase {
       return (node, range)
     }
     else {
-      assert(subtype.isMultilineNodeCompatible)
+      assert(subtype.requiresMultilineNode)
       let node = MultilineNode(
         subtype,
         [

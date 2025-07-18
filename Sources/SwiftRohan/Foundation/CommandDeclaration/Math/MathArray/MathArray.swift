@@ -14,12 +14,13 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     self.subtype = subtype
   }
 
-  var delimiters: DelimiterPair { subtype.delimiters }
+  var requiresMatrixNode: Bool { subtype.requiresMatrixNode }
+  var requiresMultilineNode: Bool { subtype.requiresMultilineNode }
 
-  var isMatrixNodeCompatible: Bool { subtype.isMatrixNodeCompatible }
-  var isMultilineNodeCompatible: Bool { subtype.isMultilineNodeCompatible }
+  var delimiters: DelimiterPair { subtype.delimiters }
   var isMatrix: Bool { subtype.isMatrix }
   var isMultline: Bool { subtype.isMultline }
+
   var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
   var shouldProvideCounter: Bool { subtype.shouldProvideCounter }
 
@@ -53,7 +54,7 @@ extension MathArray {
     case multlineAst
     case substack
 
-    var isMatrixNodeCompatible: Bool {
+    var requiresMatrixNode: Bool {
       switch self {
       case .aligned, .cases, .gathered, .matrix, .substack:
         return true
@@ -62,7 +63,7 @@ extension MathArray {
       }
     }
 
-    var isMultilineNodeCompatible: Bool { !isMatrixNodeCompatible }
+    var requiresMultilineNode: Bool { !requiresMatrixNode }
 
     var isMatrix: Bool {
       switch self {
