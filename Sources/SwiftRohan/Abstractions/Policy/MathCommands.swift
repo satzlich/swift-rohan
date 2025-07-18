@@ -189,6 +189,8 @@ enum MathCommands {
           (MathArray.Bmatrix, "Bmatrix_"),
           (MathArray.vmatrix, "vmatrix"),
           (MathArray.Vmatrix, "Vmatrix_"),
+          //
+          (MathArray.smallmatrix, "matrix"),  // recycle
           (MathArray.substack, "substack"),
         ]
       assert(matrices.count == MathArray.inlineMathCommands.count)

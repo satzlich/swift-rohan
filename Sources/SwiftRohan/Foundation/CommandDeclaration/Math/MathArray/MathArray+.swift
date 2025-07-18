@@ -10,6 +10,7 @@ extension MathArray.Subtype {
     case .gather, .gatherAst, .gathered: return ALIGN_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
     case .multline, .multlineAst: return ALIGN_ROW_GAP
+    case .smallmatrix: return MATRIX_ROW_GAP
     case .substack: return SUBSTACK_ROW_GAP
     }
   }
@@ -21,6 +22,7 @@ extension MathArray.Subtype {
     case .gather, .gatherAst, .gathered: return FixedCellAlignmentProvider(.center)
     case .matrix: return FixedCellAlignmentProvider(.center)
     case .multline, .multlineAst: return MultlineCellAlignmentProvider(rowCount)
+    case .smallmatrix: return FixedCellAlignmentProvider(.center)
     case .substack: return FixedCellAlignmentProvider(.center)
     }
   }
@@ -37,6 +39,7 @@ extension MathArray.Subtype {
     case .gather, .gatherAst, .gathered: return PlaceholderColumnGapProvider()  // unused
     case .matrix: return MatrixColumnGapProvider()
     case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
+    case .smallmatrix: return MatrixColumnGapProvider()
     case .substack: return PlaceholderColumnGapProvider()  // unused
     }
   }
