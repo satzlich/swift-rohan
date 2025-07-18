@@ -12,10 +12,10 @@ public final class CompletionProvider {
 
   private struct CacheKey: Equatable, Hashable {
     let query: String
-    let container: ContainerCategory
+    let container: ContainerProperty
     let enableFuzzy: Bool
 
-    init(_ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool) {
+    init(_ query: String, _ container: ContainerProperty, _ enableFuzzy: Bool) {
       self.query = query
       self.container = container
       self.enableFuzzy = enableFuzzy
@@ -39,7 +39,7 @@ public final class CompletionProvider {
 
   /// Returns the completion for the given query and container.
   func getCompletions(
-    _ query: String, _ container: ContainerCategory,
+    _ query: String, _ container: ContainerProperty,
     _ maxResults: Int, _ enableFuzzy: Bool = false
   ) -> Array<Result> {
     var shouldCache = false
@@ -97,7 +97,7 @@ public final class CompletionProvider {
   }
 
   private func getCachedResults(
-    _ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool
+    _ query: String, _ container: ContainerProperty, _ enableFuzzy: Bool
   ) -> (source: String, Array<Result>)? {
     // Check the cache for the exact match first.
     do {
@@ -127,7 +127,7 @@ public final class CompletionProvider {
   }
 
   /// Returns the top K command records that match the given container category.
-  private func getTopK(_ k: Int, _ container: ContainerCategory) -> Array<CommandRecord> {
+  private func getTopK(_ k: Int, _ container: ContainerProperty) -> Array<CommandRecord> {
     var results = Array<CommandRecord>()
     results.reserveCapacity(k)
 

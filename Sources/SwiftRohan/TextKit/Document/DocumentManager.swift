@@ -157,6 +157,14 @@ public final class DocumentManager: NSObject {
     TreeUtils.contentCategory(of: nodes)
   }
 
+  internal func containerProperty(for location: TextLocation) -> ContainerProperty? {
+    preconditionFailure()
+  }
+
+  internal func contentProperty(of nodes: Array<Node>) -> Array<ContentProperty> {
+    preconditionFailure()
+  }
+
   // MARK: - Editing
 
   /// Replace contents in range with nodes.

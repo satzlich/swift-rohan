@@ -11,10 +11,10 @@ struct CommandBodyTests {
   func coverage() {
     let records = CommandRecords.allCases.map(\.body)
     let rules = ReplacementRules.allCases.map(\.command)
-    let categories = ContainerCategory.allCases
+    let containerProperties = ContainerProperty.allCasesForTesting
 
-    for (body, category) in product(records + rules, categories) {
-      _ = body.isCompatible(with: category)
+    for (body, container) in product(records + rules, containerProperties) {
+      _ = body.isCompatible(with: container)
       _ = body.isMathOnly
       _ = body.isUniversal
       _ = body.preview

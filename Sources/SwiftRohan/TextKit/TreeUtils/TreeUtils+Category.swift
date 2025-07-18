@@ -170,6 +170,12 @@ extension TreeUtils {
     return contentCategory(of: nodes)
   }
 
+  /// Returns content properties of the node list.
+  static func contentProperty(of exprs: Array<Expr>) -> Array<ContentProperty> {
+    let nodes: Array<Node> = NodeUtils.convertExprs(exprs)
+    return nodes.flatMap { $0.contentProperty() }
+  }
+
   // MARK: - Container Category
 
   /// Returns category of content container where location is in.

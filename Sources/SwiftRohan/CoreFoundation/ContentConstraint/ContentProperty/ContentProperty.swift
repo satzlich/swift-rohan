@@ -8,3 +8,9 @@ struct ContentProperty {
   let contentType: ContentType
   let contentTag: ContentTag?
 }
+
+extension ContentProperty {
+  func isCompatbile(with container: ContainerProperty) -> Bool {
+    ConstraintEngine.shared.isCompatible(self, container)
+  }
+}

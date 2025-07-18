@@ -2,9 +2,31 @@
 
 import Foundation
 
-struct ContainerProperty {
+struct ContainerProperty: Equatable, Hashable {
   let nodeType: NodeType
   let parentType: NodeType?
   let containerMode: ContainerMode
   let containerType: ContainerType
+}
+
+extension ContainerProperty {
+  /// Returns a list of all container properties for testing purposes.
+  static var allCasesForTesting: Array<ContainerProperty> {
+    var result: Array<ContainerProperty> = []
+    for nodeType in NodeType.allCases {
+      for parentType in NodeType.allCases {
+        for containerMode in ContainerMode.allCases {
+          for containerType in ContainerType.allCases {
+            let container = ContainerProperty(
+              nodeType: nodeType,
+              parentType: parentType,
+              containerMode: containerMode,
+              containerType: containerType)
+            result.append(container)
+          }
+        }
+      }
+    }
+    return result
+  }
 }

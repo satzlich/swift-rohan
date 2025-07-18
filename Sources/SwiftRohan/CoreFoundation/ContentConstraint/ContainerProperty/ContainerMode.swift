@@ -8,6 +8,15 @@ enum ContainerMode: CaseIterable {
 }
 
 extension ContainerMode {
+  func layoutMode() -> LayoutMode {
+    switch self {
+    case .text: .textMode
+    case .math: .mathMode
+    }
+  }
+}
+
+extension ContainerMode {
   @inlinable @inline(__always)
   func isCompatible(with content: ContentMode) -> Bool {
     switch (self, content) {

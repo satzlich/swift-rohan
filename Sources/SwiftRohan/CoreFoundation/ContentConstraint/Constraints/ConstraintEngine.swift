@@ -6,7 +6,7 @@ struct ConstraintEngine {
 
   nonisolated(unsafe) static let shared = ConstraintEngine()
 
-  internal func isCompatile(
+  internal func isCompatible(
     _ content: ContentProperty, _ container: ContainerProperty
   ) -> Bool {
     content.contentMode.isCompatible(with: container.containerMode)

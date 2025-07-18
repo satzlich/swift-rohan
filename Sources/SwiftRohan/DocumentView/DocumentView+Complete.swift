@@ -95,7 +95,7 @@ extension DocumentView {
     for query: String, location: TextLocation
   ) -> Array<CompletionItem> {
     guard let provider = self.completionProvider,
-      let container = documentManager.containerCategory(for: location)
+      let container = documentManager.containerProperty(for: location)
     else {
       assertionFailure("completion provider or container is nil")
       return []

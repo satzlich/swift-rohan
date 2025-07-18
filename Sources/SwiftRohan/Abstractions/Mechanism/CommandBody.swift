@@ -22,10 +22,7 @@ public enum CommandBody {
 
   private init(_ expressions: Array<Expr>, _ backwardMoves: Int, preview: CommandPreview)
   {
-    guard let category = TreeUtils.contentCategory(of: expressions)
-    else { fatalError("Expect non-nil category") }
-    assert(category.isPlaintext == false)
-    let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
+    let insertExprs = InsertExprs(expressions, backwardMoves, preview: preview)
     self = .insertExprs(insertExprs)
   }
 
@@ -44,23 +41,27 @@ public enum CommandBody {
 
   // MARK: - Properties
 
-  func isCompatible(with container: ContainerCategory) -> Bool {
+  func isCompatible(with containerProperty: ContainerProperty) -> Bool {
     switch self {
     case .insertString(let insertString):
-      return container.isCompatible(with: insertString.category)
+      return insertString.contentProperty.allSatisfy {
+        $0.isCompatbile(with: containerProperty)
+      }
     case .insertExprs(let insertExprs):
-      return container.isCompatible(with: insertExprs.category)
+      return insertExprs.contentProperty.allSatisfy {
+        $0.isCompatbile(with: containerProperty)
+      }
     case .editMath:
-      return container == .mathContainer
+      return containerProperty.containerMode == .math
     }
   }
 
   var isUniversal: Bool {
     switch self {
     case .insertString(let insertString):
-      return insertString.category.isUniversal
+      return insertString.contentProperty.lazy.map(\.contentMode).isUniversal()
     case .insertExprs(let insertExprs):
-      return insertExprs.category.isUniversal
+      return insertExprs.contentProperty.lazy.map(\.contentMode).isUniversal()
     case .editMath:
       return false
     }
@@ -69,9 +70,9 @@ public enum CommandBody {
   var isMathOnly: Bool {
     switch self {
     case .insertString(let insertString):
-      return insertString.category.isMathOnly
+      return insertString.contentProperty.lazy.map(\.contentMode).isMathOnly()
     case .insertExprs(let insertExprs):
-      return insertExprs.category.isMathOnly
+      return insertExprs.contentProperty.lazy.map(\.contentMode).isMathOnly()
     case .editMath:
       return true
     }
@@ -99,19 +100,12 @@ public enum CommandBody {
 
   public struct InsertString {
     let string: String
-    let category: ContentCategory
     let contentProperty: Array<ContentProperty>
     let backwardMoves: Int
 
     init(_ string: String, _ contentMode: ContentMode, _ backwardMoves: Int = 0) {
       precondition(backwardMoves >= 0)
       self.string = string
-      self.category =
-        switch contentMode {
-        case .math: .mathText
-        case .text: .textText
-        case .universal: .universalText
-        }
       let contentProperty =
         ContentProperty(
           nodeType: .text,
@@ -129,17 +123,14 @@ public enum CommandBody {
 
   public struct InsertExprs {
     let exprs: Array<Expr>
-    let category: ContentCategory
+    let contentProperty: Array<ContentProperty>
     let backwardMoves: Int
     let preview: CommandPreview
 
-    init(
-      _ exprs: Array<Expr>, _ category: ContentCategory, _ backwardMoves: Int,
-      preview: CommandPreview
-    ) {
+    init(_ exprs: Array<Expr>, _ backwardMoves: Int, preview: CommandPreview) {
       precondition(backwardMoves >= 0)
       self.exprs = exprs
-      self.category = category
+      self.contentProperty = TreeUtils.contentProperty(of: exprs)
       self.backwardMoves = backwardMoves
       self.preview = preview
     }
