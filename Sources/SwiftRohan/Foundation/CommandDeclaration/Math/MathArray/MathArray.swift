@@ -111,13 +111,20 @@ extension MathArray {
 
     func mathStyle(for value: MathStyle) -> MathStyle {
       switch self {
-      case .align, .alignAst, .aligned: MathUtils.alignedStyle(for: value)
-      case .gather, .gatherAst, .gathered: MathUtils.gatheredStyle(for: value)
-      case .multline, .multlineAst: MathUtils.multlineStyle(for: value)
-      case .cases: MathUtils.matrixStyle(for: value)
-      case .matrix: MathUtils.matrixStyle(for: value)
-      case .smallmatrix: MathUtils.scriptStyle(for: value)
-      case .substack: MathUtils.matrixStyle(for: value)
+      case .align, .alignAst, .aligned:
+        return .display
+      case .cases:
+        return MathUtils.matrixStyle(for: value)
+      case .gather, .gatherAst, .gathered:
+        return .display
+      case .matrix:
+        return MathUtils.matrixStyle(for: value)
+      case .multline, .multlineAst:
+        return .display
+      case .smallmatrix:
+        return .script
+      case .substack:
+        return MathUtils.matrixStyle(for: value)
       }
     }
 

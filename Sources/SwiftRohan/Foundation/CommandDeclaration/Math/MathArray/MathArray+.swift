@@ -2,6 +2,14 @@
 
 import Foundation
 
+private let ALIGN_ROW_GAP = Em(0.5)
+private let ALIGN_COL_GAP = Em(1.0)
+private let MATRIX_ROW_GAP = Em(0.3)
+private let MATRIX_COL_GAP = Em(0.8)
+private let SMALLMATRIX_ROW_GAP = Em(0.15)
+private let SMALLMATRIX_COL_GAP = Em(0.4)
+private let SUBSTACK_ROW_GAP = Em.zero
+
 extension MathArray.Subtype {
   func getRowGap() -> Em {
     switch self {
@@ -10,7 +18,7 @@ extension MathArray.Subtype {
     case .gather, .gatherAst, .gathered: return ALIGN_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
     case .multline, .multlineAst: return ALIGN_ROW_GAP
-    case .smallmatrix: return MATRIX_ROW_GAP
+    case .smallmatrix: return SMALLMATRIX_ROW_GAP
     case .substack: return SUBSTACK_ROW_GAP
     }
   }
@@ -35,21 +43,15 @@ extension MathArray.Subtype {
     switch self {
     case .align, .alignAst, .aligned:
       return AlignColumnGapProvider(columns, alignments, mathContext)
-    case .cases: return MatrixColumnGapProvider()
+    case .cases: return MatrixColumnGapProvider(MATRIX_COL_GAP)
     case .gather, .gatherAst, .gathered: return PlaceholderColumnGapProvider()  // unused
-    case .matrix: return MatrixColumnGapProvider()
+    case .matrix: return MatrixColumnGapProvider(MATRIX_COL_GAP)
     case .multline, .multlineAst: return PlaceholderColumnGapProvider()  // unused
-    case .smallmatrix: return MatrixColumnGapProvider()
+    case .smallmatrix: return MatrixColumnGapProvider(SMALLMATRIX_COL_GAP)
     case .substack: return PlaceholderColumnGapProvider()  // unused
     }
   }
 }
-
-private let ALIGN_ROW_GAP = Em(0.5)
-private let ALIGN_COL_GAP = Em(1.0)
-private let MATRIX_ROW_GAP = Em(0.3)
-private let MATRIX_COL_GAP = Em(0.8)
-private let SUBSTACK_ROW_GAP = Em.zero
 
 protocol CellAlignmentProvider {
   /// Column alignment.
@@ -115,7 +117,13 @@ private struct PlaceholderColumnGapProvider: ColumnGapProvider {
 }
 
 private struct MatrixColumnGapProvider: ColumnGapProvider {
-  func get(_ columnIndex: Int) -> Em { MATRIX_COL_GAP }
+  private let _columnGap: Em
+
+  init(_ columnGap: Em) {
+    self._columnGap = columnGap
+  }
+
+  func get(_ columnIndex: Int) -> Em { _columnGap }
 }
 
 private struct AlignColumnGapProvider: ColumnGapProvider {
