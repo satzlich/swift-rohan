@@ -158,7 +158,7 @@ public final class DocumentManager: NSObject {
   //  }
 
   internal func containerProperty(for location: TextLocation) -> ContainerProperty? {
-    preconditionFailure()
+    TreeUtils.containerProperty(for: location, rootNode)
   }
 
   // MARK: - Editing
