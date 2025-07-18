@@ -33,8 +33,8 @@ public enum CommandBody {
     self = .editMath(editAttach)
   }
 
-  init(_ string: String, _ category: ContentCategory) {
-    let insertString = InsertString(string, category)
+  init(_ string: String, _ contentMode: ContentMode) {
+    let insertString = InsertString(string, contentMode)
     self = .insertString(insertString)
   }
 
@@ -100,12 +100,25 @@ public enum CommandBody {
   public struct InsertString {
     let string: String
     let category: ContentCategory
+    let contentProperty: Array<ContentProperty>
     let backwardMoves: Int
 
-    init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {
+    init(_ string: String, _ contentMode: ContentMode, _ backwardMoves: Int = 0) {
       precondition(backwardMoves >= 0)
       self.string = string
-      self.category = category
+      self.category =
+        switch contentMode {
+        case .math: .mathText
+        case .text: .textText
+        case .universal: .universalText
+        }
+      let contentProperty =
+        ContentProperty(
+          nodeType: .text,
+          contentMode: contentMode,
+          contentType: .inline,
+          contentTag: .plaintext)
+      self.contentProperty = [contentProperty]
       self.backwardMoves = backwardMoves
     }
 

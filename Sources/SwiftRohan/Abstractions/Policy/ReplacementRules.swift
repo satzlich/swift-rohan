@@ -9,15 +9,15 @@ public enum ReplacementRules {
 
   nonisolated(unsafe) private static let textRules: Array<ReplacementRule> = [
     // quote
-    .init("`", CommandBody("‘", .textText)),  // ` -> U+2018
-    .init("‘`", CommandBody("“", .textText)),  // U+2018` -> U+201C
-    .init("'", CommandBody("’", .textText)),  // ' -> U+2019
-    .init("’'", CommandBody("”", .textText)),  // U+2019 ' -> U+201D
+    .init("`", CommandBody("‘", .text)),  // ` -> U+2018
+    .init("‘`", CommandBody("“", .text)),  // U+2018` -> U+201C
+    .init("'", CommandBody("’", .text)),  // ' -> U+2019
+    .init("’'", CommandBody("”", .text)),  // U+2019 ' -> U+201D
     // dash
-    .init("--", CommandBody("–", .textText)),  // -- -> U+2013 (en-dash)
-    .init("–-", CommandBody("—", .textText)),  // U+2013- -> U+2014 (em-dash)
+    .init("--", CommandBody("–", .text)),  // -- -> U+2013 (en-dash)
+    .init("–-", CommandBody("—", .text)),  // U+2013- -> U+2014 (em-dash)
     // dots
-    .init("...", CommandBody("…", .textText)),  // ... -> U+2026
+    .init("...", CommandBody("…", .text)),  // ... -> U+2026
     // headers
     spaceTriggered("#", HeadingNode.commandBody(forSubtype: .sectionAst)),
     spaceTriggered("##", HeadingNode.commandBody(forSubtype: .subsectionAst)),
@@ -37,10 +37,10 @@ public enum ReplacementRules {
       .init("$", Snippets.inlineMath),
       .init("^", Snippets.attachOrGotoMathComponent(.sup)),
       .init("_", Snippets.attachOrGotoMathComponent(.sub)),
-      .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
-      .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
-      .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
-      .init("‴'", CommandBody("⁗", .mathText)),  // U+2034' -> U+2057
+      .init("'", CommandBody("′", .math)),  // ' -> U+2032
+      .init("′'", CommandBody("″", .math)),  // U+2032' -> U+2033
+      .init("″'", CommandBody("‴", .math)),  // U+2033' -> U+2034
+      .init("‴'", CommandBody("⁗", .math)),  // U+2034' -> U+2057
     ])
 
     // miscellaneous (6)

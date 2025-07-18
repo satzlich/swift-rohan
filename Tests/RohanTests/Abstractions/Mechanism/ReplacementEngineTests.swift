@@ -9,10 +9,10 @@ struct ReplacementEngineTests {
   @Test
   func coverage() {
     let rules: Array<ReplacementRule> = [
-      .init("", "`", CommandBody("\u{2018}", .textText)),
-      .init("\u{2018}", "`", CommandBody("\u{201C}", .textText)),
-      .init("", "'", CommandBody("\u{2019}", .textText)),
-      .init("\u{2019}", "'", CommandBody("\u{201D}", .textText)),
+      .init("", "`", CommandBody("\u{2018}", .text)),
+      .init("\u{2018}", "`", CommandBody("\u{201C}", .text)),
+      .init("", "'", CommandBody("\u{2019}", .text)),
+      .init("\u{2019}", "'", CommandBody("\u{201D}", .text)),
     ]
 
     let engine = ReplacementEngine(rules)

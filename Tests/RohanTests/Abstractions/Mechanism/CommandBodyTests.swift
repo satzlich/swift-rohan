@@ -27,7 +27,7 @@ struct CommandBodyTests {
     // cover preview for long string.
     do {
       let body =
-        CommandBody.insertString(CommandBody.InsertString("LongString", .textText))
+        CommandBody.insertString(CommandBody.InsertString("LongString", .text))
       _ = body.preview
     }
 
