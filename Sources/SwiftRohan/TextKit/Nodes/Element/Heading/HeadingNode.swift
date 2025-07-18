@@ -22,9 +22,7 @@ final class HeadingNode: ElementNodeImpl {
   // MARK: - Node(Positioning)
 
   final override func getLayoutOffset(_ index: Int) -> Int? {
-    super.getLayoutOffset(index).map { offset in
-      _preamble.length + offset
-    }
+    super.getLayoutOffset(index).map { offset in _preamble.length + offset }
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
