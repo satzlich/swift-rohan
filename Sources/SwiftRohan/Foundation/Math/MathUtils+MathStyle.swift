@@ -61,17 +61,4 @@ extension MathUtils {
     case .scriptScript: return .scriptScript
     }
   }
-
-  /// Always returns the display style.
-  public static func alignedStyle(for style: MathStyle) -> MathStyle {
-    .display
-  }
-
-  internal static func gatheredStyle(for style: MathStyle) -> MathStyle {
-    .display
-  }
-
-  internal static func multlineStyle(for style: MathStyle) -> MathStyle {
-    .display
-  }
 }

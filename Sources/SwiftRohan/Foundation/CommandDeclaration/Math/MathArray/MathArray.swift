@@ -52,11 +52,12 @@ extension MathArray {
     case matrix(DelimiterPair)
     case multline
     case multlineAst
+    case smallmatrix
     case substack
 
     var requiresMatrixNode: Bool {
       switch self {
-      case .aligned, .cases, .gathered, .matrix, .substack:
+      case .aligned, .cases, .gathered, .matrix, .smallmatrix, .substack:
         return true
       case .align, .alignAst, .gather, .gatherAst, .multline, .multlineAst:
         return false
@@ -86,6 +87,7 @@ extension MathArray {
       case .gather, .gatherAst, .gathered: false
       case .matrix: true
       case .multline, .multlineAst: false
+      case .smallmatrix: true
       case .substack: false
       }
     }
@@ -102,18 +104,27 @@ extension MathArray {
       case .matrix: false
       case .multline: true
       case .multlineAst: false
+      case .smallmatrix: false
       case .substack: false
       }
     }
 
     func mathStyle(for value: MathStyle) -> MathStyle {
       switch self {
-      case .align, .alignAst, .aligned: MathUtils.alignedStyle(for: value)
-      case .gather, .gatherAst, .gathered: MathUtils.gatheredStyle(for: value)
-      case .multline, .multlineAst: MathUtils.multlineStyle(for: value)
-      case .cases: MathUtils.matrixStyle(for: value)
-      case .matrix: MathUtils.matrixStyle(for: value)
-      case .substack: MathUtils.matrixStyle(for: value)
+      case .align, .alignAst, .aligned:
+        return .display
+      case .cases:
+        return MathUtils.matrixStyle(for: value)
+      case .gather, .gatherAst, .gathered:
+        return .display
+      case .matrix:
+        return MathUtils.matrixStyle(for: value)
+      case .multline, .multlineAst:
+        return .display
+      case .smallmatrix:
+        return .script
+      case .substack:
+        return MathUtils.matrixStyle(for: value)
       }
     }
 
@@ -124,6 +135,7 @@ extension MathArray {
       case .gather, .gatherAst, .gathered: return DelimiterPair.NONE
       case .matrix(let delimiters): return delimiters
       case .multline, .multlineAst: return DelimiterPair.NONE
+      case .smallmatrix: return DelimiterPair.NONE
       case .substack: return DelimiterPair.NONE
       }
     }
@@ -146,6 +158,7 @@ extension MathArray {
     vmatrix,
     Vmatrix,
     //
+    smallmatrix,
     substack,
   ]
 
@@ -178,6 +191,8 @@ extension MathArray {
   static let Bmatrix = MathArray("Bmatrix", .matrix(DelimiterPair.BRACE))
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
+  //
+  static let smallmatrix = MathArray("smallmatrix", .smallmatrix)
   static let substack = MathArray("substack", .substack)
 
   // block math commands

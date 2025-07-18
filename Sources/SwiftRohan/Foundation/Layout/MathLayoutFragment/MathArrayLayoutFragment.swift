@@ -126,11 +126,13 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     defer { _needsLayout = false }
 
     let font = mathContext.getFont()
+    let componentStyle = subtype.mathStyle(for: mathContext.mathStyle)
+    let componentFont = mathContext.getFont(for: componentStyle)
     let table = mathContext.table
     let constants = mathContext.constants
 
     let axisHeight = font.convertToPoints(constants.axisHeight)
-    let rowGap = font.convertToPoints(subtype.getRowGap())
+    let rowGap = componentFont.convertToPoints(subtype.getRowGap())
     let cellAlignments = subtype.getCellAlignments(self.rowCount)
     let colGapCalculator = subtype.getColumnGapCalculator(_columns, mathContext)
 
@@ -140,7 +142,12 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       // We pad ascent and descent with the ascent and descent of the paren
       // to ensure that normal matrices are aligned with others unless they are
       // way too big.
-      let paren = GlyphFragment("(", font, table)!
+      let representative: Character =
+        switch subtype.subtype {
+        case .smallmatrix: "x"
+        default: "("
+        }
+      let paren = GlyphFragment(char: representative, componentFont, table)!
       let value = AscentDescent(paren.ascent, paren.descent)
       var hs = Array(repeating: value, count: rowCount)
       for i in 0..<rowCount {
@@ -223,7 +230,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       // Advance to the end of the column
       x += columnWidth
       // advance to the start of the next column
-      colGap = font.convertToPoints(colGapCalculator.get(columnIndex))
+      colGap = componentFont.convertToPoints(colGapCalculator.get(columnIndex))
       x += colGap
     }
 
