@@ -141,6 +141,56 @@ struct CategoryTests {
         nodeType: .equation, contentMode: .text, contentType: .inline, contentTag: .formula)
       testCases.append((node, [content]))
     }
+    // FractionNode
+    do {
+      let node = FractionNode(num: [], denom: [])
+      let content = ContentProperty(
+        nodeType: .fraction, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // LeftRightNode
+    do {
+      let node = LeftRightNode(DelimiterPair.PAREN, [])
+      let content = ContentProperty(
+        nodeType: .leftRight, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // MathAttributesNode
+    do {
+      let node = MathAttributesNode(.mathLimits(.limits), [TextNode("world")])
+      let content = ContentProperty(
+        nodeType: .mathAttributes, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // MathExpressionNode
+    do {
+      let node = MathExpressionNode(MathExpression.colon)
+      let content = ContentProperty(
+        nodeType: .mathExpression, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // MathOperatorNode
+    do {
+      let node = MathOperatorNode(MathOperator.min)
+      let content = ContentProperty(
+        nodeType: .mathOperator, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // NamedSymbolNode
+    do {
+      let node = NamedSymbolNode(NamedSymbol.lookup("rightarrow")!)
+      let content = ContentProperty(
+        nodeType: .namedSymbol, contentMode: .math, contentType: .inline, contentTag: .plaintext)
+      testCases.append((node, [content]))
+    }
+    // NamedSymbolNode
+    do {
+      let node = NamedSymbolNode(NamedSymbol.lookup("S")!)
+      let content = ContentProperty(
+        nodeType: .namedSymbol, contentMode: .universal, contentType: .inline, contentTag: .plaintext)
+      testCases.append((node, [content]))
+    }
+    
 
     /*
     let testCases: [(Node, ContentProperty?)] = [

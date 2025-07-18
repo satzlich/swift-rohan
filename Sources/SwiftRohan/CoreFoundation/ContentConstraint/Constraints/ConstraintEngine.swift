@@ -56,30 +56,40 @@ struct ConstraintEngine {
 
   nonisolated(unsafe) static let _contentConstraints:
     Array<ConstraintRule.MustBeContainedIn> = [
+      // heading must be inserted into a root node or a paragraph whose parent is a root node.
       .init(
         SubjectPredicate(.heading),
         .disjunction([
           .nodeType(.root),
           .conjunction([.nodeType(.paragraph), .parentType(.root)]),
         ])),
+      // parList must be inserted into a root node or a paragraph whose parent is a root node.
       .init(
         SubjectPredicate(.parList),
         .disjunction([
           .nodeType(.root),
           .conjunction([.nodeType(.paragraph), .parentType(.root)]),
         ])),
+      // itemList must be inserted into a paragraph whose parent is not an itemList.
       .init(
         SubjectPredicate(.itemList),
         .conjunction([.nodeType(.paragraph), .negation(.parentType(.itemList))])),
+      // block equation must be inserted into a paragraph.
       .init(SubjectPredicate(.equation, .contentType(.block)), .nodeType(.paragraph)),
+      // multiline must be inserted into a paragraph.
       .init(.multiline, .paragraph),
     ]
 
   static let _containerConstraints: Array<ConstraintRule.CanContainOnly> = [
+    // heading can contain only "plaintext", "formula", and "styledText".
     .init(.heading, .contentTag([.plaintext, .formula, .styledText])),
+    // textStyles can contain only "plaintext", "formula".
     .init(.textStyles, .contentTag([.plaintext, .formula])),
+    // textMode can contain only "plaintext".
     .init(.textMode, .contentTag([.plaintext])),
+    // itemList can contain only "paragraph"s.
     .init(.itemList, .nodeType(.paragraph)),
+    // parList can contain only "paragraph"s.
     .init(.parList, .nodeType(.paragraph)),
   ]
 }
