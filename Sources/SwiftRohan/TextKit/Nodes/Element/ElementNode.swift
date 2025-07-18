@@ -68,7 +68,7 @@ internal class ElementNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
-  internal var isBlockContainer: Bool { NodePolicy.isBlockContainer(type) }
+  internal var isBlockContainer: Bool { type.containerType == .block }
 
   // MARK: - Node(Codable)
 

@@ -295,7 +295,7 @@ final class TextSegmentTests: TextKitTestsBase {
     let points = pointsAndFrames.map { $0.0 }
     let frames = pointsAndFrames.map { $0.1 }
     let expectedPoints: Array<String> = [
-      "(14.00, 29.00, 0.00, 27.00)",
+      "(6.25, 29.00, 0.00, 27.00)",
       "(32.33, 79.00, 0.00, 23.00)",
       "(102.61, 129.33, 0.00, 12.55)",
       "(102.08, 143.49, 0.00, 8.79)",
@@ -304,7 +304,7 @@ final class TextSegmentTests: TextKitTestsBase {
       "(133.49, 153.37, 0.00, 8.79)",
     ]
     let expectedFrames: Array<String> = [
-      "[(14.00, 29.00, 0.00, 27.00)]",
+      "[(6.25, 29.00, 0.00, 27.00)]",
       "[(32.33, 79.00, 0.00, 23.00)]",
       "[(102.61, 129.33, 0.00, 12.55)]",
       "[(102.08, 143.49, 0.00, 8.79)]",
