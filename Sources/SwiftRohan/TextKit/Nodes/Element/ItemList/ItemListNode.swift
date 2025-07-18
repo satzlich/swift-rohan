@@ -539,8 +539,7 @@ final class ItemListNode: ElementNode {
     ItemListSubtype.allCases.map { subtype in
       //      let expr = ItemListExpr(subtype, [ParagraphExpr()])
       let expr = ItemListExpr(subtype, [])
-      return CommandRecord(
-        subtype.command, CommandBody(expr, 1, preview: .image(subtype.command)))
+      return CommandRecord(subtype.command, CommandBody(expr, 1))
     }
 
   /// Distance from text container edge to paragraph beginning for given list
