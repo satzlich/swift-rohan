@@ -134,6 +134,11 @@ internal class Node: Codable {
     preconditionFailure("overriding required")
   }
 
+  /// Returns the layout offset when the index is the final index of a path.
+  internal func getFinalLayoutOffset(_ index: RohanIndex) -> Int? {
+    getLayoutOffset(index)
+  }
+
   /// Returns a position within the node that is picked by `layoutOffset`.
   /// - Parameter layoutOffset: layout offset
   /// - Invariant: If return value is non-nil, then the index must be valid for the node.
