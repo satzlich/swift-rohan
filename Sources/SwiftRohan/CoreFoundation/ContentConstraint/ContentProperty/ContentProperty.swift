@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ContentProperty {
+struct ContentProperty: Equatable, Hashable {
   let nodeType: NodeType
   let contentMode: ContentMode
   let contentType: ContentType

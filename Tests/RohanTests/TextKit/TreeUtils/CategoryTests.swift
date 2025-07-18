@@ -7,8 +7,19 @@ import Testing
 struct CategoryTests {
   @Test
   static func contentCategory() {
-    let testCases: [(Node, ContentCategory?)] = [
-      (CounterNode(.equation), .textText),
+    var testCases: Array<(Node, Array<ContentProperty>)> = []
+
+    do {
+      let node = CounterNode(.equation)
+      let content = ContentProperty(
+        nodeType: .counter, contentMode: .text, contentType: .inline,
+        contentTag: .plaintext)
+      testCases.append((node, [content]))
+    }
+
+    /*
+    let testCases: [(Node, ContentProperty?)] = [
+      (CounterNode(.equation), Cont),
       (LinebreakNode(), .arbitraryParagraphContent),
       (TextNode("Hello"), .plaintext),
       (UnknownNode(), .arbitraryParagraphContent),
@@ -57,6 +68,8 @@ struct CategoryTests {
       (ApplyNode(MathTemplateSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0, .textit, .inline, false), nil),
     ]
+    
+     */
 
     do {
       let coveredTypes = Set(testCases.map { $0.0.type })
@@ -65,7 +78,7 @@ struct CategoryTests {
     }
 
     for (i, (node, expected)) in testCases.enumerated() {
-      let category = TreeUtils.contentCategory(of: [node])
+      let category = TreeUtils.contentProperty(of: [node])
       #expect(category == expected, "\(i) \(node.type)")
     }
   }

@@ -149,19 +149,15 @@ public final class DocumentManager: NSObject {
     }
   }
 
-  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
-    TreeUtils.containerCategory(for: location, rootNode)
-  }
+  //  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
+  //    TreeUtils.containerCategory(for: location, rootNode)
+  //  }
 
-  internal func contentCategory(of nodes: Array<Node>) -> ContentCategory? {
-    TreeUtils.contentCategory(of: nodes)
-  }
+  //  internal func contentCategory(of nodes: Array<Node>) -> ContentCategory? {
+  //    TreeUtils.contentCategory(of: nodes)
+  //  }
 
   internal func containerProperty(for location: TextLocation) -> ContainerProperty? {
-    preconditionFailure()
-  }
-
-  internal func contentProperty(of nodes: Array<Node>) -> Array<ContentProperty> {
     preconditionFailure()
   }
 
@@ -193,9 +189,10 @@ public final class DocumentManager: NSObject {
     }
 
     // validate insertion
-    guard let content = contentCategory(of: nodes),
-      let container = containerCategory(for: range.location),
-      content.isCompatible(with: container)
+    let content: Array<ContentProperty> = TreeUtils.contentProperty(of: nodes)
+    guard content.isEmpty == false,
+      let container = containerProperty(for: range.location),
+      content.allSatisfy({ $0.isCompatbile(with: container) })
     else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
@@ -215,22 +212,18 @@ public final class DocumentManager: NSObject {
 
     // insert nodes
     let result: EditResult<RhTextRange>
-    switch content {
-    case .plaintext:
-      assertionFailure("Unreachable")
-      return .failure(SatzError(.UnreachableCodePath))
 
-    case .universalText, .textText, .mathText, .extendedText,
-      .arbitraryParagraphContent, .toplevelParagraphContent, .mathContent:
-      result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
-
-    case .paragraphNodes, .toplevelNodes:
+    // TODO: factor out the comparison
+    if content.allSatisfy({ [.paragraph, .heading, .parList].contains($0.nodeType) }) {
       switch TreeUtils.insertBlockNodes(nodes, at: location, rootNode) {
       case let .success(range):
         result = .blockInserted(range)
       case let .failure(error):
         return .failure(error)
       }
+    }
+    else {
+      result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
     }
 
     return result.map { range in
@@ -1236,7 +1229,7 @@ public final class DocumentManager: NSObject {
   func getLatexContent(for range: RhTextRange) -> String? {
     guard let nodes: Array<PartialNode> = mapContents(in: range, { $0 }),
       let parent = _lowestGenElementAncestor(for: range),
-      let layoutMode = containerCategory(for: range.location)?.layoutMode()
+      let layoutMode = containerProperty(for: range.location)?.containerMode.layoutMode()
     else { return nil }
 
     let deparseContext = DeparseContext(Rohan.latexRegistry)

@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ContentTag: OptionSet, CaseIterable {
+struct ContentTag: OptionSet, CaseIterable, Hashable {
   var rawValue: UInt32
 
   init(rawValue: UInt32) {
