@@ -182,7 +182,7 @@ final class TextNode: Node {
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     guard let offset = index.index(),
       0...layoutLength() ~= offset  // inclusive
     else { return nil }

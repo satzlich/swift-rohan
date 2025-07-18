@@ -49,9 +49,9 @@ final class ItemListNode: ElementNode {
 
   // MARK: - Node(Positioning)
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     guard let index = index.index() else { return nil }
-    return getLayoutOffset(index)
+    return getLayoutOffset(index, isFinal: isFinal)
   }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
@@ -448,7 +448,7 @@ final class ItemListNode: ElementNode {
     assert(_newlines.isEmpty || _newlines.value(before: 0) == false)
   }
 
-  final override func getLayoutOffset(_ index: Int) -> Int? {
+  final override func getLayoutOffset(_ index: Int, isFinal: Bool) -> Int? {
     guard index <= childCount else { return nil }
 
     if _children.isEmpty {
@@ -474,7 +474,7 @@ final class ItemListNode: ElementNode {
   /// Text list used for this item list.
   private var _textList: RhTextList = RhTextList.itemize(level: 1, marker: "•")
   /// Text attributes used for item markers.
-  private var _textAttributes: Dictionary<NSAttributedString.Key, Any> = [:]
+  private var _markerTextAttributes: Dictionary<NSAttributedString.Key, Any> = [:]
   /// Indent for item text.
   private var _listIndent: Double = 0.0
   /// Trailing cursor position.
@@ -502,8 +502,8 @@ final class ItemListNode: ElementNode {
     let listLevel = resolveValue(ParagraphProperty.listLevel).integer()!
     self._textList = self.subtype.textList(forLevel: listLevel)
     // prepare text attributes
-    let textProperty = TextProperty.resolveAggregate(properties, styleSheet)
-    self._textAttributes = textProperty.getAttributes()
+    let textProperty = styleSheet.resolveDefault() as TextProperty
+    self._markerTextAttributes = textProperty.getAttributes()
     // prepare list indent
     self._listIndent =
       Self.indent(forLevel: listLevel).floatValue * textProperty.size.floatValue
@@ -515,7 +515,7 @@ final class ItemListNode: ElementNode {
 
   private func _attributedMarker(forIndex index: Int) -> NSAttributedString {
     let marker = _textList.marker(forIndex: index) + "\u{2000}"
-    return NSAttributedString(string: marker, attributes: _textAttributes)
+    return NSAttributedString(string: marker, attributes: _markerTextAttributes)
   }
 
   /// String used to fill the initial space of each item.

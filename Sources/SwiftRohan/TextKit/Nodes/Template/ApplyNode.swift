@@ -51,7 +51,7 @@ final class ApplyNode: Node {
     return .argumentIndex(_arguments.count - 1)
   }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     // layout offset is not well-defined for ApplyNode
     nil
   }

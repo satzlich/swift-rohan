@@ -36,7 +36,7 @@ extension TreeUtils {
   ///     __the same layout context__ as subtree and further more be __non-pivotal__.
   ///     Otherwise, the result is undefined.
   static func computeLayoutOffset(
-    for path: ArraySlice<RohanIndex>, _ subtree: Node
+    for path: ArraySlice<RohanIndex>, isFinal: Bool, _ subtree: Node
   ) -> Int? {
     precondition(!path.isEmpty)
     var s = 0
@@ -50,7 +50,7 @@ extension TreeUtils {
       s += n
       node = child
     }
-    guard let n = node.getLayoutOffset(path.last!) else { return nil }
+    guard let n = node.getLayoutOffset(path.last!, isFinal: isFinal) else { return nil }
     s += n
     return s
   }

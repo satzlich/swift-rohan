@@ -51,17 +51,23 @@ struct PathTests {
 
     do {
       let valid = TextLocation.parse("[↓0,↓0]:3")!
-      #expect(TreeUtils.computeLayoutOffset(for: valid.asArraySlice, tree) == 3)
+      let layoutOffset =
+        TreeUtils.computeLayoutOffset(for: valid.asArraySlice, isFinal: true, tree)
+      #expect(layoutOffset == 3)
     }
 
     do {
       let invalid = TextLocation.parse("[↓0,↓0]:100")!
-      #expect(TreeUtils.computeLayoutOffset(for: invalid.asArraySlice, tree) == nil)
+      let layoutOffset =
+        TreeUtils.computeLayoutOffset(for: invalid.asArraySlice, isFinal: true, tree)
+      #expect(layoutOffset == nil)
     }
 
     do {
       let invalid = TextLocation.parse("[↓0,↓0,↓0]:4")!
-      #expect(TreeUtils.computeLayoutOffset(for: invalid.asArraySlice, tree) == nil)
+      let layoutOffset =
+        TreeUtils.computeLayoutOffset(for: invalid.asArraySlice, isFinal: true, tree)
+      #expect(layoutOffset == nil)
     }
   }
 }

@@ -49,7 +49,7 @@ class ArrayNode: Node {
     return .gridIndex(rowCount - 1, columnCount - 1)
   }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? {
     // layout offset for matrix is not well-defined and is unused
     nil
   }

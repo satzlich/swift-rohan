@@ -131,6 +131,7 @@ public enum CommandBody {
       precondition(backwardMoves >= 0)
       self.exprs = exprs
       self.contentProperty = TreeUtils.contentProperty(of: exprs)
+      assert(self.contentProperty.isEmpty == false)
       self.backwardMoves = backwardMoves
       self.preview = preview
     }

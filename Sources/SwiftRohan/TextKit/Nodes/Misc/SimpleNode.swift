@@ -26,7 +26,7 @@ class SimpleNode: Node {  // default implementation for simple nodes
   final override func firstIndex() -> RohanIndex? { nil }
   final override func lastIndex() -> RohanIndex? { nil }
 
-  final override func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
+  final override func getLayoutOffset(_ index: RohanIndex, isFinal: Bool) -> Int? { nil }
 
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // always return nil
