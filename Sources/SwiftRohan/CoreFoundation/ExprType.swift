@@ -110,7 +110,7 @@ extension NodeType {
     case .paragraph: nil
     case .parList: nil
     case .root: nil
-    case .textStyles: nil
+    case .textStyles: .styledText
 
     // Math
     case .accent: nil

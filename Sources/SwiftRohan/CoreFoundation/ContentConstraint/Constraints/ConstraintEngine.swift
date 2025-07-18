@@ -76,7 +76,7 @@ struct ConstraintEngine {
     ]
 
   static let _containerConstraints: Array<ConstraintRule.CanContainOnly> = [
-    .init(.heading, .contentTag([.plaintext, .formula])),
+    .init(.heading, .contentTag([.plaintext, .formula, .styledText])),
     .init(.textStyles, .contentTag([.plaintext, .formula])),
     .init(.textMode, .contentTag([.plaintext])),
     .init(.itemList, .nodeType(.paragraph)),
