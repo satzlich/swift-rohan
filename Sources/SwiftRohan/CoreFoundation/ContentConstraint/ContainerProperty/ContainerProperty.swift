@@ -14,7 +14,7 @@ extension ContainerProperty {
   static var allCasesForTesting: Array<ContainerProperty> {
     var result: Array<ContainerProperty> = []
     for nodeType in NodeType.allCases {
-      for parentType in NodeType.allCases {
+      for parentType in [NodeType.heading, .itemList, .paragraph, .parList] {
         for containerMode in ContainerMode.allCases {
           for containerType in ContainerType.allCases {
             let container = ContainerProperty(

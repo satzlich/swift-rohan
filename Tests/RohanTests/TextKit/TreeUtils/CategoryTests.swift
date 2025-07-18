@@ -131,14 +131,16 @@ struct CategoryTests {
     do {
       let node = EquationNode(.display, [])
       let content = ContentProperty(
-        nodeType: .equation, contentMode: .text, contentType: .block, contentTag: .formula)
+        nodeType: .equation, contentMode: .text, contentType: .block, contentTag: .formula
+      )
       testCases.append((node, [content]))
     }
     // EquationNode
     do {
       let node = EquationNode(.inline, [])
       let content = ContentProperty(
-        nodeType: .equation, contentMode: .text, contentType: .inline, contentTag: .formula)
+        nodeType: .equation, contentMode: .text, contentType: .inline,
+        contentTag: .formula)
       testCases.append((node, [content]))
     }
     // FractionNode
@@ -159,79 +161,115 @@ struct CategoryTests {
     do {
       let node = MathAttributesNode(.mathLimits(.limits), [TextNode("world")])
       let content = ContentProperty(
-        nodeType: .mathAttributes, contentMode: .math, contentType: .inline, contentTag: nil)
+        nodeType: .mathAttributes, contentMode: .math, contentType: .inline,
+        contentTag: nil)
       testCases.append((node, [content]))
     }
     // MathExpressionNode
     do {
       let node = MathExpressionNode(MathExpression.colon)
       let content = ContentProperty(
-        nodeType: .mathExpression, contentMode: .math, contentType: .inline, contentTag: nil)
+        nodeType: .mathExpression, contentMode: .math, contentType: .inline,
+        contentTag: nil)
       testCases.append((node, [content]))
     }
     // MathOperatorNode
     do {
       let node = MathOperatorNode(MathOperator.min)
       let content = ContentProperty(
-        nodeType: .mathOperator, contentMode: .math, contentType: .inline, contentTag: nil)
+        nodeType: .mathOperator, contentMode: .math, contentType: .inline, contentTag: nil
+      )
       testCases.append((node, [content]))
     }
     // NamedSymbolNode
     do {
       let node = NamedSymbolNode(NamedSymbol.lookup("rightarrow")!)
       let content = ContentProperty(
-        nodeType: .namedSymbol, contentMode: .math, contentType: .inline, contentTag: .plaintext)
+        nodeType: .namedSymbol, contentMode: .math, contentType: .inline,
+        contentTag: .plaintext)
       testCases.append((node, [content]))
     }
     // NamedSymbolNode
     do {
       let node = NamedSymbolNode(NamedSymbol.lookup("S")!)
       let content = ContentProperty(
-        nodeType: .namedSymbol, contentMode: .universal, contentType: .inline, contentTag: .plaintext)
+        nodeType: .namedSymbol, contentMode: .universal, contentType: .inline,
+        contentTag: .plaintext)
       testCases.append((node, [content]))
     }
-    
+    // MathStyles
+    do {
+      let node = MathStylesNode(MathStyles.mathfrak, [])
+      let content = ContentProperty(
+        nodeType: .mathStyles, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // MatrixNode
+    do {
+      let node = MatrixNode(
+        .pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])])
+      let content = ContentProperty(
+        nodeType: .matrix, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // MultilineNode
+    do {
+      let node = MultilineNode(
+        .multlineAst, [MultilineNode.Row([MultilineNode.Cell([TextNode("a")])])])
+      let content = ContentProperty(
+        nodeType: .multiline, contentMode: .text, contentType: .block,
+        contentTag: .formula)
+      testCases.append((node, [content]))
+    }
+    // RadicalNode
+    do {
+      let node = RadicalNode([], index: [])
+      let content = ContentProperty(
+        nodeType: .radical, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // TextModeNode
+    do {
+      let node = TextModeNode([TextNode("Hello")])
+      let content = ContentProperty(
+        nodeType: .textMode, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content]))
+    }
+    // UnderOverNode
+    do {
+      let node1 = UnderOverNode(MathSpreader.overbrace, [])
+      let node2 = UnderOverNode(MathSpreader.overline, [])
+      let node3 = UnderOverNode(MathSpreader.underbrace, [])
+      let node4 = UnderOverNode(MathSpreader.underline, [])
+      let content = ContentProperty(
+        nodeType: .underOver, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node1, [content]))
+      testCases.append((node2, [content]))
+      testCases.append((node3, [content]))
+      testCases.append((node4, [content]))
+    }
 
-    /*
-    let testCases: [(Node, ContentProperty?)] = [
-    
-      // math
-      (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
-      (AttachNode(nuc: []), .mathContent),
-      (EquationNode(.display, []), .arbitraryParagraphContent),
-      (EquationNode(.inline, []), .extendedText),
-      (FractionNode(num: [], denom: []), .mathContent),
-      (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
-      (MathAttributesNode(.mathLimits(.limits), [TextNode("world")]), .mathContent),
-      (MathExpressionNode(MathExpression.colon), .mathContent),
-      (MathOperatorNode(MathOperator.min), .mathContent),
-      (NamedSymbolNode(NamedSymbol.lookup("rightarrow")!), .mathText),
-      (NamedSymbolNode(NamedSymbol.lookup("S")!), .universalText),
-      (MathStylesNode(MathStyles.mathfrak, []), .mathContent),
-      (
-        MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),
-        .mathContent
-      ),
-      (
-        MultilineNode(
-          .multlineAst,
-          [
-            MultilineNode.Row([MultilineNode.Cell([TextNode("a")])])
-          ]),
-        .arbitraryParagraphContent
-      ),
-      (RadicalNode([], index: []), .mathContent),
-      (TextModeNode([]), .mathContent),
-      (UnderOverNode(MathSpreader.overbrace, []), .mathContent),
-      (UnderOverNode(MathSpreader.overline, []), .mathContent),
-      (UnderOverNode(MathSpreader.underbrace, []), .mathContent),
-      (UnderOverNode(MathSpreader.underline, []), .mathContent),
-      // template
-      (ApplyNode(MathTemplateSamples.newtonsLaw, [])!, .mathContent),
-      (VariableNode(0, .textit, .inline, false), nil),
-    ]
-    
-     */
+    /* Template */
+
+    // ApplyNode
+    do {
+      let node = ApplyNode(MathTemplateSamples.newtonsLaw, [])!
+      let content1 = ContentProperty(
+        nodeType: .text, contentMode: .universal, contentType: .inline,
+        contentTag: .plaintext)
+      let content2 = ContentProperty(
+        nodeType: .fraction, contentMode: .math, contentType: .inline, contentTag: nil)
+      testCases.append((node, [content1, content2]))
+    }
+    // VariableNode
+    do {
+      let node = VariableNode(0, .textit, .inline, false)
+      node.insertChild(TextNode("Hello"), at: 0, inStorage: true)
+      let content = ContentProperty(
+        nodeType: .text, contentMode: .universal, contentType: .inline,
+        contentTag: .plaintext)
+      testCases.append((node, [content]))
+    }
 
     do {
       let coveredTypes = Set(testCases.map { $0.0.type })
