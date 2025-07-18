@@ -26,7 +26,7 @@ final class VariableNode: ElementNodeImpl {
         let key = InternalProperty.nestedLevel
         let value = key.resolveValue(current, styleSheet).integer()!
         let parity = nestedLevelDelta % 2
-        let level = value + (isBlockContainer ? parity : (1 - parity))
+        let level = value + (containerType == .block ? parity : (1 - parity))
         current[key] = .integer(level)
       }
 
@@ -65,8 +65,6 @@ final class VariableNode: ElementNodeImpl {
 
   // MARK: - Node(Layout)
 
-  final override var isBlockContainer: Bool { _layoutType.defaultContainerType == .block }
-
   final override var layoutType: LayoutType { _layoutType }
 
   // MARK: - Node(Storage)
@@ -82,6 +80,8 @@ final class VariableNode: ElementNodeImpl {
   }
 
   // MARK: - ElementNode
+
+  final override var containerType: ContainerType? { _layoutType.defaultContainerType }
 
   final override func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S

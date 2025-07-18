@@ -71,7 +71,7 @@ extension TreeUtils {
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
       return EditResult.success(newRange)
 
-    case let elementNode as ElementNode where elementNode.isBlockContainer:
+    case let elementNode as ElementNode where elementNode.containerType == .block:
       let index = location.offset
       guard index <= elementNode.childCount else { throw SatzError(.InvalidTextLocation) }
       let newRange = insertString(string, blockContainer: elementNode, index: index)
@@ -117,7 +117,7 @@ extension TreeUtils {
   private static func insertString(
     _ string: BigString, blockContainer elementNode: ElementNode, index: Int
   ) -> EditResult<(Array<Int>, Array<Int>)> {
-    precondition(elementNode.isBlockContainer)
+    precondition(elementNode.containerType == .block)
     precondition(index <= elementNode.childCount)
 
     // if insert into index-th child is possible
@@ -142,7 +142,7 @@ extension TreeUtils {
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
   ) -> (Array<Int>, Array<Int>) {
-    precondition(elementNode.isBlockContainer == false)
+    precondition(!(elementNode.containerType == .block))
     precondition(index <= elementNode.childCount)
 
     // if merge with index-th child is possible
@@ -235,7 +235,7 @@ extension TreeUtils {
       let newRange = try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
       return EditResult.success(newRange)
 
-    case let container as ElementNode where container.isBlockContainer:
+    case let container as ElementNode where container.containerType == .block:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
@@ -482,7 +482,7 @@ extension TreeUtils {
         // get grand parent and index
         let thirdLast = trace.dropLast(2).last,
         let grandParent = thirdLast.node as? ElementNode,
-        grandParent.isBlockContainer,
+        grandParent.containerType == .block,
         let grandIndex = thirdLast.index.index(),
         // get parent and index
         let secondLast = trace.dropLast().last,
@@ -499,7 +499,7 @@ extension TreeUtils {
       let prefix = trace.dropLast(3).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
 
-    case let container as ElementNode where container.isBlockContainer:
+    case let container as ElementNode where container.containerType == .block:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
@@ -516,7 +516,7 @@ extension TreeUtils {
         let secondLast = trace.dropLast().last,
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
-        parent.isBlockContainer,
+        parent.containerType == .block,
         // check offset
         offset <= paragraph.childCount
       else { throw SatzError(.InvalidTextLocation) }
@@ -541,7 +541,7 @@ extension TreeUtils {
     _ grandParent: ElementNode, _ grandIndex: Int
   ) throws -> (Array<Int>, Array<Int>) {
     precondition(nodes.allSatisfy(NodePolicy.canBeToplevelNode(_:)))
-    precondition(grandParent.isBlockContainer)
+    precondition(grandParent.containerType == .block)
     precondition(grandParent.getChild(grandIndex) === paragraph)
     precondition(paragraph.getChild(index) === textNode)
 

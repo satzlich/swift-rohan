@@ -156,7 +156,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
         let argument = apply.getArgument(0)
         let children = _visitChildren(
           argument.getArgumentValue_readonly(), context,
-          isParagraphList: argument.isBlockContainer)
+          isParagraphList: argument.containerType == .block)
         guard let childrenSyntax = children.success()
         else { return .failure(SatzError(.ExportLatexFailure)) }
         let envSyntax = EnvironmentSyntax(name: envName, wrapped: childrenSyntax)

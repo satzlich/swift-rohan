@@ -37,9 +37,6 @@ internal class Node: Codable {
     return nil
   }
 
-  /// Returns the container type for the node, if any.
-  internal var containerType: ContainerType? { type.containerType }
-
   /// Returns a deep copy of the node (intrinsic state only).
   internal func deepCopy() -> Self { preconditionFailure("overriding required") }
 

@@ -46,8 +46,6 @@ final class ArgumentNode: Node {
 
   // MARK: - Node(Layout)
 
-  final var isBlockContainer: Bool { variableNodes.first!.isBlockContainer }
-
   final override func contentDidChange() {
     assertionFailure("should not be called")
   }
@@ -110,6 +108,8 @@ final class ArgumentNode: Node {
   }
 
   // MARK: - ElementNode
+
+  final var containerType: ContainerType? { variableNodes.first!.containerType }
 
   final func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S

@@ -68,7 +68,8 @@ internal class ElementNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
-  internal var isBlockContainer: Bool { type.containerType == .block }
+  /// Returns the container type for the node, if any.
+  internal var containerType: ContainerType? { type.containerType }
 
   // MARK: - Node(Codable)
 

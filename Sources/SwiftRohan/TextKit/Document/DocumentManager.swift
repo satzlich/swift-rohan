@@ -287,7 +287,7 @@ public final class DocumentManager: NSObject {
     let index = trace.last!.index
 
     if let node = node as? ElementNode,
-      node.isBlockContainer,
+      node.containerType == .block,
       let index = index.index()
     {
       if node.childCount == 0

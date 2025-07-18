@@ -98,13 +98,6 @@ enum NodePolicy {
     }
   }
 
-  /// Returns true if a node of given kind can be used as a container for
-  /// block elements such as heading and paragraph.
-  @inlinable @inline(__always)
-  static func isBlockContainer(_ nodeType: NodeType) -> Bool {
-    nodeType.containerType == .block
-  }
-
   /// Returns true if a node of given kind can be empty.
   @inlinable @inline(__always)
   static func isVoidableElement(_ nodeType: NodeType) -> Bool { true }
@@ -128,7 +121,7 @@ enum NodePolicy {
       return true
     }
     else if let argumentNode = node as? ArgumentNode,
-      argumentNode.variableNodes.first!.isBlockContainer == false
+      !(argumentNode.containerType == .block)
     {
       return true
     }
