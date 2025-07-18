@@ -4,9 +4,9 @@ import Testing
 
 @testable import SwiftRohan
 
-struct CategoryTests {
+struct ContentPropertyTests {
   @Test
-  static func contentCategory() {
+  static func contentProperty() {
     var testCases: Array<(Node, Array<ContentProperty>)> = []
 
     /* Misc */
@@ -280,13 +280,6 @@ struct CategoryTests {
     for (i, (node, expected)) in testCases.enumerated() {
       let category = TreeUtils.contentProperty(of: [node])
       #expect(category == expected, "\(i) \(node.type)")
-    }
-  }
-
-  @Test
-  func containterCategory() {
-    for category in ContainerCategory.allCases {
-      _ = category.layoutMode()
     }
   }
 }

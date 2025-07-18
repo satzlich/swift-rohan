@@ -149,14 +149,6 @@ public final class DocumentManager: NSObject {
     }
   }
 
-  //  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
-  //    TreeUtils.containerCategory(for: location, rootNode)
-  //  }
-
-  //  internal func contentCategory(of nodes: Array<Node>) -> ContentCategory? {
-  //    TreeUtils.contentCategory(of: nodes)
-  //  }
-
   internal func containerProperty(for location: TextLocation) -> ContainerProperty? {
     TreeUtils.containerProperty(for: location, rootNode)
   }
