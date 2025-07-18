@@ -11,7 +11,7 @@ struct CommandPolicyTests {
   @Test
   static func commandSet() {
     #expect(MathAccent.allCommands.count == 25)
-    #expect(MathArray.allCommands.count == 16)
+    #expect(MathArray.allCommands.count == 17)
     #expect(MathAttributes.allCommands.count == 10)
     #expect(MathExpression.allCommands.count == 11)
     #expect(MathGenFrac.allCommands.count == 8)
@@ -30,9 +30,9 @@ struct CommandPolicyTests {
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
       + TextStyles.allCommands.count
 
-    #expect(sum == 610)  // + 2 ("\sqrt", "\text").
+    #expect(sum == 611)  // + 2 ("\sqrt", "\text").
     #expect(CommandDeclaration.allCommands.count == sum)
-    #expect(CommandRecords.allCases.count == 632)
+    #expect(CommandRecords.allCases.count == 633)
   }
 
   @Test
