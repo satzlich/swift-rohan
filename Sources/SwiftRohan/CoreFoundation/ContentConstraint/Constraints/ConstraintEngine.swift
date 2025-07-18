@@ -56,8 +56,18 @@ struct ConstraintEngine {
 
   nonisolated(unsafe) static let _contentConstraints:
     Array<ConstraintRule.MustBeContainedIn> = [
-      .init(.parList, .root),
-      .init(.heading, .root),
+      .init(
+        SubjectPredicate(.heading),
+        .disjunction([
+          .nodeType(.root),
+          .conjunction([.nodeType(.paragraph), .parentType(.root)]),
+        ])),
+      .init(
+        SubjectPredicate(.parList),
+        .disjunction([
+          .nodeType(.root),
+          .conjunction([.nodeType(.paragraph), .parentType(.root)]),
+        ])),
       .init(
         SubjectPredicate(.itemList),
         .conjunction([.nodeType(.paragraph), .negation(.parentType(.itemList))])),

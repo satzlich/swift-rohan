@@ -8,6 +8,7 @@ indirect enum ContainerPredicate {
 
   case negation(_ predicate: ContainerPredicate)
   case conjunction(_ predicates: Array<ContainerPredicate>)
+  case disjunction(_ predicates: Array<ContainerPredicate>)
 
   @inlinable @inline(__always)
   func isSatisfied(_ containerProperty: ContainerProperty) -> Bool {
@@ -20,6 +21,8 @@ indirect enum ContainerPredicate {
       return !predicate.isSatisfied(containerProperty)
     case .conjunction(let predicates):
       return predicates.allSatisfy { $0.isSatisfied(containerProperty) }
+    case .disjunction(let predicates):
+      return predicates.contains { $0.isSatisfied(containerProperty) }
     }
   }
 }

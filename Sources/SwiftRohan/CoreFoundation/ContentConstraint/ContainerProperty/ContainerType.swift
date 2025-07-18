@@ -14,7 +14,7 @@ extension ContainerType {
   func isCompatible(with content: ContentType) -> Bool {
     switch (self, content) {
     case (.inline, .inline): true
-    case (.block, .block): true
+    case (.block, _): true  // inline can be converted to paragraph
     case (.mixed, _): true
     case _: false
     }
