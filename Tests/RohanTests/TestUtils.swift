@@ -94,8 +94,9 @@ enum TestUtils {
     _ pageSize: CGSize,
     _ textLayoutManager: NSTextLayoutManager
   ) {
-    guard let context = NSGraphicsContext.current?.cgContext else { return }
     outputPDF(folderName: folderName, fileName, pageSize) { bounds in
+      // context is reset before drawing
+      guard let context = NSGraphicsContext.current?.cgContext else { return }
       TestUtils.draw(bounds, textLayoutManager, context)
     }
   }
