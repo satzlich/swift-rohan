@@ -48,6 +48,32 @@ enum TestUtils {
     }
   }
 
+  static func updateLayoutLength(_ node: Node) {
+    let styleSheet = StyleSheets.testingRecord.provider(12)
+    let layoutContext = TextLayoutContext(styleSheet)
+    layoutContext.beginEditing()
+    _ = node.performLayout(layoutContext, fromScratch: true, atBlockEdge: true)
+    layoutContext.endEditing()
+  }
+
+  // MARK: - Output PDF
+
+  /// Output Pdf with given drawing handler
+  static func outputPDF(
+    folderName: String? = nil,
+    _ fileName: String,
+    _ pageSize: CGSize,
+    drawingHandler: (_ bounds: CGRect) -> ()
+  ) {
+    // compose path
+    let path = folderName != nil ? "\(folderName!)/\(fileName).pdf" : "\(fileName).pdf"
+    guard let filePath = TestUtils.filePath(path) else { return }
+    // draw
+    DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize, isFlipped: true) { bounds in
+      drawingHandler(bounds)
+    }
+  }
+
   @MainActor
   static func outputPDF(
     folderName: String? = nil,
@@ -57,25 +83,21 @@ enum TestUtils {
   ) {
     // ensure layout is ready
     documentManager.reconcileLayout(scope: .document)
-    func drawHandler(_ bounds: CGRect) {
-      guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-      TestUtils.draw(bounds, documentManager.textLayoutManager, cgContext)
-    }
-    outputPDF(folderName: folderName, fileName, pageSize, drawHandler: drawHandler)
+    outputPDF(
+      folderName: folderName, fileName, pageSize, documentManager.textLayoutManager)
   }
 
+  @MainActor
   static func outputPDF(
     folderName: String? = nil,
     _ fileName: String,
     _ pageSize: CGSize,
-    drawHandler: (_ bounds: CGRect) -> ()
+    _ textLayoutManager: NSTextLayoutManager
   ) {
-    // compose path
-    let path = folderName != nil ? "\(folderName!)/\(fileName).pdf" : "\(fileName).pdf"
-    guard let filePath = TestUtils.filePath(path) else { return }
-    // draw
-    DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize, isFlipped: true) { bounds in
-      drawHandler(bounds)
+    outputPDF(folderName: folderName, fileName, pageSize) { bounds in
+      // context is reset before drawing
+      guard let context = NSGraphicsContext.current?.cgContext else { return }
+      TestUtils.draw(bounds, textLayoutManager, context)
     }
   }
 
@@ -99,7 +121,7 @@ enum TestUtils {
     }
   }
 
-  static func drawString(_ string: String, at point: CGPoint) {
+  private static func drawString(_ string: String, at point: CGPoint) {
     let font = NSFont.systemFont(ofSize: 3)
     let attributes: Dictionary<NSAttributedString.Key, Any> = [
       .font: font,
@@ -109,16 +131,8 @@ enum TestUtils {
     attrString.draw(at: point)
   }
 
-  static func updateLayoutLength(_ node: Node) {
-    let styleSheet = StyleSheets.testingRecord.provider(12)
-    let layoutContext = TextLayoutContext(styleSheet)
-    layoutContext.beginEditing()
-    _ = node.performLayout(layoutContext, fromScratch: true, atBlockEdge: true)
-    layoutContext.endEditing()
-  }
-
   @MainActor
-  static func drawTextLayoutFragment(
+  private static func drawTextLayoutFragment(
     _ fragment: NSTextLayoutFragment, in context: CGContext, withAttachmentViews: Bool
   ) {
     context.saveGState()
@@ -132,7 +146,7 @@ enum TestUtils {
   }
 
   @MainActor
-  static func drawAttachmentViews(
+  private static func drawAttachmentViews(
     for fragment: NSTextLayoutFragment, in context: CGContext
   ) {
     for attachmentViewProvider in fragment.textAttachmentViewProviders {
@@ -150,8 +164,7 @@ enum TestUtils {
     }
   }
 
-  @MainActor
-  static func decorateTextLayoutFragment(
+  private static func decorateTextLayoutFragment(
     _ fragment: NSTextLayoutFragment, _ context: CGContext
   ) {
     let frame = fragment.layoutFragmentFrame
