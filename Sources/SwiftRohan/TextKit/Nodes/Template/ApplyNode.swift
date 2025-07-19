@@ -169,11 +169,14 @@ final class ApplyNode: Node {
 
     case .environmentUse:
       let arguments: Array<JSONValue> = _arguments.map { $0.store() }
+      assert(arguments.count == 1, "Environment use should have exactly one argument")
+      // TODO: In the future, environment may have an extra argument for options.
+      // The convention for arguments is as follows.
+      // (a) If the environment has no options, the only argument would be the content.
+      // (b) If the environment has options, the first argument is options, and
+      //     the second argument is the content.
       let values = [JSONValue.string(template.command)] + arguments
       return JSONValue.array(values)
-
-    case .codeSnippet:
-      preconditionFailure("TODO: export the content")
     }
   }
 

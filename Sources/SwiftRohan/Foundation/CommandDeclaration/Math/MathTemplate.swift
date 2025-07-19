@@ -9,8 +9,6 @@ struct MathTemplate: CommandDeclarationProtocol {
     case commandCall
     /// For environment use, the template is used to create an environment.
     case environmentUse
-    /// For code snippet, the expanded content is output for storage.
-    case codeSnippet
   }
 
   var command: String { template.name.identifier.name }

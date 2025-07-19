@@ -165,9 +165,6 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       else {
         return .failure(SatzError(.ExportLatexFailure))
       }
-
-    case .codeSnippet:
-      preconditionFailure("TODO: handle code snippets")
     }
   }
 
