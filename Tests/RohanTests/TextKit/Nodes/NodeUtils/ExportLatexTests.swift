@@ -75,7 +75,7 @@ final class ExportLatexTests: TextKitTestsBase {
     let document = self.createDocumentManager(RootNode(content))
 
     do {
-      let latex: String? = document.exportDocument(to: .latexDocument)
+      let latex: String? = document.exportDocument(to: .latex)
         .flatMap { String(data: $0, encoding: .utf8) }
 
       let expected =

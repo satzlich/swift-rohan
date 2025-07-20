@@ -4,13 +4,7 @@ import AppKit
 import SwiftRohan
 import UniformTypeIdentifiers
 
-extension UTType {
-  static let latexDocument = UTType(
-    exportedAs: "org.latex-project.tex", conformingTo: .plainText)
-}
-
 final class Document: NSDocument {
-
   private(set) var content = DocumentContent()
   private(set) var style: StyleSheets.Record = StyleSheets.defaultRecord
   private(set) var textSize: FontSize = StyleSheets.defaultTextSize
@@ -42,20 +36,32 @@ final class Document: NSDocument {
   }
 
   override func data(ofType typeName: String) throws -> Data {
-    if let data = content.data() {
+    let format: DocumentContent.OutputFormat =
+      switch typeName {
+      case UTType.latexDocument.identifier: .latex
+      case UTType.rohanDocument.identifier: .rohan
+      case _:
+        throw NSError(
+          domain: Rohan.domain, code: ErrorCode.unsupportedFormat,
+          userInfo: [NSLocalizedDescriptionKey: "Unsupported document type: \(typeName)"])
+      }
+
+    if let data = content.writeData(format: format) {
       return data
     }
     else {
-      throw NSError(domain: Rohan.domain, code: 0, userInfo: nil)
+      throw NSError(
+        domain: Rohan.domain, code: ErrorCode.writeDataFailure,
+        userInfo: [
+          NSLocalizedDescriptionKey: "Failed to write document content to data."
+        ])
     }
   }
 
   override func read(from data: Data, ofType typeName: String) throws {
-    if let content = DocumentContent.from(data) {
+    if let content = DocumentContent.readFrom(data) {
       self.content = content
-
-      // When restoration from previous version is performed, this conditional
-      // branch is called.
+      // This conditional branch is called when the document is restored from previous version.
       if let contentViewController = windowControllers.first?.contentViewController,
         let viewController = contentViewController as? ViewController
       {
@@ -112,7 +118,7 @@ final class Document: NSDocument {
           url = url.deletingPathExtension().appendingPathExtension("tex")
         }
         // Export the document
-        self._export(to: url, format: .latexDocument)
+        self._saveContent(to: url, format: .latex)
       }
     }
   }
@@ -127,9 +133,9 @@ final class Document: NSDocument {
     return result
   }
 
-  private func _export(to url: URL, format: DocumentContent.ExportFormat) {
+  private func _saveContent(to url: URL, format: DocumentContent.OutputFormat) {
     do {
-      guard let data = content.exportDocument(to: format) else {
+      guard let data = content.writeData(format: format) else {
         throw NSError(
           domain: "ExportError", code: -1,
           userInfo: [NSLocalizedDescriptionKey: "Unable to generate export data"])

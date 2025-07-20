@@ -13,14 +13,12 @@ struct DocumentContentTests {
     ])
     let documentContent = DocumentContent(rootNode)
 
-    guard let data = documentContent.data()
-    else {
+    guard let data = documentContent.writeData(format: .rohan) else {
       Issue.record("Failed to serialize DocumentContent")
       return
     }
 
-    guard let decodedContent = DocumentContent.from(data)
-    else {
+    guard let decodedContent = DocumentContent.readFrom(data) else {
       Issue.record("Failed to deserialize DocumentContent")
       return
     }
@@ -51,15 +49,14 @@ struct DocumentContentTests {
         (]
         """
       let data = Data(json.utf8)
-      #expect(nil == DocumentContent.from(data))
+      #expect(nil == DocumentContent.readFrom(data))
     }
     do {
       let json = """
         [["unsupported"]]
         """
       let data = Data(json.utf8)
-      #expect(nil == DocumentContent.from(data))
+      #expect(nil == DocumentContent.readFrom(data))
     }
-
   }
 }
