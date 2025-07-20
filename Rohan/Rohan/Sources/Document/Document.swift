@@ -34,6 +34,7 @@ final class Document: NSDocument {
       viewController.representedObject = content
     }
 
+    // If the document is new (fileURL is nil), immediately show the save dialog.
     if self.fileURL == nil {
       _showSavePanel(format: .rohan, for: .saveOperation)
     }
