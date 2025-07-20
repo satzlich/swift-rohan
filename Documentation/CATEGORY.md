@@ -15,25 +15,27 @@
 
 ## Particular Rules
 
-### Must be inserted into
+### Can only contain
+
+- `itemList` can only contain `paragraph`.
+
+### Must be contained in
 
 - `parList` and `heading` must be contained in `root`.
 - `itemList` must be contained in `paragraph` whose parent is not `itemList`.
 - Block `equation` and `multiline` must be contained in `paragraph`.
 
-### Can only be inserted into 
+### Must be inserted into
 
-- `itemList` can only contain `paragraph`.
+For implementation purpose, we define **must be inserted into** relation instead of 
+**must be contained in** relation.
 
-## Can create 
-
-- Inserting content that can be inserted into paragraph can create `paragraph` node.
 
 # Design
 
-- obtains node type and node type of its parent
-- obtains content properties from a node
-- obtains container properties from the effective node for given location
+- obtains node type and node type of its parent;
+- obtains content properties from a node;
+- obtains container properties from the effective container node for given location;
 
 ```swift
 
