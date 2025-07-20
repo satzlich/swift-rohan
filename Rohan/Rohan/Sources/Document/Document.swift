@@ -63,7 +63,7 @@ final class Document: NSDocument {
       let content = DocumentContent.readFrom(data)
     else {
       throw NSError(
-        domain: Rohan.domain, code: 0,
+        domain: Rohan.domain, code: ErrorCode.unsupportedFormat,
         userInfo: [
           NSLocalizedDescriptionKey: "Unsupported document type: \(typeName)"
         ])
