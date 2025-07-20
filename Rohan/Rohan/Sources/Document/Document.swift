@@ -33,6 +33,10 @@ final class Document: NSDocument {
     if let viewController = windowController.contentViewController as? ViewController {
       viewController.representedObject = content
     }
+
+    if self.fileURL == nil {
+      _showSavePanel(format: .rohan, for: .saveOperation)
+    }
   }
 
   override func data(ofType typeName: String) throws -> Data {
@@ -74,6 +78,53 @@ final class Document: NSDocument {
     }
   }
 
+  @IBAction func exportDocument(_ sender: Any) {
+    _showSavePanel(format: .latex, for: .saveAsOperation)
+  }
+
+  /// Shows a save panel to save the document in the specified format.
+  /// - Parameters:
+  ///   - format: The format to save the document in.
+  ///   - saveOperationType: The type of save operation (e.g., save, save as).
+  private func _showSavePanel(
+    format: DocumentContent.OutputFormat,
+    for saveOperationType: NSDocument.SaveOperationType
+  ) {
+    let contentType = format.toUTType()
+    let fileExtension = format.fileExtension
+
+    // Create a save panel with the specified content type.
+    let savePanel = NSSavePanel()
+    savePanel.allowedContentTypes = [contentType]
+    savePanel.isExtensionHidden = false
+    savePanel.canCreateDirectories = true
+
+    // Set default name with extension.
+    let baseName = self.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled"
+    savePanel.nameFieldStringValue =
+      URL(fileURLWithPath: baseName)
+      .deletingPathExtension()
+      .lastPathComponent + "." + fileExtension
+
+    savePanel.begin { response in
+      if response == .OK, var url = savePanel.url {
+        // Ensure the file has the correct extension
+        if url.pathExtension.lowercased() != fileExtension {
+          url = url.deletingPathExtension().appendingPathExtension(fileExtension)
+        }
+        self.save(to: url, ofType: contentType.identifier, for: saveOperationType) {
+          error in
+          if let error = error {
+            NSLog("Failed to save document: \(error)")
+            NSAlert(error: error).runModal()
+          }
+        }
+      }
+    }
+  }
+
+  // MARK: - Style Management
+
   /// Sets the style and updates the view controller with the new style sheet.
   func setStyle(_ style: StyleSheets.Record) {
     self.style = style
@@ -97,67 +148,5 @@ final class Document: NSDocument {
       let viewController = contentViewController as? ViewController
     else { return }
     viewController.setStyleSheet(getStyleSheet())
-  }
-
-  @IBAction func exportDocument(_ sender: Any) {
-    showSavePanel(.latex)
-  }
-
-  func showSavePanel(_ format: DocumentContent.OutputFormat) {
-    let savePanel = NSSavePanel()
-    savePanel.allowedContentTypes = [format.toUTType()]
-    savePanel.isExtensionHidden = false
-    savePanel.canCreateDirectories = true
-
-    // Set default name
-    let baseName = self.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled"
-    savePanel.nameFieldStringValue = baseName
-
-    // Ensure the filename has the correct extension
-    let fileExtension = format.fileExtension
-    savePanel.nameFieldStringValue =
-      Self.rectifyFileName(savePanel.nameFieldStringValue, fileExtension: fileExtension)
-
-    savePanel.begin { response in
-      if response == .OK, var url = savePanel.url {
-        if url.pathExtension.lowercased() != fileExtension {
-          url = url.deletingPathExtension().appendingPathExtension(fileExtension)
-        }
-        self.saveContent(to: url, format: .latex)
-      }
-    }
-  }
-
-  /// Ensures that the filename ends with the specified extension.
-  private static func rectifyFileName(
-    _ fileName: String, fileExtension: String
-  ) -> String {
-    precondition(fileExtension.first != ".")
-    if fileName.lowercased().hasSuffix(fileExtension) {
-      return fileName
-    }
-    else {
-      return URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
-        + "." + fileExtension
-    }
-  }
-
-  /// Saves the content to the specified URL in the given format. If the content cannot be
-  /// serialized, an error alert is shown.
-  private func saveContent(to url: URL, format: DocumentContent.OutputFormat) {
-    do {
-      guard let data = content.writeData(format: format) else {
-        throw NSError(
-          domain: Rohan.domain, code: ErrorCode.writeDataFailure,
-          userInfo: [
-            NSLocalizedDescriptionKey:
-              "Unable to serialise document content in \(format) format."
-          ])
-      }
-      try data.write(to: url)
-    }
-    catch {
-      NSAlert(error: error).runModal()
-    }
   }
 }
