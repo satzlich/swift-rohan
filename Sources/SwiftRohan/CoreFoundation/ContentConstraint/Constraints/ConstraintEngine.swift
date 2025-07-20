@@ -42,7 +42,7 @@ struct ConstraintEngine {
     Dictionary<NodeType, Array<ConstraintRule.MustBeInsertedInto>>
 
   private let _containerConstraints:
-    Dictionary<NodeType, Array<ConstraintRule.CanInsertOnly>>
+    Dictionary<NodeType, Array<ConstraintRule.CanContainOnly>>
 
   init() {
     _contentConstraints = Self._contentConstraints.reduce(into: [:]) { dict, rule in
@@ -84,7 +84,7 @@ struct ConstraintEngine {
         .disjunction([.nodeType(.paragraph), .containerTag(.paragraphContainer)])),
     ]
 
-  static let _containerConstraints: Array<ConstraintRule.CanInsertOnly> = [
+  static let _containerConstraints: Array<ConstraintRule.CanContainOnly> = [
     // heading can contain only "plaintext", "formula", and "styledText".
     .init(.heading, .contentTag([.plaintext, .formula, .styledText])),
     // textStyles can contain only "plaintext", "formula".
