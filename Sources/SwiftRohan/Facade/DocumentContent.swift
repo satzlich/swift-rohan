@@ -5,26 +5,20 @@ import Foundation
 import LatexParser
 
 public final class DocumentContent {
+  public enum OutputFormat: String {
+    case latex
+    case rohan
 
-  // MARK: - Export
-
-  public enum ExportFormat: String {
-    case latexDocument
-  }
-
-  public func exportDocument(to format: ExportFormat) -> Data? {
-    switch format {
-    case .latexDocument:
-      let context = DeparseContext(Rohan.latexRegistry)
-      return NodeUtils.exportLatexDocument(rootNode, context: context)
-        .flatMap { $0.data(using: .utf8) }
+    public var fileExtension: String {
+      switch self {
+      case .latex: "tex"
+      case .rohan: "rh"
+      }
     }
   }
 
-  // MARK: - Load/Save
-
   /// Deserialize a document content from data.
-  public static func from(_ data: Data) -> DocumentContent? {
+  public static func readFrom(_ data: Data) -> DocumentContent? {
     let decoder = JSONDecoder()
     guard let json = try? decoder.decode(JSONValue.self, from: data)
     else { return nil }
@@ -39,17 +33,23 @@ public final class DocumentContent {
     }
   }
 
-  /// Serialize the document content to data.
-  public func data() -> Data? {
-    let encoder = JSONEncoder()
-    #if DEBUG
-    encoder.outputFormatting = [
-      .sortedKeys
-      // .prettyPrinted,
-    ]
-    #endif
-    return try? encoder.encode(rootNode.store())
+  public func writeData(format: OutputFormat) -> Data? {
+    switch format {
+    case .latex:
+      let context = DeparseContext(Rohan.latexRegistry)
+      return NodeUtils.exportLatexDocument(rootNode, context: context)
+        .flatMap { $0.data(using: .utf8) }
+
+    case .rohan:
+      let encoder = JSONEncoder()
+      #if DEBUG
+      encoder.outputFormatting = [.sortedKeys]
+      #endif
+      return try? encoder.encode(rootNode.store())
+    }
   }
+
+  // MARK: - State
 
   internal let rootNode: RootNode
 

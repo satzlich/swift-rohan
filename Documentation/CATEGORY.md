@@ -1,46 +1,3 @@
-# Text
-
-| Node        | Mode      | Content   | Container | Constraint      |
-| ----------- | --------- | --------- | --------- | --------------- |
-| counter     | text      | plaintext | x         |                 |
-| linebreak   | text      | plaintext | x         |                 |
-| namedSymbol | text/math | plaintext | x         |                 |
-| text        | text/math | plaintext | x         |                 |
-| unknown     | text/math | -         | x         |                 |
-| content     | text/math | -         | -         |                 |
-| expansion   | text/math | -         | -         |                 |
-| heading     | text      | block     | inline    |                 |
-| itemList    | text      | block     | block     | in paragraph    |
-| paragraph   | text      | block     | mixed     |                 |
-| parList     | text      | block     | block     | only paragraphs |
-| root        | text      | x         | block     |                 |
-| textStyles  | text      | inline    | inline    |                 |
-
-# Math
-
-| Node           | Mode         | Content      | Container | Constraint   |
-| -------------- | ------------ | ------------ | --------- | ------------ |
-| accent         | math         | inline       | inline    |              |
-| attach         | math         | inline       | inline    |              |
-| equation       | text -> math | inline/block | inline    | in paragraph |
-| fraction       | math         | inline       | inline    |              |
-| leftRight      | math         | inline       | inline    |              |
-| mathAttributes | math         | inline       | inline    |              |
-| mathExpression | math         | inline       | inline    |              |
-| mathOperator   | math         | inline       | inline    |              |
-| mathStyles     | math         | inline       | inline    |              |
-| matrix         | math         | inline       | inline    |              |
-| multiline      | text -> math | block        | inline    | in paragraph |
-| radical        | math         | inline       | inline    |              |
-| textMode       | math -> text | inline       | plaintext |              |
-| underOver      | math         | inline       | inline    |              |
-
-# Abstraction
-
-| Node     | Mode      | Content | Container | Constraint |
-| -------- | --------- | ------- | --------- | ---------- |
-| apply    | text/math | -       | -         |            |
-| variable | (context) | -       | -         |            |
 
 # Rules
 
@@ -58,25 +15,27 @@
 
 ## Particular Rules
 
+### Can only contain
+
+- `itemList` can only contain `paragraph`.
+
 ### Must be contained in
 
 - `parList` and `heading` must be contained in `root`.
 - `itemList` must be contained in `paragraph` whose parent is not `itemList`.
 - Block `equation` and `multiline` must be contained in `paragraph`.
 
-### Can only contain
+### Must be inserted into
 
-- `itemList` can only contain `paragraph`.
+For implementation purpose, we define **must be inserted into** relation instead of 
+**must be contained in** relation.
 
-## Can create 
-
-- Inserting content that can be inserted into paragraph can create `paragraph` node.
 
 # Design
 
-- obtains node type and node type of its parent
-- obtains content properties from a node
-- obtains container properties from the effective node for given location
+- obtains node type and node type of its parent;
+- obtains content properties from a node;
+- obtains container properties from the effective container node for given location;
 
 ```swift
 

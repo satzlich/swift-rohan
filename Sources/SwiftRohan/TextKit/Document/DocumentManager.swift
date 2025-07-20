@@ -1208,8 +1208,8 @@ public final class DocumentManager: NSObject {
 
   // MARK: - Storage
 
-  func exportDocument(to format: DocumentContent.ExportFormat) -> Data? {
-    content.exportDocument(to: format)
+  func exportDocument(to format: DocumentContent.OutputFormat) -> Data? {
+    content.writeData(format: format)
   }
 
   func getLatexContent() -> String? {
