@@ -36,109 +36,123 @@ final class Document: NSDocument {
   }
 
   override func data(ofType typeName: String) throws -> Data {
-    let format: DocumentContent.OutputFormat =
-      switch typeName {
-      case UTType.latexDocument.identifier: .latex
-      case UTType.rohanDocument.identifier: .rohan
-      case _:
-        throw NSError(
-          domain: Rohan.domain, code: ErrorCode.unsupportedFormat,
-          userInfo: [NSLocalizedDescriptionKey: "Unsupported document type: \(typeName)"])
-      }
-
-    if let data = content.writeData(format: format) {
-      return data
+    guard let format = DocumentContent.OutputFormat.fromUTType(typeName) else {
+      throw NSError(
+        domain: Rohan.domain, code: ErrorCode.unsupportedFormat,
+        userInfo: [NSLocalizedDescriptionKey: "Unsupported document type: \(typeName)"])
     }
-    else {
+
+    guard let data = content.writeData(format: format) else {
       throw NSError(
         domain: Rohan.domain, code: ErrorCode.writeDataFailure,
         userInfo: [
           NSLocalizedDescriptionKey: "Failed to write document content to data."
         ])
     }
+
+    return data
   }
 
   override func read(from data: Data, ofType typeName: String) throws {
-    if let content = DocumentContent.readFrom(data) {
-      self.content = content
-      // This conditional branch is called when the document is restored from previous version.
-      if let contentViewController = windowControllers.first?.contentViewController,
-        let viewController = contentViewController as? ViewController
-      {
-        viewController.representedObject = content
-      }
-    }
+    guard typeName == UTType.rohanDocument.identifier,
+      let content = DocumentContent.readFrom(data)
     else {
-      throw NSError(domain: Rohan.domain, code: 0, userInfo: nil)
+      throw NSError(
+        domain: Rohan.domain, code: 0,
+        userInfo: [
+          NSLocalizedDescriptionKey: "Unsupported document type: \(typeName)"
+        ])
+    }
+
+    self.content = content
+
+    // This conditional branch is called when the document is restored from previous version.
+    if let contentViewController = windowControllers.first?.contentViewController,
+      let viewController = contentViewController as? ViewController
+    {
+      viewController.representedObject = content
     }
   }
 
-  internal func setStyle(_ style: StyleSheets.Record) {
+  /// Sets the style and updates the view controller with the new style sheet.
+  func setStyle(_ style: StyleSheets.Record) {
     self.style = style
-    self.updateStyleSheet()
+    self._updateStyleSheet()
   }
 
-  internal func setTextSize(_ size: FontSize) {
+  /// Sets the text size and updates the view controller with the new style sheet.
+  func setTextSize(_ size: FontSize) {
     self.textSize = size
-    self.updateStyleSheet()
+    self._updateStyleSheet()
   }
 
-  internal func getStyleSheet() -> StyleSheet {
+  /// Returns the current style sheet based on the selected style and text size.
+  func getStyleSheet() -> StyleSheet {
     self.style.provider(self.textSize)
   }
 
-  internal func updateStyleSheet() {
+  /// Updates the style sheet in the view controller.
+  private func _updateStyleSheet() {
     guard let contentViewController = windowControllers.first?.contentViewController,
       let viewController = contentViewController as? ViewController
     else { return }
     viewController.setStyleSheet(getStyleSheet())
   }
 
-  // MARK: - Export
-
   @IBAction func exportDocument(_ sender: Any) {
-    // Create a save panel configured for LaTeX export
+    showSavePanel(.latex)
+  }
+
+  func showSavePanel(_ format: DocumentContent.OutputFormat) {
     let savePanel = NSSavePanel()
-    savePanel.allowedContentTypes = [.latexDocument]
+    savePanel.allowedContentTypes = [format.toUTType()]
     savePanel.isExtensionHidden = false
     savePanel.canCreateDirectories = true
 
-    // Set default name and ensure .tex extension
+    // Set default name
     let baseName = self.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled"
     savePanel.nameFieldStringValue = baseName
 
-    // Ensure .tex extension is added if missing
+    // Ensure the filename has the correct extension
+    let fileExtension = format.fileExtension
     savePanel.nameFieldStringValue =
-      Self._ensureTexExtension(savePanel.nameFieldStringValue)
+      Self.rectifyFileName(savePanel.nameFieldStringValue, fileExtension: fileExtension)
 
     savePanel.begin { response in
       if response == .OK, var url = savePanel.url {
-        // Force .tex extension if somehow missing
-        if url.pathExtension.lowercased() != "tex" {
-          url = url.deletingPathExtension().appendingPathExtension("tex")
+        if url.pathExtension.lowercased() != fileExtension {
+          url = url.deletingPathExtension().appendingPathExtension(fileExtension)
         }
-        // Export the document
-        self._saveContent(to: url, format: .latex)
+        self.saveContent(to: url, format: .latex)
       }
     }
   }
 
-  private static func _ensureTexExtension(_ filename: String) -> String {
-    var result = filename
-    if !result.lowercased().hasSuffix(".tex") {
-      // Remove any existing extension first
-      result = URL(fileURLWithPath: result).deletingPathExtension().lastPathComponent
-      result += ".tex"
+  /// Ensures that the filename ends with the specified extension.
+  private static func rectifyFileName(
+    _ fileName: String, fileExtension: String
+  ) -> String {
+    precondition(fileExtension.first != ".")
+    if fileName.lowercased().hasSuffix(fileExtension) {
+      return fileName
     }
-    return result
+    else {
+      return URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
+        + "." + fileExtension
+    }
   }
 
-  private func _saveContent(to url: URL, format: DocumentContent.OutputFormat) {
+  /// Saves the content to the specified URL in the given format. If the content cannot be
+  /// serialized, an error alert is shown.
+  private func saveContent(to url: URL, format: DocumentContent.OutputFormat) {
     do {
       guard let data = content.writeData(format: format) else {
         throw NSError(
-          domain: "ExportError", code: -1,
-          userInfo: [NSLocalizedDescriptionKey: "Unable to generate export data"])
+          domain: Rohan.domain, code: ErrorCode.writeDataFailure,
+          userInfo: [
+            NSLocalizedDescriptionKey:
+              "Unable to serialise document content in \(format) format."
+          ])
       }
       try data.write(to: url)
     }

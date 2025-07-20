@@ -8,6 +8,13 @@ public final class DocumentContent {
   public enum OutputFormat: String {
     case latex
     case rohan
+
+    public var fileExtension: String {
+      switch self {
+      case .latex: "tex"
+      case .rohan: "rh"
+      }
+    }
   }
 
   /// Deserialize a document content from data.
