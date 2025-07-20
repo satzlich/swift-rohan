@@ -9,7 +9,7 @@ extension UTType {
     exportedAs: "org.latex-project.tex", conformingTo: .plainText)
 }
 
-class Document: NSDocument {
+final class Document: NSDocument {
 
   private(set) var content = DocumentContent()
   private(set) var style: StyleSheets.Record = StyleSheets.defaultRecord
@@ -103,7 +103,7 @@ class Document: NSDocument {
 
     // Ensure .tex extension is added if missing
     savePanel.nameFieldStringValue =
-      Document.ensureTexExtension(savePanel.nameFieldStringValue)
+      Self._ensureTexExtension(savePanel.nameFieldStringValue)
 
     savePanel.begin { response in
       if response == .OK, var url = savePanel.url {
@@ -111,14 +111,13 @@ class Document: NSDocument {
         if url.pathExtension.lowercased() != "tex" {
           url = url.deletingPathExtension().appendingPathExtension("tex")
         }
-
         // Export the document
-        self.export(to: url, format: .latexDocument)
+        self._export(to: url, format: .latexDocument)
       }
     }
   }
 
-  private static func ensureTexExtension(_ filename: String) -> String {
+  private static func _ensureTexExtension(_ filename: String) -> String {
     var result = filename
     if !result.lowercased().hasSuffix(".tex") {
       // Remove any existing extension first
@@ -128,15 +127,13 @@ class Document: NSDocument {
     return result
   }
 
-  private func export(to url: URL, format: DocumentContent.ExportFormat) {
+  private func _export(to url: URL, format: DocumentContent.ExportFormat) {
     do {
-      guard let data = content.exportDocument(to: format)
-      else {
+      guard let data = content.exportDocument(to: format) else {
         throw NSError(
           domain: "ExportError", code: -1,
           userInfo: [NSLocalizedDescriptionKey: "Unable to generate export data"])
       }
-
       try data.write(to: url)
     }
     catch {
