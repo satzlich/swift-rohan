@@ -92,27 +92,3 @@ final class ViewController: NSViewController {
     documentView.styleSheet = styleSheet
   }
 }
-
-extension ViewController: DocumentViewDelegate {
-  func documentDidChange(_ documentView: DocumentView) {
-    if let document = self.view.window?.windowController?.document as? Document {
-      // mark as edited
-      document.updateChangeCount(.changeDone)
-    }
-  }
-}
-
-extension ViewController: NSMenuItemValidation {
-  func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-    switch menuItem.action {
-    case #selector(zoomIn(_:)):
-      return scrollView.magnification < scrollView.maxMagnification
-    case #selector(zoomOut(_:)):
-      return scrollView.magnification > scrollView.minMagnification
-    case #selector(zoomImageToActualSize(_:)):
-      return abs(scrollView.magnification - 1.0) > 0.01
-    default:
-      return true
-    }
-  }
-}
