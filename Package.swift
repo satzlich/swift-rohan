@@ -69,9 +69,12 @@ let package = Package(
     .testTarget(
       name: "RohanTests",
       dependencies: ["SwiftRohan"],
+      resources: [
+        .process("Resources")
+      ],
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT")
-      ]
+      ],
     ),
     .testTarget(
       name: "LatexParserTests",

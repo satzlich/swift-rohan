@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60pt"
+   height="60pt"
+   viewBox="0 0 21.166666 21.166666"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch2">
+      <stop
+         style="stop-color:#1a1a1a;stop-opacity:0.21960802;"
+         offset="0"
+         id="stop2" />
+    </linearGradient>
+  </defs>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <text
+     xml:space="preserve"
+     style="font-size:6.35px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#748bee;fill-opacity:1;stroke:#748bee;stroke-width:0.264999;stroke-dasharray:none;stroke-opacity:1"
+     x="5.1216512"
+     y="12.372372"
+     id="text10"><tspan
+       id="tspan10"
+       style="fill:#748bee;fill-opacity:1;stroke:#748bee;stroke-width:0.265;stroke-opacity:1"
+       x="5.1216512"
+       y="12.372372">svg</tspan></text>
+</svg>
