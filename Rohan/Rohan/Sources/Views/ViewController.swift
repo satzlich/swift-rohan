@@ -3,7 +3,7 @@
 import Cocoa
 import SwiftRohan
 
-class ViewController: NSViewController {
+final class ViewController: NSViewController {
 
   @IBOutlet var scrollView: RhScrollView!
   @IBOutlet var documentView: DocumentView!

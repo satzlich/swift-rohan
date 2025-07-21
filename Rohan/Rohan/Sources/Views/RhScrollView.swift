@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import SwiftRohan
 
-class RhScrollView: NSScrollView {
+final class RhScrollView: NSScrollView {
   weak var scrollDelegate: ScrollViewDelegate?
 
   override func magnify(with event: NSEvent) {

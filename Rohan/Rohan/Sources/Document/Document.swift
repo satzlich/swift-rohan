@@ -13,9 +13,9 @@ final class Document: NSDocument {
     super.init()
   }
 
-  override class var autosavesInPlace: Bool { true }
+  final override class var autosavesInPlace: Bool { true }
 
-  override func makeWindowControllers() {
+  final override func makeWindowControllers() {
     let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
     let windowController =
       storyboard.instantiateController(
@@ -40,7 +40,7 @@ final class Document: NSDocument {
     }
   }
 
-  override func data(ofType typeName: String) throws -> Data {
+  final override func data(ofType typeName: String) throws -> Data {
     guard let format = DocumentContent.OutputFormat.fromUTType(typeName) else {
       throw NSError(
         domain: Rohan.domain, code: ErrorCode.unsupportedFormat,
@@ -58,7 +58,7 @@ final class Document: NSDocument {
     return data
   }
 
-  override func read(from data: Data, ofType typeName: String) throws {
+  final override func read(from data: Data, ofType typeName: String) throws {
     guard typeName == UTType.rohanDocument.identifier,
       let content = DocumentContent.readFrom(data)
     else {
@@ -79,7 +79,8 @@ final class Document: NSDocument {
     }
   }
 
-  @IBAction func exportDocument(_ sender: Any) {
+  @IBAction
+  final func exportDocument(_ sender: Any) {
     _showSavePanel(format: .latex, for: .saveAsOperation)
   }
 
@@ -87,7 +88,7 @@ final class Document: NSDocument {
   /// - Parameters:
   ///   - format: The format to save the document in.
   ///   - saveOperationType: The type of save operation (e.g., save, save as).
-  private func _showSavePanel(
+  private final func _showSavePanel(
     format: DocumentContent.OutputFormat,
     for saveOperationType: NSDocument.SaveOperationType
   ) {
@@ -127,24 +128,24 @@ final class Document: NSDocument {
   // MARK: - Style Management
 
   /// Sets the style and updates the view controller with the new style sheet.
-  func setStyle(_ style: StyleSheets.Record) {
+  final func setStyle(_ style: StyleSheets.Record) {
     self.style = style
     self._updateStyleSheet()
   }
 
   /// Sets the text size and updates the view controller with the new style sheet.
-  func setTextSize(_ size: FontSize) {
+  final func setTextSize(_ size: FontSize) {
     self.textSize = size
     self._updateStyleSheet()
   }
 
   /// Returns the current style sheet based on the selected style and text size.
-  func getStyleSheet() -> StyleSheet {
+  final func getStyleSheet() -> StyleSheet {
     self.style.provider(self.textSize)
   }
 
   /// Updates the style sheet in the view controller.
-  private func _updateStyleSheet() {
+  private final func _updateStyleSheet() {
     guard let contentViewController = windowControllers.first?.contentViewController,
       let viewController = contentViewController as? ViewController
     else { return }
