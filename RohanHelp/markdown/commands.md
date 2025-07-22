@@ -3,7 +3,7 @@ title: "Commands"
 css: styles.css
 ---
 
-We support 601 commands/environments.
+We support the following commands/environments.
 
 ## A
 
@@ -109,19 +109,20 @@ We support 601 commands/environments.
 |  24 | `\cong`             | $\cong$               |         |
 |  25 | `\copyright`        | $©$                   |         |
 |  26 | `\coprod`           | $\coprod$             |         |
-|  27 | `\cos`              | $\cos$                |         |
-|  28 | `\cosh`             | $\cosh$               |         |
-|  29 | `\cot`              | $\cot$                |         |
-|  30 | `\coth`             | $\coth$               |         |
-|  31 | `\csc`              | $\csc$                |         |
-|  32 | `\Cup`              | $\Cup$                | AMS     |
-|  33 | `\cup`              | $\cup$                |         |
-|  34 | `\curlyeqprec`      | $\curlyeqprec$        | AMS     |
-|  35 | `\curlyeqsucc`      | $\curlyeqsucc$        | AMS     |
-|  36 | `\curlyvee`         | $\curlyvee$           | AMS     |
-|  37 | `\curlywedge`       | $\curlywedge$         | AMS     |
-|  38 | `\curvearrowleft`   | $\curvearrowleft$     | AMS     |
-|  39 | `\curvearrowright`  | $\curvearrowright$    | AMS     |
+|  27 | `{corollary}`       |                       | AMS     |
+|  28 | `\cos`              | $\cos$                |         |
+|  29 | `\cosh`             | $\cosh$               |         |
+|  30 | `\cot`              | $\cot$                |         |
+|  31 | `\coth`             | $\coth$               |         |
+|  32 | `\csc`              | $\csc$                |         |
+|  33 | `\Cup`              | $\Cup$                | AMS     |
+|  34 | `\cup`              | $\cup$                |         |
+|  35 | `\curlyeqprec`      | $\curlyeqprec$        | AMS     |
+|  36 | `\curlyeqsucc`      | $\curlyeqsucc$        | AMS     |
+|  37 | `\curlyvee`         | $\curlyvee$           | AMS     |
+|  38 | `\curlywedge`       | $\curlywedge$         | AMS     |
+|  39 | `\curvearrowleft`   | $\curvearrowleft$     | AMS     |
+|  40 | `\curvearrowright`  | $\curvearrowright$    | AMS     |
 
 ## D
 
@@ -214,7 +215,7 @@ We support 601 commands/environments.
 |   2 | `\Gamma`      | $\Gamma$                 |         |
 |   3 | `\gamma`      | $\gamma$                 |         |
 |   4 | `{gather*}`   | ![](images/gathered.svg) |         |
-|   5 | `{gathered}` | ![](images/gathered.svg) |         |
+|   5 | `{gathered}`  | ![](images/gathered.svg) |         |
 |   6 | `\gcd`        | $\gcd$                   |         |
 |   7 | `\ge`         | $\ge$                    |         |
 |   8 | `\geq`        | $\geq$                   |         |
@@ -313,52 +314,53 @@ We support 601 commands/environments.
 |  22 | `\leftrightharpoons`   | $\leftrightharpoons$   | AMS            |
 |  23 | `\leftrightsquigarrow` | $\leftrightsquigarrow$ | AMS            |
 |  24 | `\leftthreetimes`      | $\leftthreetimes$      | AMS            |
-|  25 | `\leq`                 | $\leq$                 |                |
-|  26 | `\leqq`                | $\leqq$                | AMS            |
-|  27 | `\leqslant`            | $\leqslant$            | AMS            |
-|  28 | `\lessapprox`          | $\lessapprox$          | AMS            |
-|  29 | `\lessdot`             | $\lessdot$             | AMS            |
-|  30 | `\lesseqgtr`           | $\lesseqgtr$           | AMS            |
-|  31 | `\lesseqqgtr`          | $\lesseqqgtr$          | AMS            |
-|  32 | `\lessgtr`             | $\lessgtr$             | AMS            |
-|  33 | `\lesssim`             | $\lesssim$             | AMS            |
-|  34 | `\lfloor`              | $\lfloor$              |                |
-|  35 | `\lg`                  | $\lg$                  |                |
-|  36 | `\lgroup`              | $\lgroup$              |                |
-|  37 | `\lhd`                 | $\lhd$                 |                |
-|  38 | `\lim`                 | $\lim$                 |                |
-|  39 | `\liminf`              | $\liminf$              |                |
-|  40 | `\limits`              |                        |                |
-|  41 | `\limsup`              | $\limsup$              |                |
-|  42 | `\ll`                  | $\ll$                  |                |
-|  43 | `\llcorner`            | $\llcorner$            | AMS            |
-|  44 | `\Lleftarrow`          | $\Lleftarrow$          | AMS            |
-|  45 | `\lll`                 | $\lll$                 | AMS            |
-|  46 | `\llless`              | $\llless$              | AMS            |
-|  47 | `\lmoustache`          | $\lmoustache$          |                |
-|  48 | `\ln`                  | $\ln$                  |                |
-|  49 | `\lnapprox`            | $\lnapprox$            | AMS            |
-|  50 | `\lneq`                | $\lneq$                | AMS            |
-|  51 | `\lneqq`               | $\lneqq$               | AMS            |
-|  52 | `\lnot`                | $\lnot$                |                |
-|  53 | `\lnsim`               | $\lnsim$               | AMS            |
-|  54 | `\log`                 | $\log$                 |                |
-|  55 | `\Longleftarrow`       | $\Longleftarrow$       |                |
-|  56 | `\longleftarrow`       | $\longleftarrow$       |                |
-|  57 | `\Longleftrightarrow`  | $\Longleftrightarrow$  |                |
-|  58 | `\longleftrightarrow`  | $\longleftrightarrow$  |                |
-|  59 | `\longmapsto`          | $\longmapsto$          |                |
-|  60 | `\Longrightarrow`      | $\Longrightarrow$      |                |
-|  61 | `\longrightarrow`      | $\longrightarrow$      |                |
-|  62 | `\looparrowleft`       | $\looparrowleft$       | AMS            |
-|  63 | `\looparrowright`      | $\looparrowright$      | AMS            |
-|  64 | `\lor`                 | $\lor$                 |                |
-|  65 | `\lozenge`             | $\lozenge$             | AMS            |
-|  66 | `\lrcorner`            | $\lrcorner$            | AMS            |
-|  67 | `\Lsh`                 | $\Lsh$                 | AMS            |
-|  68 | `\ltimes`              | $\ltimes$              | AMS            |
-|  69 | `\lVert`               | $\lVert$               | AMS            |
-|  70 | `\lvert`               | $\lvert$               | AMS            |
+|  25 | `{lemma}`              |                        | AMS            |
+|  26 | `\leq`                 | $\leq$                 |                |
+|  27 | `\leqq`                | $\leqq$                | AMS            |
+|  28 | `\leqslant`            | $\leqslant$            | AMS            |
+|  29 | `\lessapprox`          | $\lessapprox$          | AMS            |
+|  30 | `\lessdot`             | $\lessdot$             | AMS            |
+|  31 | `\lesseqgtr`           | $\lesseqgtr$           | AMS            |
+|  32 | `\lesseqqgtr`          | $\lesseqqgtr$          | AMS            |
+|  33 | `\lessgtr`             | $\lessgtr$             | AMS            |
+|  34 | `\lesssim`             | $\lesssim$             | AMS            |
+|  35 | `\lfloor`              | $\lfloor$              |                |
+|  36 | `\lg`                  | $\lg$                  |                |
+|  37 | `\lgroup`              | $\lgroup$              |                |
+|  38 | `\lhd`                 | $\lhd$                 |                |
+|  39 | `\lim`                 | $\lim$                 |                |
+|  40 | `\liminf`              | $\liminf$              |                |
+|  41 | `\limits`              |                        |                |
+|  42 | `\limsup`              | $\limsup$              |                |
+|  43 | `\ll`                  | $\ll$                  |                |
+|  44 | `\llcorner`            | $\llcorner$            | AMS            |
+|  45 | `\Lleftarrow`          | $\Lleftarrow$          | AMS            |
+|  46 | `\lll`                 | $\lll$                 | AMS            |
+|  47 | `\llless`              | $\llless$              | AMS            |
+|  48 | `\lmoustache`          | $\lmoustache$          |                |
+|  49 | `\ln`                  | $\ln$                  |                |
+|  50 | `\lnapprox`            | $\lnapprox$            | AMS            |
+|  51 | `\lneq`                | $\lneq$                | AMS            |
+|  52 | `\lneqq`               | $\lneqq$               | AMS            |
+|  53 | `\lnot`                | $\lnot$                |                |
+|  54 | `\lnsim`               | $\lnsim$               | AMS            |
+|  55 | `\log`                 | $\log$                 |                |
+|  56 | `\Longleftarrow`       | $\Longleftarrow$       |                |
+|  57 | `\longleftarrow`       | $\longleftarrow$       |                |
+|  58 | `\Longleftrightarrow`  | $\Longleftrightarrow$  |                |
+|  59 | `\longleftrightarrow`  | $\longleftrightarrow$  |                |
+|  60 | `\longmapsto`          | $\longmapsto$          |                |
+|  61 | `\Longrightarrow`      | $\Longrightarrow$      |                |
+|  62 | `\longrightarrow`      | $\longrightarrow$      |                |
+|  63 | `\looparrowleft`       | $\looparrowleft$       | AMS            |
+|  64 | `\looparrowright`      | $\looparrowright$      | AMS            |
+|  65 | `\lor`                 | $\lor$                 |                |
+|  66 | `\lozenge`             | $\lozenge$             | AMS            |
+|  67 | `\lrcorner`            | $\lrcorner$            | AMS            |
+|  68 | `\Lsh`                 | $\Lsh$                 | AMS            |
+|  69 | `\ltimes`              | $\ltimes$              | AMS            |
+|  70 | `\lVert`               | $\lVert$               | AMS            |
+|  71 | `\lvert`               | $\lvert$               | AMS            |
 
 ## M
 
@@ -496,9 +498,10 @@ We support 601 commands/environments.
 |  23 | `\prime`       | $\prime$                |         |
 |  24 | `\prod`        | $\prod$                 |         |
 |  25 | `\projlim`     | $\projlim$              | AMS     |
-|  26 | `\propto`      | $\propto$               |         |
-|  27 | `\Psi`         | $\Psi$                  |         |
-|  28 | `\psi`         | $\psi$                  |         |
+|  26 | `{proof}`      |                         | AMS     |
+|  27 | `\propto`      | $\propto$               |         |
+|  28 | `\Psi`         | $\Psi$                  |         |
+|  29 | `\psi`         | $\psi$                  |         |
 
 ## Q
 
@@ -543,60 +546,61 @@ We support 601 commands/environments.
 
 ## S
 
-|  \# | Command              | Look                | Package |
-| --: | :------------------- | :------------------ | :------ |
-|   1 | `\S`                 | $\S$                |         |
-|   2 | `\searrow`           | $\searrow$          |         |
-|   3 | `\sec`               | $\sec$              |         |
-|   4 | `\setminus`          | $\setminus$         |         |
-|   5 | `\sharp`             | $\sharp$            |         |
-|   6 | `\Sigma`             | $\Sigma$            |         |
-|   7 | `\sigma`             | $\sigma$            |         |
-|   8 | `\sim`               | $\sim$              |         |
-|   9 | `\simeq`             | $\simeq$            |         |
-|  10 | `\sin`               | $\sin$              |         |
-|  11 | `\sinh`              | $\sinh$             |         |
-|  12 | `\smallint`          | $\smallint$         |         |
-|  13 | `\smile`             | $\smile$            |         |
-|  14 | `\spadesuit`         | $\spadesuit$        |         |
-|  15 | `\sphericalangle`    | $\sphericalangle$   | AMS     |
-|  16 | `\sqcap`             | $\sqcap$            |         |
-|  17 | `\sqcup`             | $\sqcup$            |         |
-|  18 | `\sqrt`              | $\sqrt{x}$          |         |
-|  19 | `\sqsubset`          | $\sqsubset$         |         |
-|  20 | `\sqsubseteq`        | $\sqsubseteq$       |         |
-|  21 | `\sqsupset`          | $\sqsupset$         |         |
-|  22 | `\sqsupseteq`        | $\sqsupseteq$       |         |
-|  23 | `\square`            | $\square$           | AMS     |
-|  24 | `\stackrel`          | $\stackrel{def}{=}$ |         |
-|  25 | `\star`              | $\star$             |         |
-|  26 | `\scriptscriptstyle` |                     |         |
-|  27 | `\scriptstyle`       |                     |         |
-|  28 | `\Subset`            | $\Subset$           | AMS     |
-|  29 | `\subset`            | $\subset$           |         |
-|  30 | `\subseteq`          | $\subseteq$         |         |
-|  31 | `\subseteqq`         | $\subseteqq$        | AMS     |
-|  32 | `\subsetneq`         | $\subsetneq$        | AMS     |
-|  33 | `\subsetneqq`        | $\subsetneqq$       | AMS     |
-|  34 | `\substack`          | $\substack{a\\\\b}$ |         |
-|  35 | `\succ`              | $\succ$             |         |
-|  36 | `\succapprox`        | $\succapprox$       | AMS     |
-|  37 | `\succcurlyeq`       | $\succcurlyeq$      | AMS     |
-|  38 | `\succeq`            | $\succeq$           |         |
-|  39 | `\succnapprox`       | $\succnapprox$      | AMS     |
-|  40 | `\succneqq`          | $\succneqq$         | AMS     |
-|  41 | `\succnsim`          | $\succnsim$         | AMS     |
-|  42 | `\succsim`           | $\succsim$          | AMS     |
-|  43 | `\sum`               | $\sum$              |         |
-|  44 | `\sup`               | $\sup$              |         |
-|  45 | `\Supset`            | $\Supset$           | AMS     |
-|  46 | `\supset`            | $\supset$           |         |
-|  47 | `\supseteq`          | $\supseteq$         |         |
-|  48 | `\supseteqq`         | $\supseteqq$        | AMS     |
-|  49 | `\supsetneq`         | $\supsetneq$        | AMS     |
-|  50 | `\supsetneqq`        | $\supsetneqq$       | AMS     |
-|  51 | `\surd`              | $\surd$             |         |
-|  52 | `\swarrow`           | $\swarrow$          |         |
+|  \# | Command              | Look                        | Package |
+| --: | :------------------- | :-------------------------- | :------ |
+|   1 | `\S`                 | $\S$                        |         |
+|   2 | `\searrow`           | $\searrow$                  |         |
+|   3 | `\sec`               | $\sec$                      |         |
+|   4 | `\setminus`          | $\setminus$                 |         |
+|   5 | `\sharp`             | $\sharp$                    |         |
+|   6 | `\Sigma`             | $\Sigma$                    |         |
+|   7 | `\sigma`             | $\sigma$                    |         |
+|   8 | `\sim`               | $\sim$                      |         |
+|   9 | `\simeq`             | $\simeq$                    |         |
+|  10 | `\sin`               | $\sin$                      |         |
+|  11 | `\sinh`              | $\sinh$                     |         |
+|  12 | `\smallint`          | $\smallint$                 |         |
+|  13 | `{smallmatrix}`      | ![](images/smallmatrix.svg) | AMS     |
+|  14 | `\smile`             | $\smile$                    |         |
+|  15 | `\spadesuit`         | $\spadesuit$                |         |
+|  16 | `\sphericalangle`    | $\sphericalangle$           | AMS     |
+|  17 | `\sqcap`             | $\sqcap$                    |         |
+|  18 | `\sqcup`             | $\sqcup$                    |         |
+|  19 | `\sqrt`              | $\sqrt{x}$                  |         |
+|  20 | `\sqsubset`          | $\sqsubset$                 |         |
+|  21 | `\sqsubseteq`        | $\sqsubseteq$               |         |
+|  22 | `\sqsupset`          | $\sqsupset$                 |         |
+|  23 | `\sqsupseteq`        | $\sqsupseteq$               |         |
+|  24 | `\square`            | $\square$                   | AMS     |
+|  25 | `\stackrel`          | $\stackrel{def}{=}$         |         |
+|  26 | `\star`              | $\star$                     |         |
+|  27 | `\scriptscriptstyle` |                             |         |
+|  28 | `\scriptstyle`       |                             |         |
+|  29 | `\Subset`            | $\Subset$                   | AMS     |
+|  30 | `\subset`            | $\subset$                   |         |
+|  31 | `\subseteq`          | $\subseteq$                 |         |
+|  32 | `\subseteqq`         | $\subseteqq$                | AMS     |
+|  33 | `\subsetneq`         | $\subsetneq$                | AMS     |
+|  34 | `\subsetneqq`        | $\subsetneqq$               | AMS     |
+|  35 | `\substack`          | $\substack{a\\\\b}$         |         |
+|  36 | `\succ`              | $\succ$                     |         |
+|  37 | `\succapprox`        | $\succapprox$               | AMS     |
+|  38 | `\succcurlyeq`       | $\succcurlyeq$              | AMS     |
+|  39 | `\succeq`            | $\succeq$                   |         |
+|  40 | `\succnapprox`       | $\succnapprox$              | AMS     |
+|  41 | `\succneqq`          | $\succneqq$                 | AMS     |
+|  42 | `\succnsim`          | $\succnsim$                 | AMS     |
+|  43 | `\succsim`           | $\succsim$                  | AMS     |
+|  44 | `\sum`               | $\sum$                      |         |
+|  45 | `\sup`               | $\sup$                      |         |
+|  46 | `\Supset`            | $\Supset$                   | AMS     |
+|  47 | `\supset`            | $\supset$                   |         |
+|  48 | `\supseteq`          | $\supseteq$                 |         |
+|  49 | `\supseteqq`         | $\supseteqq$                | AMS     |
+|  50 | `\supsetneq`         | $\supsetneq$                | AMS     |
+|  51 | `\supsetneqq`        | $\supsetneqq$               | AMS     |
+|  52 | `\surd`              | $\surd$                     |         |
+|  53 | `\swarrow`           | $\swarrow$                  |         |
 
 ## T
 
@@ -609,25 +613,26 @@ We support 601 commands/environments.
 |   5 | `\text`              | $\text{hello}$       |                |
 |   6 | `\textstyle`         |                      |                |
 |   7 | `\tfrac`             | $\tfrac{x}{y}$       |                |
-|   8 | `\therefore`         | $\therefore$         | AMS            |
-|   9 | `\Theta`             | $\Theta$             |                |
-|  10 | `\theta`             | $\theta$             |                |
-|  11 | `\thickspace`        |                      |                |
-|  12 | `\thinspace`         |                      |                |
-|  13 | `\tilde`             | $\tilde{x}$          |                |
-|  14 | `\times`             | $\times$             |                |
-|  15 | `\to`                | $\to$                |                |
-|  16 | `\top`               | $\top$               |                |
-|  17 | `\triangle`          | $\triangle$          |                |
-|  18 | `\triangledown`      | $\triangledown$      | AMS            |
-|  19 | `\triangleleft`      | $\triangleleft$      |                |
-|  20 | `\trianglelefteq`    | $\trianglelefteq$    | AMS            |
-|  21 | `\triangleq`         | $\triangleq$         | AMS            |
-|  22 | `\triangleright`     | $\triangleright$     |                |
-|  23 | `\trianglerighteq`   | $\trianglerighteq$   | AMS            |
-|  24 | `\trprime`           | $'''$                | `unicode-math` |
-|  25 | `\twoheadleftarrow`  | $\twoheadleftarrow$  | AMS            |
-|  26 | `\twoheadrightarrow` | $\twoheadrightarrow$ | AMS            |
+|   8 | `{theorem}`          |                      | AMS            |
+|   9 | `\therefore`         | $\therefore$         | AMS            |
+|  10 | `\Theta`             | $\Theta$             |                |
+|  11 | `\theta`             | $\theta$             |                |
+|  12 | `\thickspace`        |                      |                |
+|  13 | `\thinspace`         |                      |                |
+|  14 | `\tilde`             | $\tilde{x}$          |                |
+|  15 | `\times`             | $\times$             |                |
+|  16 | `\to`                | $\to$                |                |
+|  17 | `\top`               | $\top$               |                |
+|  18 | `\triangle`          | $\triangle$          |                |
+|  19 | `\triangledown`      | $\triangledown$      | AMS            |
+|  20 | `\triangleleft`      | $\triangleleft$      |                |
+|  21 | `\trianglelefteq`    | $\trianglelefteq$    | AMS            |
+|  22 | `\triangleq`         | $\triangleq$         | AMS            |
+|  23 | `\triangleright`     | $\triangleright$     |                |
+|  24 | `\trianglerighteq`   | $\trianglerighteq$   | AMS            |
+|  25 | `\trprime`           | $'''$                | `unicode-math` |
+|  26 | `\twoheadleftarrow`  | $\twoheadleftarrow$  | AMS            |
+|  27 | `\twoheadrightarrow` | $\twoheadrightarrow$ | AMS            |
 
 ## U
 
