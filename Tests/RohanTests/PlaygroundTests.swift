@@ -31,7 +31,7 @@ struct PlaygroundTests {
       let url = Bundle.module.url(forResource: fileName, withExtension: fileExtension),
       let image = NSImage(contentsOf: url)
     else {
-      print("Could not find foo.png in bundle")
+      Issue.record("Could not find \(fullName) in bundle")
       return
     }
     let pageSize = CGSize(width: 100, height: 100)
