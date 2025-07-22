@@ -24,14 +24,14 @@ struct CompletionItem: Identifiable {
     let emphAttrs = CompositorStyle.emphAttrs
 
     // label
-    let label = generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
+    let label = _generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
     self._label = AttributedString(label)
     //
-    self._iconSymbol = CompletionItem.iconSymbol(for: result.key)
+    self._iconSymbol = CompletionItem._iconSymbol(for: result.key)
     self.record = result.value
     // preview
     let previewAttrs = CompositorStyle.previewAttrs(mathMode: record.body.isMathOnly)
-    self._preview = CompletionItem.preview(for: record.body, previewAttrs)
+    self._preview = CompletionItem._preview(for: record.body, previewAttrs)
   }
 
   private enum Consts {
@@ -54,12 +54,12 @@ struct CompletionItem: Identifiable {
             .fixedSize(horizontal: true, vertical: false)
             .lineLimit(1)
           Spacer()
-          CompletionItem.previewView(for: _preview)
+          CompletionItem._previewView(for: _preview)
         }
       })
   }
 
-  private static func iconSymbol(for label: String) -> String {
+  private static func _iconSymbol(for label: String) -> String {
     if let firstChar = label.first,
       firstChar.isASCII, firstChar.isLetter
     {
@@ -71,7 +71,7 @@ struct CompletionItem: Identifiable {
   }
 
   @ViewBuilder
-  private static func previewView(for preview: ItemPreview) -> some View {
+  private static func _previewView(for preview: ItemPreview) -> some View {
     switch preview {
     case .attrString(let string):
       Text(string)
@@ -94,7 +94,7 @@ struct CompletionItem: Identifiable {
     }
   }
 
-  private static func preview(
+  private static func _preview(
     for body: CommandBody, _ attributes: Dictionary<NSAttributedString.Key, Any>
   ) -> ItemPreview {
     switch body.preview {
@@ -119,7 +119,7 @@ struct CompletionItem: Identifiable {
   }
 }
 
-private func generateLabel(
+private func _generateLabel(
   _ result: CompletionProvider.Result, _ pattern: String,
   _ baseAttrs: Dictionary<NSAttributedString.Key, Any>,
   emphAttrs: Dictionary<NSAttributedString.Key, Any>
@@ -145,7 +145,7 @@ private func generateLabel(
     let labelSuffix = label.lowercased().utf16.dropFirst(length)
     let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
 
-    return decorateSuffix(
+    return _decorateSuffix(
       attrString, length, labelSuffix, by: patternSuffix, baseAttrs, emphAttrs: emphAttrs)
 
   case let .subString(location, length):
@@ -160,7 +160,7 @@ private func generateLabel(
     let labelSuffix = label.lowercased().utf16.dropFirst(location + length)
     let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
 
-    return decorateSuffix(
+    return _decorateSuffix(
       attrString, location + length, labelSuffix, by: patternSuffix, baseAttrs,
       emphAttrs: emphAttrs)
 
@@ -174,12 +174,12 @@ private func generateLabel(
     let label = label.lowercased().utf16
     let pattern = pattern.lowercased().utf16
 
-    return decorateSuffix(
+    return _decorateSuffix(
       attrString, 0, label[...], by: pattern[...], baseAttrs, emphAttrs: emphAttrs)
   }
 }
 
-private func decorateSuffix(
+private func _decorateSuffix(
   _ attrString: NSMutableAttributedString, _ prefixLength: Int,
   _ labelSuffix: String.UTF16View.SubSequence,
   by patternSuffix: String.UTF16View.SubSequence,
