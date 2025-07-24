@@ -72,11 +72,14 @@ struct StyleSheetTests {
         TextProperty.size: .fontSize(h5Size),
         TextProperty.foregroundColor: .color(.blue),
       ],
+      // proof
+      ApplyNode.selector(command: MathTemplate.proof.command): [
+        ParagraphProperty.verticalRibbon: .color(Color.lightGray.withAlpha(0.5))
+      ],
     ]
 
     let defaultProperties: PropertyMapping =
       [
-
         // text
         TextProperty.font: .string(textFont),
         TextProperty.size: .fontSize(textSize),

@@ -122,8 +122,6 @@ class CompositorViewController: NSViewController {
     textFieldStack.addArrangedSubview(iconView)
     textFieldStack.addArrangedSubview(textField)
 
-    textFieldStack.wantsLayer = true
-    textFieldStack.layer?.backgroundColor = .white
     textFieldStack.orientation = .horizontal
     textFieldStack.spacing = Consts.iconTextSpacing
     textFieldStack.edgeInsets = {
@@ -140,6 +138,8 @@ class CompositorViewController: NSViewController {
 
     self.view = stackView
   }
+
+
 
   /// Rearrange widgets in stack view
   /// - Important: The method is **idempotent**.

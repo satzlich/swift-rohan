@@ -573,7 +573,7 @@ final class LayoutTests: TextKitTestsBase {
           .equation,
           [
             TextNode("a=b+c")
-          ])
+          ]),
       ]),
       ParagraphNode([
         MultilineNode(
@@ -678,6 +678,19 @@ final class LayoutTests: TextKitTestsBase {
               ])!
           ])
       ]),
+    ]
+
+    let documentManager = createDocumentManager(RootNode())
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(String(#function.dropLast(2)), documentManager)
+  }
+
+  @Test @MainActor
+  func testProofEnvironment() throws {
+    // set up content
+    let content: Array<Node> = [
+      ApplyNode(MathTemplate.proof, [[]])!
     ]
 
     let documentManager = createDocumentManager(RootNode())
