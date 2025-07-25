@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 // Check node category
 
 @inline(__always) func isApplyNode(_ node: Node) -> Bool { node is ApplyNode }

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct ParameterToken: TokenProtocol {
   public var parameterChar: Character { "#" }
   public let number: Int

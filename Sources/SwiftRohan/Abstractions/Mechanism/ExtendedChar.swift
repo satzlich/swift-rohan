@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum ExtendedChar: Equatable, Hashable, Comparable {
   case char(Character)
   case symbol(NamedSymbol)

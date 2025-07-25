@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 extension Nano {
   /// Compute nested level delta for each variable in the template.
   struct ComputeNestedLevelDelta: NanoPass {

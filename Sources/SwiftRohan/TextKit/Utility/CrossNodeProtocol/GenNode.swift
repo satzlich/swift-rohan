@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Common interface for Node and PartialNode.
 protocol GenNode {
   var type: NodeType { get }

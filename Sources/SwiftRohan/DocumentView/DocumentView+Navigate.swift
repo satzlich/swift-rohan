@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 extension DocumentView {
   public override func selectAll(_ sender: Any?) {
     let range = documentManager.documentRange

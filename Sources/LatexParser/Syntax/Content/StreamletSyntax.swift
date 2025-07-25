@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public enum StreamletSyntax: SyntaxProtocol {
   case arrayEnv(ArrayEnvSyntax)
   case attach(AttachSyntax)

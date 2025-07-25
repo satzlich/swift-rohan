@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 indirect enum ContainerPredicate {
   /// True if the node type equals the given node type.
   case nodeType(_ nodeType: NodeType)

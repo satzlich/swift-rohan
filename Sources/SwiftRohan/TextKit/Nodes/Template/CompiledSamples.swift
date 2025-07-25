@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public enum CompiledSamples {
   public static var newtonsLaw: CompiledTemplate {
     let content = [

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 internal struct TargetSelector: Equatable, Hashable, Codable, Sendable {
   /// Target node type
   public let type: NodeType

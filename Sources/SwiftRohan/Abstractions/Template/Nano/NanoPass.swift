@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum Nano {
   protocol NanoPass {
     associatedtype Input

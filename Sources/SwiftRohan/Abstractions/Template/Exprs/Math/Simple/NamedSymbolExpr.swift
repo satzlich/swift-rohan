@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 final class NamedSymbolExpr: Expr {
   override class var type: ExprType { .namedSymbol }
 

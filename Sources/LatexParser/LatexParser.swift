@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public func deparse(_ syntax: SyntaxProtocol, _ context: DeparseContext) -> String {
   syntax.deparse(context).map { $0.untokenize() }.joined()
 }

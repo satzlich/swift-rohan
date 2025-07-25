@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public enum RohanIndex: Equatable, Hashable, Codable, Sendable {
   case index(Int)
   case mathIndex(MathIndex)

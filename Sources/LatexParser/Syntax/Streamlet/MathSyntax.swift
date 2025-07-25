@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct MathSyntax: SyntaxProtocol {
   public enum DelimiterType {
     case dollar

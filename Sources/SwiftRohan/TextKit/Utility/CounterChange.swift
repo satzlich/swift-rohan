@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Structural change to the linked list of counter segments.
 enum CounterChange {
   /// No change to the counter segment.

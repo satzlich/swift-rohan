@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 final class MathAttributesExpr: MathExpr {
   override class var type: ExprType { .mathAttributes }
 

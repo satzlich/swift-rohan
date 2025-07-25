@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum ContentPredicate {
   /// True if the node type equals the given node type.
   case nodeType(NodeType)

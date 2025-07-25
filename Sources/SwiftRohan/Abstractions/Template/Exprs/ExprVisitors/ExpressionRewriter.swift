@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   typealias R = Expr
 

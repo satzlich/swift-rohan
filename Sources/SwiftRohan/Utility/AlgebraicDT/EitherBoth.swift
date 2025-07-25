@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Either or both.
 enum EitherBoth<L, R> {
   case left(L)

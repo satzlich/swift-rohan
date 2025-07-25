@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 struct SubjectPredicate {
   let nodeType: NodeType
   let predicate: Optional<ContentPredicate>

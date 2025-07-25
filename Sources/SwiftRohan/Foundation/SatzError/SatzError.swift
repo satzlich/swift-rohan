@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct SatzError: Error {
   public let code: ErrorCode
   public let message: String?

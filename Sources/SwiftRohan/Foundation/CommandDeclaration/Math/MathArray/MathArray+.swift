@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 import Foundation
 
 private let ALIGN_ROW_GAP = Em(0.5)

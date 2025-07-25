@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   private final func _visitElementNode<T: ElementNode>(_ node: T, _ context: C) {

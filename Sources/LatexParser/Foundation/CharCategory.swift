@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public enum CharCategory: Int {
   case escapeChar = 0  // \
   case groupBeginning = 1  // { or [

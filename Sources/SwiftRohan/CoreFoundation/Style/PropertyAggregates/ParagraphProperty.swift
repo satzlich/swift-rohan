@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 import AppKit
 
 internal struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {

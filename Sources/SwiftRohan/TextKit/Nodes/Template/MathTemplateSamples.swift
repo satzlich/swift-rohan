@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum MathTemplateSamples {
   nonisolated(unsafe) static let newtonsLaw =
     MathTemplate(CompiledSamples.newtonsLaw, .commandCall)

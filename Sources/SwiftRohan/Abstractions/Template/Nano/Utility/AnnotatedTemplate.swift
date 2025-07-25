@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 extension Nano {
   /// A template with annotation
   struct AnnotatedTemplate<A> {

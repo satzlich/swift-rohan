@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct ControlSymbolSyntax: SyntaxProtocol {
   public let command: ControlSymbolToken
   public let argument: Optional<ComponentSyntax>

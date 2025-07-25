@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 import Foundation
 
 internal enum PropertyName: Equatable, Hashable, Codable, Sendable {
