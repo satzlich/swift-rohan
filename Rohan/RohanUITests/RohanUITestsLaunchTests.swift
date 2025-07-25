@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 import XCTest
 
 final class RohanUITestsLaunchTests: XCTestCase {

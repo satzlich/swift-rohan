@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 struct TemplateName: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
   let identifier: Identifier
 

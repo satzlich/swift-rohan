@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public enum Either<L, R> {
   case Left(L)
   case Right(R)

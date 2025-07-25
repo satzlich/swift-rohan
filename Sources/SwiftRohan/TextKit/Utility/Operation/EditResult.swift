@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum EditResult<T> {
   /// insertion is successful, no special handling is required.
   case success(T)

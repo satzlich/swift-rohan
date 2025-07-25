@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// The four corners of a rectangle.
 enum Corner: CaseIterable {
   case topLeft

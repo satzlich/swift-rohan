@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public indirect enum ComponentSyntax: SyntaxProtocol {
   /// Example: the parenthesis in `\left(`
   case char(CharSyntax)

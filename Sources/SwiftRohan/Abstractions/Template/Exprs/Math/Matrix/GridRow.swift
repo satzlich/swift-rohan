@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Row of elements in a grid.
 internal struct GridRow<Element: Codable>: Codable, Sequence {
   private var _elements: Array<Element>

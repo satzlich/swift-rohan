@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 final class AttachExpr: MathExpr {
   class override var type: ExprType { .attach }
 

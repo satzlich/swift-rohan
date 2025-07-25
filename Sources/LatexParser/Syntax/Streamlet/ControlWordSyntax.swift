@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct ControlWordSyntax: SyntaxProtocol {
   public let command: ControlWordToken
   public let arguments: Array<ComponentSyntax>

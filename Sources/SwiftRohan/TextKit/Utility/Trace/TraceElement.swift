@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 struct TraceElement {
   let node: Node
   let index: RohanIndex

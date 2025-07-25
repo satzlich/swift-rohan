@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 import Foundation
 
 /// An object that is crossed over from certain location in certain direction.

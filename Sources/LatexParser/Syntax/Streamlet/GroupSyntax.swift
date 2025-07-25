@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct _GroupSyntax<T: SyntaxProtocol> {
   public enum DelimiterType {
     case braces

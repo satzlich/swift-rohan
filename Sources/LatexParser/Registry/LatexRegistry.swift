@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct LatexRegistry {
   /// Substitution table.
   internal typealias SubsTable = Dictionary<Character, SubstitutionRecord>

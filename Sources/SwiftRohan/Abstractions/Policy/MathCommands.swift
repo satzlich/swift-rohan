@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Non-symbol math commands.
 enum MathCommands {
   nonisolated(unsafe) static let allCases: Array<CommandRecord> = _allCases()

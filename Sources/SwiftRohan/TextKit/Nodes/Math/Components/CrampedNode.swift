@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// A content node that is cramped.
 final class CrampedNode: ContentNode {
   // MARK: - Node

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum StringReconciler {
 
   @inline(__always)

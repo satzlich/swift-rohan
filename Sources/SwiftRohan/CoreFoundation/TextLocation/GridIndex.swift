@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct GridIndex: Equatable, Hashable, Codable, Sendable {
   public let row: Int
   public let column: Int

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Degree of Radical.
 final class DegreeNode: ContentNode {
   // MARK: - Node

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 actor NodeIdAllocator {
   private static var _counter: Int = 1
 

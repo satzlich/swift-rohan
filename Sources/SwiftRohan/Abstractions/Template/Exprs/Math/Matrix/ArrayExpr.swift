@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Superclass for {align, aligned, cases, gather, gathered, multline} environments,
 ///  and various kinds of matrices.
 /// - Invariant: Rows and columns are non-empty.

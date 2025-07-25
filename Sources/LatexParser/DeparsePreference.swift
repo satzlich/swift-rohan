@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 internal enum DeparsePreference: String {
   /// Deparse without any modification. This may change the semantics of the output.
   case unmodified

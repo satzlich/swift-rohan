@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct CommandRecord {
   public let name: String
   public let body: CommandBody

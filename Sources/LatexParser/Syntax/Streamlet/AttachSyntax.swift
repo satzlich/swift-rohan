@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct AttachSyntax: SyntaxProtocol {
   public let nucleus: ComponentSyntax
   public let subscript_: ComponentSyntax?

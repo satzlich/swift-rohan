@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 internal struct PlaceholderRecord {
   let char: Character
   let isVisible: Bool

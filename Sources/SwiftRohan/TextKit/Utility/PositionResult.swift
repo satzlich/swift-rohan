@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// Result of locating with layout offset.
 
 public enum PositionResult<T> {

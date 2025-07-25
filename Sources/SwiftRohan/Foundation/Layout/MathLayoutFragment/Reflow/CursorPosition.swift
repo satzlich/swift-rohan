@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum CursorPosition {
   /// cursor is placed after the upstream fragment
   case upstream

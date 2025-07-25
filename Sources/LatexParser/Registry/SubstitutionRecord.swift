@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct SubstitutionRecord {
   public let character: Character
   public let replacement: Array<StreamletSyntax>

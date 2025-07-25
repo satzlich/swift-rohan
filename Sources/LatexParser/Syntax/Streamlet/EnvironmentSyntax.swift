@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 public struct _EnvironmentSyntax<T: SyntaxProtocol>: SyntaxProtocol {
   public let name: NameToken
   public let wrapped: T

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 enum LayoutType: UInt8, Codable, CaseIterable {
   case inline = 0
   /// hard block.

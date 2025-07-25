@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 extension Nano {
   /// Convert (named) variables to compiled ones
   struct ConvertVariables: NanoPass {

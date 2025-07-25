@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// A succinct representation of a glyph whose contextual font is implicitly known.
 struct SuccinctGlyph {
   let glyph: GlyphId

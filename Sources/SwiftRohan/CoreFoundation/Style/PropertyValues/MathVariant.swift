@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 import Foundation
 
 /// - Note: TeX has commands `\mathbb`, `\mathcal`, `\mathfrak`, etc.

@@ -1,5 +1,3 @@
-// Copyright 2024-2025 Lie Yan
-
 /// ElementNode subclass that provides default layout implementation.
 internal class ElementNodeImpl: ElementNode {
   // MARK: - Node(Positioning)
