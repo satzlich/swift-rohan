@@ -49,6 +49,8 @@ The directory structure of the Rohan project is as follows:
 
 We welcome contributions to Rohan! If you have ideas for new features, improvements, or bug fixes, please open an issue or submit a pull request.
 
+For high-level idea about the design and implementation, please refer to the [Design Document](Documentation/DESIGN-AND-IMPL.md).
+
 # License
 
 Rohan is licensed under Apache License 2.0. See the [LICENSE](LICENSE) file for more details.
